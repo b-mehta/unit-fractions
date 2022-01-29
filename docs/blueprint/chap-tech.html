@@ -113,11 +113,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="/blob/0aa42c7410d5ff9a77f159bb7da72405aadfa9a4/src/main_results.lean#L38">unit_fractions_upper_density</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="theorem_thmcontent">
-  <p> If \(A\subset \mathbb {N}\) has positive upper density then there is a finite \(S\subset A\) such that \(\sum _{n\in S}\frac{1}{n}=1\). </p>
+  <p>  If \(A\subset \mathbb {N}\) has positive upper density then there is a finite \(S\subset A\) such that \(\sum _{n\in S}\frac{1}{n}=1\). </p>
 
   </div>
 </div> </p>
@@ -185,11 +199,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="/blob/0aa42c7410d5ff9a77f159bb7da72405aadfa9a4/src/main_results.lean#L42">unit_fractions_upper_log_density</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="theorem_thmcontent">
-  <p> There is a constant \(C{\gt}0\) such that the following holds. If \(A\subset \{ 1,\ldots ,N\} \) and </p>
+  <p>  There is a constant \(C{\gt}0\) such that the following holds. If \(A\subset \{ 1,\ldots ,N\} \) and </p>
 <div class="displaymath" id="a0000000063">
   \[ \sum _{n\in A}\frac{1}{n}\geq C \frac{\log \log \log N}{\log \log N}\log N \]
 </div>
@@ -248,17 +276,16 @@
     <a class="icon proof" href="chap-tech.html#cor:tech_cor">#</a>
     <a class="icon proof" href="chap-tech.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
+    <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
       <div class="modal-content">
         <header>
-          <h1>Uses</h1>
+          <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-techprop.html#prop:techmain">Proposition 6.2</a></li>
+          <li><a href="/blob/0aa42c7410d5ff9a77f159bb7da72405aadfa9a4/src/main_results.lean#L189">corollary_one</a></li>
         </ul>
 
       </div>
@@ -293,7 +320,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>Let \(k\) be maximal such that there are disjoint \(S_1,\ldots ,S_k\subset A\) where, for each \(1\leq i\leq k\), there exists some \(d_i\in [1,(\log N)^{1/500}]\) such that \(R(S_i)=1/d_i\). Let \(t(d)\) be the number of \(S_i\) such that \(d_i=d\). If there is any \(d\) with \(t(d)\geq d\) then we are done, taking \(S\) to be the union of any \(d\) disjoint \(S_j\) with \(R(S_j)=1/d\). Otherwise, </p>
+  <p> Let \(k\) be maximal such that there are disjoint \(S_1,\ldots ,S_k\subset A\) where, for each \(1\leq i\leq k\), there exists some \(d_i\in [1,(\log N)^{1/500}]\) such that \(R(S_i)=1/d_i\). Let \(t(d)\) be the number of \(S_i\) such that \(d_i=d\). If there is any \(d\) with \(t(d)\geq d\) then we are done, taking \(S\) to be the union of any \(d\) disjoint \(S_j\) with \(R(S_j)=1/d\). Otherwise, </p>
 <div class="displaymath" id="a0000000071">
   \[ \sum _i R(S_i)= \sum _{1\leq d\leq (\log N)^{1/500}} \frac{t(d)}{d}\leq (\log N)^{1/500}, \]
 </div>
