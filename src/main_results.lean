@@ -4,11 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Bhavik Mehta, Thomas Bloom
 -/
 
-import data.real.basic
-import analysis.special_functions.log
-import analysis.special_functions.pow
-import order.filter.at_top_bot
-import number_theory.arithmetic_function
+import defs
 
 /-!
 # Title
@@ -21,19 +17,9 @@ open_locale big_operators -- this lets me use ∑ and ∏ notation
 open filter real
 open nat (coprime)
 
-
-lemma card_le_card_bUnion {ι α : Type*} [decidable_eq α]
-  {s : finset ι} {f : ι → finset α} (hs : (s : set ι).pairwise_disjoint f)
-  (hf : ∀ i ∈ s, (f i).nonempty) :
-  s.card ≤ (s.bUnion f).card :=
-by { rw [finset.card_bUnion hs, finset.card_eq_sum_ones], exact finset.sum_le_sum (λ i hi, (hf i hi).card_pos) }
-
 open_locale arithmetic_function
 open_locale classical
 noncomputable theory
-
-def upper_density (A : set ℕ) : ℝ := limsup at_top
-   (λ N : ℕ, (((finset.range(N+1)).filter (λ n, n ∈ A)).card : ℝ) / N)
 
 theorem unit_fractions_upper_density (A : set ℕ) (hA : upper_density A > 0):
    ∃ (S : finset ℕ), (S : set ℕ) ⊆ A ∧ ∑ n in S, (1 / n : ℝ) = 1 :=
@@ -63,58 +49,6 @@ sorry
 --   number" to make the division act sensibly. I could instead talk about rationals, but for
 --   the inequality part I've got a real on the LHS anyway, so it would convert to rationals and
 --   then to reals, so might as well go straight to ℝ.
-
--- This is R(A) in the paper.
-def rec_sum (A : finset ℕ) : ℚ := ∑ n in A, 1/n
-
-lemma rec_sum_bUnion_disjoint {A : finset (finset ℕ)}
-  (hA : (A : set (finset ℕ)).pairwise_disjoint id) : rec_sum (A.bUnion id) = ∑ s in A, rec_sum s :=
-by simp only [rec_sum, finset.sum_bUnion hA, id.def]
-
-lemma rec_sum_disjoint {A B : finset ℕ} (h : disjoint A B) :
-   rec_sum (A ∪ B) = rec_sum A + rec_sum B :=
-by simp only [rec_sum, finset.sum_union h]
-
-@[simp] lemma rec_sum_empty : rec_sum ∅ = 0 := by simp [rec_sum]
-
-lemma nonempty_of_rec_sum_recip {A : finset ℕ} {d : ℕ} (hd : 1 ≤ d) :
-  rec_sum A = 1 / d → A.nonempty :=
-begin -- should be able to simplify this
-  intro h,
-  rw [finset.nonempty_iff_ne_empty],
-  rintro rfl,
-  simp only [one_div, zero_eq_inv, rec_sum_empty] at h,
-  have : 0 < d := hd,
-  exact this.ne (by exact_mod_cast h),
-end
-
--- This is A_q in the paper.
-def local_part (A : finset ℕ) (q : ℕ) : finset ℕ := A.filter (λ n, q ∣ n ∧ coprime q (n/q) )
-
--- This is Q_A in the paper.
--- Replace nat.prime here with prime_power
-def ppowers_in_set (A : finset ℕ) : set ℕ := { q | nat.prime q ∧ local_part A q ≠ ∅ }
-
--- For summing over 1/q for q in Q_A, need to know this is a finite set, so
--- I've put the below for now - actually should be ppowers_in_set? Prove this is
--- finite as a lemma?
-def fin_ppowers_in_set (A : finset ℕ) : finset ℕ := sorry
-
--- This is R(A;q) in the paper.
-def rec_sum_local (A : finset ℕ) (q : ℕ) : ℚ := ∑ n in local_part A q, q/n
-
-def ppower_rec_sum (A : finset ℕ) : ℚ :=
-∑ q in fin_ppowers_in_set A, 1/q
-
--- Replace nat.prime here with prime_power
-def is_smooth (y : ℝ) (n : ℕ) : Prop := ∀ q : ℕ, nat.prime q → q ∣ n → (q : ℝ) ≤ y
-
-def arith_regular (N : ℕ) (A : finset ℕ) : Prop :=
-∀ n ∈ A, (((99:ℝ)/100)*log(log N) ≤ ω n) ∧ ((ω n : ℝ) ≤ 2*(log (log N)))
-
-lemma arith_regular.subset {N : ℕ} {A A' : finset ℕ} (hA : arith_regular N A) (hA' : A' ⊆ A) :
-  arith_regular N A' :=
-λ n hn, hA n (hA' hn)
 
 -- Prop 1
 theorem technical_prop :
@@ -183,7 +117,6 @@ end
   (f : α → ℚ) :
   ↑(∑ x in s, f x : ℚ) = (∑ x in s, (f x : β)) :=
 (rat.cast_hom β).map_sum f s
-
 
 -- Corollary 1
 theorem corollary_one :
@@ -283,7 +216,7 @@ begin
   have hk_bound : k + 1 ≤ A.card + 1,
   { rw [←hk, add_le_add_iff_right],
     apply le_trans _ (finset.card_le_of_subset (finset.bUnion_subset.2 hS₁)),
-    apply card_le_card_bUnion hS₂,
+    apply finset.card_le_card_bUnion hS₂,
     intros s hs,
     exact nonempty_of_rec_sum_recip (hd'₁ s hs) (hd'₃ s hs) },
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
@@ -309,7 +242,6 @@ sorry
 -- to detect the divisibility constraint, then rearrange. Uses the trivial bound
 -- of v for number of primes in [u,v])
 
-
 -- Lemma 1
 lemma sieve_lemma_one  : ∃ C : ℝ,
   ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (3 ≤ y) → (y < z) → (z ≤ log N) →
@@ -334,7 +266,7 @@ sorry
 --lemma sieve_eratosthenes :
 
 -- Lemma 2
-lemma sieve_lemma_two  : ∃ C : ℝ,
+lemma sieve_lemma_two : ∃ C : ℝ,
   ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (2 ≤ y) → (4*y < z) → (z^2 ≤ log N) →
    let Y : set ℕ := { n : ℕ | ∃ p₁ p₂ : ℕ, (p₁ ≠ p₂) ∧ (prime p₁)
    ∧ (prime p₂) ∧ (p₁ ∣ n) ∧ (p₂ ∣ n) ∧ (y ≤ p₁) ∧ (4*p₁ ≤ p₂)
@@ -343,34 +275,6 @@ lemma sieve_lemma_two  : ∃ C : ℝ,
    C * (log y / log z)^(1/2) * N
     :=
 sorry
-
-def lcm (A : finset ℕ) : ℕ := A.lcm id
-
--- This is the set D_I
-def interval_rare_ppowers (I: finset ℕ) (A : finset ℕ) (K : ℝ) : set ℕ :=
-{ q in ppowers_in_set A |
-(((local_part A q).filter (λ n, ∀ x ∈ I, ¬ (n ∣ x))).card : ℝ)
-< K/q }
-
--- Proposition 2
-theorem circle_method_prop : ∃ c : ℝ,
-  ∀ᶠ (N : ℕ) in at_top, ∀ k M : ℕ, ∀ η K : ℝ,  ∀ A ⊆ finset.range (N+1),
-  (M ≤ N) → ((N:ℝ)^(3/4 : ℝ) ≤ M) → (1 ≤ k) → ((k:ℝ) ≤ c*M) →
-  (0 < η) → (η < 1) → (2*K ≤ M) → ((N:ℝ)^(3/4:ℝ) ≤ K) →
-  (∀ n ∈ A, M ≤ n) →
-  (rec_sum A ≤ 2/k) → ((2:ℚ)/k - 1 ≤ rec_sum A ) →
-  (k ∣ lcm A) →
-  (∀ q ∈ ppowers_in_set A, ((q:ℝ) ≤ c*M/k) ∧
-  ((q:ℝ) ≤ c*η*M*K^2 / (N*log N)^2)) →
-  (∀ (a : ℕ), let I : finset ℕ := (finset.Icc a ⌊(a:ℝ)+K⌋₊)
-  in
-  ( ((M:ℝ)/log N ≤ ((A.filter (λ n, ∀ x ∈ I, ¬ (n ∣ x))).card : ℝ)) ∨
-    (∃ x ∈ I, ∀ q : ℕ, (q ∈ interval_rare_ppowers I A (η*M)) → q ∣ x)
-  ))
-  → ∃ S ⊆ A, rec_sum S = 1/k
-  :=
-sorry
-
 
 -- Lemma 3
 -- TODO: Replace nat.divisors with just the prime power divisors

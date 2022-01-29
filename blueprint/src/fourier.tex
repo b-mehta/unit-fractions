@@ -6,16 +6,22 @@ This section contains the part of the proof that uses Fourier analysis to reduce
 
 \begin{definition}
   \label{def:integer_count}
+  \leanok
+  \lean{integer_count}
   In this section, we write $[A]$ for the lowest common multiple of $A$, and for any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)$ for the count of the number of subsets $S\subset A$ such that $kR(S)$ is an integer.
 \end{definition}
 
 \begin{definition}
   \label{def:j}
+  \leanok
+  \lean{j}
   Let $J(A) = (-[A]/2,[A]/2)\cap\bbz \backslash \{0\}$.
 \end{definition}
 
 \begin{definition}
   \label{def:cos_prod}
+  \leanok
+  \lean{cos_prod}
   Let $C(B;h,k) = \prod_{n\in B}\abs{\cos(\pi kh/n)}$.
 \end{definition}
 
@@ -65,12 +71,14 @@ By definition it suffices to show that for all $n\in A$ we have $n\mid \prod_{p\
 If $A$ is a finite set of natural numbers such that if $q\in\mathcal{Q}_A$ then $q\leq X$, then $[A]\leq e^{O(X)}$.
 \end{lemma}
 \begin{proof}
-\uses{lem:chebyshev,lem:lcm_desc}
-We have $[A]=\prod_{\in\mathcal{P}_A}p^{r_p}$, where $p^{r_p}\in \mathcal{Q}_A$, by Lemma~\ref{lem:lcm_desc}. By hypothesis $p^{r_p}\leq X$ and so $[A]\leq X^{\abs{\mathcal{P}_A}}$. The set $\mathcal{P}_A$ is a subset of all primes $\leq X$, and so $\abs{\mathcal{P}_A}\leq \pi(X)\ll X/\log X$ by Chebyshev's estimate Lemma~\ref{lem:chebyshev}. Therefore
-\[[A]\leq X^{O(X/\log X)}=e^{O(X)}.\]
+  \uses{lem:chebyshev,lem:lcm_desc}
+  We have $[A]=\prod_{\in\mathcal{P}_A}p^{r_p}$, where $p^{r_p}\in \mathcal{Q}_A$, by Lemma~\ref{lem:lcm_desc}. By hypothesis $p^{r_p}\leq X$ and so $[A]\leq X^{\abs{\mathcal{P}_A}}$. The set $\mathcal{P}_A$ is a subset of all primes $\leq X$, and so $\abs{\mathcal{P}_A}\leq \pi(X)\ll X/\log X$ by Chebyshev's estimate Lemma~\ref{lem:chebyshev}. Therefore
+  \[[A]\leq X^{O(X/\log X)}=e^{O(X)}.\]
 \end{proof}
 
 \begin{lemma}\label{lem:cos_bound}
+  \leanok
+  \lean{cos_bound}
 If $x\in [0,1/2]$ then
 \[\cos(\pi x) \leq e^{-2x^2}.\]
 \end{lemma}

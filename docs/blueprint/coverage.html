@@ -196,16 +196,10 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>4 Fourier Analysis <span class="void">0%</span></h3>
+  <h3>4 Fourier Analysis <span class="partial">14%</span></h3>
   
   <ul class="coverage">
     
-    
-    <li>
-      <div class="thm_thmheading">Definition 4.1 (def:integer_count)</div>
-      <div class="thm_thm_content"><p> In this section, we write \([A]\) for the lowest common multiple of \(A\), and for any finite set \(A\) of natural numbers and integer \(k\geq 1\) we write \(F(A;k)\) for the count of the number of subsets \(S\subset A\) such that \(kR(S)\) is an integer. </p>
-</div>
-    </li>
     
     
     
@@ -316,12 +310,6 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Definition 4.2 (def:j)</div>
-      <div class="thm_thm_content"><p> Let \(J(A) = (-[A]/2,[A]/2)\cap \mathbb {Z}\backslash \{ 0\} \). </p>
-</div>
-    </li>
-    
     
     
     <li>
@@ -378,12 +366,6 @@ Click chapter titles to see missing items.
     </li>
     
     
-    
-    <li>
-      <div class="thm_thmheading">Definition 4.3 (def:cos_prod)</div>
-      <div class="thm_thm_content"><p> Let \(C(B;h,k) = \prod _{n\in B}\left\lvert \cos (\pi kh/n)\right\rvert \). </p>
-</div>
-    </li>
     
     
     
@@ -447,7 +429,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.9 (lem:cos_bound)</div>
-      <div class="thm_thm_content"><p> If \(x\in [0,1/2]\) then </p>
+      <div class="thm_thm_content"><p>  If \(x\in [0,1/2]\) then </p>
 <div class="displaymath" id="a0000000098">
   \[ \cos (\pi x) \leq e^{-2x^2}. \]
 </div>
@@ -635,20 +617,12 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
-      <div class="thm_thmheading">Definition 4.1 (def:integer_count)</div>
-      <div class="thm_thm_content"><p> In this section, we write \([A]\) for the lowest common multiple of \(A\), and for any finite set \(A\) of natural numbers and integer \(k\geq 1\) we write \(F(A;k)\) for the count of the number of subsets \(S\subset A\) such that \(kR(S)\) is an integer. </p>
+      <div class="thm_thmheading">Definition 4.4 (def:major_arc)</div>
+      <div class="thm_thm_content"><p>  For any finite set of naturals \(A\) and integer \(k\geq 1\), and real \(K{\gt}0\), we define the ‘major arc’ corresponding to \(t\in \mathbb {Z}\) as </p>
+<div class="displaymath" id="a0000000086">
+  \[ \mathfrak {M}(t;A,k,K) = \{  h\in J(A): \left\lvert h-t[A]/k\right\rvert \leq K/2k\}  \]
 </div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Definition 4.2 (def:j)</div>
-      <div class="thm_thm_content"><p> Let \(J(A) = (-[A]/2,[A]/2)\cap \mathbb {Z}\backslash \{ 0\} \). </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Definition 4.3 (def:cos_prod)</div>
-      <div class="thm_thm_content"><p> Let \(C(B;h,k) = \prod _{n\in B}\left\lvert \cos (\pi kh/n)\right\rvert \). </p>
+<p> Let \(\mathfrak {M}(A,k,K) = \cup _{t\in \mathbb {Z}}\mathfrak {M}(t;A,k,K)\). </p>
 </div>
     </li>
     
@@ -742,10 +716,28 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
+      <div class="thm_thmheading">Lemma 4.10 (lem:orthog_rat)</div>
+      <div class="thm_thm_content"><p>  If \(A\subset \mathbb {N}\) is finite and \(k\geq 1\) is an integer then </p>
+<div class="displaymath" id="a0000000102">
+  \[ F(A;k)= \frac{1}{[A]}\sum _{-[A]/2{\lt} h\leq [A]/2}\prod _{n\in A}(1+e(kh/n)). \]
+</div>
+</div>
+    </li>
+    
+    <li>
       <div class="thm_thmheading">Lemma 4.11 (lem:orthog_simp)</div>
       <div class="thm_thm_content"><p>  If \(k\geq 1\) is an integer and \(A\) is a finite set of natural numbers such that there is no \(S\subset A\) such that \(R(S)=1/k\), and \(R(A){\lt}2/k\), then </p>
 <div class="displaymath" id="a0000000107">
   \[ \sum _{-[A]/2{\lt} h\leq [A]/2}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)= [A]. \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.12 (lem:orthog_simp2)</div>
+      <div class="thm_thm_content"><p>  If \(k\geq 1\) is an integer and \(A\) is a finite set of natural numbers such that there is no \(S\subset A\) such that \(R(S)=1/k\), and \(R(A){\lt}2/k\), and \([A]\leq 2^{\left\lvert A\right\rvert -1}\) then </p>
+<div class="displaymath" id="a0000000110">
+  \[ \sum _{h\in J(A)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)\leq -2^{\left\lvert A\right\rvert -1}. \]
 </div>
 </div>
     </li>
@@ -764,6 +756,15 @@ Click chapter titles to see missing items.
       <div class="thm_thm_content"><p>  Let \(M\geq 1\) and \(A\) a finite set of naturals such that \(n\geq M\) for all \(n\in A\). Let \(K\) be a real such that \(K{\lt}M\). Let \(k\geq 1\) be an integer. Suppose that \(kR(A) \in [2-k/M,2)\). </p>
 <div class="displaymath" id="a0000000121">
   \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) \geq 0. \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.17 (lem:cos_prod_bound)</div>
+      <div class="thm_thm_content"><p>  For any finite set \(A\) such that \(n\leq N\) for all \(n\in A\), and integers \(k,h\), if \(kh\equiv h_n\pmod{n}\) for \(\left\lvert h_n\right\rvert \leq n/2\) for all \(n\in A\), then </p>
+<div class="displaymath" id="a0000000135">
+  \[ C(A;h,k)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}h_n^2\right). \]
 </div>
 </div>
     </li>
@@ -802,15 +803,6 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 4.8 (lem:smooth_lcm)</div>
       <div class="thm_thm_content"><p>  If \(A\) is a finite set of natural numbers such that if \(q\in \mathcal{Q}_A\) then \(q\leq X\), then \([A]\leq e^{O(X)}\). </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Lemma 4.9 (lem:cos_bound)</div>
-      <div class="thm_thm_content"><p> If \(x\in [0,1/2]\) then </p>
-<div class="displaymath" id="a0000000098">
-  \[ \cos (\pi x) \leq e^{-2x^2}. \]
-</div>
 </div>
     </li>
     
@@ -900,6 +892,20 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
+  
+  <h3>4 Fourier Analysis</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.9 (lem:cos_bound)</div>
+      <div class="thm_thm_content"><p>  If \(x\in [0,1/2]\) then </p>
+<div class="displaymath" id="a0000000098">
+  \[ \cos (\pi x) \leq e^{-2x^2}. \]
+</div>
+</div>
+    </li>
+    
+  </ul>
   
 </section>
 
