@@ -293,11 +293,10 @@ end
 -- define the X in Lemma 1 as a separate definition?
 def X (y z : ℝ) : set ℕ := sorry
 
-#exit
-
 -- Sieve of Eratosthenes-Legendre, again belongs in basic_estimates
 -- Bhavik, this is clumsily expressed, condensed form?
 lemma sieve_eratosthenes (x y u v : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (hu: 2 ≤ u)
+  -- BM: hu isn't in the paper? also the ordering looks weird to me
 (huv : u ≤ v) :
 |(((finset.Icc ⌈x⌉₊ ⌊x+y⌋₊).filter (λ n : ℕ, (∀ p : ℕ, (p ∣ n)
    → (prime p) → ( (p:ℝ) < u ∨ v < p ) ))).card : ℝ)-

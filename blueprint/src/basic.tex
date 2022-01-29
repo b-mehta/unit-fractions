@@ -32,6 +32,8 @@ By Lemma~\ref{lem:mertensprimes} this is $X(\log\log X+O(1))^2 = X(\log\log X)^2
 \end{proof}
 
 \begin{lemma}[Tur\'{a}n's estimate]\label{lem:turan}
+  \leanok
+  \lean{turan_primes_estimate}
 For any $X\geq 3$
 \[\sum_{n\leq X}(\omega(n) - \log\log X)^2 \ll X\log\log X.\]
 \end{lemma}
@@ -123,6 +125,8 @@ For any $X\geq 2$,
 \end{proof}
 
 \begin{lemma}[Sieve of Eratosthenes-Legendre]\label{lem:sieve_eratosthenes}
+  \leanok
+  \lean{sieve_eratosthenes}
 For any $x,y\geq 0$ and $u\geq v\geq 1$
 \[\#\{ n\in (x,x+y] : p\mid n\implies p\not\in [u,v]\} = y\prod_{u\leq p\leq v}\brac{1-\frac{1}{p}}+O(2^v).\]
 \end{lemma}
