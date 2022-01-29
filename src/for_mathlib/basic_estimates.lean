@@ -60,7 +60,7 @@ end
 lemma tendsto_log_div_mul_add_at_top (a b : ℝ) (ha : a ≠ 0) :
   tendsto (λ x, log x / (a * x + b)) at_top (𝓝 0) :=
 ((tendsto_div_pow_mul_exp_add_at_top a b 1 ha.symm le_rfl).comp tendsto_log_at_top).congr'
-  (by filter_upwards [eventually_gt_at_top (0 : ℝ)] (λ x hx, by simp [exp_log hx]))
+  (by filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx using by simp [exp_log hx])
 
 lemma is_o_log_id_at_top : is_o log (λ x, x) at_top :=
 begin
@@ -209,8 +209,8 @@ begin
   rw [finset.sum_Ico_succ_top nat.succ_pos', ih hN' hf.1 hf'.1, add_comm, nat.succ_eq_add_one,
     summatory_succ_sub a, sub_mul, sub_add_eq_add_sub, eq_sub_iff_add_eq, add_sub_assoc, add_assoc,
     nat.cast_add_one, add_right_eq_self, sub_add_eq_add_sub, sub_eq_zero, add_comm, ←add_sub_assoc,
-    ←sub_add_eq_add_sub, ←eq_sub_iff_add_eq, ←mul_sub,
-    integral_union_ae _ (measurable_set_Icc : measurable_set (Icc (_:ℝ) _)) measurable_set_Icc,
+    ←sub_add_eq_add_sub, ←eq_sub_iff_add_eq, ←mul_sub],
+  rw [integral_union_ae _ (measurable_set_Icc.null_measurable_set : null_measurable_set (Icc (_:ℝ) _)),
     add_sub_cancel', ←set_integral_congr_set_ae (Ico_ae_eq_Icc' volume_singleton)],
   { have : eq_on (λ x, summatory a x * f' x) (λ x, summatory a N • f' x) (Ico N (N+1)) :=
       λ x hx, congr_arg2 (*) (summatory_eq_of_Ico _ hx) rfl,
@@ -222,8 +222,8 @@ begin
     { exact (interval_integral.interval_integrable_iff_integrable_Icc_of_le hN'').2 hf'.2 } },
   { exact partial_summation_integrable a hf'.1 },
   { exact partial_summation_integrable a hf'.2 },
-  { rw [Icc_inter_Icc_eq_singleton _ hN'', ae_eq_empty, volume_singleton],
-    exact nat.one_le_cast.2 hN' },
+  rw [ae_disjoint, Icc_inter_Icc_eq_singleton _ hN'', volume_singleton],
+  exact nat.one_le_cast.2 hN',
 end
 
 /--
@@ -245,7 +245,7 @@ begin
   simp only [this, integrable_on_union, mem_union, or_imp_distrib, forall_and_distrib] at hf hf' ⊢,
   rw [summatory, partial_summation_nat a f f' (nat.one_le_cast.1 hx) hf.1 hf'.1, eq_comm,
     sub_eq_sub_iff_sub_eq_sub, summatory_eq_floor, ←mul_sub,
-    integral_union_ae _ measurable_set_Icc (measurable_set_Icc : measurable_set (Icc _ x)),
+    integral_union_ae _ (measurable_set_Icc.null_measurable_set : null_measurable_set (Icc (_:ℝ) _)),
     add_sub_cancel'],
   { have : eq_on (λ y, summatory a y * f' y) (λ y, summatory a ⌊x⌋₊ • f' y) (Icc ⌊x⌋₊ x),
     { intros y hy,
@@ -262,7 +262,7 @@ begin
     { exact (interval_integral.interval_integrable_iff_integrable_Icc_of_le hx').2 hf'.2 } },
   apply partial_summation_integrable _ hf'.1,
   apply partial_summation_integrable _ hf'.2,
-  { rw [Icc_inter_Icc_eq_singleton hx (nat.floor_le (zero_le_one.trans h)), ae_eq_empty,
+  { rw [ae_disjoint, Icc_inter_Icc_eq_singleton hx (nat.floor_le (zero_le_one.trans h)),
       volume_singleton] },
 end
 
@@ -410,9 +410,8 @@ begin
   { apply fract_mul_integrable,
     apply integrable_on_pow_inv_Ioi one_lt_two zero_lt_one },
   rw [one_mul, euler_mascheroni, norm_of_nonneg (inv_nonneg.2 (zero_le_one.trans hx)),
-    sub_sub_sub_cancel_left, ←integral_diff measurable_set_Ioi measurable_set_Ioc h
-    (h.mono_set Ioc_subset_Ioi_self) Ioc_subset_Ioi_self, Ioi_diff_Icc hx,
-    norm_of_nonneg],
+    sub_sub_sub_cancel_left, ←integral_diff measurable_set_Ioc h (h.mono_set Ioc_subset_Ioi_self)
+    Ioc_subset_Ioi_self, Ioi_diff_Icc hx, norm_of_nonneg],
   { apply (set_integral_mono_on (h.mono_set (Ioi_subset_Ioi hx))
       (integrable_on_pow_inv_Ioi one_lt_two (zero_lt_one.trans_le hx)) measurable_set_Ioi _).trans,
     { rw integral_pow_inv_Ioi one_lt_two (zero_lt_one.trans_le hx),
@@ -821,6 +820,7 @@ begin
     simp only [inv_eq_zero, ne.def],
     linarith },
   rw divisor_function_exact hn,
+  sorry
   -- by_cases n = 0,
   -- rw h, simp,
   -- have h1 : (0 : ℝ) ^ K⁻¹ = 0,
