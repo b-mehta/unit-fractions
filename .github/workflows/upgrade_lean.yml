@@ -1,0 +1,46 @@
+name: bump lean and dependencies
+on:
+  workflow_dispatch: ~
+  schedule:
+    - cron: '0 2 * * *' # once a day at 2am UTC
+
+jobs:
+  upgrade_lean:
+    runs-on: ubuntu-latest
+    name: Bump lean and dependencies
+    steps:
+      - name: checkout project
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 20
+          # We need to use a personal access token here, instead of secrets.GITHUB_TOKEN. It will
+          # be persisted for the next step, where using a personal access token is necessary
+          # so that pushing to master will trigger the build.yml workflow. See
+          # https://github.community/t/push-from-action-does-not-trigger-subsequent-action/16854
+          #
+          # To create a personal access token, log in to github and add a token at
+          # https://github.com/settings/tokens. It it necessary and sufficient that the token have
+          # the "public_repo" scope. The relevant user also needs permission to push to master of
+          # this repo.
+          token: ${{ secrets.PA_TOKEN }}
+
+      # TODO: I think but have not tested that this gets used in lean-upgrade-action
+      - name: try to find olean cache
+        continue-on-error: true
+        run: ./scripts/fetch_olean_cache.sh
+
+      - name: upgrade lean and dependencies
+        uses: leanprover-contrib/lean-upgrade-action@master
+        with:
+          repo: ${{ github.repository }}
+          access-token: ${{ secrets.PA_TOKEN }}
+
+      # Not doing: Ideally, if we generated a new commit in the previous step, we would upload new
+      # oleans here to save us having to rebuild in the build.yml action. This seems too hard to be
+      # worth doing (absent a broader refactor) for the following reasons:
+      #   * the timing's off: the build.yml workflow fires on push, which happens in the previous
+      #     step, so that the build.yml workflow might go looking for oleans before we've uploaded
+      #     them.
+      #   * we need to build again first, because the build is not idempotent; alternatively, upload
+      #     what we have here but then have build.yml overwrite when it rebuilds;
+      #   * (easy to solve) we have to figure out if the previous step made a commit.
