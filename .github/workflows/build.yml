@@ -76,8 +76,24 @@ jobs:
           lean --json --make src | python scripts/detect_errors.py
           lean --json --make src | python scripts/detect_errors.py
 
+      - name: setup precompiled zip file
+        if: always() && steps.build.outputs.started == 'true'
+        id: setup_precompiled
+        run: |
+          touch workspace.tar
+          tar -cf workspace.tar --exclude=*.tar* .
+          git_hash="$(git log -1 --pretty=format:%h)"
+          echo "::set-output name=artifact_name::precompiled-unit-fractions-$short_lean_version-$git_hash"
+
+      - name: upload precompiled unit-fractions zip file
+        if: always() && steps.build.outputs.started == 'true'
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.setup_precompiled.outputs.artifact_name }}
+          path: workspace.tar
+
   lint:
-    name: Lint lean-liquid
+    name: Lint unit-fractions
     runs-on: ubuntu-latest
     needs: build
 
