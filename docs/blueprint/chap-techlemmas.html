@@ -96,26 +96,11 @@
     <a class="icon proof" href="chap-techlemmas.html#lem-basic">#</a>
     <a class="icon proof" href="chap-techlemmas.html#a0000000156"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
-        </ul>
-
-      </div>
-    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  If \(0{\lt}\left\lvert n_1-n_2\right\rvert \leq N\) then </p>
+  <p> If \(0{\lt}\left\lvert n_1-n_2\right\rvert \leq N\) then </p>
 <div class="displaymath" id="a0000000157">
   \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N, \]
 </div>
@@ -131,7 +116,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>If \(q\mid (n_1,n_2)\) then \(q\) divides \(\left\lvert n_1-n_2\right\rvert \), and hence in particular \(q\leq N\). The contribution of all prime powers \(p^r\) with \(r\geq 2\) is \(O(1)\), and hence it suffices to show that \(\sum _{p\mid \left\lvert n_1-n_2\right\rvert }\frac{1}{p}\ll \log \log \log N\). Any integer \(\leq N\) is trivially divisible by \(O(\log N)\) many primes. Clearly summing \(1/p\) over \(O(\log N)\) many primes is maximised summing over the smallest \(O(\log N)\) primes. Since there are \(\gg (\log N)^{3/2}\) many primes \(\leq (\log N)^2\), we have </p>
+  <p> If \(q\mid (n_1,n_2)\) then \(q\) divides \(\left\lvert n_1-n_2\right\rvert \), and hence in particular \(q\leq N\). The contribution of all prime powers \(p^r\) with \(r\geq 2\) is \(O(1)\), and hence it suffices to show that \(\sum _{p\mid \left\lvert n_1-n_2\right\rvert }\frac{1}{p}\ll \log \log \log N\). Any integer \(\leq N\) is trivially divisible by \(O(\log N)\) many primes. Clearly summing \(1/p\) over \(O(\log N)\) many primes is maximised summing over the smallest \(O(\log N)\) primes. Since there are \(\gg (\log N)^{3/2}\) many primes \(\leq (\log N)^2\), we have </p>
 <div class="displaymath" id="a0000000158">
   \[ \sum _{p\mid \left\lvert n_1-n_2\right\rvert }\frac{1}{p}\ll \sum _{p\leq (\log N)^2}\frac{1}{p}\ll \log \log \log N \]
 </div>
@@ -190,26 +175,12 @@
     <a class="icon proof" href="chap-techlemmas.html#lem:usingq">#</a>
     <a class="icon proof" href="chap-techlemmas.html#a0000000163"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
-        </ul>
-
-      </div>
-    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  There is a constant \(c{\gt}0\) such that the following holds. Let \(N\geq M\geq N^{1/2}\) be sufficiently large, and suppose that \(1\leq k \leq c\log \log N\). Suppose that \(A\subset [M,N]\) is a set of integers such that \(\omega (n)\leq (\log N)^{1/k}\) for all \(n\in A\). </p>
+  
+<p>There is a constant \(c{\gt}0\) such that the following holds. Let \(N\geq M\geq N^{1/2}\) be sufficiently large, and suppose that \(1\leq k \leq c\log \log N\). Suppose that \(A\subset [M,N]\) is a set of integers such that \(\omega (n)\leq (\log N)^{1/k}\) for all \(n\in A\). </p>
 <p>For all \(q\) such that \(R(A;q)\geq (\log N)^{-1/2}\) there exists \(d\) such that </p>
 <ol class="enumerate">
   <li><p>\(qd {\gt} M\exp (-(\log N)^{1-1/k})\), </p>
@@ -232,7 +203,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>Fix some \(q\) with \(R(A;q)\geq (\log N)^{-1/2}\). Let \(D\) be the set of all \(d\) such that if \(p\) is a prime and \(p^r \|  d\) then </p>
+  <p> Fix some \(q\) with \(R(A;q)\geq (\log N)^{-1/2}\). Let \(D\) be the set of all \(d\) such that if \(p\) is a prime and \(p^r \|  d\) then </p>
 <div class="displaymath" id="a0000000165">
   \[ p^r{\gt}y=\exp ((\log N)^{1-2/k}) \]
 </div>
@@ -333,26 +304,11 @@
     <span class="lemma_thmlabel">5.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:pisq">#</a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-techlemmas.html#lem:pisqa">Lemma 5.4</a></li>
-        </ul>
-
-      </div>
-    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
+  <p> Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
 <div class="displaymath" id="a0000000179">
   \[ R(A) \geq \alpha +\frac{1}{(\log N)^{1/200}} \]
 </div>
@@ -372,7 +328,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>We first apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to produce some \(A'\subset A\) such that \(R(A')\geq \alpha \) and \(R(A';q) \geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_{A'}\). </p>
+  <p> We first apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to produce some \(A'\subset A\) such that \(R(A')\geq \alpha \) and \(R(A';q) \geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_{A'}\). </p>
 <p>We now argue that whenever \(D\) is such that \(R(D)\geq \alpha \) and \(R(D;q) \geq (\log N)^{-1/100}\) for all \(q\in \mathcal{Q}_D\) there exists some \(x\in D\) such that \(R(D\backslash \{ x\} ;q)\geq (\log N)^{-1/100}\) for all \(q\in \mathcal{Q}_{D}\). Given this, the lemma immediately follows, since we can continue removing such elements from \(A'\) one at time until \(R(B)\) falls in the required interval. </p>
 <p>To see why the above fact holds, apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to obtain some \(B\subset D\) (such that \(R(B)\geq (\log N)^{-1/200}\), and hence in particular \(B\) is non-empty), and let \(x\) be any element of \(B\). If \(x\not\in D_q\) then by definition \(R(D\backslash \{ x\} ;q)=R(D;q)\geq (\log N)^{-1/100}\). If \(x\in D_q\) then \(x\in B_q\), and so </p>
 <div class="displaymath" id="a0000000181">
