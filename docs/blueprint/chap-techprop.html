@@ -95,6 +95,21 @@
     <a class="icon proof" href="chap-techprop.html#prop:tech_iterative">#</a>
     <a class="icon proof" href="chap-techprop.html#a0000000182"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-def.html#def:interval_rare_ppowers">Definition 1.4</a></li>
+        </ul>
+
+      </div>
+    </div>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
       <div class="modal-content">
@@ -104,7 +119,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1c96ce8951e9c7924c04bedc040f1f1fff4c5210/src/main_results.lean#L410">force_good_properties</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/cb541872327960c4757f04b1d38394e1a57bb02c/src/main_results.lean#L410">force_good_properties</a></li>
         </ul>
 
       </div>
@@ -113,7 +128,7 @@
   </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
+  <p>   Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
 <div class="displaymath" id="a0000000183">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
@@ -183,7 +198,7 @@
 <div class="displaymath" id="a0000000193">
   \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N\leq 0.01\log \log N \]
 </div>
-<p> for \(N\) sufficiently large, by Lemma&#160;??. It follows that if \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\) then there can be at most one such possible value for \(x_q\in I\) as \(q\) ranges over \(\mathcal{E}_I\), and hence this common shared value of \(x_q\) is an \(x\in I\) divisible by all \(q\in \mathcal{E}_I\), and hence certainly by all \(q\in \mathcal{D}_I\), as required. </p>
+<p> for \(N\) sufficiently large, by Lemma&#160;<a href="chap-techlemmas.html#lem:basic">5.1</a>. It follows that if \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\) then there can be at most one such possible value for \(x_q\in I\) as \(q\) ranges over \(\mathcal{E}_I\), and hence this common shared value of \(x_q\) is an \(x\in I\) divisible by all \(q\in \mathcal{E}_I\), and hence certainly by all \(q\in \mathcal{D}_I\), as required. </p>
 <p>Furthermore, since \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq (1+o(1))\log \log N\leq 1.01\log \log N\), say, there must always be at most two distinct values of \(x_q\in I\) as \(q\) ranges over \(\mathcal{E}_I\). If there is no \(x\in I\) divisible by all \(q\in \mathcal{D}_I\), there must be exactly two such values, say \(w_1\) and \(w_2\). </p>
 <p>Let \(A^{(i)}=\{ n\in A: n\mid w_i\} \) and \(A^{(0)}=A\backslash (A^{(1)}\cup A^{(2)})\). Since every \(q\in \mathcal{Q}_{A^{(1)}}\) divides \(w_1\), </p>
 <div class="displaymath" id="a0000000194">
@@ -228,7 +243,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1c96ce8951e9c7924c04bedc040f1f1fff4c5210/src/main_results.lean#L120">technical_prop</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/cb541872327960c4757f04b1d38394e1a57bb02c/src/main_results.lean#L120">technical_prop</a></li>
         </ul>
 
       </div>
@@ -272,7 +287,7 @@
   \[ \frac{2}{d_i}-\frac{1}{M}\geq \frac{2}{d_{i}+1}+\frac{1}{(\log N)^{1/200}}\geq \frac{3}{(\log N)^{1/200}} \]
 </div>
 <p> for all \(0\leq i\leq t\).) Let \(0\leq j\leq t\) be minimal such that there is a multiple of \(d_j\) in \(A_j\). Such a \(j\) exists by assumption, since every \(n\in A\) is divisible by some \(d\in [y,z/4)\). </p>
-<p>Suppose first that case (2) of Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.1</a> holds for \(A_j\). The hypotheses of Proposition&#160;<a href="chap-fourier.html#prop:fourier">4.16</a> are now met with \(k=d_j\), \(\eta =1/2(\log N)^{1/100}\), and \(K=MN^{-2/\log \log N}\). This yields some \(S\subset A'\subset A\) such that \(R(S)=1/d_j\) as required. </p>
+<p>Suppose first that case (2) of Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.1</a> holds for \(A_j\). The hypotheses of Proposition&#160;<a href="chap-fourier.html#prop:fourier">4.21</a> are now met with \(k=d_j\), \(\eta =1/2(\log N)^{1/100}\), and \(K=MN^{-2/\log \log N}\). This yields some \(S\subset A'\subset A\) such that \(R(S)=1/d_j\) as required. </p>
 <p>Otherwise, Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.1</a> yields some \(B\subset A_j\) such that </p>
 <div class="displaymath" id="a0000000202">
   \[ R(B)\geq 2/3d_j-1/M\geq 1/2d_j+(\log N)^{-1/200} \]
@@ -281,7 +296,7 @@
 <div class="displaymath" id="a0000000203">
   \[ R(B_i)\in [2/e_i-1/M,2/e_i)\quad \textrm{ and }\quad R(B_i;q)\geq (\log N)^{-1/100}\textrm{ for all }q\in \mathcal{Q}_{B_i}. \]
 </div>
-<p> By minimality of \(j\), no \(d\in [y,d_j)\) divides any element of \(A_j\), and hence every \(n\in A_j\) is divisible by some \(e\in [4d_j,z]\). In particular, there must exist some \(0\leq s\leq r\) such that \(B_s\) contains a multiple of \(e_s\). Furthermore, since \(\sum _{q\in \mathcal{Q}_{B_s}}\frac{1}{q}\leq \sum _{q\in \mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log \log N\) we must be in the second case of Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.1</a>. The hypotheses of Proposition&#160;<a href="chap-fourier.html#prop:fourier">4.16</a> are now met with \(k=e_s\) and \(\eta ,K\) as above, and thus there is some \(S\subset B_j\subset A\) such that \(R(S)=1/e_s\). </p>
+<p> By minimality of \(j\), no \(d\in [y,d_j)\) divides any element of \(A_j\), and hence every \(n\in A_j\) is divisible by some \(e\in [4d_j,z]\). In particular, there must exist some \(0\leq s\leq r\) such that \(B_s\) contains a multiple of \(e_s\). Furthermore, since \(\sum _{q\in \mathcal{Q}_{B_s}}\frac{1}{q}\leq \sum _{q\in \mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log \log N\) we must be in the second case of Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.1</a>. The hypotheses of Proposition&#160;<a href="chap-fourier.html#prop:fourier">4.21</a> are now met with \(k=e_s\) and \(\eta ,K\) as above, and thus there is some \(S\subset B_j\subset A\) such that \(R(S)=1/e_s\). </p>
 
   </div>
 </div>

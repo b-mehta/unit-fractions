@@ -4,6 +4,7 @@
 \begin{proposition}\label{prop:tech_iterative}
   \leanok
   \lean{force_good_properties}
+  \uses{def:interval_rare_ppowers}
 Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that
 \[\tfrac{99}{100}\log\log N\leq \omega(n)\leq  2\log\log N\quad\textrm{for all}\quad n\in A,\]
 \[R(A)\geq (\log N)^{-1/101}\]
@@ -24,44 +25,44 @@ or
 If $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$ then case (2) is guaranteed.
 \end{proposition}
 \begin{proof}
-\uses{lem:basic,lem:usingq,lem:rtop,lem:mertens1,lem:divisor_bound}
-Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$. We may assume that $\abs{A\backslash A_I}< M/\log N$ (or else 2(a) holds), and we need to show that either there is some $x\in I$ divisible by all $q\in\mathcal{D}_I$, or the first case holds.
+  \uses{lem:basic,lem:usingq,lem:rtop,lem:divisor_bound}
+  Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$. We may assume that $\abs{A\backslash A_I}< M/\log N$ (or else 2(a) holds), and we need to show that either there is some $x\in I$ divisible by all $q\in\mathcal{D}_I$, or the first case holds.
 
-Let $\mathcal{E}_I$ be the set of those $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$. For every $q\in \mathcal{D}_I$, by definition,
-\[R(A_I; q) \geq R(A;q) - \brac{\frac{M}{2q(\log N)^{1/100}}}\frac{q}{M}>\frac{1}{2(\log N)^{1/100}},\]
-and hence in particular $\mathcal{D}_I\subset \mathcal{E}_I$.
+  Let $\mathcal{E}_I$ be the set of those $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$. For every $q\in \mathcal{D}_I$, by definition,
+  \[R(A_I; q) \geq R(A;q) - \brac{\frac{M}{2q(\log N)^{1/100}}}\frac{q}{M}>\frac{1}{2(\log N)^{1/100}},\]
+  and hence in particular $\mathcal{D}_I\subset \mathcal{E}_I$.
 
-For any $q\in \mathcal{E}_I$ we may therefore apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k$ chosen such that $(\log N)^{1/k}=2\log\log N$. This produces some $d_q$ such that $qd_q>\abs{I}$ and $\omega(d_q)<\tfrac{1}{500}\log\log N$ (provided $N$ is sufficiently large), and
-\[\sum_{\substack{n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log\log N)^2}.\]
-By definition of $A_I$, every $n\in A_I$ with $qd_q\mid n$ must divide some $x\in I$ -- in fact, they must all divide the same $x\in I$ (call this $x_q\in I$, say), since all such $x$ are in particular divisible by $qd_q>\abs{I}$, which can divide at most one element in $I$.
+  For any $q\in \mathcal{E}_I$ we may therefore apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k$ chosen such that $(\log N)^{1/k}=2\log\log N$. This produces some $d_q$ such that $qd_q>\abs{I}$ and $\omega(d_q)<\tfrac{1}{500}\log\log N$ (provided $N$ is sufficiently large), and
+  \[\sum_{\substack{n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log\log N)^2}.\]
+  By definition of $A_I$, every $n\in A_I$ with $qd_q\mid n$ must divide some $x\in I$ -- in fact, they must all divide the same $x\in I$ (call this $x_q\in I$, say), since all such $x$ are in particular divisible by $qd_q>\abs{I}$, which can divide at most one element in $I$.
 
-Let
-\[A_I^{(q)}=\{ n/qd_q : n\in A_I\textrm{ with }qd_q\mid n\textrm{ and }(qd_q,n/qd_q)=1\}\]
-so that, assuming $N$ is sufficiently large, $R(A_I^{(q)})\geq (\log N)^{-1/99}$, say. We may therefore apply Lemma~\ref{lem:rtop} with $\epsilon=2/99$ (note that since $\omega(n)\geq \frac{99}{100}\log\log N$ for $n\in A$ and $\omega(d_q)<\frac{1}{500}\log\log N$, we must have $\omega(m)\geq \frac{97}{99}\log\log N$ for all $m\in A_I^{(q)}$). This implies that
-\[\sum_{r\in \mathcal{Q}_{A_I^{(q)}}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N.\]
-Trivially, $\mathcal{Q}_{A_I^{(q)}}\subset \mathcal{Q}_A$, and further by choice of $x_q$, all $r\in \mathcal{Q}_{A_I^{(q)}}$ divide $x_q$, and hence
-\[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N\geq 0.35\log\log N.\]
-For any two $n_1\neq n_2\in I$, we have
-\[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N\leq 0.01\log\log N\]
-for $N$ sufficiently large, by Lemma~\ref{lem:basic}. It follows that if $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$ then there can be at most one such possible value for $x_q\in I$ as $q$ ranges over $\mathcal{E}_I$, and hence this common shared value of $x_q$ is an $x\in I$ divisible by all $q\in\mathcal{E}_I$, and hence certainly by all $q\in\mathcal{D}_I$, as required.
+  Let
+  \[A_I^{(q)}=\{ n/qd_q : n\in A_I\textrm{ with }qd_q\mid n\textrm{ and }(qd_q,n/qd_q)=1\}\]
+  so that, assuming $N$ is sufficiently large, $R(A_I^{(q)})\geq (\log N)^{-1/99}$, say. We may therefore apply Lemma~\ref{lem:rtop} with $\epsilon=2/99$ (note that since $\omega(n)\geq \frac{99}{100}\log\log N$ for $n\in A$ and $\omega(d_q)<\frac{1}{500}\log\log N$, we must have $\omega(m)\geq \frac{97}{99}\log\log N$ for all $m\in A_I^{(q)}$). This implies that
+  \[\sum_{r\in \mathcal{Q}_{A_I^{(q)}}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N.\]
+  Trivially, $\mathcal{Q}_{A_I^{(q)}}\subset \mathcal{Q}_A$, and further by choice of $x_q$, all $r\in \mathcal{Q}_{A_I^{(q)}}$ divide $x_q$, and hence
+  \[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N\geq 0.35\log\log N.\]
+  For any two $n_1\neq n_2\in I$, we have
+  \[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N\leq 0.01\log\log N\]
+  for $N$ sufficiently large, by Lemma~\ref{lem:basic}. It follows that if $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$ then there can be at most one such possible value for $x_q\in I$ as $q$ ranges over $\mathcal{E}_I$, and hence this common shared value of $x_q$ is an $x\in I$ divisible by all $q\in\mathcal{E}_I$, and hence certainly by all $q\in\mathcal{D}_I$, as required.
 
-Furthermore, since $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq (1+o(1))\log\log N\leq 1.01\log\log N$, say, there must always be at most two distinct values of $x_q\in I$ as $q$ ranges over $\mathcal{E}_I$. If there is no $x\in I$ divisible by all $q\in\mathcal{D}_I$, there must be exactly two such values, say $w_1$ and $w_2$.
+  Furthermore, since $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq (1+o(1))\log\log N\leq 1.01\log\log N$, say, there must always be at most two distinct values of $x_q\in I$ as $q$ ranges over $\mathcal{E}_I$. If there is no $x\in I$ divisible by all $q\in\mathcal{D}_I$, there must be exactly two such values, say $w_1$ and $w_2$.
 
-Let $A^{(i)}=\{n\in A: n\mid w_i\}$ and $A^{(0)}=A\backslash (A^{(1)}\cup A^{(2)})$. Since every $q\in\mathcal{Q}_{A^{(1)}}$ divides $w_1$,
-\[\sum_{q\in \mathcal{Q}_{A^{(1)}}}\frac{1}{q}\leq \sum_{q\leq N}\frac{1}{q}- \sum_{q\mid w_2}\frac{1}{q}+ \sum_{q\mid (w_1,w_2)}\frac{1}{q}\leq (1-\tfrac{95}{99}e^{-1}+o(1))\log\log N.\]
-For large enough $N$, the right-hand side is $\leq \frac{2}{3}\log\log N$, and similarly for $A^{(2)}$. Since $R(A^{(0)})+R(A^{(1)})+R(A^{(2)})\geq R(A)$, we are in the first case choosing $B=A^{(1)}$ or $B=A^{(2)}$, unless $R(A^{(0)})\geq R(A)/3$. In this latter case we will derive a contradiction.
+  Let $A^{(i)}=\{n\in A: n\mid w_i\}$ and $A^{(0)}=A\backslash (A^{(1)}\cup A^{(2)})$. Since every $q\in\mathcal{Q}_{A^{(1)}}$ divides $w_1$,
+  \[\sum_{q\in \mathcal{Q}_{A^{(1)}}}\frac{1}{q}\leq \sum_{q\leq N}\frac{1}{q}- \sum_{q\mid w_2}\frac{1}{q}+ \sum_{q\mid (w_1,w_2)}\frac{1}{q}\leq (1-\tfrac{95}{99}e^{-1}+o(1))\log\log N.\]
+  For large enough $N$, the right-hand side is $\leq \frac{2}{3}\log\log N$, and similarly for $A^{(2)}$. Since $R(A^{(0)})+R(A^{(1)})+R(A^{(2)})\geq R(A)$, we are in the first case choosing $B=A^{(1)}$ or $B=A^{(2)}$, unless $R(A^{(0)})\geq R(A)/3$. In this latter case we will derive a contradiction.
 
-Let $A'\subset A^{(0)}$ be the set of those $n\in A_I\cap A^{(0)}$ such that if $n\in A_q$ then $q\in\mathcal{E}_I$. By definition of $\mathcal{E}_I$ and Mertens' estimate \ref{lemma:mertens1},
-\[R(A^{(0)}\backslash A')\leq \frac{\abs{A\backslash A_I}}{M}+\sum_{q\in\mathcal{Q}_A\backslash \mathcal{E}_I}\frac{1}{q}R(A_I;q)\ll \frac{\log\log N}{(\log N)^{1/100}},\]
-and so  in particular, since $R(A)\geq (\log N)^{-1/101}$, we have $R(A')\gg (\log N)^{-1/101}$.
+  Let $A'\subset A^{(0)}$ be the set of those $n\in A_I\cap A^{(0)}$ such that if $n\in A_q$ then $q\in\mathcal{E}_I$. By definition of $\mathcal{E}_I$ and Mertens' estimate \ref{lemma:mertens1},
+  \[R(A^{(0)}\backslash A')\leq \frac{\abs{A\backslash A_I}}{M}+\sum_{q\in\mathcal{Q}_A\backslash \mathcal{E}_I}\frac{1}{q}R(A_I;q)\ll \frac{\log\log N}{(\log N)^{1/100}},\]
+  and so  in particular, since $R(A)\geq (\log N)^{-1/101}$, we have $R(A')\gg (\log N)^{-1/101}$.
 
-In particular, $\abs{A'}\gg M/(\log N)^{-1/101}$. Therefore there must exist some $x\in I$ (necessarily $x\neq w_1$ and $x\neq w_2$ since $A'\subset A^{(0)}$) such that, if $A''=\{ n\in A' : n\mid x\}$, then
-\[\abs{A''}\gg N^{2/\log\log N}(\log N)^{-1/101},\]
-and hence $\abs{A''}\geq N^{3/2\log\log N}$, say.
+  In particular, $\abs{A'}\gg M/(\log N)^{-1/101}$. Therefore there must exist some $x\in I$ (necessarily $x\neq w_1$ and $x\neq w_2$ since $A'\subset A^{(0)}$) such that, if $A''=\{ n\in A' : n\mid x\}$, then
+  \[\abs{A''}\gg N^{2/\log\log N}(\log N)^{-1/101},\]
+  and hence $\abs{A''}\geq N^{3/2\log\log N}$, say.
 
-However, if $n\in A''$ then both $n\mid x$ and $n\mid w_1w_2$ (since every $q$ with $n\in A_q$ is in $\mathcal{E}_I$ and so divides either $w_1$ or $w_2$), and hence $n$ divides
-\[(x,w_1w_2)\leq (x,w_1)(x,w_2)\leq \abs{x-w_1}\abs{x-w_2}\leq N^2.\]
-Therefore the size of $A''$ is at most the number of divisors of some fixed integer $m\leq N^2$, which is at most $N^{(1+o(1))2\log 2/\log\log N}$, and hence we have a contradiction for large enough $N$, since $2\log 2< 3/2$.
+  However, if $n\in A''$ then both $n\mid x$ and $n\mid w_1w_2$ (since every $q$ with $n\in A_q$ is in $\mathcal{E}_I$ and so divides either $w_1$ or $w_2$), and hence $n$ divides
+  \[(x,w_1w_2)\leq (x,w_1)(x,w_2)\leq \abs{x-w_1}\abs{x-w_2}\leq N^2.\]
+  Therefore the size of $A''$ is at most the number of divisors of some fixed integer $m\leq N^2$, which is at most $N^{(1+o(1))2\log 2/\log\log N}$, and hence we have a contradiction for large enough $N$, since $2\log 2< 3/2$.
 \end{proof}
 
 
@@ -94,15 +95,3 @@ and where $\sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$. Let $
 \[R(B_i)\in [2/e_i-1/M,2/e_i)\quad\textrm{ and }\quad R(B_i;q)\geq (\log N)^{-1/100}\textrm{ for all }q\in \mathcal{Q}_{B_i}.\]
 By minimality of $j$, no $d\in [y,d_j)$ divides any element of $A_j$, and hence every $n\in A_j$ is divisible by some $e\in [4d_j,z]$. In particular, there must exist some $0\leq s\leq r$ such that $B_s$ contains a multiple of $e_s$. Furthermore, since $\sum_{q\in \mathcal{Q}_{B_s}}\frac{1}{q}\leq \sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$ we must be in the second case of Proposition~\ref{prop:tech_iterative}. The hypotheses of Proposition~\ref{prop:fourier} are now met with $k=e_s$ and $\eta,K$ as above, and thus there is some $S\subset B_j\subset A$ such that $R(S)=1/e_s$.
 \end{proof}
-
-
-
-
-
-
-
-
-
-
-
-

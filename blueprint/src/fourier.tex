@@ -3,21 +3,37 @@
 
 This section contains the part of the proof that uses Fourier analysis to reduce finding solutions to a combinatorial problem involving divisors.
 \section{Local definitions}
-In this section, we write $[A]$ for the lowest common multiple of $A$, and for any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)$ for the count of the number of subsets $S\subset A$ such that $kR(S)$ is an integer.
 
+\begin{definition}
+  \label{def:integer_count}
+  In this section, we write $[A]$ for the lowest common multiple of $A$, and for any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)$ for the count of the number of subsets $S\subset A$ such that $kR(S)$ is an integer.
+\end{definition}
 
-Let $J(A) = (-[A]/2,[A]/2)\cap\bbz \backslash \{0\}$.
+\begin{definition}
+  \label{def:j}
+  Let $J(A) = (-[A]/2,[A]/2)\cap\bbz \backslash \{0\}$.
+\end{definition}
 
-Let $C(B;h,k) = \prod_{n\in B}\abs{\cos(\pi kh/n)}$.
+\begin{definition}
+  \label{def:cos_prod}
+  Let $C(B;h,k) = \prod_{n\in B}\abs{\cos(\pi kh/n)}$.
+\end{definition}
 
-For any finite set of naturals $A$ and integer $k\geq 1$, and real $K>0$, we define the `major arc' corresponding to $t\in\bbz$ as
+\begin{definition}
+  \label{def:major_arc}
+  \uses{def:j}
+  For any finite set of naturals $A$ and integer $k\geq 1$, and real $K>0$, we define the `major arc' corresponding to $t\in\bbz$ as
 \[\mathfrak{M}(t;A,k,K) = \{ h\in  J(A): \abs{h-t[A]/k}\leq K/2k\}\]
-Let $\mathfrak{M}(A,k,K) = \cup_{t\in \bbz}\mathfrak{M}(t;A,k,K)$.
+  Let $\mathfrak{M}(A,k,K) = \cup_{t\in \bbz}\mathfrak{M}(t;A,k,K)$.
+\end{definition}
 
-
+\begin{definition}
+  \label{def:minor_arcs}
+  \uses{def:major_arc}
 Let $I_h(K,k)$ be the interval of length $K$ centred at $kh$, and let $\mathfrak{m}_1(A,k,K,\delta)$ be those $h\in J(A)\backslash \mathfrak{M}(A,k,K)$ such that
 \[\# \{ n\in A : \textrm{no element of }I_h(K,k)\textrm{ is divisible by }n\}\geq \delta.\]
 Let $\mathfrak{m}_2(A,k,K,\delta)$ be the rest of $J(A)\backslash\mathfrak{M}(A,k,K)$.
+\end{definition}
 
 \section{Precursor general lemmas}
 \begin{lemma}\label{lem:orthogonality}
@@ -45,6 +61,7 @@ By definition it suffices to show that for all $n\in A$ we have $n\mid \prod_{p\
 \end{proof}
 
 \begin{lemma}\label{lem:smooth_lcm}
+  \uses{def:local_part}
 If $A$ is a finite set of natural numbers such that if $q\in\mathcal{Q}_A$ then $q\leq X$, then $[A]\leq e^{O(X)}$.
 \end{lemma}
 \begin{proof}
@@ -67,6 +84,7 @@ Since $1-y\leq e^{-y}$ for all $y\geq 0$, the right-hand side is $\leq e^{-4x^2}
 \section{Towards the main proposition}
 
 \begin{lemma}\label{lem:orthog_rat}
+  \uses{def:integer_count}
 If $A\subset\mathbb{N}$ is finite and $k\geq 1$ is an integer then
 \[F(A;k)= \frac{1}{[A]}\sum_{-[A]/2< h\leq [A]/2}\prod_{n\in A}(1+e(kh/n)).\]
 \end{lemma}
@@ -81,6 +99,7 @@ The lemma now follows choosing $I=(-[A]/2,[A]/2]\cap\bbz$, and using the general
 \end{proof}
 
 \begin{lemma}\label{lem:orthog_simp}
+  \uses{def:rec_sum}
 If $k\geq 1$ is an integer and $A$ is a finite set of natural numbers such that there is no $S\subset A$ such that $R(S)=1/k$, and $R(A)<2/k$, then
 \[\sum_{-[A]/2< h\leq [A]/2}\Re\brac{\prod_{n\in A}(1+e(kh/n))}= [A].\]
 \end{lemma}
@@ -94,6 +113,7 @@ The conclusion follows multiplying both sides by $[A]$ and taking real parts of 
 \end{proof}
 
 \begin{lemma}\label{lem:orthog_simp2}
+  \uses{def:j}
 If $k\geq 1$ is an integer and $A$ is a finite set of natural numbers such that there is no $S\subset A$ such that $R(S)=1/k$, and $R(A)<2/k$, and $[A]\leq 2^{\abs{A}-1}$ then
 \[\sum_{h\in J(A)}\Re\brac{\prod_{n\in A}(1+e(kh/n))}\leq -2^{\abs{A}-1}.\]
 \end{lemma}
@@ -111,6 +131,7 @@ and the result follows after rearranging.
 \end{proof}
 
 \begin{lemma}\label{lem:majorarcs_disjoint}
+  \uses{def:major_arc}
 If $A$ is a finite set of integers and $K$ is a real such that $[A]>K$ then, for any integer $k\geq 1$, the sets $\mathfrak{M}(t;A,k,K)$ are disjoint for distinct $t\in \bbz$.
 \end{lemma}
 \begin{proof}
@@ -132,6 +153,7 @@ Taking out real factors, this is $2^{\abs{A}}\prod_{n\in A}\cos(\pi \theta/n)\Re
 \end{proof}
 
 \begin{lemma}\label{lem:majorarcs}
+  \uses{def:rec_sum}
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$.
 \[\sum_{h\in \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))} \geq 0.\]
 \end{lemma}
@@ -160,6 +182,7 @@ for all $r\in [-K/2k,K/2k]\cap \bbz$, and hence as the sum of non-negative summa
 \end{proof}
 
 \begin{lemma}\label{lem:minor_lbound}
+  \uses{def:minor_arcs,def:cos_prod}
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$, and there is no $S\subset A$ such that $R(S)=1/k$, and $[A]\leq 2^{\abs{A}-1}$. Then
 \[\sum_{h\in J(A)\backslash \mathfrak{M}(A,k,K)} C(A;h,k)\geq 1/2.\]
 \end{lemma}
@@ -177,6 +200,7 @@ as required.
 \end{proof}
 
 \begin{lemma}\label{lem:cos_prod_bound}
+  \uses{def:cos_prod,def:interval_rare_ppowers}
 For any finite set $A$ such that $n\leq N$ for all $n\in A$, and integers $k,h$, if $kh\equiv h_n\pmod{n}$ for $\abs{h_n}\leq n/2$ for all $n\in A$, then
 \[C(A;h,k)\leq \exp\brac{-\frac{2}{N^2}\sum_{n\in A}h_n^2}.\]
 \end{lemma}
@@ -189,6 +213,7 @@ and the lemma follows taking the product over all $n\in A$.
 
 
 \begin{lemma}\label{lem:minor1_bound}
+  \uses{def:minor_arcs}
 Suppose that $N$ is sufficiently large and $M\geq 8$. Let $k\geq 1$ be an integer. Let $A\subset [M,N]$ be a set of integers such that if $q\in\mathcal{Q}_A$ then $q\leq \frac{MK^2}{N^2(\log N)^2}$. Then
 \[\sum_{h\in \mathfrak{m}_1(A,k,K,M/\log N)} C(A;h,k)\leq 1/8.\]
 \end{lemma}
@@ -208,6 +233,7 @@ assuming $N$ is sufficiently large.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_ind_bound}
+  \uses{def:interval_rare_ppowers}
 There is a constant $c>0$ such that the following holds.
 Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq cLK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L/q)$ where $I$ is the interval of length $K$ centred at $h$. Then
 \[C(A;h,k)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
@@ -229,6 +255,7 @@ By assumption, $q\leq LK^2/8CN^2(\log N)^2$, and the proof is complete.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_bound}
+  \uses{def:minor_arcs}
 There is a constant $c>0$ such that the following holds. Let $N$ be a sufficiently large integer. Let $K,L>0$ be reals. Let $k$ be an integer such that $1\leq k \leq N/2$.  Let $A\subset [1,N]$ be a finite set of integers such that
 \begin{enumerate}
 \item if $q\in\mathcal{Q}_A$ then $q\leq c\frac{LK^2}{N^2(\log N)^2}$,  and

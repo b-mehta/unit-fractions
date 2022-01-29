@@ -2,19 +2,22 @@
 \label{chap:techlemmas}
 
 
-\begin{lemma}\label{lem-basic}
-\leanok
-If $0<\abs{n_1-n_2}\leq N$ then
-\[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N,\]
-where the summation is restricted to prime powers.
+\begin{lemma}
+  \label{lem:basic}
+  \leanok
+  If $0<\abs{n_1-n_2}\leq N$ then
+  \[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N,\]
+  where the summation is restricted to prime powers.
 \end{lemma}
-\begin{proof}\uses{lem:mertens1}
-If $q\mid (n_1,n_2)$ then $q$ divides $\abs{n_1-n_2}$, and hence in particular $q\leq N$. The contribution of all prime powers $p^r$ with $r\geq 2$ is $O(1)$, and hence it suffices to show that $\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \log\log\log N$. Any integer $\leq N$ is trivially divisible by $O(\log N)$ many primes. Clearly summing $1/p$ over $O(\log N)$ many primes is maximised summing over the smallest $O(\log N)$ primes. Since there are $\gg (\log N)^{3/2}$ many primes $\leq (\log N)^2$, we have
-\[\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \sum_{p\leq (\log N)^2}\frac{1}{p}\ll \log\log\log N\]
-by Mertens' estimate \ref{lem:mertens1}.
+\begin{proof}
+  \uses{lem:mertens1}
+  If $q\mid (n_1,n_2)$ then $q$ divides $\abs{n_1-n_2}$, and hence in particular $q\leq N$. The contribution of all prime powers $p^r$ with $r\geq 2$ is $O(1)$, and hence it suffices to show that $\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \log\log\log N$. Any integer $\leq N$ is trivially divisible by $O(\log N)$ many primes. Clearly summing $1/p$ over $O(\log N)$ many primes is maximised summing over the smallest $O(\log N)$ primes. Since there are $\gg (\log N)^{3/2}$ many primes $\leq (\log N)^2$, we have
+  \[\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \sum_{p\leq (\log N)^2}\frac{1}{p}\ll \log\log\log N\]
+  by Mertens' estimate \ref{lem:mertens1}.
 \end{proof}
 
 \begin{lemma}\label{lem:rtop}
+  \uses{def:rec_sum_local,def:rec_sum}
 Let $1/2>\epsilon>0$ and $N$ be sufficiently large, depending on $\epsilon$. If $A$ is a finite set of integers such that $R(A)\geq (\log N)^{-\epsilon/2}$ and $(1-\epsilon)\log\log N\leq \omega(n)\leq  2\log\log N$ for all $n\in A$ then
 \[\sum_{q\in\mathcal{Q}_A}\frac{1}{q} \geq (1-2\epsilon)e^{-1}\log\log N.\]
 \leanok
@@ -31,6 +34,7 @@ The claimed bound follows, using the fact that $e^{-\frac{\epsilon}{2(1-\epsilon
 \begin{lemma}\label{lem:usingq}
   \leanok
   \lean{find_good_d}
+  \uses{def:rec_sum_local}
 There is a constant $c>0$ such that the following holds. Let $N\geq M\geq N^{1/2}$ be sufficiently large, and suppose that $1\leq k \leq c\log\log N$. Suppose that $A\subset [M,N]$ is a set of integers such that $\omega(n)\leq (\log N)^{1/k}$ for all $n\in A$.
 
 For all $q$ such that $R(A;q)\geq (\log N)^{-1/2}$ there exists $d$ such that
@@ -72,6 +76,7 @@ The result follows since
 \begin{lemma}\label{lem:pisqa}
   \leanok
   \lean{pruning_lemma_one}
+  \uses{def:rec_sum,def:rec_sum_local}
 Let $N$ be sufficiently large and $A\subset [1,N]$. There exists $B\subset A$ such that
 \[R(B)\geq  R(A)-\frac{1}{(\log N)^{1/200}}\]
 and $R(B;q)\geq 2/(\log N)^{1/100}$ for all $q\in \mathcal{Q}_B$.
