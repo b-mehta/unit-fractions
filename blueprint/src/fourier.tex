@@ -1,23 +1,23 @@
 \chapter{Fourier Analysis}
 \label{chap:fourier}
 
-This section contains the part of the proof that uses Fourier analysis to reduce finding solutions to a combinatorial problem involving divisors. 
+This section contains the part of the proof that uses Fourier analysis to reduce finding solutions to a combinatorial problem involving divisors.
 \section{Local definitions}
 In this section, we write $[A]$ for the lowest common multiple of $A$, and for any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)$ for the count of the number of subsets $S\subset A$ such that $kR(S)$ is an integer.
 
 
-Let $J(A) = (-[A]/2,[A]/2)\cap\bbz \backslash \{0\}$. 
+Let $J(A) = (-[A]/2,[A]/2)\cap\bbz \backslash \{0\}$.
 
 Let $C(B;h,k) = \prod_{n\in B}\abs{\cos(\pi kh/n)}$.
 
 For any finite set of naturals $A$ and integer $k\geq 1$, and real $K>0$, we define the `major arc' corresponding to $t\in\bbz$ as
 \[\mathfrak{M}(t;A,k,K) = \{ h\in  J(A): \abs{h-t[A]/k}\leq K/2k\}\]
-Let $\mathfrak{M}(A,k,K) = \cup_{t\in \bbz}\mathfrak{M}(t;A,k,K)$. 
+Let $\mathfrak{M}(A,k,K) = \cup_{t\in \bbz}\mathfrak{M}(t;A,k,K)$.
 
 
 Let $I_h(K,k)$ be the interval of length $K$ centred at $kh$, and let $\mathfrak{m}_1(A,k,K,\delta)$ be those $h\in J(A)\backslash \mathfrak{M}(A,k,K)$ such that
 \[\# \{ n\in A : \textrm{no element of }I_h(K,k)\textrm{ is divisible by }n\}\geq \delta.\]
-Let $\mathfrak{m}_2(A,k,K,\delta)$ be the rest of $J(A)\backslash\mathfrak{M}(A,k,K)$. 
+Let $\mathfrak{m}_2(A,k,K,\delta)$ be the rest of $J(A)\backslash\mathfrak{M}(A,k,K)$.
 
 \section{Precursor general lemmas}
 \begin{lemma}\label{lem:orthogonality}
@@ -29,7 +29,7 @@ If $m\mid n$ then $n/m$ is an integer, so $e(hn/m)=1$ for all $h\in \mathbb{Z}$,
 
 If $m\nmid n$ then $e(n/m)\neq 1$. Let $S=\sum_{h\in I}e(hn/m)$, so it suffices to show that $S=0$. Using $e(x+y)=e(x)e(y)$ we have
 \[e(n/m)S = \sum_{h\in I}e((h+1)n/m).\]
-If $r=\min(I)$ and $s=\max(I)$ then the right-hand side is $S + e((s+1)n/m)-e(rn/m)$. But since $I$ is a set of $m$ consecutive integers we know that $s=r+m-1$, and so 
+If $r=\min(I)$ and $s=\max(I)$ then the right-hand side is $S + e((s+1)n/m)-e(rn/m)$. But since $I$ is a set of $m$ consecutive integers we know that $s=r+m-1$, and so
 \[e((s+1)n/m)-e(rn/m) = e(rn/m+n)-e(rn/m)=e(rn/m)e(n)-e(rn/m)=0,\]
 since $e(n)=1$. Therefore $e(n/m)S=S$, and hence since $e(n/m)\neq 1$, this forces $S=0$ as required.
 \end{proof}
@@ -41,14 +41,14 @@ and for all $p\in \mathcal{P}_A$ then $r_p\geq 0$ is the greatest integer such t
 \[[A]\leq \prod_{p\in\mathcal{P}_A}p^{r_p}.\]
 \end{lemma}
 \begin{proof}
-By definition it suffices to show that for all $n\in A$ we have $n\mid \prod_{p\in\mathcal{P}_A}p^{r_p}$. By the fundamental theorem of arithmetic, it suffices to show that for each prime power $q^r\mid n$, $q\in \mathcal{P}_A$ and $r\leq r_q$. Both are true by definition of $\mathcal{P}_A$ and $r_q$ respectively. 
+By definition it suffices to show that for all $n\in A$ we have $n\mid \prod_{p\in\mathcal{P}_A}p^{r_p}$. By the fundamental theorem of arithmetic, it suffices to show that for each prime power $q^r\mid n$, $q\in \mathcal{P}_A$ and $r\leq r_q$. Both are true by definition of $\mathcal{P}_A$ and $r_q$ respectively.
 \end{proof}
 
 \begin{lemma}\label{lem:smooth_lcm}
-\uses{lem:chebyshev,lem:lcm_desc}
 If $A$ is a finite set of natural numbers such that if $q\in\mathcal{Q}_A$ then $q\leq X$, then $[A]\leq e^{O(X)}$.
 \end{lemma}
 \begin{proof}
+\uses{lem:chebyshev,lem:lcm_desc}
 We have $[A]=\prod_{\in\mathcal{P}_A}p^{r_p}$, where $p^{r_p}\in \mathcal{Q}_A$, by Lemma~\ref{lem:lcm_desc}. By hypothesis $p^{r_p}\leq X$ and so $[A]\leq X^{\abs{\mathcal{P}_A}}$. The set $\mathcal{P}_A$ is a subset of all primes $\leq X$, and so $\abs{\mathcal{P}_A}\leq \pi(X)\ll X/\log X$ by Chebyshev's estimate Lemma~\ref{lem:chebyshev}. Therefore
 \[[A]\leq X^{O(X/\log X)}=e^{O(X)}.\]
 \end{proof}
@@ -67,11 +67,11 @@ Since $1-y\leq e^{-y}$ for all $y\geq 0$, the right-hand side is $\leq e^{-4x^2}
 \section{Towards the main proposition}
 
 \begin{lemma}\label{lem:orthog_rat}
-\uses{lem:orthogonality}
 If $A\subset\mathbb{N}$ is finite and $k\geq 1$ is an integer then
 \[F(A;k)= \frac{1}{[A]}\sum_{-[A]/2< h\leq [A]/2}\prod_{n\in A}(1+e(kh/n)).\]
 \end{lemma}
 \begin{proof}
+\uses{lem:orthogonality}
 For any $S\subset A$,  $k\sum_{n\in S}\frac{1}{n}\in \bbz$ if and only if $k\sum_{n\in S}\frac{[A]}{n}\in [A]\cdot \bbz$. By definition $n\mid [A]$ for all $n\in A$, and so $k\sum_{n\in S}\frac{[A]}{n}$ is an integer. It is $\geq 0$ since each summand is. Therefore by Lemma~\ref{lem:orthogonality}, if $I$ is any set of $[A]$ consecutive integers
 \[1_{k\sum_{n\in S}\frac{1}{n}\in \bbz}=1_{[A]\mid k\sum_{n\in S}\frac{[A]}{n}} = \frac{1}{[A]}\sum_{h\in I}e(kh\sum_{n\in S}\frac{1}{n}).\]
 Therefore, changing summation,
@@ -81,12 +81,12 @@ The lemma now follows choosing $I=(-[A]/2,[A]/2]\cap\bbz$, and using the general
 \end{proof}
 
 \begin{lemma}\label{lem:orthog_simp}
-\uses{lem:orthog_rat}
 If $k\geq 1$ is an integer and $A$ is a finite set of natural numbers such that there is no $S\subset A$ such that $R(S)=1/k$, and $R(A)<2/k$, then
 \[\sum_{-[A]/2< h\leq [A]/2}\Re\brac{\prod_{n\in A}(1+e(kh/n))}= [A].\]
 \end{lemma}
 \begin{proof}
-For any $S\subset A$ we have $k\sum_{n\in S}\frac{1}{n}\leq kR(A)<2$, and therefore if $k\sum_{n\in S}\frac{1}{n} \in \bbn$ then $k\sum_{n\in S}\frac{1}{n} =0$ or $=1$. The latter can't happen by assumption, so $k\sum_{n\in S}\frac{1}{n} =0$. A non-empty sum of $>0$ summands is $>0$, so if $k\sum_{n\in S}\frac{1}{n}\in \bbz$ then $S=\emptyset$. Therefore $F(A;k)=1$. 
+\uses{lem:orthog_rat}
+For any $S\subset A$ we have $k\sum_{n\in S}\frac{1}{n}\leq kR(A)<2$, and therefore if $k\sum_{n\in S}\frac{1}{n} \in \bbn$ then $k\sum_{n\in S}\frac{1}{n} =0$ or $=1$. The latter can't happen by assumption, so $k\sum_{n\in S}\frac{1}{n} =0$. A non-empty sum of $>0$ summands is $>0$, so if $k\sum_{n\in S}\frac{1}{n}\in \bbz$ then $S=\emptyset$. Therefore $F(A;k)=1$.
 
 By Lemma~\ref{lem:orthog_rat} therefore
 \[1=\frac{1}{[A]}\sum_{-[A]/2< h\leq [A]/2}\prod_{n\in A}(1+e(kh/n)).\]
@@ -94,14 +94,14 @@ The conclusion follows multiplying both sides by $[A]$ and taking real parts of 
 \end{proof}
 
 \begin{lemma}\label{lem:orthog_simp2}
-\uses{lem:orthog_simp}
 If $k\geq 1$ is an integer and $A$ is a finite set of natural numbers such that there is no $S\subset A$ such that $R(S)=1/k$, and $R(A)<2/k$, and $[A]\leq 2^{\abs{A}-1}$ then
 \[\sum_{h\in J(A)}\Re\brac{\prod_{n\in A}(1+e(kh/n))}\leq -2^{\abs{A}-1}.\]
 \end{lemma}
 \begin{proof}
+\uses{lem:orthog_simp}
 By Lemma~\ref{lem:orthog_simp}
 \[\sum_{-[A]/2< h\leq [A]/2}\Re\brac{\prod_{n\in A}(1+e(kh/n))}= [A].\]
-By assumption the right-hand side is $\leq 2^{\abs{A}-1}$. 
+By assumption the right-hand side is $\leq 2^{\abs{A}-1}$.
 
 When $h=0$
 \[\Re\brac{\prod_{n\in A}(1+e(kh/n))}= \Re\brac{\prod_{n\in A}2}=2^{\abs{A}}.\]
@@ -111,10 +111,10 @@ and the result follows after rearranging.
 \end{proof}
 
 \begin{lemma}\label{lem:majorarcs_disjoint}
-If $A$ is a finite set of integers and $K$ is a real such that $[A]>K$ then, for any integer $k\geq 1$, the sets $\mathfrak{M}(t;A,k,K)$ are disjoint for distinct $t\in \bbz$. 
+If $A$ is a finite set of integers and $K$ is a real such that $[A]>K$ then, for any integer $k\geq 1$, the sets $\mathfrak{M}(t;A,k,K)$ are disjoint for distinct $t\in \bbz$.
 \end{lemma}
 \begin{proof}
-Suppose not and $h\in \mathfrak{M}(t_1)\cap \mathfrak{M}(t_2)$. By definition, 
+Suppose not and $h\in \mathfrak{M}(t_1)\cap \mathfrak{M}(t_2)$. By definition,
 \[\abs{hk-t_1[A]}\leq K/2\]
 and
 \[\abs{hk-t_2[A]}\leq K/2,\]
@@ -131,47 +131,46 @@ Rewrite each factor in the product using $1+e(\theta/n)=2e(\theta/2n)\cos(\pi \t
 Taking out real factors, this is $2^{\abs{A}}\prod_{n\in A}\cos(\pi \theta/n)\Re e(\theta R(A)/2)$, and the claim follows.
 \end{proof}
 \begin{lemma}\label{lem:majorarcs}
-\uses{lem:majorarcs_disjoint,lem:useful_rewrite}
-Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$. 
+Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$.
 \[\sum_{h\in \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))} \geq 0.\]
 \end{lemma}
 \begin{proof}
+\uses{lem:majorarcs_disjoint,lem:useful_rewrite}
 Since $k$ divides $[A]$, we know that $t[A]/k$ is an integer for any $t\in \bbz$, and hence by definition of $\mathfrak{M}(t)$ we can write $h=t[A]/k+r$, where $r$ is an integer satisfying $\abs{r}\leq K/2k$. Therefore, letting
 \[J_t =[-K/2k,K/2k]\cap (J(A)-t[A]/k),\]
 then
 \[\sum_{h\in \mathfrak{M}(t)}\Re\brac{\prod_{n\in A}(1+e(kh/n))}=\sum_{r\in J_t}\Re\brac{\prod_{n\in A}(1+e((t[A]+rk)/n))}=\sum_{r\in J_t}\Re\brac{\prod_{n\in A}(1+e(rk/n))},\]
-since $t[A]/n$ is always an integer, by definition of $[A]$. 
+since $t[A]/n$ is always an integer, by definition of $[A]$.
 
 Using Lemma~\ref{lem:useful_rewrite}, this is
 \[2^{[A]}\sum_{h\in \mathfrak{M}(t)}\cos(\pi krR(A))\prod_{n\in A}\cos(\pi kr/n).\]
 
 
-Since $[A]\geq \min(A)\geq M>K$, the hypotheses of Lemma~\ref{lem:majorarcs_disjoint} are all met, and so $\mathfrak{M}$ is the disjoint union of $\mathfrak{M}(t)$ as $t$ ranges over $t\in \bbz$. Therefore $1_{h\in\mathfrak{M}}=\sum_t 1_{h\in \mathfrak{M}(t)}$, and therefore using the above and rearranging the sum, 
-\[\sum_{h\in \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))} 
+Since $[A]\geq \min(A)\geq M>K$, the hypotheses of Lemma~\ref{lem:majorarcs_disjoint} are all met, and so $\mathfrak{M}$ is the disjoint union of $\mathfrak{M}(t)$ as $t$ ranges over $t\in \bbz$. Therefore $1_{h\in\mathfrak{M}}=\sum_t 1_{h\in \mathfrak{M}(t)}$, and therefore using the above and rearranging the sum,
+\[\sum_{h\in \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))}
 =\sum_{r\in [-K/2k,K/2k]\cap\bbz}\brac{\sum_{t\in \bbz}1_{r\in J_t}}\cos(\pi krR(A))\prod_{n\in A}\cos(\pi kr/n).\]
-Since for all $n\in A$ we have $n\geq M>K$ we have $\abs{kr/n}< 1/2$ for all $r$ with $\abs{r}\leq K/2k$, and hence $\cos(\pi kr/n)\geq 0$ for all such $n$ and $r$. 
+Since for all $n\in A$ we have $n\geq M>K$ we have $\abs{kr/n}< 1/2$ for all $r$ with $\abs{r}\leq K/2k$, and hence $\cos(\pi kr/n)\geq 0$ for all such $n$ and $r$.
 
 Furthermore, writing $kR(A)=2-\epsilon$ for some $0<\epsilon\leq k/M$, we have (since $r$ is an integer)
 \[\cos(\pi kr R(A)) = \cos(-\pi r\epsilon)\geq 0,\]
 since $\abs{r\epsilon}\leq K/2M<1/2$ for all $\abs{r}\leq K/2k$. It follows that
 \[\brac{\sum_{t\in \bbz}1_{r\in J_t}}\cos(\pi krR(A))\prod_{n\in A}\cos(\pi kr/n)\geq 0\]
-for all $r\in [-K/2k,K/2k]\cap \bbz$, and hence as the sum of non-negative summands the original sum is non-negative as required. 
+for all $r\in [-K/2k,K/2k]\cap \bbz$, and hence as the sum of non-negative summands the original sum is non-negative as required.
 \end{proof}
 
 \begin{lemma}\label{lem:minor_lbound}
-\uses{lem:majorarcs,lem:orthog_simp2}
-
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$, and there is no $S\subset A$ such that $R(S)=1/k$, and $[A]\leq 2^{\abs{A}-1}$. Then
 \[\sum_{h\in J(A)\backslash \mathfrak{M}(A,k,K)} C(A;h,k)\geq 1/2.\]
 \end{lemma}
 \begin{proof}
+\uses{lem:majorarcs,lem:orthog_simp2}
 By Lemma~\ref{lem:orthog_simp2}
 \[\sum_{h\in J(A)}\Re\brac{\prod_{n\in A}(1+e(kh/n))}\leq -2^{\abs{A}-1}.\]
 By Lemma~\ref{lem:majorarcs}
 \[\sum_{h\in \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))} \geq 0.\]
 Therefore
 \[\sum_{h\in J(A)\backslash \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))}\leq -2^{\abs{A}-1}.\]
-By the triangle inequality, using $\abs{\Re z}\leq \abs{z}$ and $\abs{1+e(\theta)}=2\cos(\pi \theta)$, 
+By the triangle inequality, using $\abs{\Re z}\leq \abs{z}$ and $\abs{1+e(\theta)}=2\cos(\pi \theta)$,
 \[\sum_{h\in J(A)\backslash \mathfrak{M}(A,k,K)}\abs{\cos(\pi kh/n)} \geq 1/2\]
 as required.
 \end{proof}
@@ -184,7 +183,7 @@ For any finite set $A$ such that $n\leq N$ for all $n\in A$, and integers $k,h$,
 \begin{proof}
 We first note that $\abs{\cos(\pi kh/n)}=\abs{\cos(\pi h_n/n)}$ for all $n\in A$, by periodicity of cosine. By Lemma~\ref{lem:cos_bound}, therefore
 \[\abs{\cos(\pi kh/n)}\leq \exp(-2h_n^2/n^2)\leq \exp(-\tfrac{2}{N^2}h_n^2),\]
-and the lemma follows taking the product over all $n\in A$. 
+and the lemma follows taking the product over all $n\in A$.
 \end{proof}
 
 
@@ -194,42 +193,41 @@ Suppose that $N$ is sufficiently large and $M\geq 8$. Let $k\geq 1$ be an intege
 \[\sum_{h\in \mathfrak{m}_1(A,k,K,M/\log N)} C(A;h,k)\leq 1/8.\]
 \end{lemma}
 \begin{proof}
-We show in fact that for any $h\in \mathfrak{m}_1(A,k,K,M/\log N)$ we have 
+We show in fact that for any $h\in \mathfrak{m}_1(A,k,K,M/\log N)$ we have
 \[C(A;h,k)\leq 1/[A]^2.\]
-The result then immediately follows since $\abs{\mathfrak{m}_1(A,k,K,M/\log N)}\leq \abs{J(A)}\leq [A]$, assuming $[A]\geq 8$, which is true since $[A]\geq \min(A)\geq M\geq 8$. 
+The result then immediately follows since $\abs{\mathfrak{m}_1(A,k,K,M/\log N)}\leq \abs{J(A)}\leq [A]$, assuming $[A]\geq 8$, which is true since $[A]\geq \min(A)\geq M\geq 8$.
 
-By Lemma~\ref{lem:cos_prod_bound}, 
+By Lemma~\ref{lem:cos_prod_bound},
 \[C(A;h,k)\leq \exp\brac{-\frac{2}{N^2}\sum_{n\in A}h_n^2}.\]
-Let $I_h$ be the interval of length $K$ centred around $kh$. If no element of $I_h$ is divisible by $n$ then $\abs{h_n}>K/2$. Therefore, by definition of $\mathfrak{m}_1$, $\abs{h_n}>K/2$ for at least $M/\log N$ many $n\in A$, and hence $\sum_{n\in A}h_n^2\geq K^2M/4\log N$, and so 
+Let $I_h$ be the interval of length $K$ centred around $kh$. If no element of $I_h$ is divisible by $n$ then $\abs{h_n}>K/2$. Therefore, by definition of $\mathfrak{m}_1$, $\abs{h_n}>K/2$ for at least $M/\log N$ many $n\in A$, and hence $\sum_{n\in A}h_n^2\geq K^2M/4\log N$, and so
 \[C(A;h)\leq \exp\brac{-\frac{K^2M}{2N^2\log N}}.\]
 It remains to note that by Lemma~\ref{lem:smooth_lcm}
 \[[A]\leq \exp\brac{O\brac{\frac{K^2M}{N^2(\log N)^2}}}\leq \exp\brac{\frac{K^2M}{4N^2\log N}}\]
-assuming $N$ is sufficiently large. 
+assuming $N$ is sufficiently large.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_ind_bound}
-There is a constant $c>0$ such that the following holds. 
+There is a constant $c>0$ such that the following holds.
 Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq cLK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L/q)$ where $I$ is the interval of length $K$ centred at $h$. Then
 \uses{lem:cos_bound}
 \[C(A;h,k)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 \end{lemma}
 \begin{proof}
-For any $n\in A$, let $\mathcal{Q}(n)$ denote all those $q\in \mathcal{Q}$ such that $n\in A_q$. Therefore, for any real $x_n\geq 0$, 
+For any $n\in A$, let $\mathcal{Q}(n)$ denote all those $q\in \mathcal{Q}$ such that $n\in A_q$. Therefore, for any real $x_n\geq 0$,
 \[\prod_{n\in A}x_n=\prod_{n\in A}\prod_{q\in \mathcal{Q}(n)}x_n^{1/\abs{\mathcal{Q}(n)}}
 =\prod_{q\in\mathcal{Q}}\prod_{n\in A_q}x_n^{1/\abs{\mathcal{Q}(n)}}.\]
 Using the trivial estimate $\omega(n)\ll \log n$, there is a constant $C>0$ such that for any $n\in A$ we have $\abs{\mathcal{Q}(n)}\leq C\log N$, and so if $0\leq x_n\leq 1$,
 \[\prod_{n\in A}x_n\leq \prod_{q\in\mathcal{Q}}\prod_{n\in A_q}x_n^{1/C\log N}=\prod_{q\in \mathcal{Q}}\brac{\prod_{n\in A_q}x_n}^{1/C\log N}.\]
-In particular, 
+In particular,
  \[C(A;h,k)\leq \prod_{q\in \mathcal{Q}}C(A_q;h,k)^{1/C\log N}.\]
  Using the trivial bound $C(A_q;h,k)\leq 1$, to prove the lemma it therefore suffices to show that for every $q\in\mathcal{Q}\backslash\mathcal{D}_h$ we have $C(A_q;h,k)\leq N^{-4C\log N}$.
 
 For any $n\in A$ let $kh\equiv h_n\pmod{n}$, where $\abs{h_n}\leq n/2$. For any $q\in\mathcal{Q}\backslash \mathcal{D}$ there are, by definition of $\mathcal{D}$, at least $L/q$ many $n\in A_q$ such that $\abs{h_n}>K/2$ and hence by Lemma~\ref{lem:cos_prod_bound}
 \[C(A_q;h,k)\leq\exp\brac{-\frac{2}{N^2}\cdot \frac{L}{q}\cdot \frac{K^2}{4}}.\]
-By assumption, $q\leq LK^2/8CN^2(\log N)^2$, and the proof is complete. 
+By assumption, $q\leq LK^2/8CN^2(\log N)^2$, and the proof is complete.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_bound}
-\uses{lem:minor2_ind_bound}
 There is a constant $c>0$ such that the following holds. Let $N$ be a sufficiently large integer. Let $K,L>0$ be reals. Let $k$ be an integer such that $1\leq k \leq N/2$.  Let $A\subset [1,N]$ be a finite set of integers such that
 \begin{enumerate}
 \item if $q\in\mathcal{Q}_A$ then $q\leq c\frac{LK^2}{N^2(\log N)^2}$,  and
@@ -244,7 +242,8 @@ Then
 \[\sum_{h\in\mathfrak{m}_2(A,k,K,M/\log N)}\prod_{n\in A}\abs{\cos(\pi kh/n)}\leq 1/8.\]
 \end{lemma}
 \begin{proof}
-For any $h\in\mathfrak{m}_2$, let $I_h$ be the interval of length $K$ centred at $kh$. Since $h\not\in\mathfrak{m}_1$, condition 2(a) cannot hold, and therefore there is some $x\in I_h$ divisible by all $q\in\mathcal{D}_{I_h}(A;L/q)$. In particular, $kh$ is distance at most $K/2\leq M/2$ from some multiple of $[\mathcal{D}_{I_h}(A;L/q)]$. 
+\uses{lem:minor2_ind_bound}
+For any $h\in\mathfrak{m}_2$, let $I_h$ be the interval of length $K$ centred at $kh$. Since $h\not\in\mathfrak{m}_1$, condition 2(a) cannot hold, and therefore there is some $x\in I_h$ divisible by all $q\in\mathcal{D}_{I_h}(A;L/q)$. In particular, $kh$ is distance at most $K/2\leq M/2$ from some multiple of $[\mathcal{D}_{I_h}(A;L/q)]$.
 
 Therefore, for any $\mathcal{D}\subset \mathcal{Q}$, the number of $h\in\mathfrak{m}_2$ with $\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}$ is at most $M$ times the number of multiples of $[\mathcal{D}]$ in $[1,k[A]]$, which is at most
 \[Mk\frac{[A]}{[\mathcal{D}]} \leq Mk\prod_{q\in\mathcal{Q}\backslash\mathcal{D}}q\leq kN^{\abs{\mathcal{Q}\backslash \mathcal{D}}+1}.\]
@@ -263,7 +262,6 @@ kN\sum_{\mathcal{D}\subsetneq \mathcal{Q}}N^{-3\abs{\mathcal{Q}\backslash \mathc
 \end{proof}
 
 \begin{proposition}\label{prop:fourier}
-\uses{lem:smooth_lcm,lem:minor_lbound,lem:minor1_bound,lem:minor2_bound}
 \leanok
 There is a constant $c>0$ such that the following holds. Suppose that $N$ is sufficiently large. Let $K,L,M$ be reals and $k$ an integer such that $1\leq k\leq N/2$ and $M>K$. Let $A\subset [M,N]$ be a set of integers such that
 \begin{enumerate}
@@ -280,5 +278,6 @@ or
 There is some $S\subset A$ such that $R(S)=1/k$.
 \end{proposition}
 \begin{proof}
+\uses{lem:smooth_lcm,lem:minor_lbound,lem:minor1_bound,lem:minor2_bound}
 If the conclusion fails, there is an immediate contradiction by combining Lemmas~\ref{lem:minor_lbound}, \ref{lem:minor1_bound} and \ref{lem:minor2_bound} (and the required upper bound $[A]<2^{\abs{A}-1}$ comes from Lemma~\ref{lem:smooth_lcm}).
 \end{proof}

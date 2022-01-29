@@ -3,13 +3,12 @@
 
 
 \begin{lemma}\label{lem-basic}
-\uses{lem:mertens1}
 \leanok
 If $0<\abs{n_1-n_2}\leq N$ then
 \[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N,\]
 where the summation is restricted to prime powers.
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:mertens1}
 If $q\mid (n_1,n_2)$ then $q$ divides $\abs{n_1-n_2}$, and hence in particular $q\leq N$. The contribution of all prime powers $p^r$ with $r\geq 2$ is $O(1)$, and hence it suffices to show that $\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \log\log\log N$. Any integer $\leq N$ is trivially divisible by $O(\log N)$ many primes. Clearly summing $1/p$ over $O(\log N)$ many primes is maximised summing over the smallest $O(\log N)$ primes. Since there are $\gg (\log N)^{3/2}$ many primes $\leq (\log N)^2$, we have
 \[\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \sum_{p\leq (\log N)^2}\frac{1}{p}\ll \log\log\log N\]
 by Mertens' estimate \ref{lem:mertens1}.
@@ -29,7 +28,7 @@ The claimed bound follows, using the fact that $e^{-\frac{\epsilon}{2(1-\epsilon
 \end{proof}
 
 \begin{lemma}\label{lem:usingq}
-\uses{lem:mertens1}
+
 \leanok
 There is a constant $c>0$ such that the following holds. Let $N\geq M\geq N^{1/2}$ be sufficiently large, and suppose that $1\leq k \leq c\log\log N$. Suppose that $A\subset [M,N]$ is a set of integers such that $\omega(n)\leq (\log N)^{1/k}$ for all $n\in A$.
 
@@ -40,7 +39,7 @@ For all $q$ such that $R(A;q)\geq (\log N)^{-1/2}$ there exists $d$ such that
 \item \[\sum_{\substack{n\in A_q\\qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}.\]
 \end{enumerate}
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:mertens1}
 Fix some $q$ with $R(A;q)\geq (\log N)^{-1/2}$. Let $D$ be the set of all $d$ such that if $p$ is a prime and $p^r \| d$ then
 \[p^r>y=\exp((\log N)^{1-2/k})\]
 and
@@ -85,7 +84,6 @@ and furthermore each $q\leq N$ can appear as at most one such $q_i$, since after
 since $\sum_{q\leq N}\frac{1}{q}\ll \log\log N$.
 \end{proof}
 \begin{lemma}\label{lem:pisq}
-\uses{lem:pisqa}
 Suppose that $N$ is sufficiently large and $N\geq M\geq N^{1/2}$. Let $\alpha > 2/(\log N)^{1/200}$ and $A\subset [M,N]$ be a set of integers such that
 \[R(A) \geq \alpha+\frac{1}{(\log N)^{1/200}}\]
 and if $q\in\mathcal{Q}_A$ then $q\leq M/(\log N)^{1/100}$.
@@ -93,7 +91,7 @@ and if $q\in\mathcal{Q}_A$ then $q\leq M/(\log N)^{1/100}$.
 There is a subset $B\subset A$ such that $R(B)\in [\alpha-1/M,\alpha)$ and, for all $q\in \mathcal{Q}_B$,
 \[R(B;q)\geq \frac{1}{(\log N)^{1/100}}.\]
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:pisqa}
 We first apply Lemma~\ref{lem:pisqa} to produce some $A'\subset A$ such that $R(A')\geq \alpha$ and $R(A';q) \geq 2/(\log N)^{1/100}$ for all $q\in\mathcal{Q}_{A'}$.
 
 We now argue that whenever $D$ is such that $R(D)\geq \alpha$ and $R(D;q) \geq (\log N)^{-1/100}$ for all $q\in \mathcal{Q}_D$ there exists some $x\in D$ such that $R(D\backslash \{x\};q)\geq (\log N)^{-1/100}$ for all $q\in\mathcal{Q}_{D}$. Given this, the lemma immediately follows, since we can continue removing such elements from $A'$ one at time until $R(B)$ falls in the required interval.

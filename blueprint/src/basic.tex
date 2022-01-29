@@ -3,11 +3,11 @@
 
 This section contains standard estimates from analytic number theory that will be required.
 
-\begin{lemma}\label{lem:omegasum}\uses{lem:mertensprimes}
+\begin{lemma}\label{lem:omegasum}
 For any $X\geq 3$
 \[\sum_{n\leq X}\omega(n) = X\log\log X+O(X).\]
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:mertensprimes}
 Since $\omega(n) = \sum_{p\leq n}1_{p\mid n}$, the left-hand side equals, after a change in the order of summation,
 \[\sum_{p\leq X}\sum_{n\leq X}1_{p\mid n} = \sum_{p\leq X}\left\lfloor\frac{X}{p}\right\rfloor.\]
 Since $\lfloor x\rfloor=x+O(1)$, this is equal to
@@ -15,11 +15,11 @@ Since $\lfloor x\rfloor=x+O(1)$, this is equal to
 using Lemma~\ref{lem:mertensprimes} and the trivial estimate $\pi(X)\ll X$.
 \end{proof}
 
-\begin{lemma}\label{lem:omegasquaredsum}\uses{lem:mertensprimes}
+\begin{lemma}\label{lem:omegasquaredsum}
 For any $X\geq 3$
 \[\sum_{n\leq X}\omega(n)^2 \leq X(\log\log X)^2+O(X\log\log X).\]
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:mertensprimes}
 Since $\omega(n) = \sum_{p\leq n}1_{p\mid n}$, the left-hand side is equal to, after expanding the sum and rearranging,
 \[\sum_{p,q\leq X}\sum_{n\leq X}1_{p\mid n}1_{q\mid n}.\]
 The part of the sum where $p=q$ is
@@ -32,12 +32,10 @@ By Lemma~\ref{lem:mertensprimes} this is $X(\log\log X+O(1))^2 = X(\log\log X)^2
 \end{proof}
 
 \begin{lemma}[Tur\'{a}n's estimate]\label{lem:turan}
-\uses{lem:omegasum,lem:omegasquaredsum}
-%\lean{true_iff_false}
 For any $X\geq 3$
 \[\sum_{n\leq X}(\omega(n) - \log\log X)^2 \ll X\log\log X.\]
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:omegasum,lem:omegasquaredsum}
 The left-hand side equals
 \[\sum_{n\leq X}\omega(n)^2 - 2\log\log X\sum_{n\leq X}\omega(n)+\lfloor X\rfloor (\log\log X)^2.\]
 The first summand is at most, by Lemma~\ref{lem:omegasquaredsum},
@@ -112,16 +110,15 @@ There exists a constant $c$ such that
 \[\sum_{p\leq X}\frac{1}{p} = \log\log X+c+O(1/\log X),\]
 where the sum is restricted to primes.
 \end{lemma}
-\begin{proof}
-\uses{lem:mertens1}
+\begin{proof} \uses{lem:mertens1}
 
 \end{proof}
 
-\begin{lemma}[Mertens' product estimate]\label{lem:mertens2}\uses{lem:mertens1}
+\begin{lemma}[Mertens' product estimate]\label{lem:mertens2}
 For any $X\geq 2$,
 \[\prod_{p\leq X}\brac{1-\frac{1}{p}}^{-1}\asymp \log X.\]
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:mertens1}
 
 \end{proof}
 
