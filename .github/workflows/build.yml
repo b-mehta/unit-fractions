@@ -104,7 +104,7 @@ jobs:
           lean --run scripts/lint_project.lean
 
   stats:
-    name: Stats for lean-liquid
+    name: Stats for unit-fractions
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
