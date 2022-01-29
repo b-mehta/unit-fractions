@@ -1,8 +1,8 @@
 # Unit fractions
 
-The goal of this project is to formalize the proof of a conjecture on unit fractions. Details can be found on the [project website](https://leanprover-community.github.io/sphere-eversion/).
+The goal of this project is to formalize the proof of a conjecture on unit fractions. Details can be found on the [project website](https://b-mehta.github.io/unit-fractions/).
 
-Much of the project infrastructure has been adapted from the [sphere eversion project](https://leanprover-community.github.io/sphere-eversion/).
+Much of the project infrastructure has been adapted from the [sphere eversion project](https://leanprover-community.github.io/sphere-eversion/) and the [liquid tensor experiment](https://leanprover-community.github.io/lean-liquid/).
 
 # Build the Lean files
 
