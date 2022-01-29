@@ -298,7 +298,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/5927bfe119f68e45d03d60642af214e9b15c501c/src/for_mathlib/basic_estimates.lean#L1073">nat.arithmetic_function.chebyshev_upper_explicit</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e9a2701aafce890892d09830c1d2cdeb315ce776/src/for_mathlib/basic_estimates.lean#L1073">nat.arithmetic_function.chebyshev_upper_explicit</a></li>
         </ul>
 
       </div>
@@ -337,11 +337,25 @@
     <a class="icon proof" href="chap-basic.html#lem:divisor_bound">#</a>
     <a class="icon proof" href="chap-basic.html#a0000000030"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e9a2701aafce890892d09830c1d2cdeb315ce776/src/for_mathlib/basic_estimates.lean#L835">nat.arithmetic_function.divisor_bound</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> For any \(\epsilon \) such that \(0{\lt}\epsilon \leq 1\), if \(n\) is sufficiently large depending on \(\epsilon \), then </p>
+  <p>  For any \(\epsilon \) such that \(0{\lt}\epsilon \leq 1\), if \(n\) is sufficiently large depending on \(\epsilon \), then </p>
 <div class="displaymath" id="a0000000031">
   \[ \tau (n) \leq n^{(1+\epsilon )\frac{\log 2}{\log \log n}}. \]
 </div>
@@ -446,17 +460,18 @@
     <span class="lemma_thmtitle">Mertens’ estimate, just for primes</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-basic.html#lem:mertensprimes">#</a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
+    <a class="icon proof" href="chap-basic.html#a0000000045"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
       <div class="modal-content">
         <header>
-          <h1>Uses</h1>
+          <h1>Lean declarations</h1>
           <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e9a2701aafce890892d09830c1d2cdeb315ce776/src/for_mathlib/basic_estimates.lean#L1105">nat.arithmetic_function.prime_reciprocal</a></li>
         </ul>
 
       </div>
@@ -465,14 +480,26 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> There exists a constant \(c\) such that </p>
-<div class="displaymath" id="a0000000045">
+  <p>  There exists a constant \(c\) such that </p>
+<div class="displaymath" id="a0000000046">
   \[ \sum _{p\leq X}\frac{1}{p} = \log \log X+c+O(1/\log X), \]
 </div>
 <p> where the sum is restricted to primes. </p>
 
   </div>
 </div> </p>
+<div class="proof_wrapper" id="a0000000045">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  
+
+  </div>
+</div>
 <p><div class="lemma_thmwrapper" id="lem:mertens2">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
@@ -502,13 +529,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p> For any \(X\geq 2\), </p>
-<div class="displaymath" id="a0000000046">
+<div class="displaymath" id="a0000000047">
   \[ \prod _{p\leq X}\left( 1-\frac{1}{p}\right)^{-1}\asymp \log X. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000047">
+<div class="proof_wrapper" id="a0000000048">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -528,20 +555,20 @@
     <span class="lemma_thmtitle">Sieve of Eratosthenes-Legendre</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-basic.html#lem:sieve_eratosthenes">#</a>
-    <a class="icon proof" href="chap-basic.html#a0000000048"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-basic.html#a0000000049"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
   <p> For any \(x,y\geq 0\) and \(u\geq v\geq 1\) </p>
-<div class="displaymath" id="a0000000049">
+<div class="displaymath" id="a0000000050">
   \[ \# \{  n\in (x,x+y] : p\mid n\implies p\not\in [u,v]\}  = y\prod _{u\leq p\leq v}\left( 1-\frac{1}{p}\right)+O(2^v). \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000048">
+<div class="proof_wrapper" id="a0000000049">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -550,32 +577,32 @@
   </div>
   <div class="proof_content">
   <p>Let \(P = \prod _{u\leq p\leq v}p\). The left-hand side of the estimate in the lemma can be written as </p>
-<div class="displaymath" id="a0000000050">
+<div class="displaymath" id="a0000000051">
   \[ \sum _{x\leq n{\lt}x+y}1_{(n,P)=1}. \]
 </div>
 <p> Using the identity \(\sum _{d\mid m}\mu (d) = 1\) if \(m=1\) and \(0\) otherwise, the fact that \(d\mid (n,P)\) if and only if \(d\mid n\) and \(d\mid P\), and that \(\sum _{n\leq z}1_{d\mid n}=\left\lfloor \frac{z}{d}\right\rfloor \) for any \(z\geq 0\), </p>
-<div class="displaymath" id="a0000000051">
+<div class="displaymath" id="a0000000052">
   \[  \sum _{x{\lt} n\leq x+y}1_{(n,P)=1}= \sum _{x{\lt} n\leq x+y}\sum _{d\mid (n,P)}\mu (d) \]
 </div>
-<div class="displaymath" id="a0000000052">
+<div class="displaymath" id="a0000000053">
   \[ = \sum _{x{\lt} n\leq x+y}\sum _{\substack {d\mid n\\ d\mid P}}\mu (d) \]
 </div>
-<div class="displaymath" id="a0000000053">
+<div class="displaymath" id="a0000000054">
   \[ =\sum _{d\mid P}\mu (d)\sum _{x{\lt} n\leq x+y}1_{d\mid n} \]
 </div>
-<div class="displaymath" id="a0000000054">
+<div class="displaymath" id="a0000000055">
   \[ =\sum _{d\mid P}\mu (d)\left(\left\lfloor \frac{x+y}{d}\right\rfloor -\left\lfloor \frac{x}{d}\right\rfloor \right). \]
 </div>
 <p>Since \(\lfloor X\rfloor = X+O(1)\) for any \(X\), we have </p>
-<div class="displaymath" id="a0000000055">
+<div class="displaymath" id="a0000000056">
   \[ \left\lfloor \frac{x+y}{d}\right\rfloor -\left\lfloor \frac{x}{d}\right\rfloor =\frac{y}{d}+O(1) \]
 </div>
 <p> for any \(x,y,d\), and hence </p>
-<div class="displaymath" id="a0000000056">
+<div class="displaymath" id="a0000000057">
   \[ \sum _{x{\lt} n\leq x+y}1_{(n,P)=1}=y\sum _{d\mid P}\frac{\mu (d)}{d}+O(\sum _{d\mid P}1). \]
 </div>
 <p> We have \(\sum _{d\mid P}1=\tau (P)=2^k\) where \(k\) is the number of primes in \([u,v]\), which is at most \(v\), so the error term here is \(O(2^v)\). Finally, expanding out the product shows that </p>
-<div class="displaymath" id="a0000000057">
+<div class="displaymath" id="a0000000058">
   \[ \sum _{d\mid P}\frac{\mu (d)}{d} = \prod _{p\in [u,v]}\left( 1-\frac{1}{p}\right). \]
 </div>
 <p> Inserting this into the above finishes the proof. </p>

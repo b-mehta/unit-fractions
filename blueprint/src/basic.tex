@@ -63,6 +63,7 @@ For any $X\geq 3$
 
 \begin{lemma}[Divisor bound]{\label{lem:divisor_bound}}
 \leanok
+\lean{nat.arithmetic_function.divisor_bound}
 For any $\epsilon$ such that $0<\epsilon\leq 1$, if $n$ is sufficiently large depending on $\epsilon$, then
 \[\tau(n) \leq n^{(1+\epsilon)\frac{\log 2}{\log\log n}}.\]
 \end{lemma}
@@ -105,11 +106,16 @@ where the sum is restricted to prime powers.
 
 \end{proof}
 
-\begin{lemma}[Mertens' estimate, just for primes]\label{lem:mertensprimes}\uses{lem:mertens1}
+\begin{lemma}[Mertens' estimate, just for primes]\label{lem:mertensprimes}
+  \lean{nat.arithmetic_function.prime_reciprocal}
 There exists a constant $c$ such that
 \[\sum_{p\leq X}\frac{1}{p} = \log\log X+c+O(1/\log X),\]
 where the sum is restricted to primes.
 \end{lemma}
+\begin{proof}
+\uses{lem:mertens1}
+
+\end{proof}
 
 \begin{lemma}[Mertens' product estimate]\label{lem:mertens2}\uses{lem:mertens1}
 For any $X\geq 2$,

@@ -96,7 +96,7 @@
     <span class="theorem_thmtitle">Solution in sets of positive density</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-tech.html#th:density_theorem">#</a>
-    <a class="icon proof" href="chap-tech.html#a0000000058"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-tech.html#a0000000059"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -125,7 +125,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/5927bfe119f68e45d03d60642af214e9b15c501c/src/main_results.lean#L38">unit_fractions_upper_density</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e9a2701aafce890892d09830c1d2cdeb315ce776/src/main_results.lean#L38">unit_fractions_upper_density</a></li>
         </ul>
 
       </div>
@@ -138,7 +138,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000058">
+<div class="proof_wrapper" id="a0000000059">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -148,11 +148,11 @@
   <div class="proof_content">
   <p>Suppose \(A\subset \mathbb {N}\) has upper density \(\delta {\gt}0\). Let \(y=C_1/\delta \) and \(z=\delta ^{-C_2\delta ^{-2}}\), where \(C_1,C_2\) are two absolute constants to be determined later. It suffices to show that there is some \(d\in [y,z]\) and finite \(S\subset A\) such that \(R(S)=1/d\). Indeed, given such an \(S\) we can remove it from \(A\) and still have an infinite set of upper density \(\delta \), so we can find another \(S'\subset A\backslash S\) with \(R(S')=1/d'\) for some \(d'\in [y,z]\), and so on. After repeating this process at least \(\lceil z-y\rceil ^2\) times there must be some \(d\in [y,z]\) with at least \(d\) disjoint \(S_1,\ldots ,S_d\subset A\) with \(R(S_i)=1/d\). Taking \(S=S_1\cup \cdots \cup S_d\) yields \(R(S)=1\) as required. </p>
 <p>By definition of the upper density, there exist arbitrarily large \(N\) such that \(\left\lvert A\cap [1,N]\right\rvert \geq \frac{\delta }{2}N\). The number of \(n\in [1,N]\) divisible by some prime power \(q\geq N^{1-6/\log \log N}\) is </p>
-<div class="displaymath" id="a0000000059">
+<div class="displaymath" id="a0000000060">
   \[ \ll N \sum _{N^{1-6/\log \log N}{\lt}q\leq N}\frac{1}{q}\ll \frac{N}{\log \log N} \]
 </div>
 <p> by Mertens’ estimate Lemma&#160;<a href="chap-basic.html#lem:mertens1">2.6</a>. Further, by Turán’s estimate Lemma&#160;<a href="chap-basic.html#lem:turan">2.3</a> </p>
-<div class="displaymath" id="a0000000060">
+<div class="displaymath" id="a0000000061">
   \[ \sum _{n\leq N}(\omega (n)-\log \log N)^2 \ll N \log \log N, \]
 </div>
 <p> the number of \(n\in [1,N]\) that do not satisfy </p>
@@ -166,7 +166,7 @@
 </div>
 <p> is \(\ll N/\log \log N\). Finally, provided we choose \(C_2\) sufficiently large in the definition of \(z\), Lemma&#160;<a href="chap-tech.html#lem:sieve2">3.5</a> ensures that the proportion of all \(n\in \{ 1,\ldots ,N\} \) not divisible by at least two distinct primes \(p_1,p_2\in [y,z]\) with \(4p_1{\lt}p_2\) is at most \(\frac{\delta }{8}N\), say. </p>
 <p>In particular, provided \(N\) is chosen sufficiently large (depending only on \(\delta \)), we may assume that \(\left\lvert A_N\right\rvert \geq \frac{\delta }{4}N\), where \(A_N\subset A\) is the set of those \(n\in A\cap [N^{1-1/\log \log N},N]\) which satisfy conditions (2)-(4) of Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.2</a>. Since \(\left\lvert A_N\right\rvert \geq \frac{\delta }{4}N\), </p>
-<div class="displaymath" id="a0000000061">
+<div class="displaymath" id="a0000000062">
   \[ R(A_N) \gg -\log (1-\delta /4)\gg \delta . \]
 </div>
 <p> In particular, since \(y=C_1/\delta \) for some suitably large constant \(C_1{\gt}0\), we have that \(R(A_N)\geq 4/y\), say. All of the conditions of Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.2</a> are now satisfied (provided \(N\) is chosen sufficiently large in terms of \(\delta \)), and hence there is some \(S\subset A_N\subset A\) such that \(R(S)=1/d\) for some \(d\in [y,z]\), which suffices as discussed above. </p>
@@ -182,7 +182,7 @@
     <span class="theorem_thmtitle">Solution in sets of positive logarithmic density, quantitative version</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-tech.html#th:log_density_theorem">#</a>
-    <a class="icon proof" href="chap-tech.html#a0000000062"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-tech.html#a0000000063"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -211,7 +211,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/5927bfe119f68e45d03d60642af214e9b15c501c/src/main_results.lean#L42">unit_fractions_upper_log_density</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e9a2701aafce890892d09830c1d2cdeb315ce776/src/main_results.lean#L42">unit_fractions_upper_log_density</a></li>
         </ul>
 
       </div>
@@ -221,14 +221,14 @@
   </div>
   <div class="theorem_thmcontent">
   <p>  There is a constant \(C{\gt}0\) such that the following holds. If \(A\subset \{ 1,\ldots ,N\} \) and </p>
-<div class="displaymath" id="a0000000063">
+<div class="displaymath" id="a0000000064">
   \[ \sum _{n\in A}\frac{1}{n}\geq C \frac{\log \log \log N}{\log \log N}\log N \]
 </div>
 <p> then there is an \(S\subset A\) such that \(\sum _{n\in S}\frac{1}{n}=1\). </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000062">
+<div class="proof_wrapper" id="a0000000063">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -238,24 +238,24 @@
   <div class="proof_content">
   <p>Let \(C\geq 2\) be an absolute constant to be chosen shortly, and for brevity let \(\epsilon = \log \log \log N/\log \log N\), so that we may assume that \(R(A)\geq C\epsilon \log N\). Since \(\sum _{n\leq X}\frac{1}{n}\ll \log X\), if \(A'=A\cap [N^\epsilon ,N]\) we have (assuming \(C\) is sufficiently large) \(R(A')\geq \frac{C}{2}\epsilon \log N\). </p>
 <p>Let \(X\) be those integers \(n\in [1,N]\) not divisible by any prime \(p\in [5,(\log N)^{1/1200}]\). Lemma&#160;<a href="chap-tech.html#lem:sieve1">3.4</a> implies that, for any \(x\geq \exp (\sqrt{\log N})\), </p>
-<div class="displaymath" id="a0000000064">
+<div class="displaymath" id="a0000000065">
   \[ \left\lvert X\cap [x,2x)\right\rvert \ll \frac{x}{\log \log N} \]
 </div>
 <p> and hence, by partial summation, </p>
-<div class="displaymath" id="a0000000065">
+<div class="displaymath" id="a0000000066">
   \[ \sum _{\substack {n\in X\\ n\in [\exp (\sqrt{\log N}),N]}}\frac{1}{n}\ll \frac{\log N}{\log \log N}. \]
 </div>
 <p> Similarly, if \(Y\) is the set of those \(N\in [1,N]\) such that \(\omega (n) {\lt}\frac{99}{100}\log \log N\) or \(\omega (n)\geq \frac{101}{100}\log \log N\) then Turán’s estimate Lemma&#160;<a href="chap-basic.html#lem:turan">2.3</a> </p>
-<div class="displaymath" id="a0000000066">
+<div class="displaymath" id="a0000000067">
   \[ \sum _{n\leq x}(\omega (n)-\log \log n)^2\ll x\log \log x \]
 </div>
 <p> implies that \(\left\lvert Y\cap [x,2x)\right\rvert \ll x/\log \log N\) for any \(N\geq x\geq \exp (\sqrt{\log N})\), and so </p>
-<div class="displaymath" id="a0000000067">
+<div class="displaymath" id="a0000000068">
   \[ \sum _{\substack {n\in Y\\ n\in [\exp (\sqrt{\log N}),N]}}\frac{1}{n}\ll \frac{\log N}{\log \log N}. \]
 </div>
 <p> In particular, provided we take \(C\) sufficiently large, we can assume that \(R(A'\backslash (X\cup Y))\geq \frac{C}{4}\epsilon \log N\), say. </p>
 <p>Let \(\delta =1-1/\log \log N\), and let \(N_i=N^{\delta ^i}\), and \(A_i=(A'\backslash (X\cup Y))\cap [N_{i+1},N_i]\). Since \(N_i\leq N^{e^{-i/\log \log N}}\) and \(A'\) is supported on \(n\geq N^\epsilon \), the set \(A_i\) is empty for \(i{\gt} \log (1/\epsilon )\log \log N\), and hence by the pigeonhole principle there is some \(i\) such that </p>
-<div class="displaymath" id="a0000000068">
+<div class="displaymath" id="a0000000069">
   \[ R(A_i)\geq \frac{C}{8}\frac{\epsilon \log N}{(\log \log N)\log (1/\epsilon )}. \]
 </div>
 <p> By construction, \(A_i\subset [N_{i+1},N_i]\subset [N_i^{1-1/\log \log N_i},N_i]\), and every \(n\in A_i\) is divisible by some prime \(p\) with \(5\leq p\leq (\log N)^{1/1200}\leq (\log N_i)^{1/500}\). Furthermore, every \(n\in A_i\) satisfies \(\omega (n)\geq \frac{99}{100}\log \log N\geq \frac{99}{100}\log \log N_i\) and \(\omega (n)\leq \frac{101}{99}\log \log N\leq 2\log \log N_i\). </p>
@@ -277,7 +277,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-tech.html#cor:tech_cor">#</a>
-    <a class="icon proof" href="chap-tech.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-tech.html#a0000000070"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -288,7 +288,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/5927bfe119f68e45d03d60642af214e9b15c501c/src/main_results.lean#L189">corollary_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e9a2701aafce890892d09830c1d2cdeb315ce776/src/main_results.lean#L189">corollary_one</a></li>
         </ul>
 
       </div>
@@ -306,7 +306,7 @@
   <li><p>every prime power \(q\) dividing some \(n\in A\) satisfies \(q\leq N^{1-6/\log \log N}\), and </p>
 </li>
   <li><p>every \(n\in A\) satisfies </p>
-<div class="displaymath" id="a0000000070">
+<div class="displaymath" id="a0000000071">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n) \leq 2\log \log N. \]
 </div>
 </li>
@@ -315,7 +315,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000069">
+<div class="proof_wrapper" id="a0000000070">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -324,7 +324,7 @@
   </div>
   <div class="proof_content">
   <p> Let \(k\) be maximal such that there are disjoint \(S_1,\ldots ,S_k\subset A\) where, for each \(1\leq i\leq k\), there exists some \(d_i\in [1,(\log N)^{1/500}]\) such that \(R(S_i)=1/d_i\). Let \(t(d)\) be the number of \(S_i\) such that \(d_i=d\). If there is any \(d\) with \(t(d)\geq d\) then we are done, taking \(S\) to be the union of any \(d\) disjoint \(S_j\) with \(R(S_j)=1/d\). Otherwise, </p>
-<div class="displaymath" id="a0000000071">
+<div class="displaymath" id="a0000000072">
   \[ \sum _i R(S_i)= \sum _{1\leq d\leq (\log N)^{1/500}} \frac{t(d)}{d}\leq (\log N)^{1/500}, \]
 </div>
 <p> and hence if \(A'=A\backslash (S_1\cup \cdots \cup S_k)\) then \(R(A')\geq (\log N)^{1/500}\). </p>
@@ -342,7 +342,7 @@
     <span class="lemma_thmtitle">Sieve Estimate 1</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-tech.html#lem:sieve1">#</a>
-    <a class="icon proof" href="chap-tech.html#a0000000072"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-tech.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -365,13 +365,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p> Let \(N\) be sufficiently large and \(z,y\) be two parameters such that \(\log N \geq z{\gt}y\geq 3\). If \(X\) is the set of all those integers not divisible by any prime in \(p\in [y,z]\) then </p>
-<div class="displaymath" id="a0000000073">
+<div class="displaymath" id="a0000000074">
   \[ \left\lvert  X\cap [N,2N)\right\rvert \ll \frac{\log y}{\log z}N. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000072">
+<div class="proof_wrapper" id="a0000000073">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -380,27 +380,27 @@
   </div>
   <div class="proof_content">
   <p>Lemma&#160;<a href="chap-basic.html#lem:sieve_eratosthenes">2.9</a> yields </p>
-<div class="displaymath" id="a0000000074">
+<div class="displaymath" id="a0000000075">
   \[ \left\lvert X\cap [N,2N)\right\rvert  = \prod _{y\leq p\leq z}\left( 1-\frac{1}{p}\right)N+ O(2^z). \]
 </div>
 <p> Mertens’ estimate <a href="chap-basic.html#lem:mertens2">2.8</a> yields </p>
-<div class="displaymath" id="a0000000075">
+<div class="displaymath" id="a0000000076">
   \[ \prod _{p\leq z}\left( 1-\frac{1}{p}\right)^{-1} \gg \log z \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000076">
+<div class="displaymath" id="a0000000077">
   \[ \prod _{p\leq y}\left( 1-\frac{1}{p}\right)^{-1} \ll \log y, \]
 </div>
 <p> whence </p>
-<div class="displaymath" id="a0000000077">
+<div class="displaymath" id="a0000000078">
   \[ \prod _{y\leq p\leq z}\left( 1-\frac{1}{p}\right)^{-1}\gg \frac{\log z}{\log y}, \]
 </div>
 <p> and hence </p>
-<div class="displaymath" id="a0000000078">
+<div class="displaymath" id="a0000000079">
   \[  \prod _{y\leq p\leq z}\left( 1-\frac{1}{p}\right)\ll \frac{\log y}{\log z}. \]
 </div>
 <p> Therefore the first term above is \(\ll \frac{\log y}{\log z}N\). The second term is </p>
-<div class="displaymath" id="a0000000079">
+<div class="displaymath" id="a0000000080">
   \[ \ll 2^z \leq 2^{\log N}=N^{\log 2}\ll \frac{N}{\log N}\ll \frac{\log y}{\log z}N, \]
 </div>
 <p> and the result follows. </p>
@@ -416,7 +416,7 @@
     <span class="lemma_thmtitle">Sieve Estimate 2</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-tech.html#lem:sieve2">#</a>
-    <a class="icon proof" href="chap-tech.html#a0000000080"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-tech.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -438,13 +438,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p> Let \(N\) be sufficiently large and \(z,y\) be two parameters such that \((\log N)^{1/2}\geq z{\gt}4y\geq 8\). If \(Y\subset [1,N]\) is the set of all those integers divisible by at least two distinct primes \(p_1,p_2\in [y,z]\) where \(4p_1{\lt}p_2\) then </p>
-<div class="displaymath" id="a0000000081">
+<div class="displaymath" id="a0000000082">
   \[ \left\lvert  \{ 1,\ldots ,N\} \backslash Y\right\rvert \ll \left( \frac{\log y}{\log z}\right)^{1/2}N. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000080">
+<div class="proof_wrapper" id="a0000000081">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -454,15 +454,15 @@
   <div class="proof_content">
   <p>Let \(w\in (4y,z)\) be some parameter to be chosen later. Lemma&#160;<a href="chap-tech.html#lem:sieve1">3.4</a> implies that the number of \(n\in \{ 1,\ldots ,N\} \) not divisible by any prime \(p\in [w,z]\) is \(\ll \frac{\log w}{\log z}N\). </p>
 <p>Similarly, for any \(p\in [w,z]\), the number of those \(n\in [1,N]\) divisible by \(p\) and no prime \(q\in [y,p/4)\) is </p>
-<div class="displaymath" id="a0000000082">
+<div class="displaymath" id="a0000000083">
   \[ \ll \frac{\log y}{\log p}\frac{N}{p}. \]
 </div>
 <p> It follows that the number of \(n\in \{ 1,\ldots ,N\} \backslash Y\) is </p>
-<div class="displaymath" id="a0000000083">
+<div class="displaymath" id="a0000000084">
   \[ \ll \left( \frac{\log w}{\log z}+ \log y\sum _{p\geq w}\frac{1}{p\log p}\right)N. \]
 </div>
 <p> By partial summation, \(\sum _{p\geq w}\frac{1}{p\log p}\ll 1/\log w\), and hence </p>
-<div class="displaymath" id="a0000000084">
+<div class="displaymath" id="a0000000085">
   \[ \left\lvert  \{ 1,\ldots ,N\} \backslash Y\right\rvert \ll \left( \frac{\log w}{\log z}+\frac{ \log y}{\log w}\right)N. \]
 </div>
 <p> Choosing \(w=\exp \left( \sqrt{(\log y)(\log z)}\right)\) completes the proof. </p>
