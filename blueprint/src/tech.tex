@@ -3,12 +3,12 @@
 
 This section contains the deductions of the headline results from the main technical proposition, Propostion~\ref{prop:techmain}.
 
-\begin{theorem}[Solution in sets of positive density]\label{th:density_theorem}\uses{lem:sieve2,prop:techmain,lem:turan,lem:mertens1}
+\begin{theorem}[Solution in sets of positive density]\label{th:density_theorem}
 \leanok
 \lean{unit_fractions_upper_density}
 If $A\subset \bbn$ has positive upper density then there is a finite $S\subset A$ such that $\sum_{n\in S}\frac{1}{n}=1$.
 \end{theorem}
-\begin{proof}
+\begin{proof}\uses{lem:sieve2,prop:techmain,lem:turan,lem:mertens1}
 Suppose $A\subset \bbn$ has upper density $\delta>0$. Let $y=C_1/\delta$ and $z=\delta^{-C_2\delta^{-2}}$, where $C_1,C_2$ are two absolute constants to be determined later. It suffices to show that there is some $d\in [y,z]$ and finite $S\subset A$ such that $R(S)=1/d$. Indeed, given such an $S$ we can remove it from $A$ and still have an infinite set of upper density $\delta$, so we can find another $S'\subset A\backslash S$ with $R(S')=1/d'$ for some $d'\in [y,z]$, and so on. After repeating this process at least $\lceil z-y\rceil^2$ times there must be some $d\in [y,z]$ with at least $d$ disjoint $S_1,\ldots,S_d\subset A$ with $R(S_i)=1/d$. Taking $S=S_1\cup\cdots \cup S_d$ yields $R(S)=1$ as required.
 
 By definition of the upper density, there exist arbitrarily large $N$ such that $\abs{A\cap [1,N]}\geq \frac{\delta}{2}N$. The number of $n\in [1,N]$ divisible by some prime power $q\geq N^{1-6/\log\log N}$ is
@@ -26,7 +26,7 @@ In particular, provided $N$ is chosen sufficiently large (depending only on $\de
 In particular, since $y=C_1/\delta$ for some suitably large constant $C_1>0$, we have that $R(A_N)\geq 4/y$, say. All of the conditions of Proposition~\ref{prop:techmain} are now satisfied (provided $N$ is chosen sufficiently large in terms of $\delta$), and hence there is some $S\subset A_N\subset A$ such that $R(S)=1/d$ for some $d\in [y,z]$, which suffices as discussed above.
 \end{proof}
 
-\begin{theorem}[Solution in sets of positive logarithmic density, quantitative version]\label{th:log_density_theorem}\uses{lem:sieve1,cor:tech_cor,lem:mertens1,lem:turan}
+\begin{theorem}[Solution in sets of positive logarithmic density, quantitative version]\label{th:log_density_theorem}
 \leanok
 \lean{unit_fractions_upper_log_density}
 There is a constant $C>0$ such that the following holds. If $A\subset \{1,\ldots,N\}$ and
@@ -34,6 +34,7 @@ There is a constant $C>0$ such that the following holds. If $A\subset \{1,\ldots
 then there is an $S\subset A$ such that $\sum_{n\in S}\frac{1}{n}=1$.
 \end{theorem}
 \begin{proof}
+  \uses{lem:sieve1,cor:tech_cor,lem:mertens1,lem:turan}
   Let $C\geq 2$ be an absolute constant to be chosen shortly, and for brevity let $\epsilon = \log\log\log N/\log\log N$, so that we may assume that $R(A)\geq C\epsilon \log N$. Since $\sum_{n\leq X}\frac{1}{n}\ll \log X$, if $A'=A\cap [N^\epsilon,N]$ we have (assuming $C$ is sufficiently large) $R(A')\geq \frac{C}{2}\epsilon\log N$.
 
   Let $X$ be those integers $n\in [1,N]$ not divisible by any prime $p\in [5,(\log N)^{1/1200}]$. Lemma~\ref{lem:sieve1} implies that, for any $x\geq \exp(\sqrt{\log N})$,
@@ -86,12 +87,13 @@ then there is an $S\subset A$ such that $\sum_{n\in S}\frac{1}{n}=1$.
 
 \section{Sieve Lemmas}
 
-\begin{lemma}[Sieve Estimate 1]\label{lem:sieve1}\uses{lem:sieve_eratosthenes,lem:mertens2}
+\begin{lemma}[Sieve Estimate 1]\label{lem:sieve1}
 \leanok
+\lean{sieve_lemma_one}
 Let $N$ be sufficiently large and $z,y$ be two parameters such that $\log N \geq z>y\geq 3$. If $X$ is the set of all those integers not divisible by any prime in $p\in [y,z]$ then
 \[\abs{ X\cap [N,2N)}\ll \frac{\log y}{\log z}N.\]
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:sieve_eratosthenes,lem:mertens2}
   Lemma~\ref{lem:sieve_eratosthenes} yields
   \[\abs{X\cap [N,2N)} = \prod_{y\leq p\leq z}\brac{1-\frac{1}{p}}N+ O(2^z).\]
   Mertens' estimate \ref{lem:mertens2} yields
@@ -108,11 +110,13 @@ Let $N$ be sufficiently large and $z,y$ be two parameters such that $\log N \geq
 \end{proof}
 
 
-\begin{lemma}[Sieve Estimate 2]\label{lem:sieve2}\uses{lem:sieve1}
+\begin{lemma}[Sieve Estimate 2]\label{lem:sieve2}
+  \leanok
+  \lean{sieve_lemma_two}
 Let $N$ be sufficiently large and $z,y$ be two parameters such that $(\log N)^{1/2}\geq z>4y\geq 8$. If $Y\subset [1,N]$ is the set of all those integers divisible by at least two distinct primes $p_1,p_2\in [y,z]$ where $4p_1<p_2$ then
 \[\abs{ \{1,\ldots,N\}\backslash Y}\ll \brac{\frac{\log y}{\log z}}^{1/2}N.\]
 \end{lemma}
-\begin{proof}
+\begin{proof}\uses{lem:sieve1}
   Let $w\in (4y,z)$ be some parameter to be chosen later. Lemma~\ref{lem:sieve1} implies that the number of $n\in \{1,\ldots,N\}$ not divisible by any prime $p\in [w,z]$ is $\ll \frac{\log w}{\log z}N$.
 
   Similarly, for any $p\in [w,z]$, the number of those $n\in [1,N]$ divisible by $p$ and no prime  $q\in [y,p/4)$ is

@@ -177,11 +177,11 @@ as required.
 \end{proof}
 
 \begin{lemma}\label{lem:cos_prod_bound}
-\uses{lem:cos_bound}
 For any finite set $A$ such that $n\leq N$ for all $n\in A$, and integers $k,h$, if $kh\equiv h_n\pmod{n}$ for $\abs{h_n}\leq n/2$ for all $n\in A$, then
 \[C(A;h,k)\leq \exp\brac{-\frac{2}{N^2}\sum_{n\in A}h_n^2}.\]
 \end{lemma}
 \begin{proof}
+\uses{lem:cos_bound}
 We first note that $\abs{\cos(\pi kh/n)}=\abs{\cos(\pi h_n/n)}$ for all $n\in A$, by periodicity of cosine. By Lemma~\ref{lem:cos_bound}, therefore
 \[\abs{\cos(\pi kh/n)}\leq \exp(-2h_n^2/n^2)\leq \exp(-\tfrac{2}{N^2}h_n^2),\]
 and the lemma follows taking the product over all $n\in A$.
@@ -189,11 +189,11 @@ and the lemma follows taking the product over all $n\in A$.
 
 
 \begin{lemma}\label{lem:minor1_bound}
-\uses{lem:smooth_lcm,lem:cos_prod_bound}
 Suppose that $N$ is sufficiently large and $M\geq 8$. Let $k\geq 1$ be an integer. Let $A\subset [M,N]$ be a set of integers such that if $q\in\mathcal{Q}_A$ then $q\leq \frac{MK^2}{N^2(\log N)^2}$. Then
 \[\sum_{h\in \mathfrak{m}_1(A,k,K,M/\log N)} C(A;h,k)\leq 1/8.\]
 \end{lemma}
 \begin{proof}
+\uses{lem:smooth_lcm,lem:cos_prod_bound}
 We show in fact that for any $h\in \mathfrak{m}_1(A,k,K,M/\log N)$ we have
 \[C(A;h,k)\leq 1/[A]^2.\]
 The result then immediately follows since $\abs{\mathfrak{m}_1(A,k,K,M/\log N)}\leq \abs{J(A)}\leq [A]$, assuming $[A]\geq 8$, which is true since $[A]\geq \min(A)\geq M\geq 8$.
@@ -210,10 +210,10 @@ assuming $N$ is sufficiently large.
 \begin{lemma}\label{lem:minor2_ind_bound}
 There is a constant $c>0$ such that the following holds.
 Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq cLK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L/q)$ where $I$ is the interval of length $K$ centred at $h$. Then
-\uses{lem:cos_bound}
 \[C(A;h,k)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 \end{lemma}
 \begin{proof}
+\uses{lem:cos_bound}
 For any $n\in A$, let $\mathcal{Q}(n)$ denote all those $q\in \mathcal{Q}$ such that $n\in A_q$. Therefore, for any real $x_n\geq 0$,
 \[\prod_{n\in A}x_n=\prod_{n\in A}\prod_{q\in \mathcal{Q}(n)}x_n^{1/\abs{\mathcal{Q}(n)}}
 =\prod_{q\in\mathcal{Q}}\prod_{n\in A_q}x_n^{1/\abs{\mathcal{Q}(n)}}.\]

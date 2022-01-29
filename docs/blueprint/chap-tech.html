@@ -98,24 +98,6 @@
     <a class="icon proof" href="chap-tech.html#th:density_theorem">#</a>
     <a class="icon proof" href="chap-tech.html#a0000000059"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-tech.html#lem:sieve2">Lemma 3.5</a></li>
-          <li><a href="chap-techprop.html#prop:techmain">Proposition 6.2</a></li>
-          <li><a href="chap-basic.html#lem:turan">Lemma 2.3</a></li>
-          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
-        </ul>
-
-      </div>
-    </div>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
       <div class="modal-content">
@@ -125,7 +107,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/9b915e620d46d525f67e1867718c6261e335534c/src/main_results.lean#L38">unit_fractions_upper_density</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e2db356d55d9a7eb9c3d078094c92e0ce007ce99/src/main_results.lean#L38">unit_fractions_upper_density</a></li>
         </ul>
 
       </div>
@@ -146,7 +128,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>Suppose \(A\subset \mathbb {N}\) has upper density \(\delta {\gt}0\). Let \(y=C_1/\delta \) and \(z=\delta ^{-C_2\delta ^{-2}}\), where \(C_1,C_2\) are two absolute constants to be determined later. It suffices to show that there is some \(d\in [y,z]\) and finite \(S\subset A\) such that \(R(S)=1/d\). Indeed, given such an \(S\) we can remove it from \(A\) and still have an infinite set of upper density \(\delta \), so we can find another \(S'\subset A\backslash S\) with \(R(S')=1/d'\) for some \(d'\in [y,z]\), and so on. After repeating this process at least \(\lceil z-y\rceil ^2\) times there must be some \(d\in [y,z]\) with at least \(d\) disjoint \(S_1,\ldots ,S_d\subset A\) with \(R(S_i)=1/d\). Taking \(S=S_1\cup \cdots \cup S_d\) yields \(R(S)=1\) as required. </p>
+  <p> Suppose \(A\subset \mathbb {N}\) has upper density \(\delta {\gt}0\). Let \(y=C_1/\delta \) and \(z=\delta ^{-C_2\delta ^{-2}}\), where \(C_1,C_2\) are two absolute constants to be determined later. It suffices to show that there is some \(d\in [y,z]\) and finite \(S\subset A\) such that \(R(S)=1/d\). Indeed, given such an \(S\) we can remove it from \(A\) and still have an infinite set of upper density \(\delta \), so we can find another \(S'\subset A\backslash S\) with \(R(S')=1/d'\) for some \(d'\in [y,z]\), and so on. After repeating this process at least \(\lceil z-y\rceil ^2\) times there must be some \(d\in [y,z]\) with at least \(d\) disjoint \(S_1,\ldots ,S_d\subset A\) with \(R(S_i)=1/d\). Taking \(S=S_1\cup \cdots \cup S_d\) yields \(R(S)=1\) as required. </p>
 <p>By definition of the upper density, there exist arbitrarily large \(N\) such that \(\left\lvert A\cap [1,N]\right\rvert \geq \frac{\delta }{2}N\). The number of \(n\in [1,N]\) divisible by some prime power \(q\geq N^{1-6/\log \log N}\) is </p>
 <div class="displaymath" id="a0000000060">
   \[ \ll N \sum _{N^{1-6/\log \log N}{\lt}q\leq N}\frac{1}{q}\ll \frac{N}{\log \log N} \]
@@ -184,24 +166,6 @@
     <a class="icon proof" href="chap-tech.html#th:log_density_theorem">#</a>
     <a class="icon proof" href="chap-tech.html#a0000000063"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-tech.html#lem:sieve1">Lemma 3.4</a></li>
-          <li><a href="chap-tech.html#cor:tech_cor">Corollary 3.3</a></li>
-          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
-          <li><a href="chap-basic.html#lem:turan">Lemma 2.3</a></li>
-        </ul>
-
-      </div>
-    </div>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
       <div class="modal-content">
@@ -211,7 +175,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/9b915e620d46d525f67e1867718c6261e335534c/src/main_results.lean#L42">unit_fractions_upper_log_density</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e2db356d55d9a7eb9c3d078094c92e0ce007ce99/src/main_results.lean#L42">unit_fractions_upper_log_density</a></li>
         </ul>
 
       </div>
@@ -236,7 +200,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>Let \(C\geq 2\) be an absolute constant to be chosen shortly, and for brevity let \(\epsilon = \log \log \log N/\log \log N\), so that we may assume that \(R(A)\geq C\epsilon \log N\). Since \(\sum _{n\leq X}\frac{1}{n}\ll \log X\), if \(A'=A\cap [N^\epsilon ,N]\) we have (assuming \(C\) is sufficiently large) \(R(A')\geq \frac{C}{2}\epsilon \log N\). </p>
+  <p> Let \(C\geq 2\) be an absolute constant to be chosen shortly, and for brevity let \(\epsilon = \log \log \log N/\log \log N\), so that we may assume that \(R(A)\geq C\epsilon \log N\). Since \(\sum _{n\leq X}\frac{1}{n}\ll \log X\), if \(A'=A\cap [N^\epsilon ,N]\) we have (assuming \(C\) is sufficiently large) \(R(A')\geq \frac{C}{2}\epsilon \log N\). </p>
 <p>Let \(X\) be those integers \(n\in [1,N]\) not divisible by any prime \(p\in [5,(\log N)^{1/1200}]\). Lemma&#160;<a href="chap-tech.html#lem:sieve1">3.4</a> implies that, for any \(x\geq \exp (\sqrt{\log N})\), </p>
 <div class="displaymath" id="a0000000065">
   \[ \left\lvert X\cap [x,2x)\right\rvert \ll \frac{x}{\log \log N} \]
@@ -288,7 +252,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/9b915e620d46d525f67e1867718c6261e335534c/src/main_results.lean#L189">corollary_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e2db356d55d9a7eb9c3d078094c92e0ce007ce99/src/main_results.lean#L189">corollary_one</a></li>
         </ul>
 
       </div>
@@ -344,22 +308,6 @@
     <a class="icon proof" href="chap-tech.html#lem:sieve1">#</a>
     <a class="icon proof" href="chap-tech.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-basic.html#lem:sieve_eratosthenes">Lemma 2.9</a></li>
-          <li><a href="chap-basic.html#lem:mertens2">Lemma 2.8</a></li>
-        </ul>
-
-      </div>
-    </div>
 
   </div>
   </div>
@@ -379,7 +327,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>Lemma&#160;<a href="chap-basic.html#lem:sieve_eratosthenes">2.9</a> yields </p>
+  <p> Lemma&#160;<a href="chap-basic.html#lem:sieve_eratosthenes">2.9</a> yields </p>
 <div class="displaymath" id="a0000000075">
   \[ \left\lvert X\cap [N,2N)\right\rvert  = \prod _{y\leq p\leq z}\left( 1-\frac{1}{p}\right)N+ O(2^z). \]
 </div>
@@ -418,21 +366,6 @@
     <a class="icon proof" href="chap-tech.html#lem:sieve2">#</a>
     <a class="icon proof" href="chap-tech.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
-    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
-</button>
-    <div class="modal-container">
-      <div class="modal-content">
-        <header>
-          <h1>Uses</h1>
-          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
-</button>
-        </header>
-                <ul class="uses">
-          <li><a href="chap-tech.html#lem:sieve1">Lemma 3.4</a></li>
-        </ul>
-
-      </div>
-    </div>
 
   </div>
   </div>
@@ -452,7 +385,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>Let \(w\in (4y,z)\) be some parameter to be chosen later. Lemma&#160;<a href="chap-tech.html#lem:sieve1">3.4</a> implies that the number of \(n\in \{ 1,\ldots ,N\} \) not divisible by any prime \(p\in [w,z]\) is \(\ll \frac{\log w}{\log z}N\). </p>
+  <p> Let \(w\in (4y,z)\) be some parameter to be chosen later. Lemma&#160;<a href="chap-tech.html#lem:sieve1">3.4</a> implies that the number of \(n\in \{ 1,\ldots ,N\} \) not divisible by any prime \(p\in [w,z]\) is \(\ll \frac{\log w}{\log z}N\). </p>
 <p>Similarly, for any \(p\in [w,z]\), the number of those \(n\in [1,N]\) divisible by \(p\) and no prime \(q\in [y,p/4)\) is </p>
 <div class="displaymath" id="a0000000083">
   \[ \ll \frac{\log y}{\log p}\frac{N}{p}. \]

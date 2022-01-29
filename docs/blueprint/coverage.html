@@ -236,7 +236,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.12 (lem:cos_prod_bound)</div>
-      <div class="thm_thm_content"><p>  For any finite set \(A\) such that \(n\leq N\) for all \(n\in A\), and integers \(k,h\), if \(kh\equiv h_n\pmod{n}\) for \(\left\lvert h_n\right\rvert \leq n/2\) for all \(n\in A\), then </p>
+      <div class="thm_thm_content"><p> For any finite set \(A\) such that \(n\leq N\) for all \(n\in A\), and integers \(k,h\), if \(kh\equiv h_n\pmod{n}\) for \(\left\lvert h_n\right\rvert \leq n/2\) for all \(n\in A\), then </p>
 <div class="displaymath" id="a0000000135">
   \[ C(A;h,k)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}h_n^2\right). \]
 </div>
@@ -247,7 +247,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.13 (lem:minor1_bound)</div>
-      <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large and \(M\geq 8\). Let \(k\geq 1\) be an integer. Let \(A\subset [M,N]\) be a set of integers such that if \(q\in \mathcal{Q}_A\) then \(q\leq \frac{MK^2}{N^2(\log N)^2}\). Then </p>
+      <div class="thm_thm_content"><p> Suppose that \(N\) is sufficiently large and \(M\geq 8\). Let \(k\geq 1\) be an integer. Let \(A\subset [M,N]\) be a set of integers such that if \(q\in \mathcal{Q}_A\) then \(q\leq \frac{MK^2}{N^2(\log N)^2}\). Then </p>
 <div class="displaymath" id="a0000000138">
   \[ \sum _{h\in \mathfrak {m}_1(A,k,K,M/\log N)} C(A;h,k)\leq 1/8. \]
 </div>
@@ -258,7 +258,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.14 (lem:minor2_ind_bound)</div>
-      <div class="thm_thm_content"><p> There is a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq cLK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then  </p>
+      <div class="thm_thm_content"><p> There is a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq cLK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then </p>
 <div class="displaymath" id="a0000000144">
   \[ C(A;h,k)\leq N^{-4\left\lvert \mathcal{Q}_A\backslash \mathcal{D}\right\rvert }. \]
 </div>
@@ -730,6 +730,33 @@ Click chapter titles to see missing items.
     </li>
     
     <li>
+      <div class="thm_thmheading">Lemma 4.12 (lem:cos_prod_bound)</div>
+      <div class="thm_thm_content"><p> For any finite set \(A\) such that \(n\leq N\) for all \(n\in A\), and integers \(k,h\), if \(kh\equiv h_n\pmod{n}\) for \(\left\lvert h_n\right\rvert \leq n/2\) for all \(n\in A\), then </p>
+<div class="displaymath" id="a0000000135">
+  \[ C(A;h,k)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}h_n^2\right). \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.13 (lem:minor1_bound)</div>
+      <div class="thm_thm_content"><p> Suppose that \(N\) is sufficiently large and \(M\geq 8\). Let \(k\geq 1\) be an integer. Let \(A\subset [M,N]\) be a set of integers such that if \(q\in \mathcal{Q}_A\) then \(q\leq \frac{MK^2}{N^2(\log N)^2}\). Then </p>
+<div class="displaymath" id="a0000000138">
+  \[ \sum _{h\in \mathfrak {m}_1(A,k,K,M/\log N)} C(A;h,k)\leq 1/8. \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.14 (lem:minor2_ind_bound)</div>
+      <div class="thm_thm_content"><p> There is a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq cLK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then </p>
+<div class="displaymath" id="a0000000144">
+  \[ C(A;h,k)\leq N^{-4\left\lvert \mathcal{Q}_A\backslash \mathcal{D}\right\rvert }. \]
+</div>
+</div>
+    </li>
+    
+    <li>
       <div class="thm_thmheading">Lemma 4.15 (lem:minor2_bound)</div>
       <div class="thm_thm_content"><p> There is a constant \(c{\gt}0\) such that the following holds. Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals. Let \(k\) be an integer such that \(1\leq k \leq N/2\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
 <ol class="enumerate">
@@ -912,36 +939,6 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  
-  <h3>3 Deduction of the main results</h3>
-  <ul class="coverage">
-    
-    <li>
-      <div class="thm_thmheading">Theorem 3.1 (th:density_theorem)</div>
-      <div class="thm_thm_content"><p>  If \(A\subset \mathbb {N}\) has positive upper density then there is a finite \(S\subset A\) such that \(\sum _{n\in S}\frac{1}{n}=1\). </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Theorem 3.2 (th:log_density_theorem)</div>
-      <div class="thm_thm_content"><p>  There is a constant \(C{\gt}0\) such that the following holds. If \(A\subset \{ 1,\ldots ,N\} \) and </p>
-<div class="displaymath" id="a0000000064">
-  \[ \sum _{n\in A}\frac{1}{n}\geq C \frac{\log \log \log N}{\log \log N}\log N \]
-</div>
-<p> then there is an \(S\subset A\) such that \(\sum _{n\in S}\frac{1}{n}=1\). </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Lemma 3.4 (lem:sieve1)</div>
-      <div class="thm_thm_content"><p> Let \(N\) be sufficiently large and \(z,y\) be two parameters such that \(\log N \geq z{\gt}y\geq 3\). If \(X\) is the set of all those integers not divisible by any prime in \(p\in [y,z]\) then </p>
-<div class="displaymath" id="a0000000074">
-  \[ \left\lvert  X\cap [N,2N)\right\rvert \ll \frac{\log y}{\log z}N. \]
-</div>
-</div>
-    </li>
-    
-  </ul>
   
 </section>
 
