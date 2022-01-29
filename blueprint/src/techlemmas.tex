@@ -83,6 +83,7 @@ and furthermore each $q\leq N$ can appear as at most one such $q_i$, since after
 \[R(B)> R(A) -\frac{2}{(\log N)^{1/100}}\sum_{q\leq N}\frac{1}{q}\geq R(A)-\frac{1}{(\log N)^{1/200}},\]
 since $\sum_{q\leq N}\frac{1}{q}\ll \log\log N$.
 \end{proof}
+
 \begin{lemma}\label{lem:pisq}
 Suppose that $N$ is sufficiently large and $N\geq M\geq N^{1/2}$. Let $\alpha > 2/(\log N)^{1/200}$ and $A\subset [M,N]$ be a set of integers such that
 \[R(A) \geq \alpha+\frac{1}{(\log N)^{1/200}}\]
@@ -91,7 +92,8 @@ and if $q\in\mathcal{Q}_A$ then $q\leq M/(\log N)^{1/100}$.
 There is a subset $B\subset A$ such that $R(B)\in [\alpha-1/M,\alpha)$ and, for all $q\in \mathcal{Q}_B$,
 \[R(B;q)\geq \frac{1}{(\log N)^{1/100}}.\]
 \end{lemma}
-\begin{proof}\uses{lem:pisqa}
+\begin{proof}
+\uses{lem:pisqa}
 We first apply Lemma~\ref{lem:pisqa} to produce some $A'\subset A$ such that $R(A')\geq \alpha$ and $R(A';q) \geq 2/(\log N)^{1/100}$ for all $q\in\mathcal{Q}_{A'}$.
 
 We now argue that whenever $D$ is such that $R(D)\geq \alpha$ and $R(D;q) \geq (\log N)^{-1/100}$ for all $q\in \mathcal{Q}_D$ there exists some $x\in D$ such that $R(D\backslash \{x\};q)\geq (\log N)^{-1/100}$ for all $q\in\mathcal{Q}_{D}$. Given this, the lemma immediately follows, since we can continue removing such elements from $A'$ one at time until $R(B)$ falls in the required interval.

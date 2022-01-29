@@ -130,6 +130,7 @@ Rewrite each factor in the product using $1+e(\theta/n)=2e(\theta/2n)\cos(\pi \t
 \[\Re\brac{\prod_{n\in A}(1+e(\theta/n))} = \Re\brac{ 2^{\abs{A}}e(\theta R(A)/2)\prod_{n\in A}\cos(\pi \theta/n)}.\]
 Taking out real factors, this is $2^{\abs{A}}\prod_{n\in A}\cos(\pi \theta/n)\Re e(\theta R(A)/2)$, and the claim follows.
 \end{proof}
+
 \begin{lemma}\label{lem:majorarcs}
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$.
 \[\sum_{h\in \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))} \geq 0.\]
@@ -262,7 +263,6 @@ kN\sum_{\mathcal{D}\subsetneq \mathcal{Q}}N^{-3\abs{\mathcal{Q}\backslash \mathc
 \end{proof}
 
 \begin{proposition}\label{prop:fourier}
-\leanok
 There is a constant $c>0$ such that the following holds. Suppose that $N$ is sufficiently large. Let $K,L,M$ be reals and $k$ an integer such that $1\leq k\leq N/2$ and $M>K$. Let $A\subset [M,N]$ be a set of integers such that
 \begin{enumerate}
 \item $R(A)\in [2/k-1/M,2/k)$,

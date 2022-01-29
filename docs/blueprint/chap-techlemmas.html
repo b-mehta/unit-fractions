@@ -74,7 +74,7 @@
   <a href="dep_graph.html">Dependency graph</a>
   </li>
   <li>	
-  <a href="https://leanprover-community.github.io/sphere-eversion/">Project home</a>
+  <a href="https://b-mehta.github.io/unit-fractions/">Project home</a>
   </li>
 </ul>
 </nav>
@@ -272,7 +272,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000175">
+<div class="proof_wrapper" id="a0000000173">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -281,22 +281,22 @@
   </div>
   <div class="proof_content">
   <p>We construct a sequence of decreasing sets \(A=A_0\supsetneq A_1\supsetneq \cdots \supsetneq A_i\) as follows. Given some \(A_i\), if there is a prime power \(q_i\in \mathcal{Q}_{A_i}\) such that </p>
-<div class="displaymath" id="a0000000176">
+<div class="displaymath" id="a0000000175">
   \[ R(A_i;q_i){\lt} \frac{2}{(\log N)^{1/100}}, \]
 </div>
 <p> then we let \(A_{i+1}=A_i\backslash (A_i)_{q_i}\). If no such \(q_i\) exists then we halt the construction. This process must obviously terminate in some finite time (since some non-empty amount of \(A_i\) is being removed at each step). Suppose that it halts at \(A_j=B\), say. The amount lost from \(R(A)\) at step \(i\) is </p>
-<div class="displaymath" id="a0000000177">
+<div class="displaymath" id="a0000000176">
   \[ \sum _{n\in (A_i)_{q_i}}\frac{1}{n}=\frac{1}{q_i}R(A_i;q_i){\lt} \frac{2}{q_i(\log N)^{1/100}}, \]
 </div>
 <p> and furthermore each \(q\leq N\) can appear as at most one such \(q_i\), since after removing \((A_i)_{q_i}\) anything left in \(A_i\) cannot have \(q_i\) as a coprime divisor. It follows that </p>
-<div class="displaymath" id="a0000000178">
+<div class="displaymath" id="a0000000177">
   \[ R(B){\gt} R(A) -\frac{2}{(\log N)^{1/100}}\sum _{q\leq N}\frac{1}{q}\geq R(A)-\frac{1}{(\log N)^{1/200}}, \]
 </div>
 <p> since \(\sum _{q\leq N}\frac{1}{q}\ll \log \log N\). </p>
 
   </div>
 </div>
-<p> <div class="lemma_thmwrapper" id="lem:pisq">
+<p><div class="lemma_thmwrapper" id="lem:pisq">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
@@ -304,6 +304,8 @@
     <span class="lemma_thmlabel">5.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:pisq">#</a>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000178"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
 
   </div>
   </div>
@@ -320,7 +322,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000173">
+<div class="proof_wrapper" id="a0000000178">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
