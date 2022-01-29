@@ -49,6 +49,7 @@ jobs:
         run: |
           leanpkg configure
           lean --json --make src | python scripts/detect_errors.py
+
       - name: lint
         run: |
           ./scripts/mk_all.sh
