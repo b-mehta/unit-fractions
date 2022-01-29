@@ -1,0 +1,142 @@
+\chapter{Basic Estimates}
+\label{chap:basic}
+
+This section contains standard estimates from analytic number theory that will be required.
+
+\begin{lemma}\label{lem:omegasum}\uses{lem:mertensprimes}
+For any $X\geq 3$
+\[\sum_{n\leq X}\omega(n) = X\log\log X+O(X).\]
+\end{lemma}
+\begin{proof}
+Since $\omega(n) = \sum_{p\leq n}1_{p\mid n}$, the left-hand side equals, after a change in the order of summation,
+\[\sum_{p\leq X}\sum_{n\leq X}1_{p\mid n} = \sum_{p\leq X}\left\lfloor\frac{X}{p}\right\rfloor.\]
+Since $\lfloor x\rfloor=x+O(1)$, this is equal to
+\[X\sum_{p\leq X}\frac{1}{p} +O(\pi(X)) = X\log\log X+O(X),\]
+using Lemma~\ref{lem:mertensprimes} and the trivial estimate $\pi(X)\ll X$.
+\end{proof}
+
+\begin{lemma}\label{lem:omegasquaredsum}\uses{lem:mertensprimes}
+For any $X\geq 3$
+\[\sum_{n\leq X}\omega(n)^2 \leq X(\log\log X)^2+O(X\log\log X).\]
+\end{lemma}
+\begin{proof}
+Since $\omega(n) = \sum_{p\leq n}1_{p\mid n}$, the left-hand side is equal to, after expanding the sum and rearranging,
+\[\sum_{p,q\leq X}\sum_{n\leq X}1_{p\mid n}1_{q\mid n}.\]
+The part of the sum where $p=q$ is
+\[\sum_{p\leq X}\sum_{n\leq X}\lfloor X/p\rfloor = X\log\log X+O(X),\]
+as in the proof of Lemma~\ref{lem:omegasum}. If $p\neq q$, then $p\mid n$ and $q\mid n$ if and only if $pq\mid n$, and so the sum over $n$ is bounded above by
+\[\sum_{n\leq X}1_{pq\mid n}= \lfloor X/pq\rfloor \leq X/pq.\]
+Therefore
+\[\sum_{\substack{p,q\leq X\\ p\neq q}}\sum_{n\leq X}1_{p\mid n}1_{q\mid n}\leq X\sum_{\substack{p,q\leq X\\ p\neq q}}\frac{1}{pq}\leq X\sum_{p,q\leq X}\frac{1}{pq}\leq X\brac{\sum_{p\leq X}\frac{1}{p}}^2.\]
+By Lemma~\ref{lem:mertensprimes} this is $X(\log\log X+O(1))^2 = X(\log\log X)^2+O(X\log\log X)$. The lemma follows by combining the estimates on the two parts of the sum.
+\end{proof}
+
+\begin{lemma}[Tur\'{a}n's estimate]\label{lem:turan}
+\uses{lem:omegasum,lem:omegasquaredsum}
+%\lean{true_iff_false}
+For any $X\geq 3$
+\[\sum_{n\leq X}(\omega(n) - \log\log X)^2 \ll X\log\log X.\]
+\end{lemma}
+\begin{proof}
+The left-hand side equals
+\[\sum_{n\leq X}\omega(n)^2 - 2\log\log X\sum_{n\leq X}\omega(n)+\lfloor X\rfloor (\log\log X)^2.\]
+The first summand is at most, by Lemma~\ref{lem:omegasquaredsum},
+\[X(\log\log X)^2 +O(X\log\log X).\]
+The second summand is equal to, by Lemma~\ref{lem:omegasum},
+\[-2\log\log X(X\log\log X+O(X)) = -2X(\log\log X)^2 +O(X\log\log X).\]
+The third summand is equal to
+\[(X+O(1))(\log\log X)^2 = X(\log\log X)^2 + O(X\log\log X).\]
+Therefore the main terms cancel, and
+\[\sum_{n\leq X}(\omega(n) - \log\log X)^2\leq O(X\log\log X)\]
+as required.
+\end{proof}
+
+\begin{lemma}[Chebyshevs' estimate]\label{lem:chebyshev}
+\leanok
+For any $X\geq 3$
+\[\pi(X) \ll \frac{X}{\log X}.\]
+\end{lemma}
+\begin{proof}
+\leanok
+\end{proof}
+
+\begin{lemma}[Divisor bound]{\label{lem:divisor_bound}}
+\leanok
+For any $\epsilon$ such that $0<\epsilon\leq 1$, if $n$ is sufficiently large depending on $\epsilon$, then
+\[\tau(n) \leq n^{(1+\epsilon)\frac{\log 2}{\log\log n}}.\]
+\end{lemma}
+\begin{proof}
+We first show that, for any real $K\geq 2$,
+\[\tau(n) \leq n^{1/K}K^{2^K}.\]
+Write $n$ as the product of unique prime powers $n=p_1^{k_1}\cdots p_r^{k_r}$, so that
+\[\frac{\tau(n)}{n^{1/K}} = \frac{\prod_{i=1}^r (k_i+1)}{\prod_{i=1}^r p_i^{k_i/K}} = \prod_{i=1}^r \frac{k_i+1}{p_i^{k_i/K}}.\]
+If $p_i>2^K$ then
+\[\frac{k_i+1}{p_i^{k_i/K}}\leq \frac{k_i+1}{2^{k_i}}\leq 1,\]
+since $1+k \leq 2^k$ for all integer $k\geq 0$ by Bernoulli's inequality. Therefore
+\[ \prod_{i=1}^r \frac{k_i+1}{p_i^{k_i/K}} \leq \prod_{\substack{1\leq i\leq r\\ p_i<2^K}}\frac{k_i+1}{p_i^{k_i/K}}.\]
+If $p_i<2^K$ then, since $p_i\geq 2$,
+\[\frac{k_i+1}{p^{k_i/K}}\leq \frac{k_i+1}{2^{k_i/K}}\leq \frac{k_i+1}{k_i/K+1/2},\]
+using the fact that $x+1/2\leq 2^x$ for all $x\geq 0$. Since $K\geq 2$ the denominator here is $\geq (1+k_i)/K$, and so $\frac{k_i+1}{p^{k_i/K}}\leq K$. Therefore
+\[\frac{\tau(n)}{n^{1/K}}\leq \prod_{\substack{1\leq i\leq r\\ p_i<2^K}} K\leq K^{\pi(2^K)}\leq K^{2^K},\]
+as required.
+
+The second part of the proof is to apply the first part with
+\[K=\brac{1+\epsilon/2}^{-1}\frac{\log\log n}{\log 2}.\]
+(The right-hand side tends to $\infty$ as $n\to\infty$, so for sufficiently large $n$ we have $K\geq 2$ as required.)
+
+Note that $2^K= (\log n)^{\frac{2}{2+\epsilon}}\leq (\log n)^{1-\epsilon}$ (since $1-\epsilon>\frac{2}{2+\epsilon}$, since $\epsilon\leq 1$) and
+\[\log K \leq \log\log\log n.\]
+Taking logarithms of the inequality in the first part,
+\[\log \tau(n) \leq \frac{\log n}{K}+2^K\log K\leq \log n\brac{\frac{1}{K}+\frac{\log\log\log n}{(\log n)^\epsilon}}\]
+\[= \log n\frac{\log 2}{\log\log n}\brac{1+\epsilon/2+\frac{(\log\log\log n)(\log\log n)}{(\log 2)(\log n)^{\epsilon}}}.\]
+For any fixed $\epsilon>0$, the function $\frac{(\log\log\log n)(\log\log n)}{(\log 2)(\log n)^{\epsilon}}\to 0$ as $n\to \infty$, so for sufficiently large $n$ it is $\leq \epsilon/2$, and hence
+\[\log \tau(n) \leq  \log n\frac{\log 2}{\log\log n}(1+\epsilon)\]
+as required.
+
+\end{proof}
+
+\begin{lemma}[Mertens' estimate]\label{lem:mertens1}
+There exists a constant $c$ such that
+\[\sum_{q\leq X}\frac{1}{q} = \log\log X+c+O(1/\log X),\]
+where the sum is restricted to prime powers.
+\end{lemma}
+\begin{proof}
+
+\end{proof}
+
+\begin{lemma}[Mertens' estimate, just for primes]\label{lem:mertensprimes}\uses{lem:mertens1}
+There exists a constant $c$ such that
+\[\sum_{p\leq X}\frac{1}{p} = \log\log X+c+O(1/\log X),\]
+where the sum is restricted to primes.
+\end{lemma}
+
+\begin{lemma}[Mertens' product estimate]\label{lem:mertens2}\uses{lem:mertens1}
+For any $X\geq 2$,
+\[\prod_{p\leq X}\brac{1-\frac{1}{p}}^{-1}\asymp \log X.\]
+\end{lemma}
+\begin{proof}
+
+\end{proof}
+
+\begin{lemma}[Sieve of Eratosthenes-Legendre]\label{lem:sieve_eratosthenes}
+For any $x,y\geq 0$ and $u\geq v\geq 1$
+\[\#\{ n\in (x,x+y] : p\mid n\implies p\not\in [u,v]\} = y\prod_{u\leq p\leq v}\brac{1-\frac{1}{p}}+O(2^v).\]
+\end{lemma}
+\begin{proof}
+Let $P = \prod_{u\leq p\leq v}p$. The left-hand side of the estimate in the lemma can be written as
+\[\sum_{x\leq n<x+y}1_{(n,P)=1}.\]
+Using the identity $\sum_{d\mid m}\mu(d) = 1$ if $m=1$ and $0$ otherwise, the fact that $d\mid (n,P)$ if and only if $d\mid n$ and $d\mid P$, and that $\sum_{n\leq z}1_{d\mid n}=\left\lfloor\frac{z}{d}\right\rfloor$ for any $z\geq 0$,
+\[
+\sum_{x< n\leq x+y}1_{(n,P)=1}= \sum_{x< n\leq x+y}\sum_{d\mid (n,P)}\mu(d)\]
+\[= \sum_{x< n\leq x+y}\sum_{\substack{d\mid n\\ d\mid P}}\mu(d)\]
+\[=\sum_{d\mid P}\mu(d)\sum_{x< n\leq x+y}1_{d\mid n}\]
+\[=\sum_{d\mid P}\mu(d)\left(\left\lfloor \frac{x+y}{d}\right\rfloor-\left\lfloor\frac{x}{d}\right\rfloor\right).\]
+
+Since $\lfloor X\rfloor = X+O(1)$ for any $X$, we have
+\[\left\lfloor \frac{x+y}{d}\right\rfloor-\left\lfloor\frac{x}{d}\right\rfloor=\frac{y}{d}+O(1)\]
+ for any $x,y,d$, and hence
+\[\sum_{x< n\leq x+y}1_{(n,P)=1}=y\sum_{d\mid P}\frac{\mu(d)}{d}+O(\sum_{d\mid P}1).\]
+We have $\sum_{d\mid P}1=\tau(P)=2^k$ where $k$ is the number of primes in $[u,v]$, which is at most $v$, so the error term here is $O(2^v)$. Finally, expanding out the product shows that
+\[\sum_{d\mid P}\frac{\mu(d)}{d} = \prod_{p\in[u,v]}\brac{1-\frac{1}{p}}.\]
+Inserting this into the above finishes the proof.
+\end{proof}

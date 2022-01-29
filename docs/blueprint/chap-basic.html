@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Basic Estimates</title>
+<link rel="next" href="chap-tech.html" title="Deduction of the main results" />
+<link rel="prev" href="chap-def.html" title="Definitions" />
+<link rel="up" href="index.html" title="Unit Fractions" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">Unit Fractions</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="chap-def.html"><span class="toc_ref">1</span> <span class="toc_entry">Definitions</span></a>
+ </li>
+<li class=" active current">
+  <a href="chap-basic.html"><span class="toc_ref">2</span> <span class="toc_entry">Basic Estimates</span></a>
+ </li>
+<li class="">
+  <a href="chap-tech.html"><span class="toc_ref">3</span> <span class="toc_entry">Deduction of the main results</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-tech.html#a0000000003"><span class="toc_ref">3.1</span> <span class="toc_entry">Sieve Lemmas</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-fourier.html"><span class="toc_ref">4</span> <span class="toc_entry">Fourier Analysis</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-fourier.html#a0000000004"><span class="toc_ref">4.1</span> <span class="toc_entry">Local definitions</span></a>
+ </li>
+<li class="">
+  <a href="chap-fourier.html#a0000000005"><span class="toc_ref">4.2</span> <span class="toc_entry">Precursor general lemmas</span></a>
+ </li>
+<li class="">
+  <a href="chap-fourier.html#a0000000006"><span class="toc_ref">4.3</span> <span class="toc_entry">Towards the main proposition</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-techlemmas.html"><span class="toc_ref">5</span> <span class="toc_entry">Technical Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="chap-techprop.html"><span class="toc_ref">6</span> <span class="toc_entry">Deduction of main technical proposition</span></a>
+ </li>
+  <li></li>	
+  <li>	
+  <a href="dep_graph.html">Dependency graph</a>
+  </li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="chap:basic">2 Basic Estimates</h1>
+
+<p>This section contains standard estimates from analytic number theory that will be required. </p>
+<p><div class="lemma_thmwrapper" id="lem:omegasum">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.1</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:omegasum">#</a>
+    <a class="icon proof" href="chap-basic.html#a0000000011"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-basic.html#lem:mertensprimes">Lemma 2.7</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> For any \(X\geq 3\) </p>
+<div class="displaymath" id="a0000000012">
+  \[ \sum _{n\leq X}\omega (n) = X\log \log X+O(X). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000011">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Since \(\omega (n) = \sum _{p\leq n}1_{p\mid n}\), the left-hand side equals, after a change in the order of summation, </p>
+<div class="displaymath" id="a0000000013">
+  \[ \sum _{p\leq X}\sum _{n\leq X}1_{p\mid n} = \sum _{p\leq X}\left\lfloor \frac{X}{p}\right\rfloor . \]
+</div>
+<p> Since \(\lfloor x\rfloor =x+O(1)\), this is equal to </p>
+<div class="displaymath" id="a0000000014">
+  \[ X\sum _{p\leq X}\frac{1}{p} +O(\pi (X)) = X\log \log X+O(X), \]
+</div>
+<p> using Lemma&#160;<a href="chap-basic.html#lem:mertensprimes">2.7</a> and the trivial estimate \(\pi (X)\ll X\). </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:omegasquaredsum">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.2</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:omegasquaredsum">#</a>
+    <a class="icon proof" href="chap-basic.html#a0000000015"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-basic.html#lem:mertensprimes">Lemma 2.7</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> For any \(X\geq 3\) </p>
+<div class="displaymath" id="a0000000016">
+  \[ \sum _{n\leq X}\omega (n)^2 \leq X(\log \log X)^2+O(X\log \log X). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000015">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Since \(\omega (n) = \sum _{p\leq n}1_{p\mid n}\), the left-hand side is equal to, after expanding the sum and rearranging, </p>
+<div class="displaymath" id="a0000000017">
+  \[ \sum _{p,q\leq X}\sum _{n\leq X}1_{p\mid n}1_{q\mid n}. \]
+</div>
+<p> The part of the sum where \(p=q\) is </p>
+<div class="displaymath" id="a0000000018">
+  \[ \sum _{p\leq X}\sum _{n\leq X}\lfloor X/p\rfloor = X\log \log X+O(X), \]
+</div>
+<p> as in the proof of Lemma&#160;<a href="chap-basic.html#lem:omegasum">2.1</a>. If \(p\neq q\), then \(p\mid n\) and \(q\mid n\) if and only if \(pq\mid n\), and so the sum over \(n\) is bounded above by </p>
+<div class="displaymath" id="a0000000019">
+  \[ \sum _{n\leq X}1_{pq\mid n}= \lfloor X/pq\rfloor \leq X/pq. \]
+</div>
+<p> Therefore </p>
+<div class="displaymath" id="a0000000020">
+  \[ \sum _{\substack {p,q\leq X\\ p\neq q}}\sum _{n\leq X}1_{p\mid n}1_{q\mid n}\leq X\sum _{\substack {p,q\leq X\\ p\neq q}}\frac{1}{pq}\leq X\sum _{p,q\leq X}\frac{1}{pq}\leq X\left( \sum _{p\leq X}\frac{1}{p}\right)^2. \]
+</div>
+<p> By Lemma&#160;<a href="chap-basic.html#lem:mertensprimes">2.7</a> this is \(X(\log \log X+O(1))^2 = X(\log \log X)^2+O(X\log \log X)\). The lemma follows by combining the estimates on the two parts of the sum. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:turan">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.3</span>
+    <span class="lemma_thmtitle">Turán’s estimate</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:turan">#</a>
+    <a class="icon proof" href="chap-basic.html#a0000000021"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-basic.html#lem:omegasum">Lemma 2.1</a></li>
+          <li><a href="chap-basic.html#lem:omegasquaredsum">Lemma 2.2</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  For any \(X\geq 3\) </p>
+<div class="displaymath" id="a0000000022">
+  \[ \sum _{n\leq X}(\omega (n) - \log \log X)^2 \ll X\log \log X. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000021">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>The left-hand side equals </p>
+<div class="displaymath" id="a0000000023">
+  \[ \sum _{n\leq X}\omega (n)^2 - 2\log \log X\sum _{n\leq X}\omega (n)+\lfloor X\rfloor (\log \log X)^2. \]
+</div>
+<p> The first summand is at most, by Lemma&#160;<a href="chap-basic.html#lem:omegasquaredsum">2.2</a>, </p>
+<div class="displaymath" id="a0000000024">
+  \[ X(\log \log X)^2 +O(X\log \log X). \]
+</div>
+<p> The second summand is equal to, by Lemma&#160;<a href="chap-basic.html#lem:omegasum">2.1</a>, </p>
+<div class="displaymath" id="a0000000025">
+  \[ -2\log \log X(X\log \log X+O(X)) = -2X(\log \log X)^2 +O(X\log \log X). \]
+</div>
+<p> The third summand is equal to </p>
+<div class="displaymath" id="a0000000026">
+  \[ (X+O(1))(\log \log X)^2 = X(\log \log X)^2 + O(X\log \log X). \]
+</div>
+<p> Therefore the main terms cancel, and </p>
+<div class="displaymath" id="a0000000027">
+  \[ \sum _{n\leq X}(\omega (n) - \log \log X)^2\leq O(X\log \log X) \]
+</div>
+<p> as required. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:chebyshev">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.4</span>
+    <span class="lemma_thmtitle">Chebyshevs’ estimate</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:chebyshev">#</a>
+    <a class="icon proof" href="chap-basic.html#a0000000028"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> For any \(X\geq 3\) </p>
+<div class="displaymath" id="a0000000029">
+  \[ \pi (X) \ll \frac{X}{\log X}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000028">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:divisor_bound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.5</span>
+    <span class="lemma_thmtitle">Divisor bound</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:divisor_bound">#</a>
+    <a class="icon proof" href="chap-basic.html#a0000000030"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> For any \(\epsilon \) such that \(0{\lt}\epsilon \leq 1\), if \(n\) is sufficiently large depending on \(\epsilon \), then </p>
+<div class="displaymath" id="a0000000031">
+  \[ \tau (n) \leq n^{(1+\epsilon )\frac{\log 2}{\log \log n}}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000030">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>We first show that, for any real \(K\geq 2\), </p>
+<div class="displaymath" id="a0000000032">
+  \[ \tau (n) \leq n^{1/K}K^{2^K}. \]
+</div>
+<p> Write \(n\) as the product of unique prime powers \(n=p_1^{k_1}\cdots p_r^{k_r}\), so that </p>
+<div class="displaymath" id="a0000000033">
+  \[ \frac{\tau (n)}{n^{1/K}} = \frac{\prod _{i=1}^r (k_i+1)}{\prod _{i=1}^r p_i^{k_i/K}} = \prod _{i=1}^r \frac{k_i+1}{p_i^{k_i/K}}. \]
+</div>
+<p> If \(p_i{\gt}2^K\) then </p>
+<div class="displaymath" id="a0000000034">
+  \[ \frac{k_i+1}{p_i^{k_i/K}}\leq \frac{k_i+1}{2^{k_i}}\leq 1, \]
+</div>
+<p> since \(1+k \leq 2^k\) for all integer \(k\geq 0\) by Bernoulli’s inequality. Therefore </p>
+<div class="displaymath" id="a0000000035">
+  \[  \prod _{i=1}^r \frac{k_i+1}{p_i^{k_i/K}} \leq \prod _{\substack {1\leq i\leq r\\ p_i{\lt}2^K}}\frac{k_i+1}{p_i^{k_i/K}}. \]
+</div>
+<p> If \(p_i{\lt}2^K\) then, since \(p_i\geq 2\), </p>
+<div class="displaymath" id="a0000000036">
+  \[ \frac{k_i+1}{p^{k_i/K}}\leq \frac{k_i+1}{2^{k_i/K}}\leq \frac{k_i+1}{k_i/K+1/2}, \]
+</div>
+<p> using the fact that \(x+1/2\leq 2^x\) for all \(x\geq 0\). Since \(K\geq 2\) the denominator here is \(\geq (1+k_i)/K\), and so \(\frac{k_i+1}{p^{k_i/K}}\leq K\). Therefore </p>
+<div class="displaymath" id="a0000000037">
+  \[ \frac{\tau (n)}{n^{1/K}}\leq \prod _{\substack {1\leq i\leq r\\ p_i{\lt}2^K}} K\leq K^{\pi (2^K)}\leq K^{2^K}, \]
+</div>
+<p> as required. </p>
+<p>The second part of the proof is to apply the first part with </p>
+<div class="displaymath" id="a0000000038">
+  \[ K=\left( 1+\epsilon /2\right)^{-1}\frac{\log \log n}{\log 2}. \]
+</div>
+<p> (The right-hand side tends to \(\infty \) as \(n\to \infty \), so for sufficiently large \(n\) we have \(K\geq 2\) as required.) </p>
+<p>Note that \(2^K= (\log n)^{\frac{2}{2+\epsilon }}\leq (\log n)^{1-\epsilon }\) (since \(1-\epsilon {\gt}\frac{2}{2+\epsilon }\), since \(\epsilon \leq 1\)) and </p>
+<div class="displaymath" id="a0000000039">
+  \[ \log K \leq \log \log \log n. \]
+</div>
+<p> Taking logarithms of the inequality in the first part, </p>
+<div class="displaymath" id="a0000000040">
+  \[ \log \tau (n) \leq \frac{\log n}{K}+2^K\log K\leq \log n\left( \frac{1}{K}+\frac{\log \log \log n}{(\log n)^\epsilon }\right) \]
+</div>
+<div class="displaymath" id="a0000000041">
+  \[ = \log n\frac{\log 2}{\log \log n}\left( 1+\epsilon /2+\frac{(\log \log \log n)(\log \log n)}{(\log 2)(\log n)^{\epsilon }}\right). \]
+</div>
+<p> For any fixed \(\epsilon {\gt}0\), the function \(\frac{(\log \log \log n)(\log \log n)}{(\log 2)(\log n)^{\epsilon }}\to 0\) as \(n\to \infty \), so for sufficiently large \(n\) it is \(\leq \epsilon /2\), and hence </p>
+<div class="displaymath" id="a0000000042">
+  \[ \log \tau (n) \leq \log n\frac{\log 2}{\log \log n}(1+\epsilon ) \]
+</div>
+<p> as required. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:mertens1">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.6</span>
+    <span class="lemma_thmtitle">Mertens’ estimate</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:mertens1">#</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> There exists a constant \(c\) such that </p>
+<div class="displaymath" id="a0000000043">
+  \[ \sum _{q\leq X}\frac{1}{q} = \log \log X+c+O(1/\log X), \]
+</div>
+<p> where the sum is restricted to prime powers. </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000044">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:mertensprimes">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.7</span>
+    <span class="lemma_thmtitle">Mertens’ estimate, just for primes</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:mertensprimes">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> There exists a constant \(c\) such that </p>
+<div class="displaymath" id="a0000000045">
+  \[ \sum _{p\leq X}\frac{1}{p} = \log \log X+c+O(1/\log X), \]
+</div>
+<p> where the sum is restricted to primes. </p>
+
+  </div>
+</div> </p>
+<p><div class="lemma_thmwrapper" id="lem:mertens2">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.8</span>
+    <span class="lemma_thmtitle">Mertens’ product estimate</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:mertens2">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> For any \(X\geq 2\), </p>
+<div class="displaymath" id="a0000000046">
+  \[ \prod _{p\leq X}\left( 1-\frac{1}{p}\right)^{-1}\asymp \log X. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000047">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:sieve_eratosthenes">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">2.9</span>
+    <span class="lemma_thmtitle">Sieve of Eratosthenes-Legendre</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-basic.html#lem:sieve_eratosthenes">#</a>
+    <a class="icon proof" href="chap-basic.html#a0000000048"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> For any \(x,y\geq 0\) and \(u\geq v\geq 1\) </p>
+<div class="displaymath" id="a0000000049">
+  \[ \# \{  n\in (x,x+y] : p\mid n\implies p\not\in [u,v]\}  = y\prod _{u\leq p\leq v}\left( 1-\frac{1}{p}\right)+O(2^v). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000048">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Let \(P = \prod _{u\leq p\leq v}p\). The left-hand side of the estimate in the lemma can be written as </p>
+<div class="displaymath" id="a0000000050">
+  \[ \sum _{x\leq n{\lt}x+y}1_{(n,P)=1}. \]
+</div>
+<p> Using the identity \(\sum _{d\mid m}\mu (d) = 1\) if \(m=1\) and \(0\) otherwise, the fact that \(d\mid (n,P)\) if and only if \(d\mid n\) and \(d\mid P\), and that \(\sum _{n\leq z}1_{d\mid n}=\left\lfloor \frac{z}{d}\right\rfloor \) for any \(z\geq 0\), </p>
+<div class="displaymath" id="a0000000051">
+  \[  \sum _{x{\lt} n\leq x+y}1_{(n,P)=1}= \sum _{x{\lt} n\leq x+y}\sum _{d\mid (n,P)}\mu (d) \]
+</div>
+<div class="displaymath" id="a0000000052">
+  \[ = \sum _{x{\lt} n\leq x+y}\sum _{\substack {d\mid n\\ d\mid P}}\mu (d) \]
+</div>
+<div class="displaymath" id="a0000000053">
+  \[ =\sum _{d\mid P}\mu (d)\sum _{x{\lt} n\leq x+y}1_{d\mid n} \]
+</div>
+<div class="displaymath" id="a0000000054">
+  \[ =\sum _{d\mid P}\mu (d)\left(\left\lfloor \frac{x+y}{d}\right\rfloor -\left\lfloor \frac{x}{d}\right\rfloor \right). \]
+</div>
+<p>Since \(\lfloor X\rfloor = X+O(1)\) for any \(X\), we have </p>
+<div class="displaymath" id="a0000000055">
+  \[ \left\lfloor \frac{x+y}{d}\right\rfloor -\left\lfloor \frac{x}{d}\right\rfloor =\frac{y}{d}+O(1) \]
+</div>
+<p> for any \(x,y,d\), and hence </p>
+<div class="displaymath" id="a0000000056">
+  \[ \sum _{x{\lt} n\leq x+y}1_{(n,P)=1}=y\sum _{d\mid P}\frac{\mu (d)}{d}+O(\sum _{d\mid P}1). \]
+</div>
+<p> We have \(\sum _{d\mid P}1=\tau (P)=2^k\) where \(k\) is the number of primes in \([u,v]\), which is at most \(v\), so the error term here is \(O(2^v)\). Finally, expanding out the product shows that </p>
+<div class="displaymath" id="a0000000057">
+  \[ \sum _{d\mid P}\frac{\mu (d)}{d} = \prod _{p\in [u,v]}\left( 1-\frac{1}{p}\right). \]
+</div>
+<p> Inserting this into the above finishes the proof. </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="chap-def.html" title="Definitions"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="Unit Fractions"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="chap-tech.html" title="Deduction of the main results"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

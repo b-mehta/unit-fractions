@@ -1,0 +1,18 @@
+\chapter{Definitions}
+\label{chap:def}
+
+Some definitions, local to this paper, that occur frequently. 
+
+For any finite $A\subset \bbn$
+\[R(A)=\sum_{n\in A}\frac{1}{n}.\]
+
+For any finite $A\subset \bbn$ and prime power $q$ we define
+\[A_q = \{ n\in A : q\mid n\textrm{ and }(q,n/q)=1\}\]
+and let $\mathcal{Q}_A$ be the set of all prime powers $q$ such that $A_q$ is non-empty (i.e. those $p^r$ such that $p^r\| n$ for some $n\in A$). 
+
+
+For any finite $A\subset \bbn$ and prime power $q\in\mathcal{Q}_A$ we define
+\[R(A;q) = \sum_{n\in A_q}\frac{q}{n}.\]
+
+For any finite set $A\subset \bbn$, $K\in \mathbb{R}$ and interval $I$, we define $\mathcal{D}_I(A;K)$ to be the set of those $q\in\mathcal{Q}_A$ such that
+\[\#\{ n\in A_q: \textrm{no element of }I\textrm{ is divisible by }n\} < K.\]

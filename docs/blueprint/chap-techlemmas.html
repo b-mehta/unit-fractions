@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Technical Lemmas</title>
+<link rel="next" href="chap-techprop.html" title="Deduction of main technical proposition" />
+<link rel="prev" href="chap-fourier.html" title="Fourier Analysis" />
+<link rel="up" href="index.html" title="Unit Fractions" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">Unit Fractions</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="chap-def.html"><span class="toc_ref">1</span> <span class="toc_entry">Definitions</span></a>
+ </li>
+<li class="">
+  <a href="chap-basic.html"><span class="toc_ref">2</span> <span class="toc_entry">Basic Estimates</span></a>
+ </li>
+<li class="">
+  <a href="chap-tech.html"><span class="toc_ref">3</span> <span class="toc_entry">Deduction of the main results</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-tech.html#a0000000003"><span class="toc_ref">3.1</span> <span class="toc_entry">Sieve Lemmas</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-fourier.html"><span class="toc_ref">4</span> <span class="toc_entry">Fourier Analysis</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-fourier.html#a0000000004"><span class="toc_ref">4.1</span> <span class="toc_entry">Local definitions</span></a>
+ </li>
+<li class="">
+  <a href="chap-fourier.html#a0000000005"><span class="toc_ref">4.2</span> <span class="toc_entry">Precursor general lemmas</span></a>
+ </li>
+<li class="">
+  <a href="chap-fourier.html#a0000000006"><span class="toc_ref">4.3</span> <span class="toc_entry">Towards the main proposition</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="chap-techlemmas.html"><span class="toc_ref">5</span> <span class="toc_entry">Technical Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="chap-techprop.html"><span class="toc_ref">6</span> <span class="toc_entry">Deduction of main technical proposition</span></a>
+ </li>
+  <li></li>	
+  <li>	
+  <a href="dep_graph.html">Dependency graph</a>
+  </li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="chap:techlemmas">5 Technical Lemmas</h1>
+
+<p><div class="lemma_thmwrapper" id="lem-basic">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">5.1</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-techlemmas.html#lem-basic">#</a>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000155"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  If \(0{\lt}\left\lvert n_1-n_2\right\rvert \leq N\) then </p>
+<div class="displaymath" id="a0000000156">
+  \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N, \]
+</div>
+<p> where the summation is restricted to prime powers. </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000155">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>If \(q\mid (n_1,n_2)\) then \(q\) divides \(\left\lvert n_1-n_2\right\rvert \), and hence in particular \(q\leq N\). The contribution of all prime powers \(p^r\) with \(r\geq 2\) is \(O(1)\), and hence it suffices to show that \(\sum _{p\mid \left\lvert n_1-n_2\right\rvert }\frac{1}{p}\ll \log \log \log N\). Any integer \(\leq N\) is trivially divisible by \(O(\log N)\) many primes. Clearly summing \(1/p\) over \(O(\log N)\) many primes is maximised summing over the smallest \(O(\log N)\) primes. Since there are \(\gg (\log N)^{3/2}\) many primes \(\leq (\log N)^2\), we have </p>
+<div class="displaymath" id="a0000000157">
+  \[ \sum _{p\mid \left\lvert n_1-n_2\right\rvert }\frac{1}{p}\ll \sum _{p\leq (\log N)^2}\frac{1}{p}\ll \log \log \log N \]
+</div>
+<p> by Mertens’ estimate <a href="chap-basic.html#lem:mertens1">2.6</a>. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:rtop">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">5.2</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-techlemmas.html#lem:rtop">#</a>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000158"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Let \(1/2{\gt}\epsilon {\gt}0\) and \(N\) be sufficiently large, depending on \(\epsilon \). If \(A\) is a finite set of integers such that \(R(A)\geq (\log N)^{-\epsilon /2}\) and \((1-\epsilon )\log \log N\leq \omega (n)\leq 2\log \log N\) for all \(n\in A\) then </p>
+<div class="displaymath" id="a0000000159">
+  \[ \sum _{q\in \mathcal{Q}_A}\frac{1}{q} \geq (1-2\epsilon )e^{-1}\log \log N. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000158">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Since, by definition, every integer \(n\in A\) can be written uniquely as \(q_1\cdots q_t\) for \(q_i\in \mathcal{Q}_A\) for some \(t\in I = [(1-\epsilon )\log \log N, 2\log \log N]\), we have that, since \(t!\geq (t/e)^t\), </p>
+<div class="displaymath" id="a0000000160">
+  \[ R(A)\leq \sum _{t\in I}\frac{\left( \sum _{q\in \mathcal{Q}_A}\frac{1}{q}\right)^t}{t!}\leq \sum _{t\in I}\left( \frac{e}{t}\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\right)^t. \]
+</div>
+<p> Since \((ex/t)^t\) is decreasing in \(t\) for \(x{\lt}t\), either \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\geq (1-\epsilon )\log \log N\) (and we are done), or the summand is decreasing in \(t\), and hence we have </p>
+<div class="displaymath" id="a0000000161">
+  \[ (\log N)^{-\epsilon /2}\leq R(A)\leq 2\log \log N\left( \frac{\sum _{q\in \mathcal{Q}_A}\frac{1}{q}}{(1-\epsilon )e^{-1}\log \log N}\right)^{(1-\epsilon )\log \log N}. \]
+</div>
+<p> The claimed bound follows, using the fact that \(e^{-\frac{\epsilon }{2(1-\epsilon )}}\geq 1-\epsilon \) for \(\epsilon \in (0,1/2)\), choosing \(N\) large enough such that \((2\log \log N)^{2/\log \log N}\leq 1+\epsilon ^2\), say. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:usingq">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">5.3</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-techlemmas.html#lem:usingq">#</a>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000162"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-basic.html#lem:mertens1">Lemma 2.6</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  There is a constant \(c{\gt}0\) such that the following holds. Let \(N\geq M\geq N^{1/2}\) be sufficiently large, and suppose that \(1\leq k \leq c\log \log N\). Suppose that \(A\subset [M,N]\) is a set of integers such that \(\omega (n)\leq (\log N)^{1/k}\) for all \(n\in A\). </p>
+<p>For all \(q\) such that \(R(A;q)\geq (\log N)^{-1/2}\) there exists \(d\) such that </p>
+<ol class="enumerate">
+  <li><p>\(qd {\gt} M\exp (-(\log N)^{1-1/k})\), </p>
+</li>
+  <li><p>\(\omega (d)\leq \tfrac {5}{\log k}\log \log N\), and </p>
+</li>
+  <li><div class="displaymath" id="a0000000163">
+  \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}. \]
+</div>
+</li>
+</ol>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000162">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Fix some \(q\) with \(R(A;q)\geq (\log N)^{-1/2}\). Let \(D\) be the set of all \(d\) such that if \(p\) is a prime and \(p^r \|  d\) then </p>
+<div class="displaymath" id="a0000000164">
+  \[ p^r{\gt}y=\exp ((\log N)^{1-2/k}) \]
+</div>
+<p> and </p>
+<div class="displaymath" id="a0000000165">
+  \[ qd\in (M\exp (-(\log N)^{1-1/k}),N]. \]
+</div>
+<p> We first claim that every \(n\in A_q\) is divisible by some \(qd\) with \(d\in D\), such that \((qd,n/qd)=1\). This can be done greedily, just removing from \(n/q\) all those prime power divisors \(p^r\|  n/q\) such that \(p^r\leq y\), which removes at most </p>
+<div class="displaymath" id="a0000000166">
+  \[ y^{\omega (n)}\leq \exp ((\log N)^{1-1/k}). \]
+</div>
+<p> We can therefore bound </p>
+<div class="displaymath" id="a0000000167">
+  \[ R(A;q) \leq \sum _{d\in D}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}. \]
+</div>
+<p>We will control the contribution from those \(d\) with \(\omega (d){\gt}\omega _0= \frac{5}{\log k}\log \log N\) with the trivial bound </p>
+<div class="displaymath" id="a0000000168">
+  \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} \leq \sum _{\substack {n\leq N\\ qd\mid n}}\frac{qd}{n}\ll \log N \]
+</div>
+<p> and Mertens’ bound <a href="chap-basic.html#lem:mertens1">2.6</a>. Together these imply </p>
+<span>\begin{align*}  \sum _{\substack {d\in D\\ \begin{bgroup} \omega (d)>\omega _0
+
+\end{bgroup}}}\frac{1}{d}\sum _{\substack {n\in A_q\\ \begin{bgroup} qd\mid n
+
+\end{bgroup}}}\frac{qd}{n} & \ll \log N\sum _{\substack {d\\ \begin{bgroup} p^r\|  d\implies y<p^r\leq N
+
+\\ \end{bgroup}\begin{bgroup} \omega (d)\geq \omega _0
+
+\end{bgroup}}} \frac{1}{d}\\ & \ll k^{-\omega _0}\log N\sum _{\substack {d\\ \begin{bgroup} p^r\|  d\implies y<p^r\leq N
+
+\end{bgroup}}} \frac{k^{\omega (d)}}{d}\\ & \ll C_1^kk^{-\omega _0}\log N\prod _{y<p\leq N}(1+\frac{k}{p-1}) \\ & \leq k^{-\omega _0}\log N\left( C_2\frac{\log N}{\log y}\right)^{k} \end{align*}</span>
+<p> for some absolute constants \(C_1,C_2{\gt}0\). Recalling the definitions of \(y\) and \(\omega _0\), this is </p>
+<div class="displaymath" id="a0000000169">
+  \[ \leq C_2^kk^{-\omega _0}(\log N)^3\leq 1/\log N, \]
+</div>
+<p> say, for \(N\) sufficiently large. It follows that </p>
+<div class="displaymath" id="a0000000170">
+  \[ \tfrac {1}{2}R(A;q)\leq \sum _{\substack {d\in D\\ \omega (d)\leq \omega _0}}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} . \]
+</div>
+<p> The result follows since </p>
+<div class="displaymath" id="a0000000171">
+  \[ \sum _{d\in D}\frac{1}{d}\leq \sum _{\substack {d\\ p^r\|  d\implies y{\lt}p^r\leq N}}\frac{1}{d} \ll \prod _{y{\lt}p\leq N}\left( 1-\frac{1}{p-1}\right)^{-1}\ll \frac{\log N}{\log y}\ll (\log N)^{2/k}. \]
+</div>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:pisqa">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">5.4</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-techlemmas.html#lem:pisqa">#</a>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000172"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Let \(N\) be sufficiently large and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
+<div class="displaymath" id="a0000000173">
+  \[ R(B)\geq R(A)-\frac{1}{(\log N)^{1/200}} \]
+</div>
+<p> and \(R(B;q)\geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_B\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000174">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>We construct a sequence of decreasing sets \(A=A_0\supsetneq A_1\supsetneq \cdots \supsetneq A_i\) as follows. Given some \(A_i\), if there is a prime power \(q_i\in \mathcal{Q}_{A_i}\) such that </p>
+<div class="displaymath" id="a0000000175">
+  \[ R(A_i;q_i){\lt} \frac{2}{(\log N)^{1/100}}, \]
+</div>
+<p> then we let \(A_{i+1}=A_i\backslash (A_i)_{q_i}\). If no such \(q_i\) exists then we halt the construction. This process must obviously terminate in some finite time (since some non-empty amount of \(A_i\) is being removed at each step). Suppose that it halts at \(A_j=B\), say. The amount lost from \(R(A)\) at step \(i\) is </p>
+<div class="displaymath" id="a0000000176">
+  \[ \sum _{n\in (A_i)_{q_i}}\frac{1}{n}=\frac{1}{q_i}R(A_i;q_i){\lt} \frac{2}{q_i(\log N)^{1/100}}, \]
+</div>
+<p> and furthermore each \(q\leq N\) can appear as at most one such \(q_i\), since after removing \((A_i)_{q_i}\) anything left in \(A_i\) cannot have \(q_i\) as a coprime divisor. It follows that </p>
+<div class="displaymath" id="a0000000177">
+  \[ R(B){\gt} R(A) -\frac{2}{(\log N)^{1/100}}\sum _{q\leq N}\frac{1}{q}\geq R(A)-\frac{1}{(\log N)^{1/200}}, \]
+</div>
+<p> since \(\sum _{q\leq N}\frac{1}{q}\ll \log \log N\). </p>
+
+  </div>
+</div>
+<p> <div class="lemma_thmwrapper" id="lem:pisq">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">5.5</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-techlemmas.html#lem:pisq">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-techlemmas.html#lem:pisqa">Lemma 5.4</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
+<div class="displaymath" id="a0000000178">
+  \[ R(A) \geq \alpha +\frac{1}{(\log N)^{1/200}} \]
+</div>
+<p> and if \(q\in \mathcal{Q}_A\) then \(q\leq M/(\log N)^{1/100}\). </p>
+<p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), </p>
+<div class="displaymath" id="a0000000179">
+  \[ R(B;q)\geq \frac{1}{(\log N)^{1/100}}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000172">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>We first apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to produce some \(A'\subset A\) such that \(R(A')\geq \alpha \) and \(R(A';q) \geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_{A'}\). </p>
+<p>We now argue that whenever \(D\) is such that \(R(D)\geq \alpha \) and \(R(D;q) \geq (\log N)^{-1/100}\) for all \(q\in \mathcal{Q}_D\) there exists some \(x\in D\) such that \(R(D\backslash \{ x\} ;q)\geq (\log N)^{-1/100}\) for all \(q\in \mathcal{Q}_{D}\). Given this, the lemma immediately follows, since we can continue removing such elements from \(A'\) one at time until \(R(B)\) falls in the required interval. </p>
+<p>To see why the above fact holds, apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to obtain some \(B\subset D\) (such that \(R(B)\geq (\log N)^{-1/200}\), and hence in particular \(B\) is non-empty), and let \(x\) be any element of \(B\). If \(x\not\in D_q\) then by definition \(R(D\backslash \{ x\} ;q)=R(D;q)\geq (\log N)^{-1/100}\). If \(x\in D_q\) then \(x\in B_q\), and so </p>
+<div class="displaymath" id="a0000000180">
+  \[ R(D\backslash \{ x\} ;q)\geq R(B;q)-\frac{q}{x}\geq \frac{2}{(\log N)^{1/100}}-\frac{q}{M}\geq \frac{1}{(\log N)^{1/100}} \]
+</div>
+<p> as required. </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="chap-fourier.html" title="Fourier Analysis"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="Unit Fractions"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="chap-techprop.html" title="Deduction of main technical proposition"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

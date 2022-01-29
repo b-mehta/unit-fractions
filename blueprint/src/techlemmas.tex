@@ -1,0 +1,105 @@
+\chapter{Technical Lemmas}
+\label{chap:techlemmas}
+
+
+\begin{lemma}\label{lem-basic}
+\uses{lem:mertens1}
+\leanok
+If $0<\abs{n_1-n_2}\leq N$ then
+\[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N,\]
+where the summation is restricted to prime powers.
+\end{lemma}
+\begin{proof}
+If $q\mid (n_1,n_2)$ then $q$ divides $\abs{n_1-n_2}$, and hence in particular $q\leq N$. The contribution of all prime powers $p^r$ with $r\geq 2$ is $O(1)$, and hence it suffices to show that $\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \log\log\log N$. Any integer $\leq N$ is trivially divisible by $O(\log N)$ many primes. Clearly summing $1/p$ over $O(\log N)$ many primes is maximised summing over the smallest $O(\log N)$ primes. Since there are $\gg (\log N)^{3/2}$ many primes $\leq (\log N)^2$, we have
+\[\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \sum_{p\leq (\log N)^2}\frac{1}{p}\ll \log\log\log N\]
+by Mertens' estimate \ref{lem:mertens1}.
+\end{proof}
+
+\begin{lemma}\label{lem:rtop}
+\leanok
+Let $1/2>\epsilon>0$ and $N$ be sufficiently large, depending on $\epsilon$. If $A$ is a finite set of integers such that $R(A)\geq (\log N)^{-\epsilon/2}$ and $(1-\epsilon)\log\log N\leq \omega(n)\leq  2\log\log N$ for all $n\in A$ then 
+\[\sum_{q\in\mathcal{Q}_A}\frac{1}{q} \geq (1-2\epsilon)e^{-1}\log\log N.\]
+\end{lemma}
+\begin{proof}
+Since, by definition, every integer $n\in A$ can be written uniquely as $q_1\cdots q_t$ for $q_i\in \mathcal{Q}_A$ for some $t\in I = [(1-\epsilon)\log\log N, 2\log\log N]$, we have that, since $t!\geq (t/e)^t$, 
+\[R(A)\leq  \sum_{t\in I}\frac{\brac{\sum_{q\in \mathcal{Q}_A}\frac{1}{q}}^t}{t!}\leq \sum_{t\in I}\brac{\frac{e}{t}\sum_{q\in \mathcal{Q}_A}\frac{1}{q}}^t.\]
+Since $(ex/t)^t$ is decreasing in $t$ for $x<t$, either $\sum_{q\in \mathcal{Q}_A}\frac{1}{q}\geq (1-\epsilon)\log\log N$ (and we are done), or the summand is decreasing in $t$, and hence we have
+\[(\log N)^{-\epsilon/2}\leq R(A)\leq 2\log\log N\brac{\frac{\sum_{q\in \mathcal{Q}_A}\frac{1}{q}}{(1-\epsilon)e^{-1}\log\log N}}^{(1-\epsilon)\log\log N}.\]
+The claimed bound follows, using the fact that $e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq 1-\epsilon$ for $\epsilon\in (0,1/2)$, choosing $N$ large enough such that $(2\log\log N)^{2/\log\log N}\leq 1+\epsilon^2$, say. 
+\end{proof}
+
+\begin{lemma}\label{lem:usingq}
+\uses{lem:mertens1}
+\leanok
+There is a constant $c>0$ such that the following holds. Let $N\geq M\geq N^{1/2}$ be sufficiently large, and suppose that $1\leq k \leq c\log\log N$. Suppose that $A\subset [M,N]$ is a set of integers such that $\omega(n)\leq (\log N)^{1/k}$ for all $n\in A$. 
+
+For all $q$ such that $R(A;q)\geq (\log N)^{-1/2}$ there exists $d$ such that
+\begin{enumerate}
+\item $qd > M\exp(-(\log N)^{1-1/k})$,
+\item $\omega(d)\leq \tfrac{5}{\log k}\log\log N$, and
+\item \[\sum_{\substack{n\in A_q\\qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}.\]
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+Fix some $q$ with $R(A;q)\geq (\log N)^{-1/2}$. Let $D$ be the set of all $d$ such that if $p$ is a prime and $p^r \| d$ then 
+\[p^r>y=\exp((\log N)^{1-2/k})\]
+and 
+\[qd\in (M\exp(-(\log N)^{1-1/k}),N].\]
+We first claim that every $n\in A_q$ is divisible by some $qd$ with $d\in D$, such that $(qd,n/qd)=1$. This can be done greedily, just removing from $n/q$ all those prime power divisors $p^r\| n/q$ such that $p^r\leq y$, which removes at most 
+\[y^{\omega(n)}\leq  \exp((\log N)^{1-1/k}).\]
+We can therefore bound
+\[R(A;q) \leq \sum_{d\in D}\frac{1}{d}\sum_{\substack{n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}.\]
+
+We will control the contribution from those $d$ with $\omega(d)>\omega_0= \frac{5}{\log k}\log\log N$ with the trivial bound
+\[\sum_{\substack{n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} \leq \sum_{\substack{n\leq N\\ qd\mid n}}\frac{qd}{n}\ll \log N\]
+and Mertens' bound \ref{lem:mertens1}. Together these imply
+\begin{align*}
+\sum_{\substack{d\in D\\ \omega(d)>\omega_0}}\frac{1}{d}\sum_{\substack{n\in A_q\\ qd\mid n}}\frac{qd}{n}
+&\ll \log N\sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N\\ \omega(d)\geq \omega_0}} \frac{1}{d}\\
+&\ll
+k^{-\omega_0}\log N\sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N}} \frac{k^{\omega(d)}}{d}\\
+&\ll C_1^kk^{-\omega_0}\log N\prod_{y<p\leq N}(1+\frac{k}{p-1}) \\
+ &\leq k^{-\omega_0}\log N\brac{C_2\frac{\log N}{\log y}}^{k}
+\end{align*}
+for some absolute constants $C_1,C_2>0$. Recalling the definitions of $y$ and $\omega_0$, this is
+\[\leq C_2^kk^{-\omega_0}(\log N)^3\leq 1/\log N,\]
+say, for $N$ sufficiently large. It follows that
+\[\tfrac{1}{2}R(A;q)\leq \sum_{\substack{d\in D\\ \omega(d)\leq \omega_0}}\frac{1}{d}\sum_{\substack{n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} .\]
+The result follows since 
+\[\sum_{d\in D}\frac{1}{d}\leq \sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N}}\frac{1}{d} \ll \prod_{y<p\leq N}\brac{1-\frac{1}{p-1}}^{-1}\ll \frac{\log N}{\log y}\ll (\log N)^{2/k}.\]
+\end{proof}
+
+\begin{lemma}\label{lem:pisqa}
+\leanok
+Let $N$ be sufficiently large and $A\subset [1,N]$. There exists $B\subset A$ such that 
+\[R(B)\geq  R(A)-\frac{1}{(\log N)^{1/200}}\]
+and $R(B;q)\geq 2/(\log N)^{1/100}$ for all $q\in \mathcal{Q}_B$. 
+\end{lemma}
+\begin{proof}
+We construct a sequence of decreasing sets $A=A_0\supsetneq A_1\supsetneq\cdots \supsetneq A_i$ as follows. Given some $A_i$, if there is a prime power $q_i\in\mathcal{Q}_{A_i}$ such that 
+\[R(A_i;q_i)< \frac{2}{(\log N)^{1/100}},\]
+then we let $A_{i+1}=A_i\backslash (A_i)_{q_i}$. If no such $q_i$ exists then we halt the construction. This process must obviously terminate in some finite time (since some non-empty amount of $A_i$ is being removed at each step). Suppose that it halts at $A_j=B$, say. The amount lost from $R(A)$ at step $i$ is
+\[\sum_{n\in (A_i)_{q_i}}\frac{1}{n}=\frac{1}{q_i}R(A_i;q_i)< \frac{2}{q_i(\log N)^{1/100}},\]
+and furthermore each $q\leq N$ can appear as at most one such $q_i$, since after removing $(A_i)_{q_i}$ anything left in $A_i$ cannot have $q_i$ as a coprime divisor. It follows that
+\[R(B)> R(A) -\frac{2}{(\log N)^{1/100}}\sum_{q\leq N}\frac{1}{q}\geq R(A)-\frac{1}{(\log N)^{1/200}},\]
+since $\sum_{q\leq N}\frac{1}{q}\ll \log\log N$.
+\end{proof}
+\begin{lemma}\label{lem:pisq}
+\uses{lem:pisqa}
+\leanok
+Suppose that $N$ is sufficiently large and $N\geq M\geq N^{1/2}$. Let $\alpha > 2/(\log N)^{1/200}$ and $A\subset [M,N]$ be a set of integers such that
+\[R(A) \geq \alpha+\frac{1}{(\log N)^{1/200}}\]
+and if $q\in\mathcal{Q}_A$ then $q\leq M/(\log N)^{1/100}$.
+
+There is a subset $B\subset A$ such that $R(B)\in [\alpha-1/M,\alpha)$ and, for all $q\in \mathcal{Q}_B$, 
+\[R(B;q)\geq \frac{1}{(\log N)^{1/100}}.\]
+\end{lemma}
+\begin{proof}
+We first apply Lemma~\ref{lem:pisqa} to produce some $A'\subset A$ such that $R(A')\geq \alpha$ and $R(A';q) \geq 2/(\log N)^{1/100}$ for all $q\in\mathcal{Q}_{A'}$. 
+
+We now argue that whenever $D$ is such that $R(D)\geq \alpha$ and $R(D;q) \geq (\log N)^{-1/100}$ for all $q\in \mathcal{Q}_D$ there exists some $x\in D$ such that $R(D\backslash \{x\};q)\geq (\log N)^{-1/100}$ for all $q\in\mathcal{Q}_{D}$. Given this, the lemma immediately follows, since we can continue removing such elements from $A'$ one at time until $R(B)$ falls in the required interval. 
+
+To see why the above fact holds, apply Lemma~\ref{lem:pisqa} to obtain some $B\subset D$ (such that $R(B)\geq (\log N)^{-1/200}$, and hence in particular $B$ is non-empty), and let $x$ be any element of $B$. If $x\not\in D_q$ then by definition $R(D\backslash\{x\};q)=R(D;q)\geq (\log N)^{-1/100}$. If $x\in D_q$ then $x\in B_q$, and so
+\[R(D\backslash\{x\};q)\geq R(B;q)-\frac{q}{x}\geq \frac{2}{(\log N)^{1/100}}-\frac{q}{M}\geq \frac{1}{(\log N)^{1/100}}\]
+as required.
+\end{proof}
