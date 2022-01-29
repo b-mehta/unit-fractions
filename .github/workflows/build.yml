@@ -112,6 +112,7 @@ jobs:
           curl https://raw.githubusercontent.com/Kha/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
           ~/.elan/bin/lean --version
           echo "$HOME/.elan/bin" >> $GITHUB_PATH
+
       - name: lint
         # Uncomment the following line to make the build succeed even if there are linting errors
         # continue-on-error: true
