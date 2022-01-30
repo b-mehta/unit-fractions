@@ -42,10 +42,87 @@ begin
     exact pow_le_pow_of_le_left (by linarith) (jordan_apply hx hx') _ },
   refine le_of_pow_le_pow 2 (exp_pos _).le zero_lt_two _,
   apply (i₁.trans (one_sub_le_exp_minus_of_pos (sq_nonneg (2 * x)))).trans,
-  rw [sq (exp _), ←exp_add],
-  rw exp_le_exp,
-  apply le_of_eq,
-  ring,
+  rw [←exp_nat_mul, nat.cast_two, ←neg_mul_eq_mul_neg, exp_le_exp],
+  exact le_of_eq (by ring),
+end
+
+def exp_circle (x : ℂ) : ℂ := complex.exp (2 * π * complex.I * x)
+
+lemma exp_circle_add {x y : ℂ} : exp_circle (x + y) = exp_circle x * exp_circle y :=
+by { rw [exp_circle, mul_add, complex.exp_add], refl }
+
+lemma exp_circle_int (z : ℤ) : exp_circle z = 1 :=
+by rw [exp_circle, mul_comm, complex.exp_int_mul_two_pi_mul_I z]
+
+lemma exp_circle_nat (n : ℕ) : exp_circle n = 1 :=
+by rw [←exp_circle_int n, int.cast_coe_nat]
+
+lemma int.Ico_succ_right {a b : ℤ} : finset.Ico a (b+1) = finset.Icc a b :=
+by { ext x, simp only [finset.mem_Icc, finset.mem_Ico, int.lt_add_one_iff] }
+
+lemma int.Ioc_succ_right {a b : ℤ} (h : a ≤ b) :
+  finset.Ioc a (b+1) = insert (b+1) (finset.Ioc a b) :=
+begin
+  ext x,
+  simp only [finset.mem_Ioc, finset.mem_insert],
+  rw [le_iff_lt_or_eq, int.lt_add_one_iff, or_comm, and_or_distrib_left, or_congr_left],
+  rw and_iff_right_of_imp,
+  rintro rfl,
+  exact int.lt_add_one_iff.2 h
+end
+
+lemma int.insert_Ioc_succ_left {a b : ℤ} (h : a < b) :
+  insert (a+1) (finset.Ioc (a+1) b) = finset.Ioc a b :=
+begin
+  ext x,
+  simp only [finset.mem_Ioc, finset.mem_insert],
+  rw [or_and_distrib_left, eq_comm, ←le_iff_eq_or_lt, int.add_one_le_iff, and_congr_right'],
+  rw or_iff_right_of_imp,
+  rintro rfl,
+  rwa int.add_one_le_iff,
+end
+
+lemma int.Ioc_succ_left {a b : ℤ} (h : a < b) :
+  finset.Ioc (a+1) b = (finset.Ioc a b).erase (a+1) :=
+begin
+  rw [←@int.insert_Ioc_succ_left a b h, finset.erase_insert],
+  simp only [finset.left_not_mem_Ioc, not_false_iff],
+end
+
+lemma int.Ioc_succ_succ {a b : ℤ} (h : a ≤ b) :
+  finset.Ioc (a+1) (b+1) = (insert (b+1) (finset.Ioc a b)).erase (a+1) :=
+begin
+  rw [int.Ioc_succ_left, int.Ioc_succ_right h],
+  rwa int.lt_add_one_iff,
+end
+
+lemma finset.sum_erase_eq_sub {α β : Type*} [decidable_eq α] [add_comm_group β]
+  (f : α → β) (s : finset α) (a : α) (ha : a ∈ s) :
+  ∑ x in s.erase a, f x = (∑ x in s, f x) - f a :=
+by rw [←finset.sum_erase_add _ _ ha, add_sub_cancel]
+
+-- note `r` here is different to the `r` in the proof
+lemma orthogonality {n m : ℕ} {r s : ℤ} (hm : m ≠ 0) {I : finset ℤ} (hI : I = finset.Ioc r s)
+  (hrs₁ : r < s) (hrs₂ : s = m + r) :
+  (∑ h in I, exp_circle (h * n / m)) * (1 / m) =
+    if m ∣ n then 1 else 0 :=
+begin
+  split_ifs,
+  { have hm' : (m : ℂ) ≠ 0, exact_mod_cast hm,
+    simp_rw [mul_div_assoc, ←nat.cast_dvd h hm', ←int.cast_coe_nat, ←int.cast_mul, exp_circle_int],
+    rw [finset.sum_const, nat.smul_one_eq_coe, int.cast_coe_nat, one_div, hI, int.card_Ioc, hrs₂,
+      add_sub_cancel, int.to_nat_coe_nat, mul_inv_cancel hm'] },
+  rw [mul_eq_zero, one_div, inv_eq_zero, nat.cast_eq_zero],
+  simp only [hm, or_false],
+  set S := ∑ h in I, exp_circle (h * n / m),
+  have : S * exp_circle (n / m) = ∑ h in (finset.Ioc (r + 1) (s + 1)), exp_circle (h * n / m),
+  { simp only [←finset.image_add_right_Ioc, finset.sum_image, add_left_inj, imp_self,
+      implies_true_iff, int.cast_add, add_mul, int.cast_one, one_mul, add_div, exp_circle_add,
+      finset.sum_mul, hI] },
+  rw [int.Ioc_succ_succ hrs₁.le, finset.sum_erase_eq_sub, finset.sum_insert] at this,
+  { sorry },
+  { simp },
+  { simp [int.add_one_le_iff, hrs₁] },
 end
 
 -- Proposition 2

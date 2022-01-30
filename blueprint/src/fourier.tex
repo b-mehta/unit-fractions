@@ -42,7 +42,10 @@ Let $\mathfrak{m}_2(A,k,K,\delta)$ be the rest of $J(A)\backslash\mathfrak{M}(A,
 \end{definition}
 
 \section{Precursor general lemmas}
+
 \begin{lemma}\label{lem:orthogonality}
+  \leanok
+  \lean{orthogonality}
 For any $n,m\in\bbn$, if $e(x) = e^{2\pi ix}$, then if $I$ is any set of $m$ consecutive integers then
 \[1_{m\mid n}=\frac{1}{m}\sum_{h\in I}e(h n/m).\]
 \end{lemma}
@@ -83,6 +86,7 @@ If $x\in [0,1/2]$ then
 \[\cos(\pi x) \leq e^{-2x^2}.\]
 \end{lemma}
 \begin{proof}
+  \leanok
 We have Jordan's inequality, which says $\sin(\pi x)\geq 2x$ for all $x\in[0,1/2]$. Therefore
 \[\cos(\pi x)^2 = 1-\sin(\pi x)^2\leq 1-4x^2.\]
 Since $1-y\leq e^{-y}$ for all $y\geq 0$, the right-hand side is $\leq e^{-4x^2}$. Taking square roots, and using $\cos(\pi x)\geq 0$ for all $x\in[0,1/2]$, yields
