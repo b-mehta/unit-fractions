@@ -46,13 +46,17 @@ begin
   exact le_of_eq (by ring),
 end
 
-def exp_circle (x : ℂ) : ℂ := complex.exp (2 * π * complex.I * x)
+def exp_circle (x : ℂ) : ℂ := complex.exp (x * (2 * π * complex.I))
 
 lemma exp_circle_add {x y : ℂ} : exp_circle (x + y) = exp_circle x * exp_circle y :=
-by { rw [exp_circle, mul_add, complex.exp_add], refl }
+by { rw [exp_circle, add_mul, complex.exp_add], refl }
 
 lemma exp_circle_int (z : ℤ) : exp_circle z = 1 :=
-by rw [exp_circle, mul_comm, complex.exp_int_mul_two_pi_mul_I z]
+by rw [exp_circle, complex.exp_int_mul_two_pi_mul_I z]
+
+lemma exp_circle_eq_one_iff (x : ℂ) :
+  exp_circle x = 1 ↔ ∃ (z : ℤ), x = z :=
+by simp [exp_circle, complex.exp_eq_one_iff, pi_ne_zero, complex.I_ne_zero]
 
 lemma exp_circle_nat (n : ℕ) : exp_circle n = 1 :=
 by rw [←exp_circle_int n, int.cast_coe_nat]
@@ -107,9 +111,9 @@ lemma orthogonality {n m : ℕ} {r s : ℤ} (hm : m ≠ 0) {I : finset ℤ} (hI 
   (∑ h in I, exp_circle (h * n / m)) * (1 / m) =
     if m ∣ n then 1 else 0 :=
 begin
+  have hm' : (m : ℂ) ≠ 0, exact_mod_cast hm,
   split_ifs,
-  { have hm' : (m : ℂ) ≠ 0, exact_mod_cast hm,
-    simp_rw [mul_div_assoc, ←nat.cast_dvd h hm', ←int.cast_coe_nat, ←int.cast_mul, exp_circle_int],
+  { simp_rw [mul_div_assoc, ←nat.cast_dvd h hm', ←int.cast_coe_nat, ←int.cast_mul, exp_circle_int],
     rw [finset.sum_const, nat.smul_one_eq_coe, int.cast_coe_nat, one_div, hI, int.card_Ioc, hrs₂,
       add_sub_cancel, int.to_nat_coe_nat, mul_inv_cancel hm'] },
   rw [mul_eq_zero, one_div, inv_eq_zero, nat.cast_eq_zero],
@@ -119,8 +123,17 @@ begin
   { simp only [←finset.image_add_right_Ioc, finset.sum_image, add_left_inj, imp_self,
       implies_true_iff, int.cast_add, add_mul, int.cast_one, one_mul, add_div, exp_circle_add,
       finset.sum_mul, hI] },
-  rw [int.Ioc_succ_succ hrs₁.le, finset.sum_erase_eq_sub, finset.sum_insert] at this,
-  { sorry },
+  rw [int.Ioc_succ_succ hrs₁.le, finset.sum_erase_eq_sub, finset.sum_insert, add_comm,
+    add_sub_assoc, sub_eq_zero_of_eq, add_zero, ←hI] at this,
+  { apply eq_zero_of_mul_eq_self_right _ this,
+    rw [ne.def, exp_circle_eq_one_iff, not_exists],
+    intros i hi,
+    rw [div_eq_iff_mul_eq hm', ←int.cast_coe_nat, ←int.cast_coe_nat, ←int.cast_mul,
+      int.cast_inj] at hi,
+    rw [←int.coe_nat_dvd, ←hi] at h,
+    simpa using h },
+  { rw [hrs₂, add_assoc, int.cast_add, add_mul, add_div, exp_circle_add, int.cast_coe_nat,
+      mul_div_cancel_left _ hm', exp_circle_nat, one_mul] },
   { simp },
   { simp [int.add_one_le_iff, hrs₁] },
 end

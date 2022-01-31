@@ -9,5 +9,8 @@
   "files.trimTrailingWhitespace": true,
   "search.usePCRE2": true,
   "workbench.startupEditor": "none",
-  "editor.hover.delay": 2000
+  "editor.hover.delay": 2000,
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": "file:///workspace/unit-fractions/.github/workflows/build.yml"
+  }
 }
