@@ -32,3 +32,10 @@ begin
 end
 
 end jordan
+
+open_locale big_operators
+
+@[simp, norm_cast] lemma rat.cast_sum {α β : Type*} [division_ring β] [char_zero β] (s : finset α)
+  (f : α → ℚ) :
+  ↑(∑ x in s, f x : ℚ) = (∑ x in s, (f x : β)) :=
+(rat.cast_hom β).map_sum f s

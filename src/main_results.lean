@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Bhavik Mehta, Thomas Bloom
 -/
 
+import for_mathlib.misc
 import defs
 
 /-!
@@ -112,11 +113,6 @@ begin
   obtain ⟨d₂, hd₂, hd₂', hd₂''⟩ := hA₂ n hn,
   exact ⟨1, d₂, one_dvd _, hd₂, by simp, by simpa, hd₂''⟩,
 end
-
-@[simp, norm_cast] lemma rat.cast_sum {α β : Type*} [division_ring β] [char_zero β] (s : finset α)
-  (f : α → ℚ) :
-  ↑(∑ x in s, f x : ℚ) = (∑ x in s, (f x : β)) :=
-(rat.cast_hom β).map_sum f s
 
 -- Corollary 1
 theorem corollary_one :

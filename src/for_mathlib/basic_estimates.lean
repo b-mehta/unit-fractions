@@ -20,16 +20,6 @@ open filter asymptotics real set
 section to_mathlib
 
 -- TODO (BM): Put this in mathlib
-lemma finset.Icc_subset_Icc {α : Type*} [preorder α] [locally_finite_order α]
-  {a₁ a₂ b₁ b₂ : α} (ha : a₂ ≤ a₁) (hb : b₁ ≤ b₂) :
-  finset.Icc a₁ b₁ ⊆ finset.Icc a₂ b₂ :=
-begin
-  intros x hx,
-  simp only [finset.mem_Icc] at ⊢ hx,
-  exact ⟨ha.trans hx.1, hx.2.trans hb⟩,
-end
-
--- TODO (BM): Put this in mathlib
 lemma le_floor_of_le {α : Type*} [linear_ordered_semiring α] [floor_semiring α] {n : ℕ} {a : α}
   (h : a ≤ n) : ⌊a⌋₊ ≤ n :=
 (le_total a 0).elim

@@ -11,14 +11,36 @@ open_locale big_operators classical real
 
 noncomputable theory
 
-open filter real
-open nat (coprime)
+open filter real finset
 
 def integer_count (A : finset ℕ) (k : ℕ) : ℕ :=
-(A.powerset.filter (λ S, ∃ (d : ℕ), rec_sum S * k = d)).card
+(A.powerset.filter (λ S, ∃ (d : ℤ), rec_sum S * k = d)).card
+
+def valid_sum_range (t : ℕ) : finset ℤ :=
+finset.Ioc ((- (t : ℤ) / 2)) (t/2)
+
+lemma dumb_subtraction_thing (t : ℕ) : ((t : ℤ) / 2 - -(t : ℤ) / 2) = t :=
+begin
+  have : (t : ℤ) - -(t : ℤ) = 2 * t,
+  { simp [two_mul] },
+  rw [←int.sub_div_of_dvd_sub, this, int.mul_div_cancel_left _ two_ne_zero],
+  rw this,
+  simp only [dvd_mul_right],
+end
+
+lemma card_valid_sum_range (t : ℕ) :
+  (valid_sum_range t).card = t :=
+by rw [valid_sum_range, int.card_Ioc, dumb_subtraction_thing, int.to_nat_coe_nat]
+
+lemma mem_valid_sum_range (t : ℕ) (h : ℤ) :
+  h ∈ valid_sum_range t ↔ (-↑t) / 2 < h ∧ h ≤ t / 2 :=
+by simp [valid_sum_range]
+
+-- this is dangerous but I think I can get away with it in this file
+local notation `[` A `]` := A.lcm id
 
 def j (A : finset ℕ) : finset ℤ :=
-(finset.Ioo ⌈((- (A.lcm id : ℕ) / 2) : ℚ)⌉ ⌊(((A.lcm id : ℕ) / 2) : ℚ)⌋).erase (0 : ℤ)
+(valid_sum_range [A]).erase 0
 
 -- types of `h`, `k` might need to change?
 def cos_prod (B : finset ℕ) (h : ℤ) (k : ℕ) : ℝ :=
@@ -60,6 +82,10 @@ by simp [exp_circle, complex.exp_eq_one_iff, pi_ne_zero, complex.I_ne_zero]
 
 lemma exp_circle_nat (n : ℕ) : exp_circle n = 1 :=
 by rw [←exp_circle_int n, int.cast_coe_nat]
+
+lemma exp_circle_sum {ι : Type*} {s : finset ι} (f : ι → ℂ) :
+  exp_circle (∑ i in s, f i) = ∏ i in s, exp_circle (f i) :=
+by { rw [exp_circle, finset.sum_mul, complex.exp_sum], refl }
 
 lemma int.Ico_succ_right {a b : ℤ} : finset.Ico a (b+1) = finset.Icc a b :=
 by { ext x, simp only [finset.mem_Icc, finset.mem_Ico, int.lt_add_one_iff] }
@@ -107,15 +133,14 @@ by rw [←finset.sum_erase_add _ _ ha, add_sub_cancel]
 
 -- note `r` here is different to the `r` in the proof
 lemma orthogonality {n m : ℕ} {r s : ℤ} (hm : m ≠ 0) {I : finset ℤ} (hI : I = finset.Ioc r s)
-  (hrs₁ : r < s) (hrs₂ : s = m + r) :
+  (hrs₁ : r < s) (hrs₂ : I.card = m) :
   (∑ h in I, exp_circle (h * n / m)) * (1 / m) =
     if m ∣ n then 1 else 0 :=
 begin
   have hm' : (m : ℂ) ≠ 0, exact_mod_cast hm,
   split_ifs,
   { simp_rw [mul_div_assoc, ←nat.cast_dvd h hm', ←int.cast_coe_nat, ←int.cast_mul, exp_circle_int],
-    rw [finset.sum_const, nat.smul_one_eq_coe, int.cast_coe_nat, one_div, hI, int.card_Ioc, hrs₂,
-      add_sub_cancel, int.to_nat_coe_nat, mul_inv_cancel hm'] },
+    rw [finset.sum_const, nat.smul_one_eq_coe, int.cast_coe_nat, one_div, hrs₂, mul_inv_cancel hm'] },
   rw [mul_eq_zero, one_div, inv_eq_zero, nat.cast_eq_zero],
   simp only [hm, or_false],
   set S := ∑ h in I, exp_circle (h * n / m),
@@ -132,10 +157,86 @@ begin
       int.cast_inj] at hi,
     rw [←int.coe_nat_dvd, ←hi] at h,
     simpa using h },
-  { rw [hrs₂, add_assoc, int.cast_add, add_mul, add_div, exp_circle_add, int.cast_coe_nat,
+  { have : s = m + r,
+    { rw [←hrs₂, hI, int.card_Ioc, int.to_nat_sub_of_le hrs₁.le, sub_add_cancel] },
+    rw [this, add_assoc, int.cast_add, add_mul, add_div, exp_circle_add, int.cast_coe_nat,
       mul_div_cancel_left _ hm', exp_circle_nat, one_mul] },
   { simp },
   { simp [int.add_one_le_iff, hrs₁] },
+end
+
+-- shows up in Lemma 4.10
+lemma sum_powerset_prod {ι : Type*} (I : finset ι) (x : ι → ℂ) :
+  ∑ J in I.powerset, ∏ j in J, x j = ∏ i in I, (1 + x i) :=
+begin
+  refine finset.induction_on I (by simp) _,
+  intros a s has ih,
+  rw [finset.sum_powerset_insert has, finset.prod_insert has, ←ih, add_mul, one_mul,
+    finset.mul_sum, add_right_inj, finset.sum_congr rfl],
+  intros t ht,
+  simp only [finset.mem_powerset] at ht,
+  rw finset.prod_insert (λ i, has (ht i)),
+end
+
+lemma lcm_ne_zero_of_zero_not_mem {A : finset ℕ} (hA : 0 ∉ A) : [A] ≠ 0 :=
+by rwa [ne.def, finset.lcm_eq_zero_iff, set.image_id, finset.mem_coe]
+
+-- example {a b : ℚ} (ha : a ≠ 0) : a / (b * a) = b⁻¹ :=
+-- begin
+--   rw [div_eq_mul_inv, mul_inv₀],
+-- end
+
+lemma orthog_rat {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0) :
+  (integer_count A k : ℂ) =
+    1 / ([A] : ℕ) * ∑ h in valid_sum_range [A], ∏ n in A, (1 + exp_circle (k * h / n)) :=
+begin
+  have hA' : (([A] : ℕ) : ℚ) ≠ 0 := nat.cast_ne_zero.2 (lcm_ne_zero_of_zero_not_mem hA),
+  have hk' : (k : ℚ) ≠ 0 := nat.cast_ne_zero.2 hk,
+  have : ∀ S : finset ℕ, S ⊆ A →
+          ((∃ (z : ℤ), rec_sum S * (k : ℚ) = z) ↔ [A] ∣ (k * ∑ n in S, [A] / n)),
+  { intros S hS,
+    rw [←int.coe_nat_dvd, dvd_iff_exists_eq_mul_left],
+    apply exists_congr,
+    intro z,
+    rw [←@int.cast_inj ℚ, int.cast_coe_nat, int.cast_mul, int.cast_coe_nat, nat.cast_mul,
+      nat.cast_sum, ←mul_left_inj' hA', eq.congr_left],
+    rw [mul_assoc, mul_left_comm, mul_right_inj' hk', rec_sum, finset.sum_mul, sum_congr rfl],
+    intros x hx,
+    rw [mul_comm, mul_one_div, nat.cast_dvd_char_zero],
+    exact finset.dvd_lcm (hS hx) },
+  have : ∀ S : finset ℕ, S ∈ A.powerset →
+    (if (∃ (z : ℤ), rec_sum S * (k : ℚ) = z) then (1 : ℕ) else 0 : ℂ) =
+      1 / ([A] : ℕ) * ∑ h in valid_sum_range [A], exp_circle (k * h * rec_sum S),
+  { intros S hS,
+    have ht : ((- (([A] : ℕ) : ℤ) / 2)) < (([A] : ℕ)/2),
+    { apply int.div_lt_of_lt_mul zero_lt_two,
+      apply lt_of_lt_of_le,
+      { rw [right.neg_neg_iff, int.coe_nat_pos, pos_iff_ne_zero],
+        apply lcm_ne_zero_of_zero_not_mem hA },
+      exact (mul_nonneg (int.div_nonneg (int.coe_nat_nonneg _) zero_le_two) zero_le_two) },
+    rw finset.mem_powerset at hS,
+    rw [nat.cast_one, if_congr (this S hS) rfl rfl, mul_comm (_ : ℂ),
+      ←orthogonality (lcm_ne_zero_of_zero_not_mem hA) rfl ht (card_valid_sum_range _)],
+    congr' 1,
+    apply finset.sum_congr rfl,
+    intros i hi,
+    rw [nat.cast_mul, mul_div_assoc, mul_div_assoc, ←mul_assoc, mul_comm (i : ℂ)],
+    congr' 2,
+    rw [rec_sum, nat.cast_sum, finset.sum_div, rat.cast_sum],
+    apply finset.sum_congr rfl,
+    intros n hn,
+    rw [nat.cast_dvd_char_zero, rat.cast_div, rat.cast_coe_nat, rat.cast_one, div_div_eq_div_mul,
+      mul_comm, div_mul_right],
+    { exact nat.cast_ne_zero.2 (lcm_ne_zero_of_zero_not_mem hA) },
+    exact finset.dvd_lcm (hS hn) },
+  rw [integer_count, card_eq_sum_ones, nat.cast_sum, sum_filter, finset.sum_congr rfl this,
+    ←mul_sum, sum_comm],
+  congr' 2 with i : 1,
+  rw [←sum_powerset_prod],
+  congr' 2 with S : 1,
+  rw [←exp_circle_sum, rec_sum, rat.cast_sum, mul_sum],
+  congr' 2 with j : 1,
+  rw [rat.cast_div, rat.cast_one, ←div_eq_mul_one_div, rat.cast_coe_nat],
 end
 
 -- Proposition 2
