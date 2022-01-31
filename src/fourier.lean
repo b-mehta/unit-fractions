@@ -140,18 +140,17 @@ end
 
 -- Proposition 2
 theorem circle_method_prop : ∃ c : ℝ,
-  ∀ᶠ (N : ℕ) in at_top, ∀ k M : ℕ, ∀ η K : ℝ,  ∀ A ⊆ finset.range (N+1),
-  (M ≤ N) → ((N:ℝ)^(3/4 : ℝ) ≤ M) → (1 ≤ k) → ((k:ℝ) ≤ c*M) →
-  (0 < η) → (η < 1) → (2*K ≤ M) → ((N:ℝ)^(3/4:ℝ) ≤ K) →
-  (∀ n ∈ A, M ≤ n) →
-  (rec_sum A ≤ 2/k) → ((2:ℚ)/k - 1 ≤ rec_sum A ) →
+  ∀ᶠ (N : ℕ) in at_top, ∀ k : ℕ, ∀ K L M: ℝ,  ∀ A ⊆ finset.range (N+1),
+  (M ≤ N) → (K < M) → (1 ≤ k) → (2*k ≤ N) →
+  (∀ n ∈ A, M ≤ (n:ℝ)) →
+  (rec_sum A < 2/k) → ((2:ℝ)/k - 1/M ≤ rec_sum A ) →
   (k ∣ A.lcm id) →
-  (∀ q ∈ ppowers_in_set A, ((q:ℝ) ≤ c*M/k) ∧
-  ((q:ℝ) ≤ c*η*M*K^2 / (N*log N)^2)) →
+  (∀ q ∈ ppowers_in_set A, ((q:ℝ) ≤ c*A.card) ∧
+  ((q:ℝ) ≤ c*L*K^2 / (N*log N)^2)) →
   (∀ (a : ℕ), let I : finset ℕ := (finset.Icc a ⌊(a:ℝ)+K⌋₊)
   in
   ( ((M:ℝ)/log N ≤ ((A.filter (λ n, ∀ x ∈ I, ¬ (n ∣ x))).card : ℝ)) ∨
-    (∃ x ∈ I, ∀ q : ℕ, (q ∈ interval_rare_ppowers I A (η*M)) → q ∣ x)
+    (∃ x ∈ I, ∀ q : ℕ, (q ∈ interval_rare_ppowers I A L) → q ∣ x)
   ))
   → ∃ S ⊆ A, rec_sum S = 1/k
   :=

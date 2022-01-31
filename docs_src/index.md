@@ -1,27 +1,19 @@
 ---
-title: The sphere eversion project
+title: On a density conjecture about unit fractions
 ---
 # What is it about?
 
-The goal of this project is to formalize the proof of existence of
-[sphere eversions](https://www.youtube.com/watch?v=wO61D9x6lNY)
+The goal of this project is to formalize the main result of the preprint
+['On a density conjecture about unit fractions'](https://arxiv.org/abs/2112.03726)
 using the [Lean theorem prover](https://leanprover.github.io/), 
 mainly developed at [Microsoft Research](https://www.microsoft.com/en-us/research/) 
 by [Leonardo de Moura](https://leodemoura.github.io/).
-More precisely we want to formalize the full *h*-principle for open and
-ample first order differential relations, and deduce existence of sphere
-eversions as a corollary.
 
-The main motivations are:
 
-* Demonstrating the proof assistant can handle geometric topology, and
-  not only algebra or abstract nonsense. Note that Fabian Immler and
-  Yong Kiam Tan already pioneered this direction by formalizing
-  Poincaré-Bendixon, but this project has much larger scale.
-* Exploring new infrastructure for collaborations on formalization
-  projects, using the [interactive blueprint](blueprint/index.html).
-* Producing a bilingual informal/formal document by keeping the
-  blueprint and the formalization in sync.
+More precisely we will prove that, in any dense set of integers contains
+distinct integers whose reciprocals sum to 1. (This generalises a colouring
+result of Croot, and resolves an old open problem of Erdos and Graham.) For further
+details, precise statements, contex, and so on, we refer to the preprint itself.
 
 ### Exploring and helping
 
@@ -34,7 +26,5 @@ dependencies are formalized.
 For lemmas, a blue border means the statement is ready for formalization,
 and a blue background means the proof is ready for formalization.
 
-Once you spotted something to work on, make sure to discuss in on
-[Zulip](https://leanprover.zulipchat.com/) before writing code.
-Once you formalized something, make sure the blueprint is still up to
-date, since it needs to evolve to its bilingual document final state.
+If you are interested in contributing, or have any questions about the project,
+please email bloom@maths.ox.ac.uk. 

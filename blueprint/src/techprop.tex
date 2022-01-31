@@ -1,6 +1,31 @@
 \chapter{Deduction of main technical proposition}
 \label{chap:techprop}
 
+
+\begin{lemma}\label{lem:find_multiples}
+\uses{def:rec_sum_local}
+Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that
+\[\tfrac{99}{100}\log\log N\leq \omega(n)\leq  2\log\log N\quad\textrm{for all}\quad n\in A.\]
+Then for any interval of length $\leq MN^{-2/(\log \log N)}$, if $A_I$ is the set of those $n\in A$ which divide some element of $I$, for all $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$ there exists some integer $x_q\in I$ such that $q\mid x_q$ and 
+\[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\] 
+\end{lemma}
+\begin{proof}
+  \uses{lem:usingq,lem:rtop}
+  Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$. We may assume that $\abs{A\backslash A_I}< M/\log N$ (or else 2(a) holds), and we need to show that either there is some $x\in I$ divisible by all $q\in\mathcal{D}_I$, or the first case holds.
+
+  For any $q\in \mathcal{E}_I$ we may therefore apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k$ chosen such that $(\log N)^{1/k}=2\log\log N$. This produces some $d_q$ such that $qd_q>\abs{I}$ and $\omega(d_q)<\tfrac{1}{500}\log\log N$ (provided $N$ is sufficiently large), and
+  \[\sum_{\substack{n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log\log N)^2}.\]
+  By definition of $A_I$, every $n\in A_I$ with $qd_q\mid n$ must divide some $x\in I$ -- in fact, they must all divide the same $x\in I$ (call this $x_q\in I$, say), since all such $x$ are in particular divisible by $qd_q>\abs{I}$, which can divide at most one element in $I$.
+
+  Let
+  \[A_I^{(q)}=\{ n/qd_q : n\in A_I\textrm{ with }qd_q\mid n\textrm{ and }(qd_q,n/qd_q)=1\}\]
+  so that, assuming $N$ is sufficiently large, $R(A_I^{(q)})\geq (\log N)^{-1/99}$, say. We may therefore apply Lemma~\ref{lem:rtop} with $\epsilon=2/99$ (note that since $\omega(n)\geq \frac{99}{100}\log\log N$ for $n\in A$ and $\omega(d_q)<\frac{1}{500}\log\log N$, we must have $\omega(m)\geq \frac{97}{99}\log\log N$ for all $m\in A_I^{(q)}$). This implies that
+  \[\sum_{r\in \mathcal{Q}_{A_I^{(q)}}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N.\]
+  Trivially, $\mathcal{Q}_{A_I^{(q)}}\subset \mathcal{Q}_A$, and further by choice of $x_q$, all $r\in \mathcal{Q}_{A_I^{(q)}}$ divide $x_q$, and hence
+  \[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N\geq 0.35\log\log N.\]
+\end{proof}
+
+
 \begin{proposition}\label{prop:tech_iterative}
   \leanok
   \lean{force_good_properties}
@@ -22,26 +47,9 @@ or
 \item there is some $x\in I$ divisible by all $q\in\mathcal{D}_I(A;M/2q(\log N)^{1/100})$.
 \end{enumerate}
 \end{enumerate}
-If $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$ then case (2) is guaranteed.
 \end{proposition}
 \begin{proof}
-  \uses{lem:basic,lem:usingq,lem:rtop,lem:divisor_bound}
-  Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$. We may assume that $\abs{A\backslash A_I}< M/\log N$ (or else 2(a) holds), and we need to show that either there is some $x\in I$ divisible by all $q\in\mathcal{D}_I$, or the first case holds.
-
-  Let $\mathcal{E}_I$ be the set of those $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$. For every $q\in \mathcal{D}_I$, by definition,
-  \[R(A_I; q) \geq R(A;q) - \brac{\frac{M}{2q(\log N)^{1/100}}}\frac{q}{M}>\frac{1}{2(\log N)^{1/100}},\]
-  and hence in particular $\mathcal{D}_I\subset \mathcal{E}_I$.
-
-  For any $q\in \mathcal{E}_I$ we may therefore apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k$ chosen such that $(\log N)^{1/k}=2\log\log N$. This produces some $d_q$ such that $qd_q>\abs{I}$ and $\omega(d_q)<\tfrac{1}{500}\log\log N$ (provided $N$ is sufficiently large), and
-  \[\sum_{\substack{n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log\log N)^2}.\]
-  By definition of $A_I$, every $n\in A_I$ with $qd_q\mid n$ must divide some $x\in I$ -- in fact, they must all divide the same $x\in I$ (call this $x_q\in I$, say), since all such $x$ are in particular divisible by $qd_q>\abs{I}$, which can divide at most one element in $I$.
-
-  Let
-  \[A_I^{(q)}=\{ n/qd_q : n\in A_I\textrm{ with }qd_q\mid n\textrm{ and }(qd_q,n/qd_q)=1\}\]
-  so that, assuming $N$ is sufficiently large, $R(A_I^{(q)})\geq (\log N)^{-1/99}$, say. We may therefore apply Lemma~\ref{lem:rtop} with $\epsilon=2/99$ (note that since $\omega(n)\geq \frac{99}{100}\log\log N$ for $n\in A$ and $\omega(d_q)<\frac{1}{500}\log\log N$, we must have $\omega(m)\geq \frac{97}{99}\log\log N$ for all $m\in A_I^{(q)}$). This implies that
-  \[\sum_{r\in \mathcal{Q}_{A_I^{(q)}}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N.\]
-  Trivially, $\mathcal{Q}_{A_I^{(q)}}\subset \mathcal{Q}_A$, and further by choice of $x_q$, all $r\in \mathcal{Q}_{A_I^{(q)}}$ divide $x_q$, and hence
-  \[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N\geq 0.35\log\log N.\]
+  \uses{lem:find_multiples,lem:basic,lem:mertens1,lem:divisor_bound}
   For any two $n_1\neq n_2\in I$, we have
   \[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N\leq 0.01\log\log N\]
   for $N$ sufficiently large, by Lemma~\ref{lem:basic}. It follows that if $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$ then there can be at most one such possible value for $x_q\in I$ as $q$ ranges over $\mathcal{E}_I$, and hence this common shared value of $x_q$ is an $x\in I$ divisible by all $q\in\mathcal{E}_I$, and hence certainly by all $q\in\mathcal{D}_I$, as required.
@@ -65,6 +73,34 @@ If $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$ then case (2)
   Therefore the size of $A''$ is at most the number of divisors of some fixed integer $m\leq N^2$, which is at most $N^{(1+o(1))2\log 2/\log\log N}$, and hence we have a contradiction for large enough $N$, since $2\log 2< 3/2$.
 \end{proof}
 
+\begin{proposition}\label{prop:tech_iterative2}
+  \uses{def:interval_rare_ppowers}
+Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that
+\[\tfrac{99}{100}\log\log N\leq \omega(n)\leq  2\log\log N\quad\textrm{for all}\quad n\in A,\]
+\[R(A)\geq (\log N)^{-1/101}\]
+and, for all $q\in \mathcal{Q}_A$,
+\[R(A;q) \geq (\log N)^{-1/100},\]
+and $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$  
+Then for any interval of length $\leq MN^{-2/(\log \log N)}$, either
+\begin{enumerate}
+\item \[\# \{ n\in A : \textrm{no element of }I\textrm{ is divisible by }n\}\geq M/\log N,\]
+or
+\item there is some $x\in I$ divisible by all $q\in\mathcal{D}_I(A;M/2q(\log N)^{1/100})$.
+\end{enumerate}
+\end{proposition}
+\begin{proof}
+  \uses{lem:find_multiples,lem:basic}
+ 
+  Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$. We may assume that $\abs{A\backslash A_I}< M/\log N$ (or else 2(a) holds), and we need to show that either there is some $x\in I$ divisible by all $q\in\mathcal{D}_I$, or the first case holds.
+
+  Let $\mathcal{E}_I$ be the set of those $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$. For every $q\in \mathcal{D}_I$, by definition,
+  \[R(A_I; q) \geq R(A;q) - \brac{\frac{M}{2q(\log N)^{1/100}}}\frac{q}{M}>\frac{1}{2(\log N)^{1/100}},\]
+  and hence in particular $\mathcal{D}_I\subset \mathcal{E}_I$.
+  
+  For any two $n_1\neq n_2\in I$, we have
+  \[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N\leq 0.01\log\log N\]
+  for $N$ sufficiently large, by Lemma~\ref{lem:basic}. It follows that if $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$ then there can be at most one such possible value for $x_q\in I$ as $q$ ranges over $\mathcal{E}_I$, and hence this common shared value of $x_q$ is an $x\in I$ divisible by all $q\in\mathcal{E}_I$, and hence certainly by all $q\in\mathcal{D}_I$, as required.
+  \end{proof}
 
 \begin{proposition}[Main Technical Proposition]\label{prop:techmain}
 \leanok
@@ -80,7 +116,7 @@ Let $N$ be sufficiently large. Suppose $A\subset [N^{1-1/\log\log N},N]$ and $1\
 There is some $S\subset A$ such that $R(S)=1/d$ for some $d\in [y,z]$.
 \end{proposition}
 \begin{proof}
-\uses{prop:tech_iterative,lem:pisq,prop:fourier}
+\uses{prop:tech_iterative,lem:pisq,prop:fourier,prop:tech_iterative2}
 Let $M=N^{1-1/\log\log N}$ and $d_i = \lceil y \rceil +i$. By repeated applications of Lemma~\ref{lem:pisq} we can find a sequence $A\supset A_0\supset A_1\supset\cdots \supset A_{t}$, where $d_t=\lceil z/4\rceil-1$, such that
 \[R(A_i)\in [2/d_i-1/M,2/d_i)\quad\textrm{ and }\quad R(A_i;q)\geq (\log N)^{-1/100}\textrm{ for all }q\in \mathcal{Q}_{A_i}.\]
 (Note that the hypotheses of Lemma~\ref{lem:pisq} continue to hold since
@@ -93,5 +129,5 @@ Otherwise, Proposition~\ref{prop:tech_iterative} yields some $B\subset A_j$ such
 \[R(B)\geq 2/3d_j-1/M\geq 1/2d_j+(\log N)^{-1/200}\]
 and where $\sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$. Let $e_i = 4d_j+i$ and, once again, repeatedly apply Lemma~\ref{lem:pisq} to find a sequence $B\supset B_0\supset \cdots\supset B_r$, where $e_r=\lfloor z\rfloor$, such that
 \[R(B_i)\in [2/e_i-1/M,2/e_i)\quad\textrm{ and }\quad R(B_i;q)\geq (\log N)^{-1/100}\textrm{ for all }q\in \mathcal{Q}_{B_i}.\]
-By minimality of $j$, no $d\in [y,d_j)$ divides any element of $A_j$, and hence every $n\in A_j$ is divisible by some $e\in [4d_j,z]$. In particular, there must exist some $0\leq s\leq r$ such that $B_s$ contains a multiple of $e_s$. Furthermore, since $\sum_{q\in \mathcal{Q}_{B_s}}\frac{1}{q}\leq \sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$ we must be in the second case of Proposition~\ref{prop:tech_iterative}. The hypotheses of Proposition~\ref{prop:fourier} are now met with $k=e_s$ and $\eta,K$ as above, and thus there is some $S\subset B_j\subset A$ such that $R(S)=1/e_s$.
+By minimality of $j$, no $d\in [y,d_j)$ divides any element of $A_j$, and hence every $n\in A_j$ is divisible by some $e\in [4d_j,z]$. In particular, there must exist some $0\leq s\leq r$ such that $B_s$ contains a multiple of $e_s$. Furthermore, since $\sum_{q\in \mathcal{Q}_{B_s}}\frac{1}{q}\leq \sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$ we can apply Proposition~\ref{prop:tech_iterative2}. The hypotheses of Proposition~\ref{prop:fourier} are now met with $k=e_s$ and $\eta,K$ as above, and thus there is some $S\subset B_j\subset A$ such that $R(S)=1/e_s$.
 \end{proof}

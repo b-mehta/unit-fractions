@@ -86,7 +86,7 @@
 <div class="main-text">
 <h1 id="chap:tech">3 Deduction of the main results</h1>
 
-<p>This section contains the deductions of the headline results from the main technical proposition, Propostion&#160;<a href="chap-techprop.html#prop:techmain">6.2</a>. </p>
+<p>This section contains the deductions of the headline results from the main technical proposition, Propostion&#160;<a href="chap-techprop.html#prop:techmain">6.4</a>. </p>
 <p><div class="theorem_thmwrapper" id="th:density_theorem">
   <div class="theorem_thmheading">
     <span class="theorem_thmcaption">
@@ -107,7 +107,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/21b207e709130cafead8c8d353a3fb0108deac2b/src/main_results.lean#L24">unit_fractions_upper_density</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/2ae069383936fd71ff247fbbbb7ceb0b38dabc2e/src/main_results.lean#L24">unit_fractions_upper_density</a></li>
         </ul>
 
       </div>
@@ -147,11 +147,11 @@
 </p>
 </div>
 <p> is \(\ll N/\log \log N\). Finally, provided we choose \(C_2\) sufficiently large in the definition of \(z\), Lemma&#160;<a href="chap-tech.html#lem:sieve2">3.5</a> ensures that the proportion of all \(n\in \{ 1,\ldots ,N\} \) not divisible by at least two distinct primes \(p_1,p_2\in [y,z]\) with \(4p_1{\lt}p_2\) is at most \(\frac{\delta }{8}N\), say. </p>
-<p>In particular, provided \(N\) is chosen sufficiently large (depending only on \(\delta \)), we may assume that \(\left\lvert A_N\right\rvert \geq \frac{\delta }{4}N\), where \(A_N\subset A\) is the set of those \(n\in A\cap [N^{1-1/\log \log N},N]\) which satisfy conditions (2)-(4) of Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.2</a>. Since \(\left\lvert A_N\right\rvert \geq \frac{\delta }{4}N\), </p>
+<p>In particular, provided \(N\) is chosen sufficiently large (depending only on \(\delta \)), we may assume that \(\left\lvert A_N\right\rvert \geq \frac{\delta }{4}N\), where \(A_N\subset A\) is the set of those \(n\in A\cap [N^{1-1/\log \log N},N]\) which satisfy conditions (2)-(4) of Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.4</a>. Since \(\left\lvert A_N\right\rvert \geq \frac{\delta }{4}N\), </p>
 <div class="displaymath" id="a0000000062">
   \[ R(A_N) \gg -\log (1-\delta /4)\gg \delta . \]
 </div>
-<p> In particular, since \(y=C_1/\delta \) for some suitably large constant \(C_1{\gt}0\), we have that \(R(A_N)\geq 4/y\), say. All of the conditions of Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.2</a> are now satisfied (provided \(N\) is chosen sufficiently large in terms of \(\delta \)), and hence there is some \(S\subset A_N\subset A\) such that \(R(S)=1/d\) for some \(d\in [y,z]\), which suffices as discussed above. </p>
+<p> In particular, since \(y=C_1/\delta \) for some suitably large constant \(C_1{\gt}0\), we have that \(R(A_N)\geq 4/y\), say. All of the conditions of Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.4</a> are now satisfied (provided \(N\) is chosen sufficiently large in terms of \(\delta \)), and hence there is some \(S\subset A_N\subset A\) such that \(R(S)=1/d\) for some \(d\in [y,z]\), which suffices as discussed above. </p>
 
   </div>
 </div>
@@ -175,7 +175,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/21b207e709130cafead8c8d353a3fb0108deac2b/src/main_results.lean#L28">unit_fractions_upper_log_density</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/2ae069383936fd71ff247fbbbb7ceb0b38dabc2e/src/main_results.lean#L28">unit_fractions_upper_log_density</a></li>
         </ul>
 
       </div>
@@ -252,7 +252,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/21b207e709130cafead8c8d353a3fb0108deac2b/src/main_results.lean#L122">corollary_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/2ae069383936fd71ff247fbbbb7ceb0b38dabc2e/src/main_results.lean#L122">corollary_one</a></li>
         </ul>
 
       </div>
@@ -292,7 +292,7 @@
   \[ \sum _i R(S_i)= \sum _{1\leq d\leq (\log N)^{1/500}} \frac{t(d)}{d}\leq (\log N)^{1/500}, \]
 </div>
 <p> and hence if \(A'=A\backslash (S_1\cup \cdots \cup S_k)\) then \(R(A')\geq (\log N)^{1/500}\). </p>
-<p>We may now apply Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.2</a> with \(y=1\) and \(z=(\log N)^{1/500}\) – note that condition (2) of Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.2</a> follows from condition (2) of the hypotheses with \(d_1=1\) and \(d_2=p\in [5,(\log N)^{1/500}]\) some suitable prime divisor. Thus there exists some \(S'\subset A'\) such that \(R(S')=1/d\) for some \(d\in [1,(\log N)^{1/500}]\), contradicting the maximality of \(k\). </p>
+<p>We may now apply Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.4</a> with \(y=1\) and \(z=(\log N)^{1/500}\) – note that condition (2) of Proposition&#160;<a href="chap-techprop.html#prop:techmain">6.4</a> follows from condition (2) of the hypotheses with \(d_1=1\) and \(d_2=p\in [5,(\log N)^{1/500}]\) some suitable prime divisor. Thus there exists some \(S'\subset A'\) such that \(R(S')=1/d\) for some \(d\in [1,(\log N)^{1/500}]\), contradicting the maximality of \(k\). </p>
 
   </div>
 </div>
@@ -317,7 +317,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/21b207e709130cafead8c8d353a3fb0108deac2b/src/main_results.lean#L246">sieve_lemma_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/2ae069383936fd71ff247fbbbb7ceb0b38dabc2e/src/main_results.lean#L246">sieve_lemma_one</a></li>
         </ul>
 
       </div>
@@ -389,7 +389,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/21b207e709130cafead8c8d353a3fb0108deac2b/src/main_results.lean#L269">sieve_lemma_two</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/2ae069383936fd71ff247fbbbb7ceb0b38dabc2e/src/main_results.lean#L269">sieve_lemma_two</a></li>
         </ul>
 
       </div>
