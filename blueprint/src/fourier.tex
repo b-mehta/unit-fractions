@@ -6,6 +6,7 @@ This section contains the part of the proof that uses Fourier analysis to reduce
 
 \begin{definition}
   \label{def:integer_count}
+  \uses{def:rec_sum}
   \leanok
   \lean{integer_count}
   In this section, we write $[A]$ for the lowest common multiple of $A$, and for any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)$ for the count of the number of subsets $S\subset A$ such that $kR(S)$ is an integer.
@@ -104,6 +105,7 @@ If $A\subset\mathbb{N}$ is finite and $k\geq 1$ is an integer then
 \[F(A;k)= \frac{1}{[A]}\sum_{-[A]/2< h\leq [A]/2}\prod_{n\in A}(1+e(kh/n)).\]
 \end{lemma}
 \begin{proof}
+  \leanok
 \uses{lem:orthogonality}
 For any $S\subset A$,  $k\sum_{n\in S}\frac{1}{n}\in \bbz$ if and only if $k\sum_{n\in S}\frac{[A]}{n}\in [A]\cdot \bbz$. By definition $n\mid [A]$ for all $n\in A$, and so $k\sum_{n\in S}\frac{[A]}{n}$ is an integer. It is $\geq 0$ since each summand is. Therefore by Lemma~\ref{lem:orthogonality}, if $I$ is any set of $[A]$ consecutive integers
 \[1_{k\sum_{n\in S}\frac{1}{n}\in \bbz}=1_{[A]\mid k\sum_{n\in S}\frac{[A]}{n}} = \frac{1}{[A]}\sum_{h\in I}e(kh\sum_{n\in S}\frac{1}{n}).\]

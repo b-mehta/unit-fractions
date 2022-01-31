@@ -3,15 +3,14 @@
 
 
 \begin{lemma}\label{lem:find_multiples}
-\uses{def:rec_sum_local}
 Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that
 \[\tfrac{99}{100}\log\log N\leq \omega(n)\leq  2\log\log N\quad\textrm{for all}\quad n\in A.\]
-Then for any interval of length $\leq MN^{-2/(\log \log N)}$, if $A_I$ is the set of those $n\in A$ which divide some element of $I$, for all $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$ there exists some integer $x_q\in I$ such that $q\mid x_q$ and 
-\[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\] 
+Then for any interval of length $\leq MN^{-2/(\log \log N)}$, if $A_I$ is the set of those $n\in A$ which divide some element of $I$, for all $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$ there exists some integer $x_q\in I$ such that $q\mid x_q$ and
+\[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\]
 \end{lemma}
 \begin{proof}
   \uses{lem:usingq,lem:rtop}
-Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$. 
+Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$.
 
 Apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k$ chosen such that $(\log N)^{1/k}=2\log\log N$. This produces some $d_q$ such that $qd_q>\abs{I}$ and $\omega(d_q)<\tfrac{1}{500}\log\log N$ (provided $N$ is sufficiently large), and
   \[\sum_{\substack{n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log\log N)^2}\geq \frac{1}{(\log N)^{1/99}}.\]
@@ -54,8 +53,8 @@ Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be 
 
 Let $\mathcal{E}$ be the set of those $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$. For every $q\in \mathcal{D}_I$, by definition,
   \[R(A_I; q) \geq R(A;q) - \brac{\frac{M}{2q(\log N)^{1/100}}}\frac{q}{M}>\frac{1}{2(\log N)^{1/100}},\]
-  and hence in particular $\mathcal{D}_I\subset \mathcal{E}_I$. By Lemma~\ref{lem:find_multiples} for each $q\in\mathcal{E}$ there exists $x_q\in I$ such that $q\mid x_q$ and 
-\[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\] 
+  and hence in particular $\mathcal{D}_I\subset \mathcal{E}_I$. By Lemma~\ref{lem:find_multiples} for each $q\in\mathcal{E}$ there exists $x_q\in I$ such that $q\mid x_q$ and
+\[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\]
 
  For any two $n_1\neq n_2\in I$, we have
   \[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N\leq 0.01\log\log N\]
@@ -85,7 +84,7 @@ Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A
 \[R(A)\geq (\log N)^{-1/101}\]
 and, for all $q\in \mathcal{Q}_A$,
 \[R(A;q) \geq (\log N)^{-1/100},\]
-and $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$  
+and $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log\log N$
 Then for any interval of length $\leq MN^{-2/(\log \log N)}$, either
 \begin{enumerate}
 \item \[\# \{ n\in A : \textrm{no element of }I\textrm{ is divisible by }n\}\geq M/\log N,\]
@@ -95,13 +94,13 @@ or
 \end{proposition}
 \begin{proof}
   \uses{lem:find_multiples,lem:basic}
- 
+
 Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$, and $\mathcal{D}=\mathcal{D}_I(A;M/2q(\log N)^{1/00})$. We may assume that $\abs{A\backslash A_I}< M/\log N$.
 
 For every $q\in \mathcal{D}$, by definition,
   \[R(A_I; q) \geq R(A;q) - \brac{\frac{M}{2q(\log N)^{1/100}}}\frac{q}{M}>\frac{1}{2(\log N)^{1/100}},\]
-and hence by Lemma~\ref{lem:find_multiples} for each $q\in\mathcal{D}$ there exists $x_q\in I$ such that $q\mid x_q$ and 
-\[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\] 
+and hence by Lemma~\ref{lem:find_multiples} for each $q\in\mathcal{D}$ there exists $x_q\in I$ such that $q\mid x_q$ and
+\[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\]
 
  For any two $n_1\neq n_2\in I$, we have
   \[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N\leq 0.01\log\log N\]
