@@ -41,6 +41,30 @@ by simp only [rec_sum, finset.sum_union h]
 
 @[simp] lemma rec_sum_empty : rec_sum ∅ = 0 := by simp [rec_sum]
 
+lemma rec_sum_nonneg {A : finset ℕ} : 0 ≤ rec_sum A :=
+finset.sum_nonneg (λ i hi, div_nonneg zero_le_one (nat.cast_nonneg _))
+
+lemma rec_sum_mono {A₁ A₂ : finset ℕ} (h : A₁ ⊆ A₂) : rec_sum A₁ ≤ rec_sum A₂ :=
+finset.sum_le_sum_of_subset_of_nonneg h (λ _ _ _, div_nonneg zero_le_one (nat.cast_nonneg _))
+
+-- can make this stronger without 0 ∉ A but we never care about that case
+lemma rec_sum_eq_zero_iff {A : finset ℕ} (hA : 0 ∉ A) : rec_sum A = 0 ↔ A = ∅ :=
+begin
+  symmetry,
+  split,
+  { rintro rfl,
+    simp },
+  simp_rw [rec_sum, one_div],
+  rw [finset.sum_eq_zero_iff_of_nonneg (λ i hi, _)],
+  { intro h,
+    simp only [one_div, inv_eq_zero, nat.cast_eq_zero] at h,
+    apply finset.eq_empty_of_forall_not_mem,
+    intros x hx,
+    cases h x hx,
+    apply hA hx },
+  exact inv_nonneg.2 (nat.cast_nonneg _),
+end
+
 lemma nonempty_of_rec_sum_recip {A : finset ℕ} {d : ℕ} (hd : 1 ≤ d) :
   rec_sum A = 1 / d → A.nonempty :=
 begin -- should be able to simplify this

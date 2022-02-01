@@ -39,3 +39,7 @@ open_locale big_operators
   (f : α → ℚ) :
   ↑(∑ x in s, f x : ℚ) = (∑ x in s, (f x : β)) :=
 (rat.cast_hom β).map_sum f s
+
+lemma complex.re_sum {α : Type*} (s : finset α) (f : α → ℂ) :
+  (∑ i in s, f i).re = ∑ i in s, (f i).re :=
+complex.re_add_group_hom.map_sum f s

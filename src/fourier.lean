@@ -36,6 +36,14 @@ lemma mem_valid_sum_range (t : ℕ) (h : ℤ) :
   h ∈ valid_sum_range t ↔ (-↑t) / 2 < h ∧ h ≤ t / 2 :=
 by simp [valid_sum_range]
 
+lemma zero_mem_valid_sum_range {t : ℕ} (ht : t ≠ 0) : (0 : ℤ) ∈ valid_sum_range t :=
+begin
+  rw [mem_valid_sum_range],
+  refine ⟨int.div_neg' _ zero_lt_two, int.div_nonneg _ zero_le_two⟩,
+  { simpa only [right.neg_neg_iff, int.coe_nat_pos] using ht.bot_lt, },
+  simp only [int.coe_nat_nonneg],
+end
+
 -- this is dangerous but I think I can get away with it in this file
 local notation `[` A `]` := A.lcm id
 
@@ -80,8 +88,11 @@ lemma exp_circle_eq_one_iff (x : ℂ) :
   exp_circle x = 1 ↔ ∃ (z : ℤ), x = z :=
 by simp [exp_circle, complex.exp_eq_one_iff, pi_ne_zero, complex.I_ne_zero]
 
-lemma exp_circle_nat (n : ℕ) : exp_circle n = 1 :=
+@[simp] lemma exp_circle_nat (n : ℕ) : exp_circle n = 1 :=
 by rw [←exp_circle_int n, int.cast_coe_nat]
+
+@[simp] lemma exp_circle_zero : exp_circle 0 = 1 :=
+by rw [←exp_circle_nat 0, nat.cast_zero]
 
 lemma exp_circle_sum {ι : Type*} {s : finset ι} (f : ι → ℂ) :
   exp_circle (∑ i in s, f i) = ∏ i in s, exp_circle (f i) :=
@@ -127,7 +138,7 @@ begin
 end
 
 lemma finset.sum_erase_eq_sub {α β : Type*} [decidable_eq α] [add_comm_group β]
-  (f : α → β) (s : finset α) (a : α) (ha : a ∈ s) :
+  {f : α → β} {s : finset α} {a : α} (ha : a ∈ s) :
   ∑ x in s.erase a, f x = (∑ x in s, f x) - f a :=
 by rw [←finset.sum_erase_add _ _ ha, add_sub_cancel]
 
@@ -231,12 +242,70 @@ begin
     exact finset.dvd_lcm (hS hn) },
   rw [integer_count, card_eq_sum_ones, nat.cast_sum, sum_filter, finset.sum_congr rfl this,
     ←mul_sum, sum_comm],
-  congr' 2 with i : 1,
-  rw [←sum_powerset_prod],
-  congr' 2 with S : 1,
-  rw [←exp_circle_sum, rec_sum, rat.cast_sum, mul_sum],
-  congr' 2 with j : 1,
-  rw [rat.cast_div, rat.cast_one, ←div_eq_mul_one_div, rat.cast_coe_nat],
+  simp_rw [←sum_powerset_prod, ←exp_circle_sum, rec_sum, rat.cast_sum, mul_sum,
+    rat.cast_div, rat.cast_one, ←div_eq_mul_one_div, rat.cast_coe_nat],
+end
+
+lemma integer_bound_thing {d : ℤ} (hd₀ : 0 ≤ d) (hd₁ : d ≠ 1) (hd₂ : d < 2) :
+  d = 0 :=
+begin
+  interval_cases using hd₀ hd₂,
+  cases hd₁ rfl,
+end
+
+lemma orthog_simp_aux {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
+  (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA' : rec_sum A < 2 / k) :
+  ∑ h in valid_sum_range [A], (∏ n in A, (1 + exp_circle (k * h / n))) = ([A] : ℕ) :=
+begin
+  have : integer_count A k = 1,
+  { rw [integer_count, card_eq_one],
+    refine ⟨∅, _⟩,
+    ext S,
+    simp only [mem_filter, mem_powerset, mem_singleton],
+    split,
+    { rintro ⟨h₁, d, h₂⟩,
+      have : 0 ≤ d,
+      { rw [←@int.cast_nonneg ℚ, ←h₂],
+        exact mul_nonneg rec_sum_nonneg (nat.cast_nonneg _) },
+      have : d < 2,
+      { rw [←@int.cast_lt ℚ, ←h₂, int.cast_two, ←lt_div_iff],
+        { exact (rec_sum_mono h₁).trans_lt hA' },
+        exact nat.cast_pos.2 hk.bot_lt },
+      have : d ≠ 1,
+      { rw [ne.def, ←@int.cast_inj ℚ, ←h₂, int.cast_one, ←eq_div_iff],
+        { exact hS S h₁ },
+        rwa nat.cast_ne_zero, },
+      rw integer_bound_thing ‹0 ≤ d› ‹d ≠ 1› ‹d < 2› at *,
+      simp only [hk, int.cast_zero, mul_eq_zero, nat.cast_eq_zero, or_false] at h₂,
+      have : 0 ∉ S := mt (λ i, h₁ i) hA,
+      rwa ←rec_sum_eq_zero_iff this, },
+    rintro rfl,
+    exact ⟨by simp, 0, by simp⟩ },
+  rw [←div_eq_one_iff_eq, div_eq_mul_one_div, mul_comm, ←orthog_rat hA hk, this, nat.cast_one],
+  rw nat.cast_ne_zero,
+  apply lcm_ne_zero_of_zero_not_mem hA,
+end
+
+lemma orthog_simp {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
+  (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA' : rec_sum A < 2 / k) :
+  ∑ h in valid_sum_range [A], (∏ n in A, (1 + exp_circle (k * h / n))).re = ([A] : ℕ) :=
+begin
+  have := congr_arg complex.re (orthog_simp_aux hA hk hS hA'),
+  rwa [complex.nat_cast_re, complex.re_sum] at this,
+end
+
+lemma orthog_simp2 {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
+  (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA' : rec_sum A < 2 / k)
+  (hA'' : (([A] : ℕ) : ℝ) ≤ 2^(A.card - 1 : ℤ)) :
+  ∑ h in j A, (∏ n in A, (1 + exp_circle (k * h / n))).re ≤ -2^(A.card - 1 : ℤ) :=
+begin
+  have hA''' := lcm_ne_zero_of_zero_not_mem hA,
+  rw [j, finset.sum_erase_eq_sub (zero_mem_valid_sum_range hA'''), orthog_simp hA hk hS hA'],
+  simp only [int.cast_zero, zero_div, mul_zero, exp_circle_zero, prod_const],
+  rw [sub_le_iff_le_add, neg_add_eq_sub],
+  apply hA''.trans,
+  rw [le_sub_iff_add_le, ←mul_two, ←zpow_add_one₀ (@two_ne_zero ℝ _ _), sub_add_cancel],
+  norm_cast,
 end
 
 -- Proposition 2
