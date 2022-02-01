@@ -28,6 +28,8 @@ This section contains the part of the proof that uses Fourier analysis to reduce
 
 \begin{definition}
   \label{def:major_arc}
+  \leanok
+  \lean{major_arc}
   \uses{def:j}
   For any finite set of naturals $A$ and integer $k\geq 1$, and real $K>0$, we define the `major arc' corresponding to $t\in\bbz$ as
 \[\mathfrak{M}(t;A,k,K) = \{ h\in  J(A): \abs{h-t[A]/k}\leq K/2k\}\]
@@ -156,9 +158,12 @@ and the result follows after rearranging.
 
 \begin{lemma}\label{lem:majorarcs_disjoint}
   \uses{def:major_arc}
+  \leanok
+  \lean{majorarcs_disjoint}
 If $A$ is a finite set of integers and $K$ is a real such that $[A]>K$ then, for any integer $k\geq 1$, the sets $\mathfrak{M}(t;A,k,K)$ are disjoint for distinct $t\in \bbz$.
 \end{lemma}
 \begin{proof}
+  \leanok
 Suppose not and $h\in \mathfrak{M}(t_1)\cap \mathfrak{M}(t_2)$. By definition,
 \[\abs{hk-t_1[A]}\leq K/2\]
 and
