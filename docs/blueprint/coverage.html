@@ -196,10 +196,21 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>4 Fourier Analysis <span class="partial">47%</span></h3>
+  <h3>4 Fourier Analysis <span class="partial">45%</span></h3>
   
   <ul class="coverage">
     
+    
+    
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.10 (lem:triv_q_bound)</div>
+      <div class="thm_thm_content"><p>  Let \(A\) be a finite set of naturals not containing \(0\). For any \(n\in A\), let \(\mathcal{Q}_A(n)\) denote all those \(q\in \mathcal{Q}_A\) such that \(n\in A_q\), then </p>
+<div class="displaymath" id="a0000000102">
+  \[ \left\lvert \mathcal{Q}_A(n)\right\rvert \leq \tfrac {1}{\log 2}\log n. \]
+</div>
+</div>
+    </li>
     
     
     
@@ -212,9 +223,9 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 4.14 (lem:useful_rewrite)</div>
+      <div class="thm_thmheading">Lemma 4.15 (lem:useful_rewrite)</div>
       <div class="thm_thm_content"><p>  For any finite set of natural numbers \(A\) and \(\theta \in \mathbb {R}\) </p>
-<div class="displaymath" id="a0000000118">
+<div class="displaymath" id="a0000000120">
   \[ \Re \left( \prod _{n\in A}(1+e(\theta /n))\right)=2^{\left\lvert A\right\rvert }\cos (\pi \theta R(A))\prod _{n\in A}\cos (\pi \theta /n). \]
 </div>
 </div>
@@ -223,9 +234,9 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 4.15 (lem:majorarcs)</div>
+      <div class="thm_thmheading">Lemma 4.16 (lem:majorarcs)</div>
       <div class="thm_thm_content"><p> Let \(M\geq 1\) and \(A\) a finite set of naturals such that \(n\geq M\) for all \(n\in A\). Let \(K\) be a real such that \(K{\lt}M\). Let \(k\geq 1\) be an integer. Suppose that \(kR(A) \in [2-k/M,2)\). </p>
-<div class="displaymath" id="a0000000121">
+<div class="displaymath" id="a0000000123">
   \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) \geq 0. \]
 </div>
 </div>
@@ -234,9 +245,9 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 4.16 (lem:minor_lbound)</div>
+      <div class="thm_thmheading">Lemma 4.17 (lem:minor_lbound)</div>
       <div class="thm_thm_content"><p>  Let \(M\geq 1\) and \(A\) a finite set of naturals such that \(n\geq M\) for all \(n\in A\). Let \(K\) be a real such that \(K{\lt}M\). Let \(k\geq 1\) be an integer. Suppose that \(kR(A) \in [2-k/M,2)\), and there is no \(S\subset A\) such that \(R(S)=1/k\), and \([A]\leq 2^{\left\lvert A\right\rvert -1}\). Then </p>
-<div class="displaymath" id="a0000000129">
+<div class="displaymath" id="a0000000131">
   \[ \sum _{h\in J(A)\backslash \mathfrak {M}(A,k,K)} C(A;h,k)\geq 1/2. \]
 </div>
 </div>
@@ -245,9 +256,9 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 4.17 (lem:cos_prod_bound)</div>
+      <div class="thm_thmheading">Lemma 4.18 (lem:cos_prod_bound)</div>
       <div class="thm_thm_content"><p>  For any finite set \(A\) such that \(n\leq N\) for all \(n\in A\), and integers \(k,h\), if \(kh\equiv h_n\pmod{n}\) for \(\left\lvert h_n\right\rvert \leq n/2\) for all \(n\in A\), then </p>
-<div class="displaymath" id="a0000000135">
+<div class="displaymath" id="a0000000137">
   \[ C(A;h,k)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}h_n^2\right). \]
 </div>
 </div>
@@ -256,9 +267,9 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Lemma 4.18 (lem:minor1_bound)</div>
+      <div class="thm_thmheading">Lemma 4.19 (lem:minor1_bound)</div>
       <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large and \(M\geq 8\). Let \(k\geq 1\) be an integer. Let \(A\subset [M,N]\) be a set of integers such that if \(q\in \mathcal{Q}_A\) then \(q\leq \frac{MK^2}{N^2(\log N)^2}\). Then </p>
-<div class="displaymath" id="a0000000138">
+<div class="displaymath" id="a0000000140">
   \[ \sum _{h\in \mathfrak {m}_1(A,k,K,M/\log N)} C(A;h,k)\leq 1/8. \]
 </div>
 </div>
@@ -266,10 +277,12 @@ Click chapter titles to see missing items.
     
     
     
+    
+    
     <li>
-      <div class="thm_thmheading">Lemma 4.19 (lem:minor2_ind_bound)</div>
-      <div class="thm_thm_content"><p>  There is a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq cLK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then </p>
-<div class="displaymath" id="a0000000144">
+      <div class="thm_thmheading">Lemma 4.20 (lem:minor2_ind_bound)</div>
+      <div class="thm_thm_content"><p>  Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq \tfrac {1}{16}LK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then </p>
+<div class="displaymath" id="a0000000146">
   \[ C(A;h,k)\leq N^{-4\left\lvert \mathcal{Q}_A\backslash \mathcal{D}\right\rvert }. \]
 </div>
 </div>
@@ -277,17 +290,15 @@ Click chapter titles to see missing items.
     
     
     
-    
-    
     <li>
-      <div class="thm_thmheading">Lemma 4.20 (lem:minor2_bound)</div>
-      <div class="thm_thm_content"><p>  There is a constant \(c{\gt}0\) such that the following holds. Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals. Let \(k\) be an integer such that \(1\leq k \leq N/2\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
+      <div class="thm_thmheading">Lemma 4.21 (lem:minor2_bound)</div>
+      <div class="thm_thm_content"><p>  Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals. Let \(k\) be an integer such that \(1\leq k \leq N/2\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
 <ol class="enumerate">
-  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq c\frac{LK^2}{N^2(\log N)^2}\), and </p>
+  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \tfrac {1}{16}\frac{LK^2}{N^2(\log N)^2}\), and </p>
 </li>
   <li><p>for any interval \(I\) of length \(K\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000150">
+  <li><div class="displaymath" id="a0000000152">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -298,7 +309,7 @@ Click chapter titles to see missing items.
 </li>
 </ol>
 <p> Then </p>
-<div class="displaymath" id="a0000000151">
+<div class="displaymath" id="a0000000153">
   \[ \sum _{h\in \mathfrak {m}_2(A,k,K,M/\log N)}\prod _{n\in A}\left\lvert \cos (\pi kh/n)\right\rvert \leq 1/8. \]
 </div>
 </div>
@@ -307,18 +318,18 @@ Click chapter titles to see missing items.
     
     
     <li>
-      <div class="thm_thmheading">Proposition 4.21 (prop:fourier)</div>
-      <div class="thm_thm_content"><p>  There is a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\) is sufficiently large. Let \(K,L,M\) be reals and \(k\) an integer such that \(1\leq k\leq N/2\) and \(M{\gt}K\). Let \(A\subset [M,N]\) be a set of integers such that </p>
+      <div class="thm_thmheading">Proposition 4.22 (prop:fourier)</div>
+      <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large. Let \(K,L,M\) be reals and \(k\) an integer such that \(1\leq k\leq N/2\) and \(M{\gt}K\). Let \(A\subset [M,N]\) be a set of integers such that </p>
 <ol class="enumerate">
   <li><p>\(R(A)\in [2/k-1/M,2/k)\), </p>
 </li>
   <li><p>\(k\) divides the lowest common multiple of \(A\), </p>
 </li>
-  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq c\min \left( \left\lvert A\right\rvert ,\frac{LK^2}{N^2(\log N)^2}\right)\), and </p>
+  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \tfrac {1}{16}\min \left( \left\lvert A\right\rvert ,\frac{LK^2}{N^2(\log N)^2}\right)\), and </p>
 </li>
   <li><p>for any interval \(I\) of length \(K\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000155">
+  <li><div class="displaymath" id="a0000000157">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -354,13 +365,13 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.7 (lem:lcm_desc)</div>
-      <div class="thm_thm_content"><p> Let \(A\) be a finite set of natural numbers. If </p>
+      <div class="thm_thm_content"><p> Let \(A\) be a finite set of natural numbers not containing \(0\). If </p>
 <div class="displaymath" id="a0000000093">
-  \[ \mathcal{P}_A = \{  p : \exists n\in A : p \mid n\}  \]
+  \[ \mathcal{P}_A = \{  p \textrm{ prime}: \exists n\in A : p \mid n\}  \]
 </div>
 <p> and for all \(p\in \mathcal{P}_A\) then \(r_p\geq 0\) is the greatest integer such that \(p^{r_p}\) divides some \(n\in A\), then </p>
 <div class="displaymath" id="a0000000094">
-  \[ [A]\leq \prod _{p\in \mathcal{P}_A}p^{r_p}. \]
+  \[ [A]=\prod _{p\in \mathcal{P}_A}p^{r_p}. \]
 </div>
 </div>
     </li>
@@ -369,7 +380,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.8 (lem:smooth_lcm)</div>
-      <div class="thm_thm_content"><p>  If \(A\) is a finite set of natural numbers such that if \(q\in \mathcal{Q}_A\) then \(q\leq X\), then \([A]\leq e^{O(X)}\). </p>
+      <div class="thm_thm_content"><p>  If \(A\) is a finite set of natural numbers not containing \(0\) such that if \(q\in \mathcal{Q}_A\) then \(q\leq X\), then \([A]\leq e^{O(X)}\). </p>
 </div>
     </li>
     
@@ -389,7 +400,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 5.1 (lem:basic)</div>
       <div class="thm_thm_content"><p> If \(0{\lt}\left\lvert n_1-n_2\right\rvert \leq N\) then </p>
-<div class="displaymath" id="a0000000157">
+<div class="displaymath" id="a0000000159">
   \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N, \]
 </div>
 <p> where the summation is restricted to prime powers. </p>
@@ -401,7 +412,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 5.2 (lem:rtop)</div>
       <div class="thm_thm_content"><p>  Let \(1/2{\gt}\epsilon {\gt}0\) and \(N\) be sufficiently large, depending on \(\epsilon \). If \(A\) is a finite set of integers such that \(R(A)\geq (\log N)^{-\epsilon /2}\) and \((1-\epsilon )\log \log N\leq \omega (n)\leq 2\log \log N\) for all \(n\in A\) then </p>
-<div class="displaymath" id="a0000000160">
+<div class="displaymath" id="a0000000162">
   \[ \sum _{q\in \mathcal{Q}_A}\frac{1}{q} \geq (1-2\epsilon )e^{-1}\log \log N. \]
 </div>
 
@@ -419,7 +430,7 @@ Click chapter titles to see missing items.
 </li>
   <li><p>\(\omega (d)\leq \tfrac {5}{\log k}\log \log N\), and </p>
 </li>
-  <li><div class="displaymath" id="a0000000164">
+  <li><div class="displaymath" id="a0000000166">
   \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}. \]
 </div>
 </li>
@@ -432,7 +443,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 5.4 (lem:pisqa)</div>
       <div class="thm_thm_content"><p>   Let \(N\) be sufficiently large and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
-<div class="displaymath" id="a0000000174">
+<div class="displaymath" id="a0000000176">
   \[ R(B)\geq R(A)-\frac{1}{(\log N)^{1/200}} \]
 </div>
 <p> and \(R(B;q)\geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_B\). </p>
@@ -444,12 +455,12 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 5.5 (lem:pisq)</div>
       <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
-<div class="displaymath" id="a0000000179">
+<div class="displaymath" id="a0000000181">
   \[ R(A) \geq \alpha +\frac{1}{(\log N)^{1/200}} \]
 </div>
 <p> and if \(q\in \mathcal{Q}_A\) then \(q\leq M/(\log N)^{1/100}\). </p>
 <p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), </p>
-<div class="displaymath" id="a0000000180">
+<div class="displaymath" id="a0000000182">
   \[ R(B;q)\geq \frac{1}{(\log N)^{1/100}}. \]
 </div>
 </div>
@@ -469,11 +480,11 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 6.1 (lem:find_multiples)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000183">
+<div class="displaymath" id="a0000000185">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A. \]
 </div>
 <p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), if \(A_I\) is the set of those \(n\in A\) which divide some element of \(I\), for all \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\) there exists some integer \(x_q\in I\) such that \(q\mid x_q\) and </p>
-<div class="displaymath" id="a0000000184">
+<div class="displaymath" id="a0000000186">
   \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log \log N. \]
 </div>
 </div>
@@ -484,27 +495,27 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Proposition 6.2 (prop:tech_iterative)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000190">
+<div class="displaymath" id="a0000000192">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
-<div class="displaymath" id="a0000000191">
+<div class="displaymath" id="a0000000193">
   \[ R(A)\geq (\log N)^{-1/101} \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000192">
+<div class="displaymath" id="a0000000194">
   \[ R(A;q) \geq (\log N)^{-1/100}. \]
 </div>
 <p> Then either </p>
 <ol class="enumerate">
   <li><p>there is some \(B\subset A\) such that \(R(B)\geq \tfrac {1}{3}R(A)\) and </p>
-<div class="displaymath" id="a0000000193">
+<div class="displaymath" id="a0000000195">
   \[ \sum _{q\in \mathcal{Q}_{B}}\frac{1}{q}\leq \frac{2}{3}\log \log N, \]
 </div>
 <p> or </p>
 </li>
   <li><p>for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000194">
+  <li><div class="displaymath" id="a0000000196">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -522,19 +533,19 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Proposition 6.3 (prop:tech_iterative2)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000203">
+<div class="displaymath" id="a0000000205">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
-<div class="displaymath" id="a0000000204">
+<div class="displaymath" id="a0000000206">
   \[ R(A)\geq (\log N)^{-1/101} \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000205">
+<div class="displaymath" id="a0000000207">
   \[ R(A;q) \geq (\log N)^{-1/100}, \]
 </div>
 <p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\) Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000206">
+  <li><div class="displaymath" id="a0000000208">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -558,7 +569,7 @@ Click chapter titles to see missing items.
   <li><p>every prime power \(q\) dividing some \(n\in A\) satisfies \(q\leq N^{1-6/\log \log N}\), and </p>
 </li>
   <li><p>every \(n\in A\) satisfies </p>
-<div class="displaymath" id="a0000000211">
+<div class="displaymath" id="a0000000213">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n) \leq 2\log \log N. \]
 </div>
 </li>
@@ -687,36 +698,45 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
-      <div class="thm_thmheading">Lemma 4.14 (lem:useful_rewrite)</div>
+      <div class="thm_thmheading">Lemma 4.10 (lem:triv_q_bound)</div>
+      <div class="thm_thm_content"><p>  Let \(A\) be a finite set of naturals not containing \(0\). For any \(n\in A\), let \(\mathcal{Q}_A(n)\) denote all those \(q\in \mathcal{Q}_A\) such that \(n\in A_q\), then </p>
+<div class="displaymath" id="a0000000102">
+  \[ \left\lvert \mathcal{Q}_A(n)\right\rvert \leq \tfrac {1}{\log 2}\log n. \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 4.15 (lem:useful_rewrite)</div>
       <div class="thm_thm_content"><p>  For any finite set of natural numbers \(A\) and \(\theta \in \mathbb {R}\) </p>
-<div class="displaymath" id="a0000000118">
+<div class="displaymath" id="a0000000120">
   \[ \Re \left( \prod _{n\in A}(1+e(\theta /n))\right)=2^{\left\lvert A\right\rvert }\cos (\pi \theta R(A))\prod _{n\in A}\cos (\pi \theta /n). \]
 </div>
 </div>
     </li>
     
     <li>
-      <div class="thm_thmheading">Lemma 4.15 (lem:majorarcs)</div>
+      <div class="thm_thmheading">Lemma 4.16 (lem:majorarcs)</div>
       <div class="thm_thm_content"><p> Let \(M\geq 1\) and \(A\) a finite set of naturals such that \(n\geq M\) for all \(n\in A\). Let \(K\) be a real such that \(K{\lt}M\). Let \(k\geq 1\) be an integer. Suppose that \(kR(A) \in [2-k/M,2)\). </p>
-<div class="displaymath" id="a0000000121">
+<div class="displaymath" id="a0000000123">
   \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) \geq 0. \]
 </div>
 </div>
     </li>
     
     <li>
-      <div class="thm_thmheading">Lemma 4.17 (lem:cos_prod_bound)</div>
+      <div class="thm_thmheading">Lemma 4.18 (lem:cos_prod_bound)</div>
       <div class="thm_thm_content"><p>  For any finite set \(A\) such that \(n\leq N\) for all \(n\in A\), and integers \(k,h\), if \(kh\equiv h_n\pmod{n}\) for \(\left\lvert h_n\right\rvert \leq n/2\) for all \(n\in A\), then </p>
-<div class="displaymath" id="a0000000135">
+<div class="displaymath" id="a0000000137">
   \[ C(A;h,k)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}h_n^2\right). \]
 </div>
 </div>
     </li>
     
     <li>
-      <div class="thm_thmheading">Lemma 4.19 (lem:minor2_ind_bound)</div>
-      <div class="thm_thm_content"><p>  There is a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq cLK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then </p>
-<div class="displaymath" id="a0000000144">
+      <div class="thm_thmheading">Lemma 4.20 (lem:minor2_ind_bound)</div>
+      <div class="thm_thm_content"><p>  Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq \tfrac {1}{16}LK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then </p>
+<div class="displaymath" id="a0000000146">
   \[ C(A;h,k)\leq N^{-4\left\lvert \mathcal{Q}_A\backslash \mathcal{D}\right\rvert }. \]
 </div>
 </div>
@@ -724,20 +744,20 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.7 (lem:lcm_desc)</div>
-      <div class="thm_thm_content"><p> Let \(A\) be a finite set of natural numbers. If </p>
+      <div class="thm_thm_content"><p> Let \(A\) be a finite set of natural numbers not containing \(0\). If </p>
 <div class="displaymath" id="a0000000093">
-  \[ \mathcal{P}_A = \{  p : \exists n\in A : p \mid n\}  \]
+  \[ \mathcal{P}_A = \{  p \textrm{ prime}: \exists n\in A : p \mid n\}  \]
 </div>
 <p> and for all \(p\in \mathcal{P}_A\) then \(r_p\geq 0\) is the greatest integer such that \(p^{r_p}\) divides some \(n\in A\), then </p>
 <div class="displaymath" id="a0000000094">
-  \[ [A]\leq \prod _{p\in \mathcal{P}_A}p^{r_p}. \]
+  \[ [A]=\prod _{p\in \mathcal{P}_A}p^{r_p}. \]
 </div>
 </div>
     </li>
     
     <li>
       <div class="thm_thmheading">Lemma 4.8 (lem:smooth_lcm)</div>
-      <div class="thm_thm_content"><p>  If \(A\) is a finite set of natural numbers such that if \(q\in \mathcal{Q}_A\) then \(q\leq X\), then \([A]\leq e^{O(X)}\). </p>
+      <div class="thm_thm_content"><p>  If \(A\) is a finite set of natural numbers not containing \(0\) such that if \(q\in \mathcal{Q}_A\) then \(q\leq X\), then \([A]\leq e^{O(X)}\). </p>
 </div>
     </li>
     
@@ -757,11 +777,11 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 6.1 (lem:find_multiples)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000183">
+<div class="displaymath" id="a0000000185">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A. \]
 </div>
 <p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), if \(A_I\) is the set of those \(n\in A\) which divide some element of \(I\), for all \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\) there exists some integer \(x_q\in I\) such that \(q\mid x_q\) and </p>
-<div class="displaymath" id="a0000000184">
+<div class="displaymath" id="a0000000186">
   \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log \log N. \]
 </div>
 </div>
@@ -770,19 +790,19 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Proposition 6.3 (prop:tech_iterative2)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000203">
+<div class="displaymath" id="a0000000205">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
-<div class="displaymath" id="a0000000204">
+<div class="displaymath" id="a0000000206">
   \[ R(A)\geq (\log N)^{-1/101} \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000205">
+<div class="displaymath" id="a0000000207">
   \[ R(A;q) \geq (\log N)^{-1/100}, \]
 </div>
 <p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\) Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000206">
+  <li><div class="displaymath" id="a0000000208">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -882,7 +902,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 5.2 (lem:rtop)</div>
       <div class="thm_thm_content"><p>  Let \(1/2{\gt}\epsilon {\gt}0\) and \(N\) be sufficiently large, depending on \(\epsilon \). If \(A\) is a finite set of integers such that \(R(A)\geq (\log N)^{-\epsilon /2}\) and \((1-\epsilon )\log \log N\leq \omega (n)\leq 2\log \log N\) for all \(n\in A\) then </p>
-<div class="displaymath" id="a0000000160">
+<div class="displaymath" id="a0000000162">
   \[ \sum _{q\in \mathcal{Q}_A}\frac{1}{q} \geq (1-2\epsilon )e^{-1}\log \log N. \]
 </div>
 
@@ -892,7 +912,7 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 5.4 (lem:pisqa)</div>
       <div class="thm_thm_content"><p>   Let \(N\) be sufficiently large and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
-<div class="displaymath" id="a0000000174">
+<div class="displaymath" id="a0000000176">
   \[ R(B)\geq R(A)-\frac{1}{(\log N)^{1/200}} \]
 </div>
 <p> and \(R(B;q)\geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_B\). </p>
@@ -902,12 +922,12 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 5.5 (lem:pisq)</div>
       <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
-<div class="displaymath" id="a0000000179">
+<div class="displaymath" id="a0000000181">
   \[ R(A) \geq \alpha +\frac{1}{(\log N)^{1/200}} \]
 </div>
 <p> and if \(q\in \mathcal{Q}_A\) then \(q\leq M/(\log N)^{1/100}\). </p>
 <p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), </p>
-<div class="displaymath" id="a0000000180">
+<div class="displaymath" id="a0000000182">
   \[ R(B;q)\geq \frac{1}{(\log N)^{1/100}}. \]
 </div>
 </div>
