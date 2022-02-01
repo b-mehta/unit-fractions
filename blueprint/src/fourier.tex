@@ -116,11 +116,14 @@ The lemma now follows choosing $I=(-[A]/2,[A]/2]\cap\bbz$, and using the general
 \end{proof}
 
 \begin{lemma}\label{lem:orthog_simp}
-  \uses{def:rec_sum}
+  \leanok
+  \lean{orthog_simp}
 If $k\geq 1$ is an integer and $A$ is a finite set of natural numbers such that there is no $S\subset A$ such that $R(S)=1/k$, and $R(A)<2/k$, then
 \[\sum_{-[A]/2< h\leq [A]/2}\Re\brac{\prod_{n\in A}(1+e(kh/n))}= [A].\]
 \end{lemma}
 \begin{proof}
+  \leanok
+  \lean{orthog_simp}
 \uses{lem:orthog_rat}
 For any $S\subset A$ we have $k\sum_{n\in S}\frac{1}{n}\leq kR(A)<2$, and therefore if $k\sum_{n\in S}\frac{1}{n} \in \bbn$ then $k\sum_{n\in S}\frac{1}{n} =0$ or $=1$. The latter can't happen by assumption, so $k\sum_{n\in S}\frac{1}{n} =0$. A non-empty sum of $>0$ summands is $>0$, so if $k\sum_{n\in S}\frac{1}{n}\in \bbz$ then $S=\emptyset$. Therefore $F(A;k)=1$.
 
@@ -131,10 +134,14 @@ The conclusion follows multiplying both sides by $[A]$ and taking real parts of 
 
 \begin{lemma}\label{lem:orthog_simp2}
   \uses{def:j}
+  \leanok
+  \lean{orthog_simp2}
 If $k\geq 1$ is an integer and $A$ is a finite set of natural numbers such that there is no $S\subset A$ such that $R(S)=1/k$, and $R(A)<2/k$, and $[A]\leq 2^{\abs{A}-1}$ then
 \[\sum_{h\in J(A)}\Re\brac{\prod_{n\in A}(1+e(kh/n))}\leq -2^{\abs{A}-1}.\]
 \end{lemma}
 \begin{proof}
+  \leanok
+  \lean{orthog_simp2}
 \uses{lem:orthog_simp}
 By Lemma~\ref{lem:orthog_simp}
 \[\sum_{-[A]/2< h\leq [A]/2}\Re\brac{\prod_{n\in A}(1+e(kh/n))}= [A].\]
@@ -160,6 +167,7 @@ and so by the triangle inequality $[A]\abs{t_1-t_2}\leq K$. Since $t_1\neq t_2$,
 \end{proof}
 
 \begin{lemma}\label{lem:useful_rewrite}
+  \uses{def:rec_sum}
 For any finite set of natural numbers $A$ and $\theta\in \mathbb{R}$
 \[\Re\brac{\prod_{n\in A}(1+e(\theta/n))}=2^{\abs{A}}\cos(\pi \theta R(A))\prod_{n\in A}\cos(\pi \theta/n).\]
 \end{lemma}
@@ -170,7 +178,6 @@ Taking out real factors, this is $2^{\abs{A}}\prod_{n\in A}\cos(\pi \theta/n)\Re
 \end{proof}
 
 \begin{lemma}\label{lem:majorarcs}
-  \uses{def:rec_sum}
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$.
 \[\sum_{h\in \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))} \geq 0.\]
 \end{lemma}
