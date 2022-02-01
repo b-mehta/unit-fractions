@@ -45,7 +45,7 @@ begin
 end
 
 -- this is dangerous but I think I can get away with it in this file
-local notation `[` A `]` := A.lcm id
+local notation `[` A `]` := (A.lcm id : ℕ)
 
 def j (A : finset ℕ) : finset ℤ :=
 (valid_sum_range [A]).erase 0
@@ -53,6 +53,63 @@ def j (A : finset ℕ) : finset ℤ :=
 -- types of `h`, `k` might need to change?
 def cos_prod (B : finset ℕ) (h : ℤ) (k : ℕ) : ℝ :=
 ∏ n in B, |cos (π * k * h / n)|
+
+def major_arc_at (A : finset ℕ) (k : ℕ) (K : ℝ) (t : ℤ) : finset ℤ :=
+(j A).filter (λ h, |(h : ℝ) - t * [A] / k| ≤ K / (2 * k))
+
+lemma mem_major_arc_at {A : finset ℕ} {k : ℕ} {K : ℝ} {t : ℤ} (i : ℤ) :
+  i ∈ major_arc_at A k K t ↔ i ∈ j A ∧ |(i : ℝ) - t * [A] / k| ≤ K / (2 * k) :=
+finset.mem_filter
+
+lemma mem_major_arc_at' {A : finset ℕ} {k : ℕ} {K : ℝ} {t : ℤ} (hk : k ≠ 0) (i : ℤ) :
+  i ∈ major_arc_at A k K t ↔ i ∈ j A ∧ (|i * k - t * [A]| : ℝ) ≤ K / 2 :=
+begin
+  have hk' : (0 : ℝ) < k,
+  { rwa [nat.cast_pos, pos_iff_ne_zero] },
+  rw [mem_major_arc_at, and_congr_right'],
+  rw [←div_div_eq_div_mul, le_div_iff hk'],
+  congr' 2,
+  rw [←abs_of_pos hk', ←abs_mul, abs_of_pos hk', sub_mul, div_mul_cancel],
+  rwa nat.cast_ne_zero,
+end
+
+def major_arc (A : finset ℕ) (k : ℕ) (K : ℝ) : finset ℤ :=
+(j A).filter (λ h, ∀ t, h ∈ major_arc_at A k K t)
+
+lemma major_arc_at_of_neg {A : finset ℕ} {k : ℕ} {K : ℝ} (hk : k ≠ 0) (hK : K < 0) (t : ℤ) :
+  major_arc_at A k K t = ∅ :=
+begin
+  rw [major_arc_at, finset.filter_false_of_mem],
+  intros i hi q,
+  have : K / (2 * k) < 0,
+  { refine div_neg_of_neg_of_pos hK (mul_pos zero_lt_two _),
+    rwa [nat.cast_pos, pos_iff_ne_zero] },
+  exact not_lt_of_le (abs_nonneg _) (q.trans_lt this),
+end
+
+lemma majorarcs_disjoint {A : finset ℕ} {k : ℕ} {K : ℝ} (hk : k ≠ 0) (hA : K < [A]) :
+  (set.univ : set ℤ).pairwise_disjoint (major_arc_at A k K) :=
+begin
+  rintro t₁ - t₂ - ht h hh,
+  cases lt_or_le K 0 with hK hK,
+  { rw major_arc_at_of_neg hk hK at hh,
+    simpa using hh },
+  simp only [inf_eq_inter, mem_inter, mem_major_arc_at' hk, and_and_and_comm, and_self] at hh,
+  have : (|(t₁ - t₂) * [A]| : ℝ) ≤ K,
+  { rw [sub_mul],
+    refine le_trans (abs_sub_le _ (h * k) _) _,
+    rw abs_sub_comm,
+    apply le_trans (add_le_add hh.2.1 hh.2.2),
+    simp only [add_halves'] },
+  rw [abs_mul, nat.abs_cast, ←int.cast_sub, ←int.cast_abs] at this,
+  apply not_lt_of_le this,
+  have ht' : 1 ≤ |t₁ - t₂|,
+  { rwa [←zero_add (1 : ℤ), int.add_one_le_iff, abs_pos, sub_ne_zero] },
+  have ht'' : (1 : ℝ) ≤ (|t₁ - t₂| : ℤ) := by exact_mod_cast ht',
+  rw ←one_mul K,
+  apply mul_lt_mul' ht'' hA hK,
+  rwa [int.cast_pos, abs_pos, sub_ne_zero],
+end
 
 lemma jordan_apply {x : ℝ} (hx : 0 ≤ x) (hx' : x ≤ 1 / 2) : 2 * x ≤ sin (π * x) :=
 begin
@@ -199,9 +256,9 @@ by rwa [ne.def, finset.lcm_eq_zero_iff, set.image_id, finset.mem_coe]
 
 lemma orthog_rat {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0) :
   (integer_count A k : ℂ) =
-    1 / ([A] : ℕ) * ∑ h in valid_sum_range [A], ∏ n in A, (1 + exp_circle (k * h / n)) :=
+    1 / [A] * ∑ h in valid_sum_range [A], ∏ n in A, (1 + exp_circle (k * h / n)) :=
 begin
-  have hA' : (([A] : ℕ) : ℚ) ≠ 0 := nat.cast_ne_zero.2 (lcm_ne_zero_of_zero_not_mem hA),
+  have hA' : ([A] : ℚ) ≠ 0 := nat.cast_ne_zero.2 (lcm_ne_zero_of_zero_not_mem hA),
   have hk' : (k : ℚ) ≠ 0 := nat.cast_ne_zero.2 hk,
   have : ∀ S : finset ℕ, S ⊆ A →
           ((∃ (z : ℤ), rec_sum S * (k : ℚ) = z) ↔ [A] ∣ (k * ∑ n in S, [A] / n)),
@@ -217,9 +274,9 @@ begin
     exact finset.dvd_lcm (hS hx) },
   have : ∀ S : finset ℕ, S ∈ A.powerset →
     (if (∃ (z : ℤ), rec_sum S * (k : ℚ) = z) then (1 : ℕ) else 0 : ℂ) =
-      1 / ([A] : ℕ) * ∑ h in valid_sum_range [A], exp_circle (k * h * rec_sum S),
+      1 / [A] * ∑ h in valid_sum_range [A], exp_circle (k * h * rec_sum S),
   { intros S hS,
-    have ht : ((- (([A] : ℕ) : ℤ) / 2)) < (([A] : ℕ)/2),
+    have ht : ((- ([A] : ℤ) / 2)) < ([A] / 2),
     { apply int.div_lt_of_lt_mul zero_lt_two,
       apply lt_of_lt_of_le,
       { rw [right.neg_neg_iff, int.coe_nat_pos, pos_iff_ne_zero],
@@ -255,7 +312,7 @@ end
 
 lemma orthog_simp_aux {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
   (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA' : rec_sum A < 2 / k) :
-  ∑ h in valid_sum_range [A], (∏ n in A, (1 + exp_circle (k * h / n))) = ([A] : ℕ) :=
+  ∑ h in valid_sum_range [A], (∏ n in A, (1 + exp_circle (k * h / n))) = [A] :=
 begin
   have : integer_count A k = 1,
   { rw [integer_count, card_eq_one],
@@ -288,7 +345,7 @@ end
 
 lemma orthog_simp {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
   (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA' : rec_sum A < 2 / k) :
-  ∑ h in valid_sum_range [A], (∏ n in A, (1 + exp_circle (k * h / n))).re = ([A] : ℕ) :=
+  ∑ h in valid_sum_range [A], (∏ n in A, (1 + exp_circle (k * h / n))).re = [A] :=
 begin
   have := congr_arg complex.re (orthog_simp_aux hA hk hS hA'),
   rwa [complex.nat_cast_re, complex.re_sum] at this,
@@ -296,7 +353,7 @@ end
 
 lemma orthog_simp2 {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
   (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA' : rec_sum A < 2 / k)
-  (hA'' : (([A] : ℕ) : ℝ) ≤ 2^(A.card - 1 : ℤ)) :
+  (hA'' : ([A] : ℝ) ≤ 2^(A.card - 1 : ℤ)) :
   ∑ h in j A, (∏ n in A, (1 + exp_circle (k * h / n))).re ≤ -2^(A.card - 1 : ℤ) :=
 begin
   have hA''' := lcm_ne_zero_of_zero_not_mem hA,
