@@ -94,21 +94,21 @@
     <span class="lemma_thmlabel">5.1</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:basic">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000156"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000158"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
   <p> If \(0{\lt}\left\lvert n_1-n_2\right\rvert \leq N\) then </p>
-<div class="displaymath" id="a0000000157">
+<div class="displaymath" id="a0000000159">
   \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N, \]
 </div>
 <p> where the summation is restricted to prime powers. </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000156">
+<div class="proof_wrapper" id="a0000000158">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -117,7 +117,7 @@
   </div>
   <div class="proof_content">
   <p> If \(q\mid (n_1,n_2)\) then \(q\) divides \(\left\lvert n_1-n_2\right\rvert \), and hence in particular \(q\leq N\). The contribution of all prime powers \(p^r\) with \(r\geq 2\) is \(O(1)\), and hence it suffices to show that \(\sum _{p\mid \left\lvert n_1-n_2\right\rvert }\frac{1}{p}\ll \log \log \log N\). Any integer \(\leq N\) is trivially divisible by \(O(\log N)\) many primes. Clearly summing \(1/p\) over \(O(\log N)\) many primes is maximised summing over the smallest \(O(\log N)\) primes. Since there are \(\gg (\log N)^{3/2}\) many primes \(\leq (\log N)^2\), we have </p>
-<div class="displaymath" id="a0000000158">
+<div class="displaymath" id="a0000000160">
   \[ \sum _{p\mid \left\lvert n_1-n_2\right\rvert }\frac{1}{p}\ll \sum _{p\leq (\log N)^2}\frac{1}{p}\ll \log \log \log N \]
 </div>
 <p> by Mertens’ estimate <a href="chap-basic.html#lem:mertens1">2.6</a>. </p>
@@ -132,7 +132,7 @@
     <span class="lemma_thmlabel">5.2</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:rtop">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000159"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000161"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -159,7 +159,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/main_results.lean#L285">rec_qsum_lower_bound</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/main_results.lean#L285">rec_qsum_lower_bound</a></li>
         </ul>
 
       </div>
@@ -169,14 +169,14 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Let \(1/2{\gt}\epsilon {\gt}0\) and \(N\) be sufficiently large, depending on \(\epsilon \). If \(A\) is a finite set of integers such that \(R(A)\geq (\log N)^{-\epsilon /2}\) and \((1-\epsilon )\log \log N\leq \omega (n)\leq 2\log \log N\) for all \(n\in A\) then </p>
-<div class="displaymath" id="a0000000160">
+<div class="displaymath" id="a0000000162">
   \[ \sum _{q\in \mathcal{Q}_A}\frac{1}{q} \geq (1-2\epsilon )e^{-1}\log \log N. \]
 </div>
 
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000159">
+<div class="proof_wrapper" id="a0000000161">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -185,11 +185,11 @@
   </div>
   <div class="proof_content">
   <p>Since, by definition, every integer \(n\in A\) can be written uniquely as \(q_1\cdots q_t\) for \(q_i\in \mathcal{Q}_A\) for some \(t\in I = [(1-\epsilon )\log \log N, 2\log \log N]\), we have that, since \(t!\geq (t/e)^t\), </p>
-<div class="displaymath" id="a0000000161">
+<div class="displaymath" id="a0000000163">
   \[ R(A)\leq \sum _{t\in I}\frac{\left( \sum _{q\in \mathcal{Q}_A}\frac{1}{q}\right)^t}{t!}\leq \sum _{t\in I}\left( \frac{e}{t}\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\right)^t. \]
 </div>
 <p> Since \((ex/t)^t\) is decreasing in \(t\) for \(x{\lt}t\), either \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\geq (1-\epsilon )\log \log N\) (and we are done), or the summand is decreasing in \(t\), and hence we have </p>
-<div class="displaymath" id="a0000000162">
+<div class="displaymath" id="a0000000164">
   \[ (\log N)^{-\epsilon /2}\leq R(A)\leq 2\log \log N\left( \frac{\sum _{q\in \mathcal{Q}_A}\frac{1}{q}}{(1-\epsilon )e^{-1}\log \log N}\right)^{(1-\epsilon )\log \log N}. \]
 </div>
 <p> The claimed bound follows, using the fact that \(e^{-\frac{\epsilon }{2(1-\epsilon )}}\geq 1-\epsilon \) for \(\epsilon \in (0,1/2)\), choosing \(N\) large enough such that \((2\log \log N)^{2/\log \log N}\leq 1+\epsilon ^2\), say. </p>
@@ -204,7 +204,7 @@
     <span class="lemma_thmlabel">5.3</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:usingq">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000163"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000165"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -230,7 +230,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/main_results.lean#L294">find_good_d</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/main_results.lean#L294">find_good_d</a></li>
         </ul>
 
       </div>
@@ -246,7 +246,7 @@
 </li>
   <li><p>\(\omega (d)\leq \tfrac {5}{\log k}\log \log N\), and </p>
 </li>
-  <li><div class="displaymath" id="a0000000164">
+  <li><div class="displaymath" id="a0000000166">
   \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}. \]
 </div>
 </li>
@@ -254,7 +254,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000163">
+<div class="proof_wrapper" id="a0000000165">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -263,23 +263,23 @@
   </div>
   <div class="proof_content">
   <p> Fix some \(q\) with \(R(A;q)\geq (\log N)^{-1/2}\). Let \(D\) be the set of all \(d\) such that if \(p\) is a prime and \(p^r \|  d\) then </p>
-<div class="displaymath" id="a0000000165">
+<div class="displaymath" id="a0000000167">
   \[ p^r{\gt}y=\exp ((\log N)^{1-2/k}) \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000166">
+<div class="displaymath" id="a0000000168">
   \[ qd\in (M\exp (-(\log N)^{1-1/k}),N]. \]
 </div>
 <p> We first claim that every \(n\in A_q\) is divisible by some \(qd\) with \(d\in D\), such that \((qd,n/qd)=1\). This can be done greedily, just removing from \(n/q\) all those prime power divisors \(p^r\|  n/q\) such that \(p^r\leq y\), which removes at most </p>
-<div class="displaymath" id="a0000000167">
+<div class="displaymath" id="a0000000169">
   \[ y^{\omega (n)}\leq \exp ((\log N)^{1-1/k}). \]
 </div>
 <p> We can therefore bound </p>
-<div class="displaymath" id="a0000000168">
+<div class="displaymath" id="a0000000170">
   \[ R(A;q) \leq \sum _{d\in D}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}. \]
 </div>
 <p>We will control the contribution from those \(d\) with \(\omega (d){\gt}\omega _0= \frac{5}{\log k}\log \log N\) with the trivial bound </p>
-<div class="displaymath" id="a0000000169">
+<div class="displaymath" id="a0000000171">
   \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} \leq \sum _{\substack {n\leq N\\ qd\mid n}}\frac{qd}{n}\ll \log N \]
 </div>
 <p> and Mertens’ bound <a href="chap-basic.html#lem:mertens1">2.6</a>. Together these imply </p>
@@ -295,15 +295,15 @@
 
 \end{bgroup}}} \frac{k^{\omega (d)}}{d}\\ & \ll C_1^kk^{-\omega _0}\log N\prod _{y<p\leq N}(1+\frac{k}{p-1}) \\ & \leq k^{-\omega _0}\log N\left( C_2\frac{\log N}{\log y}\right)^{k} \end{align*}</span>
 <p> for some absolute constants \(C_1,C_2{\gt}0\). Recalling the definitions of \(y\) and \(\omega _0\), this is </p>
-<div class="displaymath" id="a0000000170">
+<div class="displaymath" id="a0000000172">
   \[ \leq C_2^kk^{-\omega _0}(\log N)^3\leq 1/\log N, \]
 </div>
 <p> say, for \(N\) sufficiently large. It follows that </p>
-<div class="displaymath" id="a0000000171">
+<div class="displaymath" id="a0000000173">
   \[ \tfrac {1}{2}R(A;q)\leq \sum _{\substack {d\in D\\ \omega (d)\leq \omega _0}}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} . \]
 </div>
 <p> The result follows since </p>
-<div class="displaymath" id="a0000000172">
+<div class="displaymath" id="a0000000174">
   \[ \sum _{d\in D}\frac{1}{d}\leq \sum _{\substack {d\\ p^r\|  d\implies y{\lt}p^r\leq N}}\frac{1}{d} \ll \prod _{y{\lt}p\leq N}\left( 1-\frac{1}{p-1}\right)^{-1}\ll \frac{\log N}{\log y}\ll (\log N)^{2/k}. \]
 </div>
 
@@ -317,7 +317,7 @@
     <span class="lemma_thmlabel">5.4</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:pisqa">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000173"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000175"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -344,7 +344,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/main_results.lean#L331">pruning_lemma_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/main_results.lean#L331">pruning_lemma_one</a></li>
         </ul>
 
       </div>
@@ -354,14 +354,14 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   Let \(N\) be sufficiently large and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
-<div class="displaymath" id="a0000000174">
+<div class="displaymath" id="a0000000176">
   \[ R(B)\geq R(A)-\frac{1}{(\log N)^{1/200}} \]
 </div>
 <p> and \(R(B;q)\geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_B\). </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000173">
+<div class="proof_wrapper" id="a0000000175">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -370,15 +370,15 @@
   </div>
   <div class="proof_content">
   <p>We construct a sequence of decreasing sets \(A=A_0\supsetneq A_1\supsetneq \cdots \supsetneq A_i\) as follows. Given some \(A_i\), if there is a prime power \(q_i\in \mathcal{Q}_{A_i}\) such that </p>
-<div class="displaymath" id="a0000000175">
+<div class="displaymath" id="a0000000177">
   \[ R(A_i;q_i){\lt} \frac{2}{(\log N)^{1/100}}, \]
 </div>
 <p> then we let \(A_{i+1}=A_i\backslash (A_i)_{q_i}\). If no such \(q_i\) exists then we halt the construction. This process must obviously terminate in some finite time (since some non-empty amount of \(A_i\) is being removed at each step). Suppose that it halts at \(A_j=B\), say. The amount lost from \(R(A)\) at step \(i\) is </p>
-<div class="displaymath" id="a0000000176">
+<div class="displaymath" id="a0000000178">
   \[ \sum _{n\in (A_i)_{q_i}}\frac{1}{n}=\frac{1}{q_i}R(A_i;q_i){\lt} \frac{2}{q_i(\log N)^{1/100}}, \]
 </div>
 <p> and furthermore each \(q\leq N\) can appear as at most one such \(q_i\), since after removing \((A_i)_{q_i}\) anything left in \(A_i\) cannot have \(q_i\) as a coprime divisor. It follows that </p>
-<div class="displaymath" id="a0000000177">
+<div class="displaymath" id="a0000000179">
   \[ R(B){\gt} R(A) -\frac{2}{(\log N)^{1/100}}\sum _{q\leq N}\frac{1}{q}\geq R(A)-\frac{1}{(\log N)^{1/200}}, \]
 </div>
 <p> since \(\sum _{q\leq N}\frac{1}{q}\ll \log \log N\). </p>
@@ -393,7 +393,7 @@
     <span class="lemma_thmlabel">5.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:pisq">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000178"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000180"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -404,7 +404,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/main_results.lean#L340">pruning_lemma_two</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/main_results.lean#L340">pruning_lemma_two</a></li>
         </ul>
 
       </div>
@@ -414,18 +414,18 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
-<div class="displaymath" id="a0000000179">
+<div class="displaymath" id="a0000000181">
   \[ R(A) \geq \alpha +\frac{1}{(\log N)^{1/200}} \]
 </div>
 <p> and if \(q\in \mathcal{Q}_A\) then \(q\leq M/(\log N)^{1/100}\). </p>
 <p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), </p>
-<div class="displaymath" id="a0000000180">
+<div class="displaymath" id="a0000000182">
   \[ R(B;q)\geq \frac{1}{(\log N)^{1/100}}. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000178">
+<div class="proof_wrapper" id="a0000000180">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -436,7 +436,7 @@
   <p> We first apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to produce some \(A'\subset A\) such that \(R(A')\geq \alpha \) and \(R(A';q) \geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_{A'}\). </p>
 <p>We now argue that whenever \(D\) is such that \(R(D)\geq \alpha \) and \(R(D;q) \geq (\log N)^{-1/100}\) for all \(q\in \mathcal{Q}_D\) there exists some \(x\in D\) such that \(R(D\backslash \{ x\} ;q)\geq (\log N)^{-1/100}\) for all \(q\in \mathcal{Q}_{D}\). Given this, the lemma immediately follows, since we can continue removing such elements from \(A'\) one at time until \(R(B)\) falls in the required interval. </p>
 <p>To see why the above fact holds, apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to obtain some \(B\subset D\) (such that \(R(B)\geq (\log N)^{-1/200}\), and hence in particular \(B\) is non-empty), and let \(x\) be any element of \(B\). If \(x\not\in D_q\) then by definition \(R(D\backslash \{ x\} ;q)=R(D;q)\geq (\log N)^{-1/100}\). If \(x\in D_q\) then \(x\in B_q\), and so </p>
-<div class="displaymath" id="a0000000181">
+<div class="displaymath" id="a0000000183">
   \[ R(D\backslash \{ x\} ;q)\geq R(B;q)-\frac{q}{x}\geq \frac{2}{(\log N)^{1/100}}-\frac{q}{M}\geq \frac{1}{(\log N)^{1/100}} \]
 </div>
 <p> as required. </p>

@@ -87,6 +87,7 @@
 <h1 id="chap:fourier">4 Fourier Analysis</h1>
 
 <p>This section contains the part of the proof that uses Fourier analysis to reduce finding solutions to a combinatorial problem involving divisors. </p>
+<p>In this section, we write \([A]\) for the lowest common multiple of \(A\) (if \(A\) is a finite set of naturals). </p>
 <h1 id="a0000000004">4.1 Local definitions</h1>
 <p><div class="definition_thmwrapper" id="def:integer_count">
   <div class="definition_thmheading">
@@ -121,7 +122,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L16">integer_count</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L16">integer_count</a></li>
         </ul>
 
       </div>
@@ -130,7 +131,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>   In this section, we write \([A]\) for the lowest common multiple of \(A\), and for any finite set \(A\) of natural numbers and integer \(k\geq 1\) we write \(F(A;k)\) for the count of the number of subsets \(S\subset A\) such that \(kR(S)\) is an integer. </p>
+  <p>   For any finite set \(A\) of natural numbers and integer \(k\geq 1\) we write \(F(A;k)\) for the count of the number of subsets \(S\subset A\) such that \(kR(S)\) is an integer. </p>
 
   </div>
 </div> </p>
@@ -152,7 +153,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L50">j</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L50">j</a></li>
         </ul>
 
       </div>
@@ -161,7 +162,7 @@
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  Let \(J(A) = (-[A]/2,[A]/2)\cap \mathbb {Z}\backslash \{ 0\} \). </p>
+  <p>  Let \(J(A) = (-[A]/2,[A]/2]\cap \mathbb {Z}\backslash \{ 0\} \). </p>
 
   </div>
 </div> </p>
@@ -183,7 +184,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L54">cos_prod</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L54">cos_prod</a></li>
         </ul>
 
       </div>
@@ -202,6 +203,7 @@
     Definition
     </span>
     <span class="definition_thmlabel">4.4</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#def:major_arc">#</a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
@@ -219,11 +221,25 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L76">major_arc</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="definition_thmcontent">
-  <p>  For any finite set of naturals \(A\) and integer \(k\geq 1\), and real \(K{\gt}0\), we define the ‘major arc’ corresponding to \(t\in \mathbb {Z}\) as </p>
+  <p>   For any finite set of naturals \(A\) and integer \(k\geq 1\), and real \(K{\gt}0\), we define the ‘major arc’ corresponding to \(t\in \mathbb {Z}\) as </p>
 <div class="displaymath" id="a0000000086">
   \[ \mathfrak {M}(t;A,k,K) = \{  h\in J(A): \left\lvert h-t[A]/k\right\rvert \leq K/2k\}  \]
 </div>
@@ -287,7 +303,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L146">orthogonality</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L203">orthogonality</a></li>
         </ul>
 
       </div>
@@ -338,17 +354,17 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p> Let \(A\) be a finite set of natural numbers. If </p>
+  <p> Let \(A\) be a finite set of natural numbers not containing \(0\). If </p>
 <div class="displaymath" id="a0000000093">
-  \[ \mathcal{P}_A = \{  p : \exists n\in A : p \mid n\}  \]
+  \[ \mathcal{P}_A = \{  p \textrm{ prime}: \exists n\in A : p \mid n\}  \]
 </div>
 <p> and for all \(p\in \mathcal{P}_A\) then \(r_p\geq 0\) is the greatest integer such that \(p^{r_p}\) divides some \(n\in A\), then </p>
 <div class="displaymath" id="a0000000094">
-  \[ [A]\leq \prod _{p\in \mathcal{P}_A}p^{r_p}. \]
+  \[ [A]=\prod _{p\in \mathcal{P}_A}p^{r_p}. \]
 </div>
 
   </div>
-</div> </p>
+</div> (NOTE: This is a generally useful fact when working with lowest common multiples, perhaps this should be in mathlib somewhere.) </p>
 <div class="proof_wrapper" id="a0000000092">
   <div class="proof_heading">
     <span class="proof_caption">
@@ -357,7 +373,10 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>By definition it suffices to show that for all \(n\in A\) we have \(n\mid \prod _{p\in \mathcal{P}_A}p^{r_p}\). By the fundamental theorem of arithmetic, it suffices to show that for each prime power \(q^r\mid n\), \(q\in \mathcal{P}_A\) and \(r\leq r_q\). Both are true by definition of \(\mathcal{P}_A\) and \(r_q\) respectively. </p>
+  <p>We first note that if \(p\mid [A]\) then \(p\in \mathcal{P}_A\). If not, suppose \(p\not\in \mathcal{P}_A\) and \(p\mid [A]\). Let \(M=[A]/p\). We claim every \(n\in A\) divides \(M\), contradicting the definition of lowest common multiple. It suffices to show that if a prime power \(q^r\mid n\) then \(q\mid M\). But we know \(q^r\mid [A]=Mp\), and \((q^r,p)=1\), so \(q\mid M\) as required. </p>
+<p>By the fundamental theorem of arithmetic, we can write \([A] = \prod _{p\in \mathcal{P}_A}p^{s_p}\) for some integers \(s_p\geq 0\). It remains to show that \(s_p=r_p\). </p>
+<p>That \(s_p\geq r_p\) follows from the fact that \(p^{r_p}\mid n\) for some \(n\in A\) by definition, hence \(p^{r_p}\mid [A]\), hence \(r_p\leq s_p\). </p>
+<p>Suppose that \(s_p{\gt}r_p\), and as above consider \(M=[A]/p\). We claim every \(n\in A\) divides \(M\), the required contradiction. If a prime power \(q^r\mid n\) with \(q\neq p\) then \(q\mid Mp\) hence \(q\mid M\). If \(p^r\mid n\) then \(r\leq r_p\), so \(p^r\mid p^{r_p}\mid p^{s_p-1}\mid M\), as required. </p>
 
   </div>
 </div>
@@ -390,7 +409,7 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  If \(A\) is a finite set of natural numbers such that if \(q\in \mathcal{Q}_A\) then \(q\leq X\), then \([A]\leq e^{O(X)}\). </p>
+  <p>  If \(A\) is a finite set of natural numbers not containing \(0\) such that if \(q\in \mathcal{Q}_A\) then \(q\leq X\), then \([A]\leq e^{O(X)}\). </p>
 
   </div>
 </div> </p>
@@ -402,7 +421,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> We have \([A]=\prod _{\in \mathcal{P}_A}p^{r_p}\), where \(p^{r_p}\in \mathcal{Q}_A\), by Lemma&#160;<a href="chap-fourier.html#lem:lcm_desc">4.7</a>. By hypothesis \(p^{r_p}\leq X\) and so \([A]\leq X^{\left\lvert \mathcal{P}_A\right\rvert }\). The set \(\mathcal{P}_A\) is a subset of all primes \(\leq X\), and so \(\left\lvert \mathcal{P}_A\right\rvert \leq \pi (X)\ll X/\log X\) by Chebyshev’s estimate Lemma&#160;<a href="chap-basic.html#lem:chebyshev">2.4</a>. Therefore </p>
+  <p> We have \([A]=\prod _{p\in \mathcal{P}_A}p^{r_p}\), where \(p^{r_p}\in \mathcal{Q}_A\), by Lemma&#160;<a href="chap-fourier.html#lem:lcm_desc">4.7</a>. By hypothesis \(p^{r_p}\leq X\) and so \([A]\leq X^{\left\lvert \mathcal{P}_A\right\rvert }\). The set \(\mathcal{P}_A\) is a subset of all primes \(\leq X\), and so \(\left\lvert \mathcal{P}_A\right\rvert \leq \pi (X)\ll X/\log X\) by Chebyshev’s estimate Lemma&#160;<a href="chap-basic.html#lem:chebyshev">2.4</a>. Therefore </p>
 <div class="displaymath" id="a0000000096">
   \[ [A]\leq X^{O(X/\log X)}=e^{O(X)}. \]
 </div>
@@ -429,7 +448,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L67">cos_bound</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L124">cos_bound</a></li>
         </ul>
 
       </div>
@@ -464,17 +483,66 @@
 
   </div>
 </div>
+<p><div class="lemma_thmwrapper" id="lem:triv_q_bound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.10</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:triv_q_bound">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000101"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-def.html#def:local_part">Definition 1.2</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(A\) be a finite set of naturals not containing \(0\). For any \(n\in A\), let \(\mathcal{Q}_A(n)\) denote all those \(q\in \mathcal{Q}_A\) such that \(n\in A_q\), then </p>
+<div class="displaymath" id="a0000000102">
+  \[ \left\lvert \mathcal{Q}_A(n)\right\rvert \leq \tfrac {1}{\log 2}\log n. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000101">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>The first step is to show that \(\prod _{q\in \mathcal{Q}(n)}q\mid n\) (in fact they’re equal, but all we need is the one direction). This can be shown by showing that every \(q\in \mathcal{Q}(n)\) divides \(n\), since \(n\in A_q\) implies \(q\mid n\), and then noting that any two distinct \(q_1,q_2\in \mathcal{Q}(n)\) are coprime. If not, then since they are prime powers, they must both be powers of the same prime, say \(q_1=p^{r_1}{\lt} q_2=p^{r_2}\). Since \(n\in A_{q_2}\) we have \(p^{r_2}\mid n\), but then \(p\mid n/q_1\), so \(p\mid (q_1,n/q_1)\), and so \(n\not\in A_{q_1}\). </p>
+<p>Therefore \(\prod _{q\in \mathcal{Q}(n)}q\leq n\). Since all prime powers are \(\geq 2\) it follows that \(2^{\left\lvert \mathcal{Q}(n)\right\rvert }\leq n\), and the result follows taking logarithms. </p>
+
+  </div>
+</div>
 <h1 id="a0000000006">4.3 Towards the main proposition</h1>
 <p><div class="lemma_thmwrapper" id="lem:orthog_rat">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.10</span>
+    <span class="lemma_thmlabel">4.11</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:orthog_rat">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000101"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000103"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -500,7 +568,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L200">orthog_rat</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L257">orthog_rat</a></li>
         </ul>
 
       </div>
@@ -509,14 +577,14 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   If \(A\subset \mathbb {N}\) is finite and \(k\geq 1\) is an integer then </p>
-<div class="displaymath" id="a0000000102">
+  <p>   If \(A\) is a finite set of natural numbers not containing \(0\) and \(k\geq 1\) is an integer then </p>
+<div class="displaymath" id="a0000000104">
   \[ F(A;k)= \frac{1}{[A]}\sum _{-[A]/2{\lt} h\leq [A]/2}\prod _{n\in A}(1+e(kh/n)). \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000101">
+<div class="proof_wrapper" id="a0000000103">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -525,15 +593,15 @@
   </div>
   <div class="proof_content">
   <p> For any \(S\subset A\), \(k\sum _{n\in S}\frac{1}{n}\in \mathbb {Z}\) if and only if \(k\sum _{n\in S}\frac{[A]}{n}\in [A]\cdot \mathbb {Z}\). By definition \(n\mid [A]\) for all \(n\in A\), and so \(k\sum _{n\in S}\frac{[A]}{n}\) is an integer. It is \(\geq 0\) since each summand is. Therefore by Lemma&#160;<a href="chap-fourier.html#lem:orthogonality">4.6</a>, if \(I\) is any set of \([A]\) consecutive integers </p>
-<div class="displaymath" id="a0000000103">
+<div class="displaymath" id="a0000000105">
   \[ 1_{k\sum _{n\in S}\frac{1}{n}\in \mathbb {Z}}=1_{[A]\mid k\sum _{n\in S}\frac{[A]}{n}} = \frac{1}{[A]}\sum _{h\in I}e(kh\sum _{n\in S}\frac{1}{n}). \]
 </div>
 <p> Therefore, changing summation, </p>
-<div class="displaymath" id="a0000000104">
+<div class="displaymath" id="a0000000106">
   \[ F(A;k) = \sum _{S\subset A}1_{k\sum _{n\in S}\frac{1}{n}\in \mathbb {Z}} = \frac{1}{[A]} \sum _{h\in I}\sum _{S\subset A}\prod _{n\in S}e(kh/n). \]
 </div>
 <p> The lemma now follows choosing \(I=(-[A]/2,[A]/2]\cap \mathbb {Z}\), and using the general fact that for any indexed set of complex numbers \((x_i)_{i\in I}\) </p>
-<div class="displaymath" id="a0000000105">
+<div class="displaymath" id="a0000000107">
   \[ \sum _{J\subset I}\prod _{j\in J}x_j = \prod _{i\in I}(1+x_i). \]
 </div>
 
@@ -544,11 +612,11 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.11</span>
+    <span class="lemma_thmlabel">4.12</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:orthog_simp">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000106"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000108"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -559,7 +627,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L289">orthog_simp</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L346">orthog_simp</a></li>
         </ul>
 
       </div>
@@ -569,13 +637,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  If \(k\geq 1\) is an integer and \(A\) is a finite set of natural numbers such that there is no \(S\subset A\) such that \(R(S)=1/k\), and \(R(A){\lt}2/k\), then </p>
-<div class="displaymath" id="a0000000107">
+<div class="displaymath" id="a0000000109">
   \[ \sum _{-[A]/2{\lt} h\leq [A]/2}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)= [A]. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000106">
+<div class="proof_wrapper" id="a0000000108">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -584,8 +652,8 @@
   </div>
   <div class="proof_content">
   <p>  For any \(S\subset A\) we have \(k\sum _{n\in S}\frac{1}{n}\leq kR(A){\lt}2\), and therefore if \(k\sum _{n\in S}\frac{1}{n} \in \mathbb {N}\) then \(k\sum _{n\in S}\frac{1}{n} =0\) or \(=1\). The latter can’t happen by assumption, so \(k\sum _{n\in S}\frac{1}{n} =0\). A non-empty sum of \({\gt}0\) summands is \({\gt}0\), so if \(k\sum _{n\in S}\frac{1}{n}\in \mathbb {Z}\) then \(S=\emptyset \). Therefore \(F(A;k)=1\). </p>
-<p>By Lemma&#160;<a href="chap-fourier.html#lem:orthog_rat">4.10</a> therefore </p>
-<div class="displaymath" id="a0000000108">
+<p>By Lemma&#160;<a href="chap-fourier.html#lem:orthog_rat">4.11</a> therefore </p>
+<div class="displaymath" id="a0000000110">
   \[ 1=\frac{1}{[A]}\sum _{-[A]/2{\lt} h\leq [A]/2}\prod _{n\in A}(1+e(kh/n)). \]
 </div>
 <p> The conclusion follows multiplying both sides by \([A]\) and taking real parts of both sides. </p>
@@ -597,11 +665,11 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.12</span>
+    <span class="lemma_thmlabel">4.13</span>
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:orthog_simp2">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000109"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000111"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -627,7 +695,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L297">orthog_simp2</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L354">orthog_simp2</a></li>
         </ul>
 
       </div>
@@ -637,13 +705,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   If \(k\geq 1\) is an integer and \(A\) is a finite set of natural numbers such that there is no \(S\subset A\) such that \(R(S)=1/k\), and \(R(A){\lt}2/k\), and \([A]\leq 2^{\left\lvert A\right\rvert -1}\) then </p>
-<div class="displaymath" id="a0000000110">
+<div class="displaymath" id="a0000000112">
   \[ \sum _{h\in J(A)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)\leq -2^{\left\lvert A\right\rvert -1}. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000109">
+<div class="proof_wrapper" id="a0000000111">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -651,17 +719,17 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>  By Lemma&#160;<a href="chap-fourier.html#lem:orthog_simp">4.11</a> </p>
-<div class="displaymath" id="a0000000111">
+  <p>  By Lemma&#160;<a href="chap-fourier.html#lem:orthog_simp">4.12</a> </p>
+<div class="displaymath" id="a0000000113">
   \[ \sum _{-[A]/2{\lt} h\leq [A]/2}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)= [A]. \]
 </div>
 <p> By assumption the right-hand side is \(\leq 2^{\left\lvert A\right\rvert -1}\). </p>
 <p>When \(h=0\) </p>
-<div class="displaymath" id="a0000000112">
+<div class="displaymath" id="a0000000114">
   \[ \Re \left( \prod _{n\in A}(1+e(kh/n))\right)= \Re \left( \prod _{n\in A}2\right)=2^{\left\lvert A\right\rvert }. \]
 </div>
 <p> Therefore </p>
-<div class="displaymath" id="a0000000113">
+<div class="displaymath" id="a0000000115">
   \[ \sum _{h\in J(A)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)+2^{\left\lvert A\right\rvert }\leq 2^{\left\lvert A\right\rvert -1}, \]
 </div>
 <p> and the result follows after rearranging. </p>
@@ -673,10 +741,11 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.13</span>
+    <span class="lemma_thmlabel">4.14</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:majorarcs_disjoint">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000114"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000116"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -693,15 +762,29 @@
 
       </div>
     </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L90">majorarcs_disjoint</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  If \(A\) is a finite set of integers and \(K\) is a real such that \([A]{\gt}K\) then, for any integer \(k\geq 1\), the sets \(\mathfrak {M}(t;A,k,K)\) are disjoint for distinct \(t\in \mathbb {Z}\). </p>
+  <p>   If \(A\) is a finite set of integers and \(K\) is a real such that \([A]{\gt}K\) then, for any integer \(k\geq 1\), the sets \(\mathfrak {M}(t;A,k,K)\) are disjoint for distinct \(t\in \mathbb {Z}\). </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000114">
+<div class="proof_wrapper" id="a0000000116">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -710,11 +793,11 @@
   </div>
   <div class="proof_content">
   <p>Suppose not and \(h\in \mathfrak {M}(t_1)\cap \mathfrak {M}(t_2)\). By definition, </p>
-<div class="displaymath" id="a0000000115">
+<div class="displaymath" id="a0000000117">
   \[ \left\lvert hk-t_1[A]\right\rvert \leq K/2 \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000116">
+<div class="displaymath" id="a0000000118">
   \[ \left\lvert hk-t_2[A]\right\rvert \leq K/2, \]
 </div>
 <p> and so by the triangle inequality \([A]\left\lvert t_1-t_2\right\rvert \leq K\). Since \(t_1\neq t_2\), we know \(\left\lvert t_1-t_2\right\rvert \geq 1\), and so \([A]\leq K\), contradicting the assumption. </p>
@@ -726,10 +809,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.14</span>
+    <span class="lemma_thmlabel">4.15</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:useful_rewrite">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000117"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000119"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -751,13 +834,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  For any finite set of natural numbers \(A\) and \(\theta \in \mathbb {R}\) </p>
-<div class="displaymath" id="a0000000118">
+<div class="displaymath" id="a0000000120">
   \[ \Re \left( \prod _{n\in A}(1+e(\theta /n))\right)=2^{\left\lvert A\right\rvert }\cos (\pi \theta R(A))\prod _{n\in A}\cos (\pi \theta /n). \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000117">
+<div class="proof_wrapper" id="a0000000119">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -766,7 +849,7 @@
   </div>
   <div class="proof_content">
   <p>Rewrite each factor in the product using \(1+e(\theta /n)=2e(\theta /2n)\cos (\pi \theta /n)\), so </p>
-<div class="displaymath" id="a0000000119">
+<div class="displaymath" id="a0000000121">
   \[ \Re \left( \prod _{n\in A}(1+e(\theta /n))\right) = \Re \left(  2^{\left\lvert A\right\rvert }e(\theta R(A)/2)\prod _{n\in A}\cos (\pi \theta /n)\right). \]
 </div>
 <p> Taking out real factors, this is \(2^{\left\lvert A\right\rvert }\prod _{n\in A}\cos (\pi \theta /n)\Re e(\theta R(A)/2)\), and the claim follows. </p>
@@ -778,23 +861,23 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.15</span>
+    <span class="lemma_thmlabel">4.16</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:majorarcs">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000120"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000122"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
 
   </div>
   </div>
   <div class="lemma_thmcontent">
   <p> Let \(M\geq 1\) and \(A\) a finite set of naturals such that \(n\geq M\) for all \(n\in A\). Let \(K\) be a real such that \(K{\lt}M\). Let \(k\geq 1\) be an integer. Suppose that \(kR(A) \in [2-k/M,2)\). </p>
-<div class="displaymath" id="a0000000121">
+<div class="displaymath" id="a0000000123">
   \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) \geq 0. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000120">
+<div class="proof_wrapper" id="a0000000122">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -803,29 +886,29 @@
   </div>
   <div class="proof_content">
   <p> Since \(k\) divides \([A]\), we know that \(t[A]/k\) is an integer for any \(t\in \mathbb {Z}\), and hence by definition of \(\mathfrak {M}(t)\) we can write \(h=t[A]/k+r\), where \(r\) is an integer satisfying \(\left\lvert r\right\rvert \leq K/2k\). Therefore, letting </p>
-<div class="displaymath" id="a0000000122">
+<div class="displaymath" id="a0000000124">
   \[ J_t =[-K/2k,K/2k]\cap (J(A)-t[A]/k), \]
 </div>
 <p> then </p>
-<div class="displaymath" id="a0000000123">
+<div class="displaymath" id="a0000000125">
   \[ \sum _{h\in \mathfrak {M}(t)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)=\sum _{r\in J_t}\Re \left( \prod _{n\in A}(1+e((t[A]+rk)/n))\right)=\sum _{r\in J_t}\Re \left( \prod _{n\in A}(1+e(rk/n))\right), \]
 </div>
 <p> since \(t[A]/n\) is always an integer, by definition of \([A]\). </p>
-<p>Using Lemma&#160;<a href="chap-fourier.html#lem:useful_rewrite">4.14</a>, this is </p>
-<div class="displaymath" id="a0000000124">
+<p>Using Lemma&#160;<a href="chap-fourier.html#lem:useful_rewrite">4.15</a>, this is </p>
+<div class="displaymath" id="a0000000126">
   \[ 2^{[A]}\sum _{h\in \mathfrak {M}(t)}\cos (\pi krR(A))\prod _{n\in A}\cos (\pi kr/n). \]
 </div>
-<p>Since \([A]\geq \min (A)\geq M{\gt}K\), the hypotheses of Lemma&#160;<a href="chap-fourier.html#lem:majorarcs_disjoint">4.13</a> are all met, and so \(\mathfrak {M}\) is the disjoint union of \(\mathfrak {M}(t)\) as \(t\) ranges over \(t\in \mathbb {Z}\). Therefore \(1_{h\in \mathfrak {M}}=\sum _t 1_{h\in \mathfrak {M}(t)}\), and therefore using the above and rearranging the sum, </p>
-<div class="displaymath" id="a0000000125">
+<p>Since \([A]\geq \min (A)\geq M{\gt}K\), the hypotheses of Lemma&#160;<a href="chap-fourier.html#lem:majorarcs_disjoint">4.14</a> are all met, and so \(\mathfrak {M}\) is the disjoint union of \(\mathfrak {M}(t)\) as \(t\) ranges over \(t\in \mathbb {Z}\). Therefore \(1_{h\in \mathfrak {M}}=\sum _t 1_{h\in \mathfrak {M}(t)}\), and therefore using the above and rearranging the sum, </p>
+<div class="displaymath" id="a0000000127">
   \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) =\sum _{r\in [-K/2k,K/2k]\cap \mathbb {Z}}\left( \sum _{t\in \mathbb {Z}}1_{r\in J_t}\right)\cos (\pi krR(A))\prod _{n\in A}\cos (\pi kr/n). \]
 </div>
 <p> Since for all \(n\in A\) we have \(n\geq M{\gt}K\) we have \(\left\lvert kr/n\right\rvert {\lt} 1/2\) for all \(r\) with \(\left\lvert r\right\rvert \leq K/2k\), and hence \(\cos (\pi kr/n)\geq 0\) for all such \(n\) and \(r\). </p>
 <p>Furthermore, writing \(kR(A)=2-\epsilon \) for some \(0{\lt}\epsilon \leq k/M\), we have (since \(r\) is an integer) </p>
-<div class="displaymath" id="a0000000126">
+<div class="displaymath" id="a0000000128">
   \[ \cos (\pi kr R(A)) = \cos (-\pi r\epsilon )\geq 0, \]
 </div>
 <p> since \(\left\lvert r\epsilon \right\rvert \leq K/2M{\lt}1/2\) for all \(\left\lvert r\right\rvert \leq K/2k\). It follows that </p>
-<div class="displaymath" id="a0000000127">
+<div class="displaymath" id="a0000000129">
   \[ \left( \sum _{t\in \mathbb {Z}}1_{r\in J_t}\right)\cos (\pi krR(A))\prod _{n\in A}\cos (\pi kr/n)\geq 0 \]
 </div>
 <p> for all \(r\in [-K/2k,K/2k]\cap \mathbb {Z}\), and hence as the sum of non-negative summands the original sum is non-negative as required. </p>
@@ -837,10 +920,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.16</span>
+    <span class="lemma_thmlabel">4.17</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:minor_lbound">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000128"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000130"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -863,13 +946,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Let \(M\geq 1\) and \(A\) a finite set of naturals such that \(n\geq M\) for all \(n\in A\). Let \(K\) be a real such that \(K{\lt}M\). Let \(k\geq 1\) be an integer. Suppose that \(kR(A) \in [2-k/M,2)\), and there is no \(S\subset A\) such that \(R(S)=1/k\), and \([A]\leq 2^{\left\lvert A\right\rvert -1}\). Then </p>
-<div class="displaymath" id="a0000000129">
+<div class="displaymath" id="a0000000131">
   \[ \sum _{h\in J(A)\backslash \mathfrak {M}(A,k,K)} C(A;h,k)\geq 1/2. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000128">
+<div class="proof_wrapper" id="a0000000130">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -877,20 +960,20 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> By Lemma&#160;<a href="chap-fourier.html#lem:orthog_simp2">4.12</a> </p>
-<div class="displaymath" id="a0000000130">
+  <p> By Lemma&#160;<a href="chap-fourier.html#lem:orthog_simp2">4.13</a> </p>
+<div class="displaymath" id="a0000000132">
   \[ \sum _{h\in J(A)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)\leq -2^{\left\lvert A\right\rvert -1}. \]
 </div>
-<p> By Lemma&#160;<a href="chap-fourier.html#lem:majorarcs">4.15</a> </p>
-<div class="displaymath" id="a0000000131">
+<p> By Lemma&#160;<a href="chap-fourier.html#lem:majorarcs">4.16</a> </p>
+<div class="displaymath" id="a0000000133">
   \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) \geq 0. \]
 </div>
 <p> Therefore </p>
-<div class="displaymath" id="a0000000132">
+<div class="displaymath" id="a0000000134">
   \[ \sum _{h\in J(A)\backslash \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)\leq -2^{\left\lvert A\right\rvert -1}. \]
 </div>
 <p> By the triangle inequality, using \(\left\lvert \Re z\right\rvert \leq \left\lvert z\right\rvert \) and \(\left\lvert 1+e(\theta )\right\rvert =2\cos (\pi \theta )\), </p>
-<div class="displaymath" id="a0000000133">
+<div class="displaymath" id="a0000000135">
   \[ \sum _{h\in J(A)\backslash \mathfrak {M}(A,k,K)}\left\lvert \cos (\pi kh/n)\right\rvert  \geq 1/2 \]
 </div>
 <p> as required. </p>
@@ -902,10 +985,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.17</span>
+    <span class="lemma_thmlabel">4.18</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:cos_prod_bound">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000134"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000136"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -928,13 +1011,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  For any finite set \(A\) such that \(n\leq N\) for all \(n\in A\), and integers \(k,h\), if \(kh\equiv h_n\pmod{n}\) for \(\left\lvert h_n\right\rvert \leq n/2\) for all \(n\in A\), then </p>
-<div class="displaymath" id="a0000000135">
+<div class="displaymath" id="a0000000137">
   \[ C(A;h,k)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}h_n^2\right). \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000134">
+<div class="proof_wrapper" id="a0000000136">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -943,7 +1026,7 @@
   </div>
   <div class="proof_content">
   <p> We first note that \(\left\lvert \cos (\pi kh/n)\right\rvert =\left\lvert \cos (\pi h_n/n)\right\rvert \) for all \(n\in A\), by periodicity of cosine. By Lemma&#160;<a href="chap-fourier.html#lem:cos_bound">4.9</a>, therefore </p>
-<div class="displaymath" id="a0000000136">
+<div class="displaymath" id="a0000000138">
   \[ \left\lvert \cos (\pi kh/n)\right\rvert \leq \exp (-2h_n^2/n^2)\leq \exp (-\tfrac {2}{N^2}h_n^2), \]
 </div>
 <p> and the lemma follows taking the product over all \(n\in A\). </p>
@@ -955,10 +1038,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.18</span>
+    <span class="lemma_thmlabel">4.19</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:minor1_bound">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000137"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000139"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -980,13 +1063,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Suppose that \(N\) is sufficiently large and \(M\geq 8\). Let \(k\geq 1\) be an integer. Let \(A\subset [M,N]\) be a set of integers such that if \(q\in \mathcal{Q}_A\) then \(q\leq \frac{MK^2}{N^2(\log N)^2}\). Then </p>
-<div class="displaymath" id="a0000000138">
+<div class="displaymath" id="a0000000140">
   \[ \sum _{h\in \mathfrak {m}_1(A,k,K,M/\log N)} C(A;h,k)\leq 1/8. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000137">
+<div class="proof_wrapper" id="a0000000139">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -995,20 +1078,20 @@
   </div>
   <div class="proof_content">
   <p> We show in fact that for any \(h\in \mathfrak {m}_1(A,k,K,M/\log N)\) we have </p>
-<div class="displaymath" id="a0000000139">
+<div class="displaymath" id="a0000000141">
   \[ C(A;h,k)\leq 1/[A]^2. \]
 </div>
 <p> The result then immediately follows since \(\left\lvert \mathfrak {m}_1(A,k,K,M/\log N)\right\rvert \leq \left\lvert J(A)\right\rvert \leq [A]\), assuming \([A]\geq 8\), which is true since \([A]\geq \min (A)\geq M\geq 8\). </p>
-<p>By Lemma&#160;<a href="chap-fourier.html#lem:cos_prod_bound">4.17</a>, </p>
-<div class="displaymath" id="a0000000140">
+<p>By Lemma&#160;<a href="chap-fourier.html#lem:cos_prod_bound">4.18</a>, </p>
+<div class="displaymath" id="a0000000142">
   \[ C(A;h,k)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}h_n^2\right). \]
 </div>
 <p> Let \(I_h\) be the interval of length \(K\) centred around \(kh\). If no element of \(I_h\) is divisible by \(n\) then \(\left\lvert h_n\right\rvert {\gt}K/2\). Therefore, by definition of \(\mathfrak {m}_1\), \(\left\lvert h_n\right\rvert {\gt}K/2\) for at least \(M/\log N\) many \(n\in A\), and hence \(\sum _{n\in A}h_n^2\geq K^2M/4\log N\), and so </p>
-<div class="displaymath" id="a0000000141">
+<div class="displaymath" id="a0000000143">
   \[ C(A;h)\leq \exp \left( -\frac{K^2M}{2N^2\log N}\right). \]
 </div>
 <p> It remains to note that by Lemma&#160;<a href="chap-fourier.html#lem:smooth_lcm">4.8</a> </p>
-<div class="displaymath" id="a0000000142">
+<div class="displaymath" id="a0000000144">
   \[ [A]\leq \exp \left( O\left( \frac{K^2M}{N^2(\log N)^2}\right)\right)\leq \exp \left( \frac{K^2M}{4N^2\log N}\right) \]
 </div>
 <p> assuming \(N\) is sufficiently large. </p>
@@ -1020,10 +1103,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.19</span>
+    <span class="lemma_thmlabel">4.20</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:minor2_ind_bound">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000143"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000145"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1044,14 +1127,14 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  There is a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq cLK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then </p>
-<div class="displaymath" id="a0000000144">
+  <p>  Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(h\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq \tfrac {1}{16}LK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L/q)\) where \(I\) is the interval of length \(K\) centred at \(h\). Then </p>
+<div class="displaymath" id="a0000000146">
   \[ C(A;h,k)\leq N^{-4\left\lvert \mathcal{Q}_A\backslash \mathcal{D}\right\rvert }. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000143">
+<div class="proof_wrapper" id="a0000000145">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1060,23 +1143,23 @@
   </div>
   <div class="proof_content">
   <p> For any \(n\in A\), let \(\mathcal{Q}(n)\) denote all those \(q\in \mathcal{Q}\) such that \(n\in A_q\). Therefore, for any real \(x_n\geq 0\), </p>
-<div class="displaymath" id="a0000000145">
+<div class="displaymath" id="a0000000147">
   \[ \prod _{n\in A}x_n=\prod _{n\in A}\prod _{q\in \mathcal{Q}(n)}x_n^{1/\left\lvert \mathcal{Q}(n)\right\rvert } =\prod _{q\in \mathcal{Q}}\prod _{n\in A_q}x_n^{1/\left\lvert \mathcal{Q}(n)\right\rvert }. \]
 </div>
-<p> Using the trivial estimate \(\omega (n)\ll \log n\), there is a constant \(C{\gt}0\) such that for any \(n\in A\) we have \(\left\lvert \mathcal{Q}(n)\right\rvert \leq C\log N\), and so if \(0\leq x_n\leq 1\), </p>
-<div class="displaymath" id="a0000000146">
-  \[ \prod _{n\in A}x_n\leq \prod _{q\in \mathcal{Q}}\prod _{n\in A_q}x_n^{1/C\log N}=\prod _{q\in \mathcal{Q}}\left( \prod _{n\in A_q}x_n\right)^{1/C\log N}. \]
+<p> By Lemma&#160;<a href="chap-fourier.html#lem:triv_q_bound">4.10</a> for any \(n\in A\) we have \(\left\lvert \mathcal{Q}(n)\right\rvert \leq \tfrac {1}{\log 2}\log n\leq 2\log N\), and so if \(0\leq x_n\leq 1\), </p>
+<div class="displaymath" id="a0000000148">
+  \[ \prod _{n\in A}x_n\leq \prod _{q\in \mathcal{Q}}\prod _{n\in A_q}x_n^{/2\log N}=\prod _{q\in \mathcal{Q}}\left( \prod _{n\in A_q}x_n\right)^{1/2\log N}. \]
 </div>
 <p> In particular, </p>
-<div class="displaymath" id="a0000000147">
-  \[ C(A;h,k)\leq \prod _{q\in \mathcal{Q}}C(A_q;h,k)^{1/C\log N}. \]
+<div class="displaymath" id="a0000000149">
+  \[ C(A;h,k)\leq \prod _{q\in \mathcal{Q}}C(A_q;h,k)^{/2\log N}. \]
 </div>
-<p> Using the trivial bound \(C(A_q;h,k)\leq 1\), to prove the lemma it therefore suffices to show that for every \(q\in \mathcal{Q}\backslash \mathcal{D}_h\) we have \(C(A_q;h,k)\leq N^{-4C\log N}\). </p>
-<p>For any \(n\in A\) let \(kh\equiv h_n\pmod{n}\), where \(\left\lvert h_n\right\rvert \leq n/2\). For any \(q\in \mathcal{Q}\backslash \mathcal{D}\) there are, by definition of \(\mathcal{D}\), at least \(L/q\) many \(n\in A_q\) such that \(\left\lvert h_n\right\rvert {\gt}K/2\) and hence by Lemma&#160;<a href="chap-fourier.html#lem:cos_prod_bound">4.17</a> </p>
-<div class="displaymath" id="a0000000148">
+<p> Using the trivial bound \(C(A_q;h,k)\leq 1\), to prove the lemma it therefore suffices to show that for every \(q\in \mathcal{Q}\backslash \mathcal{D}_h\) we have \(C(A_q;h,k)\leq N^{-8\log N}\). </p>
+<p>For any \(n\in A\) let \(kh\equiv h_n\pmod{n}\), where \(\left\lvert h_n\right\rvert \leq n/2\). For any \(q\in \mathcal{Q}\backslash \mathcal{D}\) there are, by definition of \(\mathcal{D}\), at least \(L/q\) many \(n\in A_q\) such that \(\left\lvert h_n\right\rvert {\gt}K/2\) and hence by Lemma&#160;<a href="chap-fourier.html#lem:cos_prod_bound">4.18</a> </p>
+<div class="displaymath" id="a0000000150">
   \[ C(A_q;h,k)\leq \exp \left( -\frac{2}{N^2}\cdot \frac{L}{q}\cdot \frac{K^2}{4}\right). \]
 </div>
-<p> By assumption, \(q\leq LK^2/8CN^2(\log N)^2\), and the proof is complete. </p>
+<p> By assumption, \(q\leq LK^2/16N^2(\log N)^2\), and the proof is complete. </p>
 
   </div>
 </div>
@@ -1085,10 +1168,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">4.20</span>
+    <span class="lemma_thmlabel">4.21</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#lem:minor2_bound">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000149"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000151"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -1109,13 +1192,13 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  There is a constant \(c{\gt}0\) such that the following holds. Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals. Let \(k\) be an integer such that \(1\leq k \leq N/2\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
+  <p>  Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals. Let \(k\) be an integer such that \(1\leq k \leq N/2\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
 <ol class="enumerate">
-  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq c\frac{LK^2}{N^2(\log N)^2}\), and </p>
+  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \tfrac {1}{16}\frac{LK^2}{N^2(\log N)^2}\), and </p>
 </li>
   <li><p>for any interval \(I\) of length \(K\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000150">
+  <li><div class="displaymath" id="a0000000152">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -1126,13 +1209,13 @@
 </li>
 </ol>
 <p> Then </p>
-<div class="displaymath" id="a0000000151">
+<div class="displaymath" id="a0000000153">
   \[ \sum _{h\in \mathfrak {m}_2(A,k,K,M/\log N)}\prod _{n\in A}\left\lvert \cos (\pi kh/n)\right\rvert \leq 1/8. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000149">
+<div class="proof_wrapper" id="a0000000151">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1142,11 +1225,11 @@
   <div class="proof_content">
   <p> For any \(h\in \mathfrak {m}_2\), let \(I_h\) be the interval of length \(K\) centred at \(kh\). Since \(h\not\in \mathfrak {m}_1\), condition 2(a) cannot hold, and therefore there is some \(x\in I_h\) divisible by all \(q\in \mathcal{D}_{I_h}(A;L/q)\). In particular, \(kh\) is distance at most \(K/2\leq M/2\) from some multiple of \([\mathcal{D}_{I_h}(A;L/q)]\). </p>
 <p>Therefore, for any \(\mathcal{D}\subset \mathcal{Q}\), the number of \(h\in \mathfrak {m}_2\) with \(\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}\) is at most \(M\) times the number of multiples of \([\mathcal{D}]\) in \([1,k[A]]\), which is at most </p>
-<div class="displaymath" id="a0000000152">
+<div class="displaymath" id="a0000000154">
   \[ Mk\frac{[A]}{[\mathcal{D}]} \leq Mk\prod _{q\in \mathcal{Q}\backslash \mathcal{D}}q\leq kN^{\left\lvert \mathcal{Q}\backslash \mathcal{D}\right\rvert +1}. \]
 </div>
-<p> Therefore, for any \(\mathcal{D}\subset \mathcal{Q}\), using Lemma&#160;<a href="chap-fourier.html#lem:minor2_ind_bound">4.19</a>, </p>
-<div class="displaymath" id="a0000000153">
+<p> Therefore, for any \(\mathcal{D}\subset \mathcal{Q}\), using Lemma&#160;<a href="chap-fourier.html#lem:minor2_ind_bound">4.20</a>, </p>
+<div class="displaymath" id="a0000000155">
   \[ \sum _{h\in \mathfrak {m}_2}1_{\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}}C(A;h,k)\leq kN^{1-3\left\lvert \mathcal{Q}_A\backslash \mathcal{D}\right\rvert }. \]
 </div>
 <p>By definition of \(\mathfrak {m}\), if \(h\in \mathfrak {m}_2\) then \(kh\) is distance greater than \(K/2\) from any multiple of \([A]\), and hence \(\mathcal{D}_{I_h}(A;L/q)\neq \mathcal{Q}\). Therefore (using the trivial estimate \(\left\lvert \mathcal{Q}\right\rvert \leq N\)) </p>
@@ -1159,10 +1242,10 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">4.21</span>
+    <span class="proposition_thmlabel">4.22</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-fourier.html#prop:fourier">#</a>
-    <a class="icon proof" href="chap-fourier.html#a0000000154"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-fourier.html#a0000000156"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -1173,7 +1256,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/f290b94cf4c1a5b1c3e0df4471d562ecf0d3f813/src/fourier.lean#L312">circle_method_prop</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/508a740fa1a8c7547d5881f747403b0c63212f68/src/fourier.lean#L369">circle_method_prop</a></li>
         </ul>
 
       </div>
@@ -1182,17 +1265,17 @@
   </div>
   </div>
   <div class="proposition_thmcontent">
-  <p>  There is a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\) is sufficiently large. Let \(K,L,M\) be reals and \(k\) an integer such that \(1\leq k\leq N/2\) and \(M{\gt}K\). Let \(A\subset [M,N]\) be a set of integers such that </p>
+  <p>  Suppose that \(N\) is sufficiently large. Let \(K,L,M\) be reals and \(k\) an integer such that \(1\leq k\leq N/2\) and \(M{\gt}K\). Let \(A\subset [M,N]\) be a set of integers such that </p>
 <ol class="enumerate">
   <li><p>\(R(A)\in [2/k-1/M,2/k)\), </p>
 </li>
   <li><p>\(k\) divides the lowest common multiple of \(A\), </p>
 </li>
-  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq c\min \left( \left\lvert A\right\rvert ,\frac{LK^2}{N^2(\log N)^2}\right)\), and </p>
+  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \tfrac {1}{16}\min \left( \left\lvert A\right\rvert ,\frac{LK^2}{N^2(\log N)^2}\right)\), and </p>
 </li>
   <li><p>for any interval \(I\) of length \(K\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000155">
+  <li><div class="displaymath" id="a0000000157">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -1206,7 +1289,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000154">
+<div class="proof_wrapper" id="a0000000156">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -1214,7 +1297,7 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> If the conclusion fails, there is an immediate contradiction by combining Lemmas&#160;<a href="chap-fourier.html#lem:minor_lbound">4.16</a>, <a href="chap-fourier.html#lem:minor1_bound">4.18</a> and <a href="chap-fourier.html#lem:minor2_bound">4.20</a> (and the required upper bound \([A]{\lt}2^{\left\lvert A\right\rvert -1}\) comes from Lemma&#160;<a href="chap-fourier.html#lem:smooth_lcm">4.8</a>). </p>
+  <p> If the conclusion fails, there is an immediate contradiction by combining Lemmas&#160;<a href="chap-fourier.html#lem:minor_lbound">4.17</a>, <a href="chap-fourier.html#lem:minor1_bound">4.19</a> and <a href="chap-fourier.html#lem:minor2_bound">4.21</a> (and the required upper bound \([A]{\lt}2^{\left\lvert A\right\rvert -1}\) comes from Lemma&#160;<a href="chap-fourier.html#lem:smooth_lcm">4.8</a>). </p>
 
   </div>
 </div>

@@ -2,6 +2,8 @@
 \label{chap:fourier}
 
 This section contains the part of the proof that uses Fourier analysis to reduce finding solutions to a combinatorial problem involving divisors.
+
+In this section, we write $[A]$ for the lowest common multiple of $A$ (if $A$ is a finite set of naturals). 
 \section{Local definitions}
 
 \begin{definition}
@@ -9,14 +11,14 @@ This section contains the part of the proof that uses Fourier analysis to reduce
   \uses{def:rec_sum}
   \leanok
   \lean{integer_count}
-  In this section, we write $[A]$ for the lowest common multiple of $A$, and for any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)$ for the count of the number of subsets $S\subset A$ such that $kR(S)$ is an integer.
+For any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)$ for the count of the number of subsets $S\subset A$ such that $kR(S)$ is an integer.
 \end{definition}
 
 \begin{definition}
   \label{def:j}
   \leanok
   \lean{j}
-  Let $J(A) = (-[A]/2,[A]/2)\cap\bbz \backslash \{0\}$.
+  Let $J(A) = (-[A]/2,[A]/2]\cap\bbz \backslash \{0\}$.
 \end{definition}
 
 \begin{definition}
@@ -28,6 +30,8 @@ This section contains the part of the proof that uses Fourier analysis to reduce
 
 \begin{definition}
   \label{def:major_arc}
+  \leanok
+  \lean{major_arc}
   \uses{def:j}
   For any finite set of naturals $A$ and integer $k\geq 1$, and real $K>0$, we define the `major arc' corresponding to $t\in\bbz$ as
 \[\mathfrak{M}(t;A,k,K) = \{ h\in  J(A): \abs{h-t[A]/k}\leq K/2k\}\]
@@ -62,22 +66,29 @@ since $e(n)=1$. Therefore $e(n/m)S=S$, and hence since $e(n/m)\neq 1$, this forc
 \end{proof}
 
 \begin{lemma}\label{lem:lcm_desc}
-Let $A$ be a finite set of natural numbers. If
-\[\mathcal{P}_A = \{ p : \exists n\in A : p \mid n\}\]
+Let $A$ be a finite set of natural numbers not containing $0$. If
+\[\mathcal{P}_A = \{ p \textrm{ prime}: \exists n\in A : p \mid n\}\]
 and for all $p\in \mathcal{P}_A$ then $r_p\geq 0$ is the greatest integer such that $p^{r_p}$ divides some $n\in A$, then
-\[[A]\leq \prod_{p\in\mathcal{P}_A}p^{r_p}.\]
+\[[A]=\prod_{p\in\mathcal{P}_A}p^{r_p}.\]
 \end{lemma}
+(NOTE: This is a generally useful fact when working with lowest common multiples, perhaps this should be in mathlib somewhere.)
 \begin{proof}
-By definition it suffices to show that for all $n\in A$ we have $n\mid \prod_{p\in\mathcal{P}_A}p^{r_p}$. By the fundamental theorem of arithmetic, it suffices to show that for each prime power $q^r\mid n$, $q\in \mathcal{P}_A$ and $r\leq r_q$. Both are true by definition of $\mathcal{P}_A$ and $r_q$ respectively.
+We first note that if $p\mid [A]$ then $p\in \mathcal{P}_A$. If not, suppose $p\not\in\mathcal{P}_A$ and $p\mid [A]$. Let $M=[A]/p$. We claim every $n\in A$ divides $M$, contradicting the definition of lowest common multiple. It suffices to show that if a prime power $q^r\mid n$ then $q\mid M$. But we know $q^r\mid [A]=Mp$, and $(q^r,p)=1$, so $q\mid M$ as required.
+
+By the fundamental theorem of arithmetic, we can write $[A] = \prod_{p\in \mathcal{P}_A}p^{s_p}$ for some integers $s_p\geq 0$. It remains to show that $s_p=r_p$. 
+
+That $s_p\geq r_p$ follows from the fact that $p^{r_p}\mid n$ for some $n\in A$ by definition, hence $p^{r_p}\mid [A]$, hence $r_p\leq s_p$.
+
+Suppose that $s_p>r_p$, and as above consider $M=[A]/p$. We claim every $n\in A$ divides $M$, the required contradiction. If a prime power $q^r\mid n$ with $q\neq p$ then $q\mid Mp$ hence $q\mid M$. If $p^r\mid n$ then $r\leq r_p$, so $p^r\mid p^{r_p}\mid p^{s_p-1}\mid M$, as required. 
 \end{proof}
 
 \begin{lemma}\label{lem:smooth_lcm}
   \uses{def:local_part}
-If $A$ is a finite set of natural numbers such that if $q\in\mathcal{Q}_A$ then $q\leq X$, then $[A]\leq e^{O(X)}$.
+If $A$ is a finite set of natural numbers not containing $0$ such that if $q\in\mathcal{Q}_A$ then $q\leq X$, then $[A]\leq e^{O(X)}$.
 \end{lemma}
 \begin{proof}
   \uses{lem:chebyshev,lem:lcm_desc}
-  We have $[A]=\prod_{\in\mathcal{P}_A}p^{r_p}$, where $p^{r_p}\in \mathcal{Q}_A$, by Lemma~\ref{lem:lcm_desc}. By hypothesis $p^{r_p}\leq X$ and so $[A]\leq X^{\abs{\mathcal{P}_A}}$. The set $\mathcal{P}_A$ is a subset of all primes $\leq X$, and so $\abs{\mathcal{P}_A}\leq \pi(X)\ll X/\log X$ by Chebyshev's estimate Lemma~\ref{lem:chebyshev}. Therefore
+  We have $[A]=\prod_{p\in\mathcal{P}_A}p^{r_p}$, where $p^{r_p}\in \mathcal{Q}_A$, by Lemma~\ref{lem:lcm_desc}. By hypothesis $p^{r_p}\leq X$ and so $[A]\leq X^{\abs{\mathcal{P}_A}}$. The set $\mathcal{P}_A$ is a subset of all primes $\leq X$, and so $\abs{\mathcal{P}_A}\leq \pi(X)\ll X/\log X$ by Chebyshev's estimate Lemma~\ref{lem:chebyshev}. Therefore
   \[[A]\leq X^{O(X/\log X)}=e^{O(X)}.\]
 \end{proof}
 
@@ -95,13 +106,24 @@ Since $1-y\leq e^{-y}$ for all $y\geq 0$, the right-hand side is $\leq e^{-4x^2}
 \[\cos(\pi x) \leq e^{-2x^2}.\]
 \end{proof}
 
+\begin{lemma}\label{lem:triv_q_bound}
+  \uses{def:local_part}
+Let $A$ be a finite set of naturals not containing $0$. For any $n\in A$, let $\mathcal{Q}_A(n)$ denote all those $q\in \mathcal{Q}_A$ such that $n\in A_q$, then
+\[\abs{\mathcal{Q}_A(n)}\leq  \tfrac{1}{\log 2}\log n.\]
+\end{lemma}
+\begin{proof}
+The first step is to show that $\prod_{q\in\mathcal{Q}(n)}q\mid n$ (in fact they're equal, but all we need is the one direction). This can be shown by showing that every $q\in\mathcal{Q}(n)$ divides $n$, since $n\in A_q$ implies $q\mid n$,  and then noting that any two distinct $q_1,q_2\in \mathcal{Q}(n)$ are coprime. If not, then since they are prime powers, they must both be powers of the same prime, say $q_1=p^{r_1}< q_2=p^{r_2}$. Since $n\in A_{q_2}$ we have $p^{r_2}\mid n$, but then $p\mid n/q_1$, so $p\mid (q_1,n/q_1)$, and so $n\not\in A_{q_1}$. 
+
+Therefore $\prod_{q\in\mathcal{Q}(n)}q\leq n$. Since all prime powers are $\geq 2$ it follows that $2^{\abs{\mathcal{Q}(n)}}\leq n$, and the result follows taking logarithms. 
+\end{proof}
+
 \section{Towards the main proposition}
 
 \begin{lemma}\label{lem:orthog_rat}
   \uses{def:integer_count}
   \leanok
   \lean{orthog_rat}
-If $A\subset\mathbb{N}$ is finite and $k\geq 1$ is an integer then
+If $A$ is a finite set of natural numbers not containing $0$ and $k\geq 1$ is an integer then
 \[F(A;k)= \frac{1}{[A]}\sum_{-[A]/2< h\leq [A]/2}\prod_{n\in A}(1+e(kh/n)).\]
 \end{lemma}
 \begin{proof}
@@ -156,9 +178,12 @@ and the result follows after rearranging.
 
 \begin{lemma}\label{lem:majorarcs_disjoint}
   \uses{def:major_arc}
+  \leanok
+  \lean{majorarcs_disjoint}
 If $A$ is a finite set of integers and $K$ is a real such that $[A]>K$ then, for any integer $k\geq 1$, the sets $\mathfrak{M}(t;A,k,K)$ are disjoint for distinct $t\in \bbz$.
 \end{lemma}
 \begin{proof}
+  \leanok
 Suppose not and $h\in \mathfrak{M}(t_1)\cap \mathfrak{M}(t_2)$. By definition,
 \[\abs{hk-t_1[A]}\leq K/2\]
 and
@@ -258,31 +283,30 @@ assuming $N$ is sufficiently large.
 
 \begin{lemma}\label{lem:minor2_ind_bound}
   \uses{def:interval_rare_ppowers}
-There is a constant $c>0$ such that the following holds.
-Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq cLK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L/q)$ where $I$ is the interval of length $K$ centred at $h$. Then
+Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq \tfrac{1}{16}LK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L/q)$ where $I$ is the interval of length $K$ centred at $h$. Then
 \[C(A;h,k)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 \end{lemma}
 \begin{proof}
-\uses{lem:cos_bound}
+\uses{lem:cos_bound,lem:triv_q_bound}
 For any $n\in A$, let $\mathcal{Q}(n)$ denote all those $q\in \mathcal{Q}$ such that $n\in A_q$. Therefore, for any real $x_n\geq 0$,
 \[\prod_{n\in A}x_n=\prod_{n\in A}\prod_{q\in \mathcal{Q}(n)}x_n^{1/\abs{\mathcal{Q}(n)}}
 =\prod_{q\in\mathcal{Q}}\prod_{n\in A_q}x_n^{1/\abs{\mathcal{Q}(n)}}.\]
-Using the trivial estimate $\omega(n)\ll \log n$, there is a constant $C>0$ such that for any $n\in A$ we have $\abs{\mathcal{Q}(n)}\leq C\log N$, and so if $0\leq x_n\leq 1$,
-\[\prod_{n\in A}x_n\leq \prod_{q\in\mathcal{Q}}\prod_{n\in A_q}x_n^{1/C\log N}=\prod_{q\in \mathcal{Q}}\brac{\prod_{n\in A_q}x_n}^{1/C\log N}.\]
+By Lemma~\ref{lem:triv_q_bound} for any $n\in A$ we have $\abs{\mathcal{Q}(n)}\leq \tfrac{1}{\log 2}\log n\leq 2\log N$, and so if $0\leq x_n\leq 1$,
+\[\prod_{n\in A}x_n\leq \prod_{q\in\mathcal{Q}}\prod_{n\in A_q}x_n^{/2\log N}=\prod_{q\in \mathcal{Q}}\brac{\prod_{n\in A_q}x_n}^{1/2\log N}.\]
 In particular,
- \[C(A;h,k)\leq \prod_{q\in \mathcal{Q}}C(A_q;h,k)^{1/C\log N}.\]
- Using the trivial bound $C(A_q;h,k)\leq 1$, to prove the lemma it therefore suffices to show that for every $q\in\mathcal{Q}\backslash\mathcal{D}_h$ we have $C(A_q;h,k)\leq N^{-4C\log N}$.
+ \[C(A;h,k)\leq \prod_{q\in \mathcal{Q}}C(A_q;h,k)^{/2\log N}.\]
+ Using the trivial bound $C(A_q;h,k)\leq 1$, to prove the lemma it therefore suffices to show that for every $q\in\mathcal{Q}\backslash\mathcal{D}_h$ we have $C(A_q;h,k)\leq N^{-8\log N}$.
 
 For any $n\in A$ let $kh\equiv h_n\pmod{n}$, where $\abs{h_n}\leq n/2$. For any $q\in\mathcal{Q}\backslash \mathcal{D}$ there are, by definition of $\mathcal{D}$, at least $L/q$ many $n\in A_q$ such that $\abs{h_n}>K/2$ and hence by Lemma~\ref{lem:cos_prod_bound}
 \[C(A_q;h,k)\leq\exp\brac{-\frac{2}{N^2}\cdot \frac{L}{q}\cdot \frac{K^2}{4}}.\]
-By assumption, $q\leq LK^2/8CN^2(\log N)^2$, and the proof is complete.
+By assumption, $q\leq LK^2/16N^2(\log N)^2$, and the proof is complete.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_bound}
   \uses{def:minor_arcs}
-There is a constant $c>0$ such that the following holds. Let $N$ be a sufficiently large integer. Let $K,L>0$ be reals. Let $k$ be an integer such that $1\leq k \leq N/2$.  Let $A\subset [1,N]$ be a finite set of integers such that
+Let $N$ be a sufficiently large integer. Let $K,L>0$ be reals. Let $k$ be an integer such that $1\leq k \leq N/2$.  Let $A\subset [1,N]$ be a finite set of integers such that
 \begin{enumerate}
-\item if $q\in\mathcal{Q}_A$ then $q\leq c\frac{LK^2}{N^2(\log N)^2}$,  and
+\item if $q\in\mathcal{Q}_A$ then $q\leq \tfrac{1}{16}\frac{LK^2}{N^2(\log N)^2}$,  and
 \item for any interval $I$ of length $K$, either
 \begin{enumerate}
 \item \[\# \{ n\in A : \textrm{no element of }I\textrm{ is divisible by }n\}\geq M/\log N,\]
@@ -316,11 +340,11 @@ kN\sum_{\mathcal{D}\subsetneq \mathcal{Q}}N^{-3\abs{\mathcal{Q}\backslash \mathc
 \begin{proposition}\label{prop:fourier}
   \leanok
   \lean{circle_method_prop}
-There is a constant $c>0$ such that the following holds. Suppose that $N$ is sufficiently large. Let $K,L,M$ be reals and $k$ an integer such that $1\leq k\leq N/2$ and $M>K$. Let $A\subset [M,N]$ be a set of integers such that
+Suppose that $N$ is sufficiently large. Let $K,L,M$ be reals and $k$ an integer such that $1\leq k\leq N/2$ and $M>K$. Let $A\subset [M,N]$ be a set of integers such that
 \begin{enumerate}
 \item $R(A)\in [2/k-1/M,2/k)$,
 \item $k$ divides the lowest common multiple of $A$,
-\item if $q\in\mathcal{Q}_A$ then $q\leq c\min\brac{\abs{A},\frac{LK^2}{N^2(\log N)^2}}$,  and
+\item if $q\in\mathcal{Q}_A$ then $q\leq \tfrac{1}{16}\min\brac{\abs{A},\frac{LK^2}{N^2(\log N)^2}}$,  and
 \item for any interval $I$ of length $K$, either
 \begin{enumerate}
 \item \[\# \{ n\in A : \textrm{no element of }I\textrm{ is divisible by }n\}\geq M/\log N,\]
