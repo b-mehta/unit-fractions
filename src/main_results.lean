@@ -286,7 +286,7 @@ lemma rec_qsum_lower_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) :
   ∀ᶠ (N : ℕ) in at_top, ∀ A : finset ℕ,
   ((log N)^(-ε/2) ≤ rec_sum A )
   → (∀ n ∈ A, ((1-ε)*log(log N) ≤ ω n ) ∧ ( (ω n : ℝ) ≤ 2*(log (log N))))
-  → (1-2*ε)*log(log N) *real.exp(-1) ≤ ∑ q in fin_ppowers_in_set A, (1/q : ℝ)
+  → (1-2*ε)*log(log N) *real.exp(-1) ≤ ∑ q in ppowers_in_set A, (1/q : ℝ)
 :=
 sorry
 

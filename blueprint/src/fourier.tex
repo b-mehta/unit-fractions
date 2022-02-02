@@ -3,7 +3,7 @@
 
 This section contains the part of the proof that uses Fourier analysis to reduce finding solutions to a combinatorial problem involving divisors.
 
-In this section, we write $[A]$ for the lowest common multiple of $A$ (if $A$ is a finite set of naturals). 
+In this section, we write $[A]$ for the lowest common multiple of $A$ (if $A$ is a finite set of naturals).
 \section{Local definitions}
 
 \begin{definition}
@@ -75,11 +75,11 @@ and for all $p\in \mathcal{P}_A$ then $r_p\geq 0$ is the greatest integer such t
 \begin{proof}
 We first note that if $p\mid [A]$ then $p\in \mathcal{P}_A$. If not, suppose $p\not\in\mathcal{P}_A$ and $p\mid [A]$. Let $M=[A]/p$. We claim every $n\in A$ divides $M$, contradicting the definition of lowest common multiple. It suffices to show that if a prime power $q^r\mid n$ then $q\mid M$. But we know $q^r\mid [A]=Mp$, and $(q^r,p)=1$, so $q\mid M$ as required.
 
-By the fundamental theorem of arithmetic, we can write $[A] = \prod_{p\in \mathcal{P}_A}p^{s_p}$ for some integers $s_p\geq 0$. It remains to show that $s_p=r_p$. 
+By the fundamental theorem of arithmetic, we can write $[A] = \prod_{p\in \mathcal{P}_A}p^{s_p}$ for some integers $s_p\geq 0$. It remains to show that $s_p=r_p$.
 
 That $s_p\geq r_p$ follows from the fact that $p^{r_p}\mid n$ for some $n\in A$ by definition, hence $p^{r_p}\mid [A]$, hence $r_p\leq s_p$.
 
-Suppose that $s_p>r_p$, and as above consider $M=[A]/p$. We claim every $n\in A$ divides $M$, the required contradiction. If a prime power $q^r\mid n$ with $q\neq p$ then $q\mid Mp$ hence $q\mid M$. If $p^r\mid n$ then $r\leq r_p$, so $p^r\mid p^{r_p}\mid p^{s_p-1}\mid M$, as required. 
+Suppose that $s_p>r_p$, and as above consider $M=[A]/p$. We claim every $n\in A$ divides $M$, the required contradiction. If a prime power $q^r\mid n$ with $q\neq p$ then $q\mid Mp$ hence $q\mid M$. If $p^r\mid n$ then $r\leq r_p$, so $p^r\mid p^{r_p}\mid p^{s_p-1}\mid M$, as required.
 \end{proof}
 
 \begin{lemma}\label{lem:smooth_lcm}
@@ -107,14 +107,17 @@ Since $1-y\leq e^{-y}$ for all $y\geq 0$, the right-hand side is $\leq e^{-4x^2}
 \end{proof}
 
 \begin{lemma}\label{lem:triv_q_bound}
+  \lean{triv_q_bound}
+  \leanok
   \uses{def:local_part}
 Let $A$ be a finite set of naturals not containing $0$. For any $n\in A$, let $\mathcal{Q}_A(n)$ denote all those $q\in \mathcal{Q}_A$ such that $n\in A_q$, then
 \[\abs{\mathcal{Q}_A(n)}\leq  \tfrac{1}{\log 2}\log n.\]
 \end{lemma}
 \begin{proof}
-The first step is to show that $\prod_{q\in\mathcal{Q}(n)}q\mid n$ (in fact they're equal, but all we need is the one direction). This can be shown by showing that every $q\in\mathcal{Q}(n)$ divides $n$, since $n\in A_q$ implies $q\mid n$,  and then noting that any two distinct $q_1,q_2\in \mathcal{Q}(n)$ are coprime. If not, then since they are prime powers, they must both be powers of the same prime, say $q_1=p^{r_1}< q_2=p^{r_2}$. Since $n\in A_{q_2}$ we have $p^{r_2}\mid n$, but then $p\mid n/q_1$, so $p\mid (q_1,n/q_1)$, and so $n\not\in A_{q_1}$. 
+  \leanok
+The first step is to show that $\prod_{q\in\mathcal{Q}(n)}q\mid n$ (in fact they're equal, but all we need is the one direction). This can be shown by showing that every $q\in\mathcal{Q}(n)$ divides $n$, since $n\in A_q$ implies $q\mid n$,  and then noting that any two distinct $q_1,q_2\in \mathcal{Q}(n)$ are coprime. If not, then since they are prime powers, they must both be powers of the same prime, say $q_1=p^{r_1}< q_2=p^{r_2}$. Since $n\in A_{q_2}$ we have $p^{r_2}\mid n$, but then $p\mid n/q_1$, so $p\mid (q_1,n/q_1)$, and so $n\not\in A_{q_1}$.
 
-Therefore $\prod_{q\in\mathcal{Q}(n)}q\leq n$. Since all prime powers are $\geq 2$ it follows that $2^{\abs{\mathcal{Q}(n)}}\leq n$, and the result follows taking logarithms. 
+Therefore $\prod_{q\in\mathcal{Q}(n)}q\leq n$. Since all prime powers are $\geq 2$ it follows that $2^{\abs{\mathcal{Q}(n)}}\leq n$, and the result follows taking logarithms.
 \end{proof}
 
 \section{Towards the main proposition}
