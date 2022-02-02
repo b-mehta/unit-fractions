@@ -285,7 +285,7 @@ assuming $N$ is sufficiently large.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_ind_bound}
-Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq \tfrac{1}{16}LK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L/q)$ where $I$ is the interval of length $K$ centred at $h$. Then
+Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq \tfrac{1}{16}LK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L)$ where $I$ is the interval of length $K$ centred at $h$. Then
 \[C(A;h,k)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 \end{lemma}
 \begin{proof}
@@ -299,7 +299,9 @@ In particular,
  \[C(A;h,k)\leq \prod_{q\in \mathcal{Q}}C(A_q;h,k)^{/2\log N}.\]
  Using the trivial bound $C(A_q;h,k)\leq 1$, to prove the lemma it therefore suffices to show that for every $q\in\mathcal{Q}\backslash\mathcal{D}_h$ we have $C(A_q;h,k)\leq N^{-8\log N}$.
 
-For any $n\in A$ let $kh\equiv h_n\pmod{n}$, where $\abs{h_n}\leq n/2$. For any $q\in\mathcal{Q}\backslash \mathcal{D}$ there are, by definition of $\mathcal{D}$, at least $L/q$ many $n\in A_q$ such that $\abs{h_n}>K/2$ and hence by Lemma~\ref{lem:cos_prod_bound}
+For any $n\in A$ let $kh\equiv h_n\pmod{n}$, where $\abs{h_n}\leq n/2$. For any $q\in\mathcal{Q}\backslash \mathcal{D}$ there are, by definition of $\mathcal{D}$, at least $L/q$ many $n\in A_q$ such that $n$ divides no element of the interval of length $K$ centred at $kh$. 
+
+Recall that $h_n$ is the integer in $(-n/2,n/2]$ such that $kh\pmod h_n\pmod{n}$, so that $n$ divides $kh-h_n$. If $\abs{h_n}\leq K/2$ then $kh-h_n$ is in the interval of length $K$ centred at $kh$, which contradicts the previous paragraph. Therefore $\abs{h_n}>K/2$. Hence by Lemma~\ref{lem:cos_prod_bound}
 \[C(A_q;h,k)\leq\exp\brac{-\frac{2}{N^2}\cdot \frac{L}{q}\cdot \frac{K^2}{4}}.\]
 By assumption, $q\leq LK^2/16N^2(\log N)^2$, and the proof is complete.
 \end{proof}
