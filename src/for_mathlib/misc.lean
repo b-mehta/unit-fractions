@@ -1,4 +1,5 @@
 import analysis.convex.specific_functions
+import algebra.is_prime_pow
 
 section jordan
 
@@ -32,6 +33,43 @@ begin
 end
 
 end jordan
+
+-- begin
+--   obtain ⟨p, k, hp, hk, rfl⟩ := hn,
+--   rw ←nat.prime_iff at hp,
+--   rw [hp.pow_min_fac hk.ne', hp.factorization_pow, finsupp.single_eq_same],
+-- end
+
+
+-- lemma prime_dvd_is_prime_pow {p q : ℕ} (hp : p.prime) (hq : is_prime_pow q) (hpq : p ∣ q) :
+--   p ^ q.factorization p = q :=
+-- begin
+--   rw is_prime_pow_nat_iff at hq,
+--   obtain ⟨p', k, hp', hk, rfl⟩ := hq,
+--   rw [hp'.factorization_pow, (nat.prime_dvd_prime_iff_eq hp hp').1 (hp.dvd_of_dvd_pow hpq),
+--     finsupp.single_eq_same],
+-- end
+
+-- lemma prime_dvd_is_prime_pow' {p q : ℕ} (hp : p.prime) (hq : is_prime_pow q) :
+--   p ∣ q ↔ ∃ k, 0 < k ∧ q = p ^ k :=
+-- begin
+--   split,
+--   { intro h,
+--     refine ⟨q.factorization p, _⟩,
+--     rw [pos_iff_ne_zero, ←finsupp.mem_support_iff, nat.factor_iff_mem_factorization,
+--       nat.mem_factors_iff_dvd, prime_dvd_is_prime_pow],
+
+--   },
+-- end
+
+-- lemma is_prime_pow.not_coprime_iff {q₁ q₂ : ℕ} (h₁ : is_prime_pow q₁) (h₂ : is_prime_pow q₂) :
+--   ¬q₁.coprime q₂ ↔ ∃ (p k₁ k₂ : ℕ), p.prime ∧ q₁ = p ^ k₁ ∧ q₂ = p ^ k₂ :=
+-- begin
+--   simp only [nat.prime.not_coprime_iff_dvd, exists_and_distrib_left],
+--   refine exists_congr (λ p, and_congr_right (λ hp, _)),
+
+-- end
+
 
 open_locale big_operators
 

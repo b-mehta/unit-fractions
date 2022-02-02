@@ -9,6 +9,7 @@ import analysis.special_functions.log
 import analysis.special_functions.pow
 import order.filter.at_top_bot
 import number_theory.arithmetic_function
+import algebra.is_prime_pow
 
 /-!
 # Title
@@ -76,26 +77,50 @@ begin -- should be able to simplify this
   exact this.ne (by exact_mod_cast h),
 end
 
--- This is A_q in the paper.
-def local_part (A : finset ℕ) (q : ℕ) : finset ℕ := A.filter (λ n, q ∣ n ∧ coprime q (n/q))
+/--
+This is A_q in the paper.
+-/
+def local_part (A : finset ℕ) (q : ℕ) : finset ℕ := A.filter (λ n, q ∣ n ∧ coprime q (n / q))
 
--- This is Q_A in the paper.
--- Replace nat.prime here with prime_power
-def ppowers_in_set (A : finset ℕ) : set ℕ := { q | nat.prime q ∧ local_part A q ≠ ∅ }
+lemma mem_local_part {A : finset ℕ} {q : ℕ} (n : ℕ) :
+  n ∈ local_part A q ↔ n ∈ A ∧ q ∣ n ∧ coprime q (n / q) :=
+by rw [local_part, finset.mem_filter]
 
--- For summing over 1/q for q in Q_A, need to know this is a finite set, so
--- I've put the below for now - actually should be ppowers_in_set? Prove this is
--- finite as a lemma?
-def fin_ppowers_in_set (A : finset ℕ) : finset ℕ := sorry
+lemma zero_mem_local_part_iff {A : finset ℕ} {q : ℕ} (hA : 0 ∉ A) :
+  0 ∉ local_part A q :=
+λ i, hA (finset.filter_subset _ _ i)
+
+/--
+This is Q_A in the paper. The definition looks a bit different, but `mem_ppowers_in_set` shows
+it's the same thing.
+-/
+def ppowers_in_set (A : finset ℕ) : finset ℕ :=
+A.bUnion (λ n, n.divisors.filter (λ q, is_prime_pow q ∧ coprime q (n / q)))
+
+lemma mem_ppowers_in_set (A : finset ℕ) (q : ℕ) :
+  q ∈ ppowers_in_set A ↔ is_prime_pow q ∧ (local_part A q).nonempty :=
+begin
+  simp only [ppowers_in_set, finset.mem_bUnion, finset.mem_filter, exists_prop, nat.mem_divisors,
+    finset.nonempty, mem_local_part, ←exists_and_distrib_left],
+  refine exists_congr (λ i, _),
+  split,
+  { rintro ⟨h₁, h₂, h₃, h₄⟩,
+    exact ⟨h₃, h₁, h₂.1, h₄⟩ },
+  { rintro ⟨h₁, h₂, h₃, h₄⟩,
+    refine ⟨h₂, ⟨h₃, _⟩, h₁, h₄⟩,
+    rintro rfl,
+    simp only [nat.zero_div, nat.coprime_zero_right] at h₄,
+    exact h₁.ne_one h₄ },
+end
 
 -- This is R(A;q) in the paper.
-def rec_sum_local (A : finset ℕ) (q : ℕ) : ℚ := ∑ n in local_part A q, q/n
+def rec_sum_local (A : finset ℕ) (q : ℕ) : ℚ := ∑ n in local_part A q, q / n
 
 def ppower_rec_sum (A : finset ℕ) : ℚ :=
-∑ q in fin_ppowers_in_set A, 1/q
+∑ q in ppowers_in_set A, 1 / q
 
 -- Replace nat.prime here with prime_power
-def is_smooth (y : ℝ) (n : ℕ) : Prop := ∀ q : ℕ, nat.prime q → q ∣ n → (q : ℝ) ≤ y
+def is_smooth (y : ℝ) (n : ℕ) : Prop := ∀ q : ℕ, is_prime_pow q → q ∣ n → (q : ℝ) ≤ y
 
 def arith_regular (N : ℕ) (A : finset ℕ) : Prop :=
 ∀ n ∈ A, ((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N)
@@ -106,4 +131,4 @@ lemma arith_regular.subset {N : ℕ} {A A' : finset ℕ} (hA : arith_regular N A
 
 -- This is the set D_I
 def interval_rare_ppowers (I : finset ℕ) (A : finset ℕ) (K : ℝ) : set ℕ :=
-{ q in ppowers_in_set A | (((local_part A q).filter (λ n, ∀ x ∈ I, ¬ n ∣ x)).card : ℝ) < K / q }
+(ppowers_in_set A).filter $ λ q, ↑((local_part A q).filter (λ n, ∀ x ∈ I, ¬ n ∣ x)).card < K / q

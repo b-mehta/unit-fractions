@@ -6,6 +6,7 @@ Authors: Bhavik Mehta, Thomas Bloom
 
 import defs
 import for_mathlib.misc
+import algebra.group_power.order
 
 open_locale big_operators classical real
 
@@ -131,6 +132,89 @@ begin
   apply (i₁.trans (one_sub_le_exp_minus_of_pos (sq_nonneg (2 * x)))).trans,
   rw [←exp_nat_mul, nat.cast_two, ←neg_mul_eq_mul_neg, exp_le_exp],
   exact le_of_eq (by ring),
+end
+
+lemma nat.coprime_prod {ι : Type*} (s : finset ι) (f : ι → ℕ) (n : ℕ) :
+  n.coprime (∏ i in s, f i) ↔ ∀ i ∈ s, n.coprime (f i) :=
+begin
+  apply finset.induction_on s,
+  { simp },
+  intros a s has ih,
+  simp [has, nat.coprime_mul_iff_right, ih],
+end
+
+lemma prod_dvd_of_dvd_of_pairwise_disjoint {ι : Type*} {s : finset ι} {f : ι → ℕ} {n : ℕ}
+  (hn : ∀ i ∈ s, f i ∣ n) (h : (s : set ι).pairwise (nat.coprime on f)) :
+  ∏ i in s, f i ∣ n :=
+begin
+  revert h hn,
+  apply finset.induction_on s,
+  { simp },
+  intros a s has ih h hn,
+  simp only [mem_insert, forall_eq_or_imp] at hn,
+  rw [coe_insert, set.pairwise_insert_of_symmetric] at h,
+  rw [prod_insert has],
+  refine nat.coprime.mul_dvd_of_dvd_of_dvd _ hn.1 (ih h.1 hn.2),
+  { rw [nat.coprime_prod],
+    intros i hi,
+    exact h.2 i hi (ne_of_mem_of_not_mem hi has).symm },
+  intros i j t,
+  exact t.symm,
+end
+
+lemma nat.pow_eq_one_iff {n k : ℕ} : n ^ k = 1 ↔ n = 1 ∨ k = 0 :=
+begin
+  rcases eq_or_ne k 0 with rfl | hk,
+  { simp },
+  { simp [pow_eq_one_iff, hk] },
+end
+
+lemma coprime_div_iff {n p k : ℕ} (hp : p.prime) (hn : p ^ k ∣ n) (hk : k ≠ 0) :
+  nat.coprime (p^k) (n / p^k) → k = n.factorization p :=
+begin
+  rcases eq_or_ne n 0 with rfl | hn',
+  { simp [nat.pow_eq_one_iff, hp.ne_one] },
+  intro h,
+  have := nat.factorization_mul_of_coprime h,
+  rw [nat.mul_div_cancel' hn] at this,
+  rw [this, hp.factorization_pow, finsupp.coe_add, pi.add_apply, finsupp.single_eq_same,
+    self_eq_add_right, ←finsupp.not_mem_support_iff],
+  intro i,
+  apply nat.factorization_disjoint_of_coprime h,
+  simp only [inf_eq_inter, mem_inter],
+  refine ⟨_, i⟩,
+  simp only [nat.support_factorization],
+  rw [nat.prime_pow_prime_divisor hk hp, finset.mem_singleton],
+end
+
+lemma triv_q_bound {A : finset ℕ} (hA : 0 ∉ A) (n : ℕ) :
+  ↑((ppowers_in_set A).filter (λ q, n ∈ local_part A q)).card ≤ log n / log 2 :=
+begin
+  set Q := (ppowers_in_set A).filter (λ q, n ∈ local_part A q),
+  have : ∏ q in Q, q ∣ n,
+  { apply prod_dvd_of_dvd_of_pairwise_disjoint,
+    { intros q hq,
+      rw [mem_filter, mem_local_part] at hq,
+      exact hq.2.2.1 },
+    simp only [set.pairwise, mem_coe, mem_filter, mem_ppowers_in_set, mem_local_part,
+      is_prime_pow_nat_iff, and_imp, forall_exists_index],
+    rintro _ p₁ k₁ hp₁ hk₁ rfl - hn hpk₁ hpk₁' _ p₂ k₂ hp₂ hk₂ rfl - - hpk₂ hpk₂' i,
+    rw [function.on_fun, nat.coprime_pow_left_iff hk₁, nat.coprime_pow_right_iff hk₂,
+      nat.coprime_primes hp₁ hp₂],
+    rintro rfl,
+    apply i,
+    rw [coprime_div_iff hp₁ hpk₁ hk₁.ne' hpk₁', coprime_div_iff hp₂ hpk₂ hk₂.ne' hpk₂'] },
+  rcases eq_or_ne n 0 with rfl | hn,
+  { simp [Q, zero_mem_local_part_iff hA] },
+  have two_le : ∀ q ∈ Q, 2 ≤ q,
+  { intros q hq,
+    rw [mem_filter, mem_ppowers_in_set] at hq,
+    exact hq.1.1.two_le },
+  replace := (le_prod_of_forall_le Q _ _ two_le).trans (nat.le_of_dvd hn.bot_lt this),
+  rw [←@nat.cast_le ℝ, nat.cast_pow, nat.cast_two] at this,
+  rwa [le_div_iff (log_pos one_lt_two), ←log_pow, log_le_log],
+  { exact pow_pos zero_lt_two _ },
+  rwa [nat.cast_pos, pos_iff_ne_zero],
 end
 
 def exp_circle (x : ℂ) : ℂ := complex.exp (x * (2 * π * complex.I))
