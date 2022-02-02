@@ -285,12 +285,11 @@ assuming $N$ is sufficiently large.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_ind_bound}
-  \uses{def:interval_rare_ppowers}
 Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq \tfrac{1}{16}LK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L/q)$ where $I$ is the interval of length $K$ centred at $h$. Then
 \[C(A;h,k)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 \end{lemma}
 \begin{proof}
-\uses{lem:cos_bound,lem:triv_q_bound}
+\uses{lem:cos_prod_bound,lem:triv_q_bound}
 For any $n\in A$, let $\mathcal{Q}(n)$ denote all those $q\in \mathcal{Q}$ such that $n\in A_q$. Therefore, for any real $x_n\geq 0$,
 \[\prod_{n\in A}x_n=\prod_{n\in A}\prod_{q\in \mathcal{Q}(n)}x_n^{1/\abs{\mathcal{Q}(n)}}
 =\prod_{q\in\mathcal{Q}}\prod_{n\in A_q}x_n^{1/\abs{\mathcal{Q}(n)}}.\]
