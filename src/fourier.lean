@@ -14,12 +14,15 @@ noncomputable theory
 
 open filter real finset
 
+/-- Def 4.1 -/
 def integer_count (A : finset ℕ) (k : ℕ) : ℕ :=
 (A.powerset.filter (λ S, ∃ (d : ℤ), rec_sum S * k = d)).card
 
+/-- Useful for def 4.2 and in other statements -/
 def valid_sum_range (t : ℕ) : finset ℤ :=
 finset.Ioc ((- (t : ℤ) / 2)) (t/2)
 
+/-- implementation lemma -/
 lemma dumb_subtraction_thing (t : ℕ) : ((t : ℤ) / 2 - -(t : ℤ) / 2) = t :=
 begin
   have : (t : ℤ) - -(t : ℤ) = 2 * t,
@@ -48,13 +51,15 @@ end
 -- this is dangerous but I think I can get away with it in this file
 local notation `[` A `]` := (A.lcm id : ℕ)
 
+/-- Def 4.2 (maybe has a better name?) -/
 def j (A : finset ℕ) : finset ℤ :=
 (valid_sum_range [A]).erase 0
 
--- types of `h`, `k` might need to change?
+/-- Def 4.3: types of `h`, `k` might need to change? -/
 def cos_prod (B : finset ℕ) (h : ℤ) (k : ℕ) : ℝ :=
 ∏ n in B, |cos (π * k * h / n)|
 
+/-- Def 4.4 part one -/
 def major_arc_at (A : finset ℕ) (k : ℕ) (K : ℝ) (t : ℤ) : finset ℤ :=
 (j A).filter (λ h, |(h : ℝ) - t * [A] / k| ≤ K / (2 * k))
 
@@ -74,6 +79,7 @@ begin
   rwa nat.cast_ne_zero,
 end
 
+/-- Def 4.4 part two -/
 def major_arc (A : finset ℕ) (k : ℕ) (K : ℝ) : finset ℤ :=
 (j A).filter (λ h, ∀ t, h ∈ major_arc_at A k K t)
 
@@ -88,28 +94,60 @@ begin
   exact not_lt_of_le (abs_nonneg _) (q.trans_lt this),
 end
 
-lemma majorarcs_disjoint {A : finset ℕ} {k : ℕ} {K : ℝ} (hk : k ≠ 0) (hA : K < [A]) :
-  (set.univ : set ℤ).pairwise_disjoint (major_arc_at A k K) :=
+def exp_circle (x : ℂ) : ℂ := complex.exp (x * (2 * π * complex.I))
+
+lemma exp_circle_add {x y : ℂ} : exp_circle (x + y) = exp_circle x * exp_circle y :=
+by { rw [exp_circle, add_mul, complex.exp_add], refl }
+
+lemma exp_circle_int (z : ℤ) : exp_circle z = 1 :=
+by rw [exp_circle, complex.exp_int_mul_two_pi_mul_I z]
+
+lemma exp_circle_eq_one_iff (x : ℂ) :
+  exp_circle x = 1 ↔ ∃ (z : ℤ), x = z :=
+by simp [exp_circle, complex.exp_eq_one_iff, pi_ne_zero, complex.I_ne_zero]
+
+@[simp] lemma exp_circle_nat (n : ℕ) : exp_circle n = 1 :=
+by rw [←exp_circle_int n, int.cast_coe_nat]
+
+@[simp] lemma exp_circle_zero : exp_circle 0 = 1 :=
+by rw [←exp_circle_nat 0, nat.cast_zero]
+
+lemma exp_circle_sum {ι : Type*} {s : finset ι} (f : ι → ℂ) :
+  exp_circle (∑ i in s, f i) = ∏ i in s, exp_circle (f i) :=
+by { rw [exp_circle, finset.sum_mul, complex.exp_sum], refl }
+
+/-- Lemma 4.6. Note `r` in this statement is different to the `r` in the written proof -/
+lemma orthogonality {n m : ℕ} {r s : ℤ} (hm : m ≠ 0) {I : finset ℤ} (hI : I = finset.Ioc r s)
+  (hrs₁ : r < s) (hrs₂ : I.card = m) :
+  (∑ h in I, exp_circle (h * n / m)) * (1 / m) =
+    if m ∣ n then 1 else 0 :=
 begin
-  rintro t₁ - t₂ - ht h hh,
-  cases lt_or_le K 0 with hK hK,
-  { rw major_arc_at_of_neg hk hK at hh,
-    simpa using hh },
-  simp only [inf_eq_inter, mem_inter, mem_major_arc_at' hk, and_and_and_comm, and_self] at hh,
-  have : (|(t₁ - t₂) * [A]| : ℝ) ≤ K,
-  { rw [sub_mul],
-    refine le_trans (abs_sub_le _ (h * k) _) _,
-    rw abs_sub_comm,
-    apply le_trans (add_le_add hh.2.1 hh.2.2),
-    simp only [add_halves'] },
-  rw [abs_mul, nat.abs_cast, ←int.cast_sub, ←int.cast_abs] at this,
-  apply not_lt_of_le this,
-  have ht' : 1 ≤ |t₁ - t₂|,
-  { rwa [←zero_add (1 : ℤ), int.add_one_le_iff, abs_pos, sub_ne_zero] },
-  have ht'' : (1 : ℝ) ≤ (|t₁ - t₂| : ℤ) := by exact_mod_cast ht',
-  rw ←one_mul K,
-  apply mul_lt_mul' ht'' hA hK,
-  rwa [int.cast_pos, abs_pos, sub_ne_zero],
+  have hm' : (m : ℂ) ≠ 0, exact_mod_cast hm,
+  split_ifs,
+  { simp_rw [mul_div_assoc, ←nat.cast_dvd h hm', ←int.cast_coe_nat, ←int.cast_mul, exp_circle_int],
+    rw [finset.sum_const, nat.smul_one_eq_coe, int.cast_coe_nat, one_div, hrs₂, mul_inv_cancel hm'] },
+  rw [mul_eq_zero, one_div, inv_eq_zero, nat.cast_eq_zero],
+  simp only [hm, or_false],
+  set S := ∑ h in I, exp_circle (h * n / m),
+  have : S * exp_circle (n / m) = ∑ h in (finset.Ioc (r + 1) (s + 1)), exp_circle (h * n / m),
+  { simp only [←finset.image_add_right_Ioc, finset.sum_image, add_left_inj, imp_self,
+      implies_true_iff, int.cast_add, add_mul, int.cast_one, one_mul, add_div, exp_circle_add,
+      finset.sum_mul, hI] },
+  rw [int.Ioc_succ_succ hrs₁.le, finset.sum_erase_eq_sub, finset.sum_insert, add_comm,
+    add_sub_assoc, sub_eq_zero_of_eq, add_zero, ←hI] at this,
+  { apply eq_zero_of_mul_eq_self_right _ this,
+    rw [ne.def, exp_circle_eq_one_iff, not_exists],
+    intros i hi,
+    rw [div_eq_iff_mul_eq hm', ←int.cast_coe_nat, ←int.cast_coe_nat, ←int.cast_mul,
+      int.cast_inj] at hi,
+    rw [←int.coe_nat_dvd, ←hi] at h,
+    simpa using h },
+  { have : s = m + r,
+    { rw [←hrs₂, hI, int.card_Ioc, int.to_nat_sub_of_le hrs₁.le, sub_add_cancel] },
+    rw [this, add_assoc, int.cast_add, add_mul, add_div, exp_circle_add, int.cast_coe_nat,
+      mul_div_cancel_left _ hm', exp_circle_nat, one_mul] },
+  { simp },
+  { simp [int.add_one_le_iff, hrs₁] },
 end
 
 lemma jordan_apply {x : ℝ} (hx : 0 ≤ x) (hx' : x ≤ 1 / 2) : 2 * x ≤ sin (π * x) :=
@@ -122,16 +160,27 @@ begin
   exact two_ne_zero
 end
 
+/-- Lemma 4.9 -/
 lemma cos_bound {x : ℝ} (hx : 0 ≤ x) (hx' : x ≤ 1/2) :
-  cos (π * x) ≤ exp (-(2 * x ^ 2)) :=
+  |cos (π * x)| ≤ exp (-(2 * x ^ 2)) :=
 begin
-  have i₁ : cos (π * x) ^ 2 ≤ 1 - (2 * x) ^ 2,
-  { rw [cos_sq', sub_le_sub_iff_left],
+  have i₁ : |cos (π * x)| ^ 2 ≤ 1 - (2 * x) ^ 2,
+  { rw [sq_abs, cos_sq', sub_le_sub_iff_left],
     exact pow_le_pow_of_le_left (by linarith) (jordan_apply hx hx') _ },
   refine le_of_pow_le_pow 2 (exp_pos _).le zero_lt_two _,
   apply (i₁.trans (one_sub_le_exp_minus_of_pos (sq_nonneg (2 * x)))).trans,
   rw [←exp_nat_mul, nat.cast_two, ←neg_mul_eq_mul_neg, exp_le_exp],
   exact le_of_eq (by ring),
+end
+
+lemma cos_bound_abs {x : ℝ} (hx' : |x| ≤ 1/2) :
+  |cos (π * x)| ≤ exp (-(2 * x ^ 2)) :=
+begin
+  rcases le_total x 0 with hx | hx,
+  { rw abs_of_nonpos hx at hx',
+    rw ←neg_nonneg at hx,
+    simpa using cos_bound hx hx' },
+  exact cos_bound hx (by rwa [abs_of_nonneg hx] at hx'),
 end
 
 lemma nat.coprime_prod {ι : Type*} (s : finset ι) (f : ι → ℕ) (n : ℕ) :
@@ -187,6 +236,7 @@ begin
   rw [nat.prime_pow_prime_divisor hk hp, finset.mem_singleton],
 end
 
+/-- Lemma 4.10 -/
 lemma triv_q_bound {A : finset ℕ} (hA : 0 ∉ A) (n : ℕ) :
   ↑((ppowers_in_set A).filter (λ q, n ∈ local_part A q)).card ≤ log n / log 2 :=
 begin
@@ -217,107 +267,6 @@ begin
   rwa [nat.cast_pos, pos_iff_ne_zero],
 end
 
-def exp_circle (x : ℂ) : ℂ := complex.exp (x * (2 * π * complex.I))
-
-lemma exp_circle_add {x y : ℂ} : exp_circle (x + y) = exp_circle x * exp_circle y :=
-by { rw [exp_circle, add_mul, complex.exp_add], refl }
-
-lemma exp_circle_int (z : ℤ) : exp_circle z = 1 :=
-by rw [exp_circle, complex.exp_int_mul_two_pi_mul_I z]
-
-lemma exp_circle_eq_one_iff (x : ℂ) :
-  exp_circle x = 1 ↔ ∃ (z : ℤ), x = z :=
-by simp [exp_circle, complex.exp_eq_one_iff, pi_ne_zero, complex.I_ne_zero]
-
-@[simp] lemma exp_circle_nat (n : ℕ) : exp_circle n = 1 :=
-by rw [←exp_circle_int n, int.cast_coe_nat]
-
-@[simp] lemma exp_circle_zero : exp_circle 0 = 1 :=
-by rw [←exp_circle_nat 0, nat.cast_zero]
-
-lemma exp_circle_sum {ι : Type*} {s : finset ι} (f : ι → ℂ) :
-  exp_circle (∑ i in s, f i) = ∏ i in s, exp_circle (f i) :=
-by { rw [exp_circle, finset.sum_mul, complex.exp_sum], refl }
-
-lemma int.Ico_succ_right {a b : ℤ} : finset.Ico a (b+1) = finset.Icc a b :=
-by { ext x, simp only [finset.mem_Icc, finset.mem_Ico, int.lt_add_one_iff] }
-
-lemma int.Ioc_succ_right {a b : ℤ} (h : a ≤ b) :
-  finset.Ioc a (b+1) = insert (b+1) (finset.Ioc a b) :=
-begin
-  ext x,
-  simp only [finset.mem_Ioc, finset.mem_insert],
-  rw [le_iff_lt_or_eq, int.lt_add_one_iff, or_comm, and_or_distrib_left, or_congr_left],
-  rw and_iff_right_of_imp,
-  rintro rfl,
-  exact int.lt_add_one_iff.2 h
-end
-
-lemma int.insert_Ioc_succ_left {a b : ℤ} (h : a < b) :
-  insert (a+1) (finset.Ioc (a+1) b) = finset.Ioc a b :=
-begin
-  ext x,
-  simp only [finset.mem_Ioc, finset.mem_insert],
-  rw [or_and_distrib_left, eq_comm, ←le_iff_eq_or_lt, int.add_one_le_iff, and_congr_right'],
-  rw or_iff_right_of_imp,
-  rintro rfl,
-  rwa int.add_one_le_iff,
-end
-
-lemma int.Ioc_succ_left {a b : ℤ} (h : a < b) :
-  finset.Ioc (a+1) b = (finset.Ioc a b).erase (a+1) :=
-begin
-  rw [←@int.insert_Ioc_succ_left a b h, finset.erase_insert],
-  simp only [finset.left_not_mem_Ioc, not_false_iff],
-end
-
-lemma int.Ioc_succ_succ {a b : ℤ} (h : a ≤ b) :
-  finset.Ioc (a+1) (b+1) = (insert (b+1) (finset.Ioc a b)).erase (a+1) :=
-begin
-  rw [int.Ioc_succ_left, int.Ioc_succ_right h],
-  rwa int.lt_add_one_iff,
-end
-
-lemma finset.sum_erase_eq_sub {α β : Type*} [decidable_eq α] [add_comm_group β]
-  {f : α → β} {s : finset α} {a : α} (ha : a ∈ s) :
-  ∑ x in s.erase a, f x = (∑ x in s, f x) - f a :=
-by rw [←finset.sum_erase_add _ _ ha, add_sub_cancel]
-
--- note `r` here is different to the `r` in the proof
-lemma orthogonality {n m : ℕ} {r s : ℤ} (hm : m ≠ 0) {I : finset ℤ} (hI : I = finset.Ioc r s)
-  (hrs₁ : r < s) (hrs₂ : I.card = m) :
-  (∑ h in I, exp_circle (h * n / m)) * (1 / m) =
-    if m ∣ n then 1 else 0 :=
-begin
-  have hm' : (m : ℂ) ≠ 0, exact_mod_cast hm,
-  split_ifs,
-  { simp_rw [mul_div_assoc, ←nat.cast_dvd h hm', ←int.cast_coe_nat, ←int.cast_mul, exp_circle_int],
-    rw [finset.sum_const, nat.smul_one_eq_coe, int.cast_coe_nat, one_div, hrs₂, mul_inv_cancel hm'] },
-  rw [mul_eq_zero, one_div, inv_eq_zero, nat.cast_eq_zero],
-  simp only [hm, or_false],
-  set S := ∑ h in I, exp_circle (h * n / m),
-  have : S * exp_circle (n / m) = ∑ h in (finset.Ioc (r + 1) (s + 1)), exp_circle (h * n / m),
-  { simp only [←finset.image_add_right_Ioc, finset.sum_image, add_left_inj, imp_self,
-      implies_true_iff, int.cast_add, add_mul, int.cast_one, one_mul, add_div, exp_circle_add,
-      finset.sum_mul, hI] },
-  rw [int.Ioc_succ_succ hrs₁.le, finset.sum_erase_eq_sub, finset.sum_insert, add_comm,
-    add_sub_assoc, sub_eq_zero_of_eq, add_zero, ←hI] at this,
-  { apply eq_zero_of_mul_eq_self_right _ this,
-    rw [ne.def, exp_circle_eq_one_iff, not_exists],
-    intros i hi,
-    rw [div_eq_iff_mul_eq hm', ←int.cast_coe_nat, ←int.cast_coe_nat, ←int.cast_mul,
-      int.cast_inj] at hi,
-    rw [←int.coe_nat_dvd, ←hi] at h,
-    simpa using h },
-  { have : s = m + r,
-    { rw [←hrs₂, hI, int.card_Ioc, int.to_nat_sub_of_le hrs₁.le, sub_add_cancel] },
-    rw [this, add_assoc, int.cast_add, add_mul, add_div, exp_circle_add, int.cast_coe_nat,
-      mul_div_cancel_left _ hm', exp_circle_nat, one_mul] },
-  { simp },
-  { simp [int.add_one_le_iff, hrs₁] },
-end
-
--- shows up in Lemma 4.10
 lemma sum_powerset_prod {ι : Type*} (I : finset ι) (x : ι → ℂ) :
   ∑ J in I.powerset, ∏ j in J, x j = ∏ i in I, (1 + x i) :=
 begin
@@ -333,11 +282,7 @@ end
 lemma lcm_ne_zero_of_zero_not_mem {A : finset ℕ} (hA : 0 ∉ A) : [A] ≠ 0 :=
 by rwa [ne.def, finset.lcm_eq_zero_iff, set.image_id, finset.mem_coe]
 
--- example {a b : ℚ} (ha : a ≠ 0) : a / (b * a) = b⁻¹ :=
--- begin
---   rw [div_eq_mul_inv, mul_inv₀],
--- end
-
+/-- Lemma 4.11 -/
 lemma orthog_rat {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0) :
   (integer_count A k : ℂ) =
     1 / [A] * ∑ h in valid_sum_range [A], ∏ n in A, (1 + exp_circle (k * h / n)) :=
@@ -427,6 +372,7 @@ begin
   apply lcm_ne_zero_of_zero_not_mem hA,
 end
 
+/-- Lemma 4.12 -/
 lemma orthog_simp {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
   (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA' : rec_sum A < 2 / k) :
   ∑ h in valid_sum_range [A], (∏ n in A, (1 + exp_circle (k * h / n))).re = [A] :=
@@ -435,6 +381,7 @@ begin
   rwa [complex.nat_cast_re, complex.re_sum] at this,
 end
 
+/-- Lemma 4.13 -/
 lemma orthog_simp2 {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
   (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA' : rec_sum A < 2 / k)
   (hA'' : ([A] : ℝ) ≤ 2^(A.card - 1 : ℤ)) :
@@ -447,6 +394,78 @@ begin
   apply hA''.trans,
   rw [le_sub_iff_add_le, ←mul_two, ←zpow_add_one₀ (@two_ne_zero ℝ _ _), sub_add_cancel],
   norm_cast,
+end
+
+/-- Lemma 4.14 -/
+lemma majorarcs_disjoint {A : finset ℕ} {k : ℕ} {K : ℝ} (hk : k ≠ 0) (hA : K < [A]) :
+  (set.univ : set ℤ).pairwise_disjoint (major_arc_at A k K) :=
+begin
+  rintro t₁ - t₂ - ht h hh,
+  cases lt_or_le K 0 with hK hK,
+  { rw major_arc_at_of_neg hk hK at hh,
+    simpa using hh },
+  simp only [inf_eq_inter, mem_inter, mem_major_arc_at' hk, and_and_and_comm, and_self] at hh,
+  have : (|(t₁ - t₂) * [A]| : ℝ) ≤ K,
+  { rw [sub_mul],
+    refine le_trans (abs_sub_le _ (h * k) _) _,
+    rw abs_sub_comm,
+    apply le_trans (add_le_add hh.2.1 hh.2.2),
+    simp only [add_halves'] },
+  rw [abs_mul, nat.abs_cast, ←int.cast_sub, ←int.cast_abs] at this,
+  apply not_lt_of_le this,
+  have ht' : 1 ≤ |t₁ - t₂|,
+  { rwa [←zero_add (1 : ℤ), int.add_one_le_iff, abs_pos, sub_ne_zero] },
+  have ht'' : (1 : ℝ) ≤ (|t₁ - t₂| : ℤ) := by exact_mod_cast ht',
+  rw ←one_mul K,
+  apply mul_lt_mul' ht'' hA hK,
+  rwa [int.cast_pos, abs_pos, sub_ne_zero],
+end
+
+lemma function.antiperiodic.abs_periodic {f : ℝ → ℝ} {c : ℝ} (h : function.antiperiodic f c) :
+  function.periodic (abs ∘ f) c :=
+λ x, by simp [h x]
+
+lemma abs_cos_periodic : function.periodic (λ i, |cos i|) π :=
+function.antiperiodic.abs_periodic cos_antiperiodic
+
+lemma abs_cos_period {x y n : ℤ} (h : x % n = y % n) :
+  |cos (π * (x / n))| = |cos (π * (y / n))| :=
+begin
+  rcases eq_or_ne n 0 with rfl | hn,
+  { simp },
+  have : n ∣ x - y,
+  { rwa [int.dvd_iff_mod_eq_zero, ←int.mod_eq_mod_iff_mod_sub_eq_zero] },
+  obtain ⟨k, hk⟩ := this,
+  rw sub_eq_iff_eq_add' at hk,
+  rw [hk, int.cast_add, int.cast_mul, add_div, mul_div_cancel_left, mul_add, mul_comm π k],
+  exact abs_cos_periodic.int_mul k _,
+  simpa using hn
+end
+
+/-- Lemma 4.18 -/
+lemma cos_prod_bound {A : finset ℕ} {N k : ℕ} (h : ℤ) (hA' : 0 ∉ A) (hA : ∀ n ∈ A, n ≤ N)
+  (h' : ℕ → ℤ) (hh'₁ : ∀ n ∈ A, h' n % n = (k * h) % n) (hh'₂ : ∀ n ∈ A, (|h' n| : ℝ) ≤ n / 2) :
+  cos_prod A h k ≤ exp (- (2 / N^2) * ∑ n in A, h' n ^ 2) :=
+begin
+  rw [cos_prod, mul_sum, exp_sum],
+  refine prod_le_prod (λ i hi, (abs_nonneg _)) _,
+  intros n hn,
+  have hn' : n ≠ 0 := ne_of_mem_of_not_mem hn hA',
+  rw [neg_mul_eq_neg_mul_symm, div_mul_comm', ←div_pow, ←mul_comm (2 : ℝ), mul_assoc, mul_div_assoc,
+    ←int.cast_coe_nat, ←int.cast_mul, ←int.cast_coe_nat, abs_cos_period (hh'₁ _ hn).symm,
+    int.cast_coe_nat],
+  apply (cos_bound_abs _).trans,
+  { rw [exp_le_exp, neg_le_neg_iff, ←sq_abs, ←sq_abs (_ / _)],
+    refine mul_le_mul_of_nonneg_left _ zero_le_two,
+    refine pow_le_pow_of_le_left (abs_nonneg _) _ _,
+    rw [abs_div, abs_div],
+    refine div_le_div_of_le_left (abs_nonneg _) _ _,
+    { simpa only [nat.abs_cast, nat.cast_pos, pos_iff_ne_zero] using hn' },
+    simp only [nat.abs_cast, nat.cast_le],
+    exact hA _ hn },
+  rw [abs_div, nat.abs_cast, div_le_iff, mul_comm, ←div_eq_mul_one_div],
+  { exact hh'₂ _ hn },
+  simpa only [nat.abs_cast, nat.cast_pos, pos_iff_ne_zero] using hn',
 end
 
 -- Proposition 2

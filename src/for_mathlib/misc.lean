@@ -70,6 +70,44 @@ end jordan
 
 -- end
 
+lemma int.Ico_succ_right {a b : ℤ} : finset.Ico a (b+1) = finset.Icc a b :=
+by { ext x, simp only [finset.mem_Icc, finset.mem_Ico, int.lt_add_one_iff] }
+
+lemma int.Ioc_succ_right {a b : ℤ} (h : a ≤ b) :
+  finset.Ioc a (b+1) = insert (b+1) (finset.Ioc a b) :=
+begin
+  ext x,
+  simp only [finset.mem_Ioc, finset.mem_insert],
+  rw [le_iff_lt_or_eq, int.lt_add_one_iff, or_comm, and_or_distrib_left, or_congr_left],
+  rw and_iff_right_of_imp,
+  rintro rfl,
+  exact int.lt_add_one_iff.2 h
+end
+
+lemma int.insert_Ioc_succ_left {a b : ℤ} (h : a < b) :
+  insert (a+1) (finset.Ioc (a+1) b) = finset.Ioc a b :=
+begin
+  ext x,
+  simp only [finset.mem_Ioc, finset.mem_insert],
+  rw [or_and_distrib_left, eq_comm, ←le_iff_eq_or_lt, int.add_one_le_iff, and_congr_right'],
+  rw or_iff_right_of_imp,
+  rintro rfl,
+  rwa int.add_one_le_iff,
+end
+
+lemma int.Ioc_succ_left {a b : ℤ} (h : a < b) :
+  finset.Ioc (a+1) b = (finset.Ioc a b).erase (a+1) :=
+begin
+  rw [←@int.insert_Ioc_succ_left a b h, finset.erase_insert],
+  simp only [finset.left_not_mem_Ioc, not_false_iff],
+end
+
+lemma int.Ioc_succ_succ {a b : ℤ} (h : a ≤ b) :
+  finset.Ioc (a+1) (b+1) = (insert (b+1) (finset.Ioc a b)).erase (a+1) :=
+begin
+  rw [int.Ioc_succ_left, int.Ioc_succ_right h],
+  rwa int.lt_add_one_iff,
+end
 
 open_locale big_operators
 
@@ -81,3 +119,8 @@ open_locale big_operators
 lemma complex.re_sum {α : Type*} (s : finset α) (f : α → ℂ) :
   (∑ i in s, f i).re = ∑ i in s, (f i).re :=
 complex.re_add_group_hom.map_sum f s
+
+lemma finset.sum_erase_eq_sub {α β : Type*} [decidable_eq α] [add_comm_group β]
+  {f : α → β} {s : finset α} {a : α} (ha : a ∈ s) :
+  ∑ x in s.erase a, f x = (∑ x in s, f x) - f a :=
+by rw [←finset.sum_erase_add _ _ ha, add_sub_cancel]
