@@ -8,6 +8,8 @@ The goal of this project is to formalize the main result of the preprint
 using the [Lean theorem prover](https://leanprover.github.io/), 
 mainly developed at [Microsoft Research](https://www.microsoft.com/en-us/research/) 
 by [Leonardo de Moura](https://leodemoura.github.io/).
+This project structure is adapted from the infrastructure created by Patrick Massot 
+for the [Sphere Eversion project](https://github.com/leanprover-community/sphere-eversion).
 
 
 More precisely we will prove that, in any dense set of integers contains
