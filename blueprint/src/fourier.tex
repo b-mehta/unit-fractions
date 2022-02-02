@@ -252,11 +252,14 @@ as required.
 \end{proof}
 
 \begin{lemma}\label{lem:cos_prod_bound}
+  \leanok
+  \lean{cos_prod_bound}
   \uses{def:cos_prod,def:interval_rare_ppowers}
 For any finite set $A$ such that $n\leq N$ for all $n\in A$, and integer $t$, if $t\equiv t_n\pmod{n}$ for $\abs{t_n}\leq n/2$ for all $n\in A$, then
 \[C(A;t)\leq \exp\brac{-\frac{2}{N^2}\sum_{n\in A}t_n^2}.\]
 \end{lemma}
 \begin{proof}
+  \leanok
 \uses{lem:cos_bound}
 We first note that $\abs{\cos(\pi t/n)}=\abs{\cos(\pi t_n/n)}$ for all $n\in A$, by periodicity of cosine. By Lemma~\ref{lem:cos_bound}, therefore
 \[\abs{\cos(\pi t/n)}\leq \exp(-2t_n^2/n^2)\leq \exp(-\tfrac{2}{N^2}t_n^2),\]
