@@ -7,6 +7,7 @@ Authors: Thomas Bloom, Alex Kontorovich, Bhavik Mehta
 import analysis.special_functions.integrals
 import analysis.special_functions.pow
 import number_theory.arithmetic_function
+import number_theory.von_mangoldt
 import measure_theory.function.floor
 import measure_theory.integral.integral_eq_improper
 import data.complex.exponential_bounds
@@ -662,7 +663,10 @@ lemma sigma_zero_apply_eq_card_divisors {i : ℕ} :
   σ 0 i = i.divisors.card :=
  by rw [sigma_zero_apply_eq_sum_divisors, finset.card_eq_sum_ones]
 
+end nat.arithmetic_function
+
 localized "notation `τ` := σ 0" in arithmetic_function
+open nat.arithmetic_function
 
 -- BM: Bounds like these make me tempted to define a relation
 -- `equal_up_to p f g` to express that `f - g ≪ p` (probably stated `f - g = O(p)`) and show that
@@ -714,25 +718,24 @@ begin
     { exact div_nonneg (nat.cast_nonneg _) h2.le } }
 end
 
-lemma log_pow {n : ℕ} (x : ℝ) (hx : 0 < x) : log (x ^ n) = n * log x :=
-by rw [←log_rpow hx, rpow_nat_cast]
-
 lemma rpow_two (x : ℝ) : x^(2 : ℝ) = x^2 :=
 by rw [←rpow_nat_cast, nat.cast_two]
 
 lemma bernoulli_aux (x : ℝ) (hx : 0 ≤ x) : x + 1/2 ≤ 2^x :=
 begin
-  have h : 0 < log 2 := log_pos one_lt_two,
-  have h₁ : 1 / log 2 - 1 / log 2 * log (1 / log 2) ≤ exp (log 2 * x) - 1 / log 2 * (log 2 * x),
+  have h : (0 : ℝ) < log (2 : ℝ) := log_pos one_lt_two,
+  have h₁ :
+    1 / real.log 2 - 1 / real.log 2 * log (1 / real.log 2) ≤
+      exp (real.log 2 * x) - 1 / real.log 2 * (real.log 2 * x),
   { apply exp_sub_mul,
     simp only [one_div, inv_nonneg],
     apply h.le },
   rw [rpow_def_of_pos zero_lt_two, ←le_sub_iff_add_le'],
   rw [←mul_assoc, div_mul_cancel _ h.ne', one_mul] at h₁,
   apply le_trans _ h₁,
-  rw [one_div (log 2), log_inv],
+  rw [one_div (real.log 2), log_inv],
   simp only [one_div, mul_neg_eq_neg_mul_symm, sub_neg_eq_add],
-  suffices : log 2 / 2 - 1 ≤ log (log 2),
+  suffices : real.log 2 / 2 - 1 ≤ log (real.log 2),
   { field_simp [h],
     rw le_div_iff h,
     linarith },
@@ -767,36 +770,22 @@ begin
   norm_cast, linarith, linarith, linarith,
 end
 
-lemma divisor_function_exact_prime_power (r : ℕ) (p : ℕ) (h : p.prime) : σ 0 (p^r) = r + 1 :=
+lemma divisor_function_exact_prime_power (r : ℕ) {p : ℕ} (h : p.prime) : σ 0 (p^r) = r + 1 :=
 begin
-  rw [sigma_zero_apply_eq_card_divisors, nat.divisors_prime_pow h],
+  rw [nat.arithmetic_function.sigma_zero_apply_eq_card_divisors, nat.divisors_prime_pow h],
   rw [finset.card_map, finset.card_range],
 end
 
 variables {R : Type*}
 
--- This lemma is hopefully already proved somewhere? Yes
-lemma is_multiplicative_eq_prod_prime_powers
-  {n : ℕ} [comm_monoid_with_zero R] {f : nat.arithmetic_function R} (hf : f.is_multiplicative) :
-  n ≠ 0 → f n = ∏ p in n.factors.to_finset, f (p ^ n.factors.count p) :=
-begin
-  sorry
-end
-
 lemma divisor_function_exact {n : ℕ} :
-  n ≠ 0 → σ 0 n = ∏ p in n.factors.to_finset, (n.factors.count p + 1) :=
+  n ≠ 0 → σ 0 n = n.factorization.prod (λ _ k, k + 1) :=
 begin
   intro hn,
-  have h1 : σ 0 n = ∏ p in n.factors.to_finset, (σ 0 (p ^ n.factors.count p)),
-  { refine is_multiplicative_eq_prod_prime_powers is_multiplicative_sigma hn },
-  have h2 : ∏ p in n.factors.to_finset, σ 0 (p ^ n.factors.count p) =
-    ∏ p in n.factors.to_finset, (n.factors.count p + 1),
-  { rw finset.prod_congr rfl,
-    intros x hx,
-    have hxp : x.prime,
-    { rwa list.mem_to_finset at hx, exact nat.prime_of_mem_factors hx },
-    rwa [divisor_function_exact_prime_power] },
-  rwa ← h2,
+  rw [nat.arithmetic_function.is_multiplicative_sigma.multiplicative_factorization _ hn],
+  apply finsupp.prod_congr,
+  intros p hp,
+  rw divisor_function_exact_prime_power _ (nat.prime_of_mem_factorization hp),
 end
 
 -- INCOMPLETE PROOF
@@ -805,7 +794,7 @@ lemma anyk_divisor_bound (n : ℕ) (K : ℝ) (hK : 2 < K) :
 begin
   rcases eq_or_ne n 0 with rfl | hn,
   { simp only [one_div, finset.card_empty, algebra.id.smul_eq_mul, nat.divisors_zero,
-      nat.cast_zero, zero_mul, finset.sum_const, pow_zero, sigma_apply],
+      nat.cast_zero, zero_mul, finset.sum_const, pow_zero, nat.arithmetic_function.sigma_apply],
     rw zero_rpow, { simp },
     simp only [inv_eq_zero, ne.def],
     linarith },
@@ -823,7 +812,7 @@ begin
 end
 
 lemma divisor_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε ≤ 1) :
-  ∀ᶠ (n : ℕ) in filter.at_top, (σ 0 n : ℝ) ≤ n ^ (log(2) * (1 / log (log n)) * (1 + ε)) :=
+  ∀ᶠ (n : ℕ) in filter.at_top, (σ 0 n : ℝ) ≤ n ^ (real.log 2 * (1 / log (log (n : ℝ))) * (1 + ε)) :=
 begin
   sorry
 end
@@ -836,28 +825,19 @@ lemma big_O_divisor_bound (ε : ℝ) (hε : 0 < ε) :
   is_O (λ n, (σ 0 n : ℝ)) (λ n, (n : ℝ)^ε) filter.at_top :=
 sorry
 
--- BM: I have this defined in another branch, coming to mathlib soon
-def von_mangoldt : nat.arithmetic_function ℝ := sorry
-localized "notation `Λ` := nat.arithmetic_function.von_mangoldt" in arithmetic_function
-
-lemma von_mangoldt_nonneg (n : ℕ) : 0 ≤ Λ n :=
-sorry
-
-lemma von_mangoldt_divisor_sum {n : ℕ} :
-  ∑ i in n.divisors, Λ i = log n :=
-sorry
-
-lemma von_mangoldt_upper {n : ℕ} : Λ n ≤ log n :=
+lemma von_mangoldt_upper {n : ℕ} : Λ n ≤ log (n : ℝ) :=
 begin
   rcases n.eq_zero_or_pos with rfl | hn,
   { simp },
-  rw ←von_mangoldt_divisor_sum,
-  exact finset.single_le_sum (λ i hi, von_mangoldt_nonneg i) (nat.mem_divisors_self _ hn.ne'),
+  rw ←nat.arithmetic_function.von_mangoldt_sum,
+  exact finset.single_le_sum (λ i hi, nat.arithmetic_function.von_mangoldt_nonneg)
+    (nat.mem_divisors_self _ hn.ne'),
 end
 
 lemma von_mangoldt_summatory {x y : ℝ} (hx : 0 ≤ x) (xy : x ≤ y) :
-  summatory (λ n, Λ n * ⌊x / n⌋) y = summatory (λ n, log n) x :=
-by simp only [summatory_mul_floor_eq_summatory_sum_divisors hx xy, von_mangoldt_divisor_sum]
+  summatory (λ n, Λ n * ⌊x / n⌋) y = summatory (λ n, real.log n) x :=
+by simp only [summatory_mul_floor_eq_summatory_sum_divisors hx xy,
+  nat.arithmetic_function.von_mangoldt_sum]
 
 lemma helpful_floor_identity {x : ℝ} :
   ⌊x⌋ - 2 * ⌊x/2⌋ ≤ 1 :=
@@ -893,11 +873,11 @@ begin
 end
 
 def chebyshev_error (x : ℝ) : ℝ :=
-  (summatory (λ i, log i) x - (x * log x - x))
-    - 2 * (summatory (λ i, log i) (x/2) - (x/2 * log (x/2) - x/2))
+  (summatory (λ i, real.log i) x - (x * log x - x))
+    - 2 * (summatory (λ i, real.log i) (x/2) - (x/2 * log (x/2) - x/2))
 
 lemma von_mangoldt_floor_sum {x : ℝ} (hx₀ : 0 < x) :
-  summatory (λ n, Λ n * (⌊x / n⌋ - 2 * ⌊x / n / 2⌋)) x = log 2 * x + chebyshev_error x :=
+  summatory (λ n, Λ n * (⌊x / n⌋ - 2 * ⌊x / n / 2⌋)) x = real.log 2 * x + chebyshev_error x :=
 begin
   rw [chebyshev_error, mul_sub, log_div hx₀.ne' two_ne_zero, mul_sub, ←mul_assoc,
     mul_div_cancel' x two_ne_zero, mul_sub, sub_right_comm (x * log x), ←sub_add _ (_ - _),
@@ -911,18 +891,18 @@ begin
 end
 
 lemma chebyshev_lower_aux {x : ℝ} (hx : 0 < x) :
-  chebyshev_error x ≤ summatory Λ x - log 2 * x :=
+  chebyshev_error x ≤ summatory Λ x - real.log 2 * x :=
 begin
   rw [le_sub_iff_add_le', ←von_mangoldt_floor_sum hx],
   apply finset.sum_le_sum,
   intros i hi,
-  apply mul_le_of_le_one_right (von_mangoldt_nonneg _),
+  apply mul_le_of_le_one_right von_mangoldt_nonneg,
   norm_cast,
   apply helpful_floor_identity,
 end
 
 lemma chebyshev_upper_aux {x : ℝ} (hx : 0 < x) :
-  summatory Λ x - summatory Λ (x / 2) - log 2 * x ≤ chebyshev_error x :=
+  summatory Λ x - summatory Λ (x / 2) - real.log 2 * x ≤ chebyshev_error x :=
 begin
   rw [sub_le_iff_le_add', ←von_mangoldt_floor_sum hx, summatory, summatory],
   have : finset.Icc 1 ⌊x/2⌋₊ ⊆ finset.Icc 1 ⌊x⌋₊,
@@ -942,7 +922,7 @@ begin
     { norm_num1 },
     rwa [nat.cast_pos] },
   rintro i - -,
-  apply mul_nonneg (von_mangoldt_nonneg _) _,
+  apply mul_nonneg von_mangoldt_nonneg _,
   rw sub_nonneg,
   norm_cast,
   apply helpful_floor_identity3,
@@ -962,7 +942,7 @@ begin
   linarith
 end
 
-lemma chebyshev_lower_explicit {c : ℝ} (hc : c < log 2) :
+lemma chebyshev_lower_explicit {c : ℝ} (hc : c < real.log 2) :
   ∀ᶠ x : ℝ in at_top, c * x ≤ summatory Λ x :=
 begin
   have h₁ := (chebyshev_error_O.trans_is_o is_o_log_id_at_top).bound (sub_pos_of_lt hc),
@@ -977,7 +957,7 @@ lemma chebyshev_lower :
   is_O (λ x, x) (summatory Λ) at_top :=
 begin
   rw [is_O_iff],
-  refine ⟨(log 2 / 2)⁻¹, _⟩,
+  refine ⟨(real.log 2 / 2)⁻¹, _⟩,
   filter_upwards [eventually_ge_at_top (0 : ℝ),
     chebyshev_lower_explicit (half_lt_self (log_pos one_lt_two))],
   intros x hx₁ hx₂,
@@ -987,10 +967,10 @@ begin
 end
 
 lemma chebyshev_trivial_upper_nat (n : ℕ) :
-  summatory Λ n ≤ n * log n :=
+  summatory Λ n ≤ n * real.log n :=
 begin
   rw [summatory_nat, ←nsmul_eq_mul],
-  apply (finset.sum_le_of_forall_le _ _ (log n) (λ i hi, _)).trans _,
+  apply (finset.sum_le_of_forall_le _ _ (real.log n) (λ i hi, _)).trans _,
   { apply von_mangoldt_upper.trans,
     simp only [finset.mem_Icc] at hi,
     exact (log_le_log (nat.cast_pos.2 hi.1) (nat.cast_pos.2 (hi.1.trans hi.2))).2
@@ -1009,7 +989,7 @@ begin
     (log_nonneg (by rwa [nat.one_le_cast, nat.le_floor_iff hx₀.le, nat.cast_one])) hx₀.le,
 end
 
-lemma chebyshev_upper_inductive {c : ℝ} (hc : log 2 < c) :
+lemma chebyshev_upper_inductive {c : ℝ} (hc : real.log 2 < c) :
   ∃ C, 1 ≤ C ∧ ∀ x : ℕ, summatory Λ x ≤ 2 * c * x + C * log C :=
 begin
   have h₁ := (chebyshev_error_O.trans_is_o is_o_log_id_at_top).bound (sub_pos_of_lt hc),
@@ -1022,7 +1002,8 @@ begin
   intros n ih,
   cases le_or_lt (n : ℝ) C with hn hn,
   -- Do the case n ≤ C first.
-  { refine (summatory_monotone_of_nonneg _ von_mangoldt_nonneg hn).trans _,
+  { refine (summatory_monotone_of_nonneg _ _ hn).trans _,
+    { exact λ _, von_mangoldt_nonneg },
     refine (chebyshev_trivial_upper hC₁).trans _,
     refine le_add_of_nonneg_left (mul_nonneg _ (nat.cast_nonneg _)),
     exact mul_nonneg zero_le_two ((log_nonneg one_le_two).trans hc.le) },
@@ -1044,29 +1025,30 @@ begin
   simp
 end
 
-lemma chebyshev_upper_real {c : ℝ} (hc : 2 * log 2 < c) :
+lemma chebyshev_upper_real {c : ℝ} (hc : 2 * real.log 2 < c) :
   ∃ C, 1 ≤ C ∧ is_O_with 1 (summatory Λ) (λ x, c * x + C * log C) at_top :=
 begin
-  have hc' : log 2 < c / 2 := by rwa lt_div_iff' (zero_lt_two : (0 : ℝ) < _),
+  have hc' : real.log 2 < c / 2 := by rwa lt_div_iff' (zero_lt_two : (0 : ℝ) < _),
   obtain ⟨C, hC₁, hC⟩ := chebyshev_upper_inductive hc',
   refine ⟨C, hC₁, _⟩,
   rw [is_O_with_iff, eventually_at_top],
   refine ⟨0, λ x hx, _⟩,
-  rw [summatory_eq_floor, norm_of_nonneg (summatory_nonneg _ _ von_mangoldt_nonneg), one_mul,
+  rw [summatory_eq_floor, norm_of_nonneg (summatory_nonneg _ _ _), one_mul,
     real.norm_eq_abs],
-  refine (hC ⌊x⌋₊).trans (le_trans _ (le_abs_self _)),
-  rw [mul_div_cancel' _ (@two_ne_zero ℝ _ _), add_le_add_iff_right],
-  refine mul_le_mul_of_nonneg_left (nat.floor_le hx) _,
-  exact (mul_nonneg zero_le_two (log_nonneg one_le_two)).trans hc.le,
+  { refine (hC ⌊x⌋₊).trans (le_trans _ (le_abs_self _)),
+    rw [mul_div_cancel' _ (@two_ne_zero ℝ _ _), add_le_add_iff_right],
+    refine mul_le_mul_of_nonneg_left (nat.floor_le hx) _,
+    exact (mul_nonneg zero_le_two (log_nonneg one_le_two)).trans hc.le },
+  exact λ _, von_mangoldt_nonneg,
 end
 
-lemma chebyshev_upper_explicit {c : ℝ} (hc : 2 * log 2 < c) :
+lemma chebyshev_upper_explicit {c : ℝ} (hc : 2 * real.log 2 < c) :
   is_O_with c (summatory Λ) (λ x, x) at_top :=
 begin
-  let c' := log 2 + c/2,
+  let c' := real.log 2 + c/2,
   have hc'₁ : c' < c,
   { rwa [←lt_sub_iff_add_lt, sub_half, lt_div_iff' (@zero_lt_two ℝ _ _)] },
-  have hc'₂ : 2 * log 2 < c',
+  have hc'₂ : 2 * real.log 2 < c',
   { rwa [←sub_lt_iff_lt_add', two_mul, add_sub_cancel, lt_div_iff' (@zero_lt_two ℝ _ _)] },
   obtain ⟨C, hC₁, hC⟩ := chebyshev_upper_real hc'₂,
   refine (hC.trans _ zero_le_one).congr_const (one_mul _),
@@ -1084,7 +1066,7 @@ def prime_summatory {M : Type*} [add_comm_monoid M] (a : ℕ → M) (x : ℝ) : 
 -- BM: equivalently could say it's `summatory (λ n, if (a n).prime then a n else 0) x`
 
 lemma log_reciprocal :
-  is_O (λ x, prime_summatory (λ p, log p / p) x - log x) (λ _, (1 : ℝ)) at_top :=
+  is_O (λ x, prime_summatory (λ p, real.log p / p) x - log x) (λ _, (1 : ℝ)) at_top :=
 sorry
 
 lemma prime_counting_asymptotic :
@@ -1098,8 +1080,6 @@ sorry
 
 -- BM: I expect there's a nicer way of stating this but this should be good enough for now
 lemma mertens_third :
-  ∃ c, is_O (λ x, ∏ p in (finset.Icc 1 ⌊x⌋₊), (1 - (p : ℝ)⁻¹)⁻¹ - c * log x)
+  ∃ c, is_O (λ x, ∏ p in (finset.Icc 1 ⌊x⌋₊), (1 - (p : ℝ)⁻¹)⁻¹ - c * real.log x)
         (λ _, (1 : ℝ)) at_top :=
 sorry
-
-end nat.arithmetic_function
