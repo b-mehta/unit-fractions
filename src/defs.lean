@@ -86,9 +86,13 @@ lemma mem_local_part {A : finset ℕ} {q : ℕ} (n : ℕ) :
   n ∈ local_part A q ↔ n ∈ A ∧ q ∣ n ∧ coprime q (n / q) :=
 by rw [local_part, finset.mem_filter]
 
+lemma local_part_subset {A : finset ℕ} {q : ℕ} :
+  local_part A q ⊆ A :=
+finset.filter_subset _ _
+
 lemma zero_mem_local_part_iff {A : finset ℕ} {q : ℕ} (hA : 0 ∉ A) :
   0 ∉ local_part A q :=
-λ i, hA (finset.filter_subset _ _ i)
+λ i, hA (local_part_subset i)
 
 /--
 This is Q_A in the paper. The definition looks a bit different, but `mem_ppowers_in_set` shows
@@ -130,5 +134,9 @@ lemma arith_regular.subset {N : ℕ} {A A' : finset ℕ} (hA : arith_regular N A
 λ n hn, hA n (hA' hn)
 
 -- This is the set D_I
-def interval_rare_ppowers (I : finset ℕ) (A : finset ℕ) (K : ℝ) : set ℕ :=
-(ppowers_in_set A).filter $ λ q, ↑((local_part A q).filter (λ n, ∀ x ∈ I, ¬ n ∣ x)).card < K / q
+def interval_rare_ppowers (I : finset ℤ) (A : finset ℕ) (K : ℝ) : finset ℕ :=
+(ppowers_in_set A).filter $ λ q, ↑((local_part A q).filter (λ n, ∀ x ∈ I, ¬ ↑n ∣ x)).card < K / q
+
+lemma interval_rare_ppowers_subset (I : finset ℤ) {A : finset ℕ} (K : ℝ) :
+  interval_rare_ppowers I A K ⊆ ppowers_in_set A :=
+finset.filter_subset _ _
