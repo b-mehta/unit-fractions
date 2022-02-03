@@ -134,22 +134,81 @@
   </div>
   <div class="proof_content">
   <p> Let \(I\) be any interval of length \(\leq MN^{-2/(\log \log N)}\), and let \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\). </p>
-<p>Apply Lemma&#160;<a href="chap-techlemmas.html#lem:usingq">5.3</a> with \(A\) replaced by \(A_I\), and \(k\) chosen such that \((\log N)^{1/k}=2\log \log N\). This produces some \(d_q\) such that \(qd_q{\gt}\left\lvert I\right\rvert \) and \(\omega (d_q){\lt}\tfrac {1}{500}\log \log N\) (provided \(N\) is sufficiently large), and </p>
+<p>Apply Lemma&#160;<a href="chap-techlemmas.html#lem:usingq">5.3</a> with \(A\) replaced by \(A_I\), and \(k=\frac{\log \log N}{\log 2+\log \log \log N}\), so that \((\log N)^{1/k}=2\log \log N\). We choose \(N\) large enough such that \(k\leq c\log \log N\) (where \(c\) is the constant in the statement of Lemma&#160;<a href="chap-techlemmas.html#lem:usingq">5.3</a>) and such that \(\log k\geq 100\). </p>
+<p>This produces some \(d_q\) such that \(qd_q{\gt}\left\lvert I\right\rvert \) and \(\omega (d_q){\lt}\tfrac {1}{500}\log \log N\), and </p>
 <div class="displaymath" id="a0000000187">
-  \[ \sum _{\substack {n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log \log N)^2}\geq \frac{1}{(\log N)^{1/99}}. \]
+  \[ \sum _{\substack {n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log \log N)^2}\geq \frac{1}{(\log N)^{1/99}}, \]
 </div>
-<p> By definition of \(A_I\), every \(n\in A_I\) with \(qd_q\mid n\) must divide some \(x\in I\) – in fact, they must all divide the same \(x\in I\) (call this \(x_q\in I\), say), since all such \(x\) are in particular divisible by \(qd_q{\gt}\left\lvert I\right\rvert \), which can divide at most one element in \(I\). </p>
-<p>Let </p>
+<p> assuming \(N\) is sufficiently large. Let </p>
 <div class="displaymath" id="a0000000188">
   \[ A_I^{(q)}=\{  n/qd_q : n\in A_I\textrm{ with }qd_q\mid n\textrm{ and }(qd_q,n/qd_q)=1\}  \]
 </div>
-<p> so that, assuming \(N\) is sufficiently large, \(R(A_I^{(q)})\geq (\log N)^{-1/99}\), say. We may therefore apply Lemma&#160;<a href="chap-techlemmas.html#lem:rtop">5.2</a> with \(\epsilon =2/99\) (note that since \(\omega (n)\geq \frac{99}{100}\log \log N\) for \(n\in A\) and \(\omega (d_q){\lt}\frac{1}{500}\log \log N\), we must have \(\omega (m)\geq \omega (md_q)-\omega (d_q)\geq \frac{97}{99}\log \log N\) for all \(m\in A_I^{(q)}\)). This implies that </p>
+<p> so that, the above inequality states that \(R(A_I^{(q)})\geq (\log N)^{-1/99}\). </p>
+<p>We now claim that \(2\log \log N\geq \omega (m) \geq \tfrac {97}{99}\log \log N\) for all \(m\in A_I^{(q)}\). This follows from the trivial \(\omega (md_q)\geq \omega (m)\geq \omega (md_q)-\omega (d_q)\), and that \(2\log \log N\geq \omega (md_q)\geq \frac{99}{100}\log \log N\) (since \(md_q\in A\)) and \(\omega (d_q){\lt}\frac{1}{500}\log \log N\). </p>
+<p>We now apply Lemma&#160;<a href="chap-techlemmas.html#lem:rtop">5.2</a> with \(\epsilon =2/99\). This implies that </p>
 <div class="displaymath" id="a0000000189">
-  \[ \sum _{r\in \mathcal{Q}_{A_I^{(q)}}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log \log N. \]
+  \[ \sum _{r\in \mathcal{Q}_{A_I^{(q)}}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log \log N\geq 0.35\log \log N. \]
 </div>
-<p> Trivially, \(\mathcal{Q}_{A_I^{(q)}}\subset \mathcal{Q}_A\), and further by choice of \(x_q\), all \(r\in \mathcal{Q}_{A_I^{(q)}}\) divide \(x_q\), and hence </p>
-<div class="displaymath" id="a0000000190">
-  \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log \log N\geq 0.35\log \log N. \]
+<p>By definition of \(A_I\), every \(n\in A_I\) with \(qd_q\mid n\) must divide some \(x\in I\), say \(x(q;n)\). We claim that \(x(q,n)=x(q,m)\) for all \(n,m\in A_I\) with \(qd_q\mid n\) and \(qd_q\mid m\). Otherwise \(qd_q\) divides \(\left\lvert x(q,n)-x(q,m)\right\rvert \), so \(\left\lvert I\right\rvert {\lt}qd_q\leq \left\lvert x(q,n)-x(q,m)\right\rvert \), which is an integer in \([1,\left\lvert I\right\rvert )\), a contradiction. </p>
+<p>Let \(x_q\in I\) be such that \(x(q,n)=x_q\) for all \(n\in A_I\) with \(qd_q \mid n\). We claim that \(\mathcal{Q}_{A_I^{(q)}}\subset \{  r\in \mathcal{Q}_A : r\mid x_q\} \), which concludes the proof using the above bound. </p>
+<p>If \(r\in \mathcal{Q}_{A_I^{(q)}}\) then there exists some \(m\in A_I^{(q)}\) such that \(r\mid m\) and \((r,m/r)=1\). Let \(m=n/qd_q\) where \(n\in A\) with \(qd_q\mid n\) and \((qd_q,n/qd_q)=(qd_q,m)=1\). Certainly \(r\mid n = mqd_q\), since \(r\mid m\). Furthermore, \(r\) is coprime to \(qd_q\) since \(r\) divides \(m\). Therefore \((r,n/r)=(r,(m/r)qd_q)=(r,m/r)=1\), and hence \(r\in \mathcal{Q}_A\). </p>
+<p>Finally, we need to show that \(r\mid x_q\). Let \(m\in A_I^{(q)}\) be such that \(r\mid m\). Let \(n\in A_I\) be such that \(qd_q\mid n\) and \(m=n/qd_q\). Then \(r\mid n=mqd_q\), and hence since \(n\mid x_q\) we have \(r\mid x_q\) as required. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:good_d">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">6.2</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-techprop.html#lem:good_d">#</a>
+    <a class="icon proof" href="chap-techprop.html#a0000000190"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that, for all \(q\in \mathcal{Q}_A\), </p>
+<div class="displaymath" id="a0000000191">
+  \[ R(A;q) \geq (\log N)^{-1/100}, \]
+</div>
+<p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
+<ol class="enumerate">
+  <li><div class="displaymath" id="a0000000192">
+  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
+</div>
+<p> or </p>
+</li>
+  <li><p>for all \(q\in \mathcal{D}_I(A;M/2(\log N)^{1/100})\) </p>
+<div class="displaymath" id="a0000000193">
+  \[ R(A_I;q){\gt} 1/2(\log N)^{1/100}. \]
+</div>
+</li>
+</ol>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000190">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Let \(I\) be any interval of length \(\leq MN^{-2/(\log \log N)}\), and let \(A_I\) be those \(n\in A\) that divide some element of \(I\), and \(\mathcal{D}=\mathcal{D}_I(A;M/2(\log N)^{1/100})\). We may assume that \(\left\lvert A\backslash A_I\right\rvert {\lt} M/\log N\), or else the first part of the conclusion holds and we’re done. </p>
+<p>For every \(q\in \mathcal{D}\), by definition, </p>
+<div class="displaymath" id="a0000000194">
+  \[ \# \{  n\in A_q : n\not\in A_I\}  {\lt} \frac{M}{2q(\log N)^{1/100}}. \]
+</div>
+<p> Therefore </p>
+<div class="displaymath" id="a0000000195">
+  \[ R(A_I;q) = \sum _{\substack {n \in A_q\\ n\in A_I}}\frac{q}{n}{\gt} \sum _{n \in A_q}\frac{q}{n}-\frac{q}{M}\left( \frac{M}{2q(\log N)^{1/100}}\right). \]
+</div>
+<div class="displaymath" id="a0000000196">
+  \[ =R(A;q) - \frac{1}{2(\log N)^{1/100}}\geq \frac{1}{2(\log N)^{1/100}}. \]
 </div>
 
   </div>
@@ -159,10 +218,10 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">6.2</span>
+    <span class="proposition_thmlabel">6.3</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techprop.html#prop:tech_iterative">#</a>
-    <a class="icon proof" href="chap-techprop.html#a0000000191"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techprop.html#a0000000197"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -173,7 +232,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/ec3ecbd4d0c90321b0980a97832c0eb4bf067e74/src/main_results.lean#L310">force_good_properties</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/4de1c20d8e2557395dc1edbe790965dc5eef4a52/src/main_results.lean#L310">force_good_properties</a></li>
         </ul>
 
       </div>
@@ -183,32 +242,32 @@
   </div>
   <div class="proposition_thmcontent">
   <p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000192">
+<div class="displaymath" id="a0000000198">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
-<div class="displaymath" id="a0000000193">
+<div class="displaymath" id="a0000000199">
   \[ R(A)\geq (\log N)^{-1/101} \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000194">
+<div class="displaymath" id="a0000000200">
   \[ R(A;q) \geq (\log N)^{-1/100}. \]
 </div>
 <p> Then either </p>
 <ol class="enumerate">
   <li><p>there is some \(B\subset A\) such that \(R(B)\geq \tfrac {1}{3}R(A)\) and </p>
-<div class="displaymath" id="a0000000195">
+<div class="displaymath" id="a0000000201">
   \[ \sum _{q\in \mathcal{Q}_{B}}\frac{1}{q}\leq \frac{2}{3}\log \log N, \]
 </div>
 <p> or </p>
 </li>
   <li><p>for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000196">
+  <li><div class="displaymath" id="a0000000202">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
 </li>
-  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A;M/2q(\log N)^{1/100})\). </p>
+  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A;M/2(\log N)^{1/100})\). </p>
 </li>
 </ol>
 </li>
@@ -216,7 +275,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000191">
+<div class="proof_wrapper" id="a0000000197">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -224,40 +283,54 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> Let \(I\) be any interval of length \(\leq MN^{-2/(\log \log N)}\), and let \(A_I\) be those \(n\in A\) that divide some element of \(I\), and \(\mathcal{D}=\mathcal{D}_I(A;M/2q(\log N)^{1/00})\). We may assume that \(\left\lvert A\backslash A_I\right\rvert {\lt} M/\log N\) (or else 2(a) holds), and we need to show that either there is some \(x\in I\) divisible by all \(q\in \mathcal{D}\), or the first case holds. </p>
-<p>Let \(\mathcal{E}\) be the set of those \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\). For every \(q\in \mathcal{D}_I\), by definition, </p>
-<div class="displaymath" id="a0000000197">
-  \[ R(A_I; q) \geq R(A;q) - \left( \frac{M}{2q(\log N)^{1/100}}\right)\frac{q}{M}{\gt}\frac{1}{2(\log N)^{1/100}}, \]
-</div>
-<p> and hence in particular \(\mathcal{D}_I\subset \mathcal{E}_I\). By Lemma&#160;<a href="chap-techprop.html#lem:find_multiples">6.1</a> for each \(q\in \mathcal{E}\) there exists \(x_q\in I\) such that \(q\mid x_q\) and </p>
-<div class="displaymath" id="a0000000198">
+  <p> Let \(I\) be any interval of length \(\leq MN^{-2/(\log \log N)}\), and let \(A_I\) be those \(n\in A\) that divide some element of \(I\), and \(\mathcal{D}=\mathcal{D}_I(A;M/2(\log N)^{1/00})\). We may assume that \(\left\lvert A\backslash A_I\right\rvert {\lt} M/\log N\). </p>
+<p>Let \(\mathcal{E}\) be the set of those \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\), so that by Lemma&#160;<a href="chap-techprop.html#lem:good_d">6.2</a> we have \(\mathcal{D}\subset \mathcal{E}\). By Lemma&#160;<a href="chap-techprop.html#lem:find_multiples">6.1</a> for each \(q\in \mathcal{E}\) there exists \(x_q\in I\) such that \(q\mid x_q\) and </p>
+<div class="displaymath" id="a0000000203">
   \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log \log N. \]
 </div>
-<p>For any two \(n_1\neq n_2\in I\), we have </p>
-<div class="displaymath" id="a0000000199">
-  \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N\leq 0.01\log \log N \]
+<p>Let \(X=\{ x_q : q\in \mathcal{E}\} \). Suppose that \(\left\lvert X\right\rvert \geq 3\), and say \(x,y,z\in X\) are three distinct elements. Then </p>
+<div class="displaymath" id="a0000000204">
+  \[ \sum _{q\in \mathcal{Q}_A}\frac{1}{q}\geq \sum _{\substack {q\mid x\\ q\in \mathcal{Q}_A}}\frac{1}{q}+\sum _{\substack {q\mid y\\ q\in \mathcal{Q}_A}}\frac{1}{q}+\sum _{\substack {q\mid z\\ q\in \mathcal{Q}_A}}\frac{1}{q}-\sum _{q\mid (x,y)}\frac{1}{q}-\sum _{q\mid (y,z)}\frac{1}{q}-\sum _{q\mid (x,z)}\frac{1}{q}, \]
 </div>
-<p> for \(N\) sufficiently large, by Lemma&#160;<a href="chap-techlemmas.html#lem:basic">5.1</a>. Furthermore, since \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq (1+o(1))\log \log N\leq 1.01\log \log N\), say, by Lemma&#160;<a href="chap-basic.html#lem:mertens1">2.6</a>, there must always be at most two distinct values of \(x_q\in I\) as \(q\) ranges over \(\mathcal{E}\). If there is exactly one value for \(x_q\), then there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I\) as required. Otherwise, there are exactly two such values, say \(w_1\) and \(w_2\). </p>
-<p>Let \(A^{(i)}=\{ n\in A: n\mid w_i\} \) and \(A^{(0)}=A\backslash (A^{(1)}\cup A^{(2)})\). Since every \(q\in \mathcal{Q}_{A^{(1)}}\) divides \(w_1\), </p>
-<div class="displaymath" id="a0000000200">
-  \[ \sum _{q\in \mathcal{Q}_{A^{(1)}}}\frac{1}{q}\leq \sum _{q\leq N}\frac{1}{q}- \sum _{q\mid w_2}\frac{1}{q}+ \sum _{q\mid (w_1,w_2)}\frac{1}{q}\leq (1-\tfrac {95}{99}e^{-1}+o(1))\log \log N. \]
+<p> where the last three sums are restricted to prime powers. </p>
+<p>Since \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq (1+o(1))\log \log N\leq 1.01\log \log N\), say, by Lemma&#160;<a href="chap-basic.html#lem:mertens1">2.6</a>, it follows that </p>
+<div class="displaymath" id="a0000000205">
+  \[ \sum _{q\mid (x,y)}\frac{1}{q}+\sum _{q\mid (y,z)}\frac{1}{q}+\sum _{q\mid (x,z)}\frac{1}{q}\geq 0.04\log \log N. \]
 </div>
-<p> For large enough \(N\), the right-hand side is \(\leq \frac{2}{3}\log \log N\), and similarly for \(A^{(2)}\). Since \(R(A^{(0)})+R(A^{(1)})+R(A^{(2)})\geq R(A)\), we are in the first case choosing \(B=A^{(1)}\) or \(B=A^{(2)}\), unless \(R(A^{(0)})\geq R(A)/3\). In this latter case we will derive a contradiction. </p>
-<p>Let \(A'\subset A^{(0)}\) be the set of those \(n\in A_I\cap A^{(0)}\) such that if \(n\in A_q\) then \(q\in \mathcal{E}_I\). By definition of \(\mathcal{E}_I\) and Mertens’ estimate ??, </p>
-<div class="displaymath" id="a0000000201">
+<p>But since \(x,y\in I\) we have, by Lemma&#160;<a href="chap-techlemmas.html#lem:basic">5.1</a>, </p>
+<div class="displaymath" id="a0000000206">
+  \[ \sum _{q\mid (x,y)}\frac{1}{q}\ll \log \log \log N, \]
+</div>
+<p> and similarly for the other sums, and so the left-hand side is \(O(\log \log \log N)\), which is a contradiction for large enough \(N\). </p>
+<p>Therefore \(\left\lvert X\right\rvert \leq 2\). If \(\mathcal{D}\) is empty the second conclusion trivially holds, and therefore we may assume there is some \(q\in \mathcal{E}\) and hence some \(x_q\in X\), so \(\left\lvert X\right\rvert \geq 1\). If \(\left\lvert X\right\rvert =1\) then we are in the second conclusion, letting \(x\) be the unique element of \(X\), since by construction \(x=x_q\) for all \(q\in \mathcal{D}\), and hence in particular \(q\mid x\) for all \(q\in \mathcal{D}_I\) as required. </p>
+<p>Finally, we deal with the case \(\left\lvert X\right\rvert =2\). Say \(X=\{ w_1,w_2\} \) with \(w_1\neq w_2\) (and both are elements of \(I\)). Let \(A^{(i)}=\{ n\in A: n\mid w_i\} \) and \(A^{(0)}=A\backslash (A^{(1)}\cup A^{(2)})\). Without loss of generality, label the \(w_i\) such that \(R(A^{(1)})\geq R(A^{(2)}\). Suppose first that \(R(A^{(0)}){\lt}R(A)/3\). In this case, since \(R(A^{(0)})+R(A^{(1)})+R(A^{(2)})\geq R(A)\), we have \(R(A^{(1)}\geq R(A)/3\). Furthermore, note that </p>
+<div class="displaymath" id="a0000000207">
+  \[ \sum _{q\mid w_1}\frac{1}{q}\leq \sum _{q\leq N}\frac{1}{q}-\sum _{q\mid w_2}\frac{1}{q}+\sum _{q\mid (w_1,w_2)}\frac{1}{q}. \]
+</div>
+<p> As above, by Lemma&#160;<a href="chap-basic.html#lem:mertens1">2.6</a>, the assumed lower bound on the sum over \(q\mid w_2\), and Lemma&#160;<a href="chap-techlemmas.html#lem:basic">5.1</a>, for sufficiently large \(N\) the right-hand side is </p>
+<div class="displaymath" id="a0000000208">
+  \[ \leq \left( 1.01-0.35+0.01\right)\log \log N\leq \tfrac {2}{3}\log \log N. \]
+</div>
+<p> Every \(q\mid \mathcal{Q}_{A^{(1)}}\) divides \(w_1\), and hence </p>
+<div class="displaymath" id="a0000000209">
+  \[ \sum _{q\in \mathcal{Q}_{A^{(1)}}}\frac{1}{q}\leq \frac{2}{3}\log \log N, \]
+</div>
+<p> and we are in case (1) with \(B=A^{(1)}\). </p>
+<p>Finally, suppose that \(R(A^{(0)})\geq R(A)/3\). We will derive a contradiction, assuming \(N\) is large enough. Let \(A'\subset A^{(0)}\) be the set of those \(n\in A_I\cap A^{(0)}\) such that if \(n\in A_q\) then \(q\in \mathcal{E}\). By definition of \(\mathcal{E}\) and Mertens’ estimate ??, </p>
+<div class="displaymath" id="a0000000210">
   \[ R(A^{(0)}\backslash A')\leq \frac{\left\lvert A\backslash A_I\right\rvert }{M}+\sum _{q\in \mathcal{Q}_A\backslash \mathcal{E}_I}\frac{1}{q}R(A_I;q)\ll \frac{\log \log N}{(\log N)^{1/100}}, \]
 </div>
 <p> and so in particular, since \(R(A)\geq (\log N)^{-1/101}\), we have \(R(A')\gg (\log N)^{-1/101}\). </p>
-<p>In particular, \(\left\lvert A'\right\rvert \gg M/(\log N)^{-1/101}\). Therefore there must exist some \(x\in I\) (necessarily \(x\neq w_1\) and \(x\neq w_2\) since \(A'\subset A^{(0)}\)) such that, if \(A''=\{  n\in A' : n\mid x\} \), then </p>
-<div class="displaymath" id="a0000000202">
+<p>In particular, \(\left\lvert A'\right\rvert \gg M/(\log N)^{-1/101}\). Every \(n\in A'\) divides some \(x\in I\), and there are at most \(MN^{-2/\log \log N}\) many \(x\in I\), so by the pigeonhole principle there must exist some \(x\in I\) (necessarily \(x\neq w_1\) and \(x\neq w_2\) since \(A'\subset A^{(0)}\)) such that, if \(A''=\{  n\in A' : n\mid x\} \), then </p>
+<div class="displaymath" id="a0000000211">
   \[ \left\lvert A''\right\rvert \gg N^{2/\log \log N}(\log N)^{-1/101}, \]
 </div>
 <p> and hence \(\left\lvert A''\right\rvert \geq N^{3/2\log \log N}\), say. </p>
 <p>However, if \(n\in A''\) then both \(n\mid x\) and \(n\mid w_1w_2\) (since every \(q\) with \(n\in A_q\) is in \(\mathcal{E}_I\) and so divides either \(w_1\) or \(w_2\)), and hence \(n\) divides </p>
-<div class="displaymath" id="a0000000203">
+<div class="displaymath" id="a0000000212">
   \[ (x,w_1w_2)\leq (x,w_1)(x,w_2)\leq \left\lvert x-w_1\right\rvert \left\lvert x-w_2\right\rvert \leq N^2. \]
 </div>
-<p> Therefore the size of \(A''\) is at most the number of divisors of some fixed integer \(m\leq N^2\), which is at most \(N^{(1+o(1))2\log 2/\log \log N}\), and hence we have a contradiction for large enough \(N\), since \(2\log 2{\lt} 3/2\). </p>
+<p> Therefore the size of \(A''\) is at most the number of divisors of some fixed integer \(m\leq N^2\), which is at most \(N^{(1+o(1))2\log 2/\log \log N}\) by Lemma&#160;<a href="chap-basic.html#lem:divisor_bound">2.5</a>, and hence we have a contradiction for large enough \(N\), since \(2\log 2{\lt} 3/2\). </p>
 
   </div>
 </div>
@@ -266,40 +339,52 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">6.3</span>
+    <span class="proposition_thmlabel">6.4</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techprop.html#prop:tech_iterative2">#</a>
-    <a class="icon proof" href="chap-techprop.html#a0000000204"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techprop.html#a0000000213"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-def.html#def:interval_rare_ppowers">Definition 1.4</a></li>
+        </ul>
+
+      </div>
+    </div>
 
   </div>
   </div>
   <div class="proposition_thmcontent">
-  <p> Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000205">
+  <p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
+<div class="displaymath" id="a0000000214">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
-<div class="displaymath" id="a0000000206">
-  \[ R(A)\geq (\log N)^{-1/101} \]
-</div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000207">
+<div class="displaymath" id="a0000000215">
   \[ R(A;q) \geq (\log N)^{-1/100}, \]
 </div>
-<p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\) Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
+<p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\). Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000208">
+  <li><div class="displaymath" id="a0000000216">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
 </li>
-  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A;M/2q(\log N)^{1/100})\). </p>
+  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A;M/2(\log N)^{1/100})\). </p>
 </li>
 </ol>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000204">
+<div class="proof_wrapper" id="a0000000213">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -307,21 +392,26 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  
-<p>Let \(I\) be any interval of length \(\leq MN^{-2/(\log \log N)}\), and let \(A_I\) be those \(n\in A\) that divide some element of \(I\), and \(\mathcal{D}=\mathcal{D}_I(A;M/2q(\log N)^{1/00})\). We may assume that \(\left\lvert A\backslash A_I\right\rvert {\lt} M/\log N\). </p>
-<p>For every \(q\in \mathcal{D}\), by definition, </p>
-<div class="displaymath" id="a0000000209">
-  \[ R(A_I; q) \geq R(A;q) - \left( \frac{M}{2q(\log N)^{1/100}}\right)\frac{q}{M}{\gt}\frac{1}{2(\log N)^{1/100}}, \]
-</div>
-<p> and hence by Lemma&#160;<a href="chap-techprop.html#lem:find_multiples">6.1</a> for each \(q\in \mathcal{D}\) there exists \(x_q\in I\) such that \(q\mid x_q\) and </p>
-<div class="displaymath" id="a0000000210">
+  <p> Let \(I\) be any interval of length \(\leq MN^{-2/(\log \log N)}\), and let \(A_I\) be those \(n\in A\) that divide some element of \(I\), and \(\mathcal{D}=\mathcal{D}_I(A;M/2q(\log N)^{1/00})\). We may assume that \(\left\lvert A\backslash A_I\right\rvert {\lt} M/\log N\). </p>
+<p>By Lemmas&#160;<a href="chap-techprop.html#lem:find_multiples">6.1</a> and <a href="chap-techprop.html#lem:good_d">6.2</a> for each \(q\in \mathcal{D}\) there exists \(x_q\in I\) such that \(q\mid x_q\) and </p>
+<div class="displaymath" id="a0000000217">
   \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log \log N. \]
 </div>
-<p>For any two \(n_1\neq n_2\in I\), we have </p>
-<div class="displaymath" id="a0000000211">
-  \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N\leq 0.01\log \log N \]
+<p>Let \(X=\{ x_q : q\in \mathcal{D}\} \). Suppose that \(\left\lvert X\right\rvert \geq 2\), and say \(x,y\in X\) are two distinct elements. Then </p>
+<div class="displaymath" id="a0000000218">
+  \[ \sum _{q\in \mathcal{Q}_A}\frac{1}{q}\geq \sum _{\substack {q\mid x\\ q\in \mathcal{Q}_A}}\frac{1}{q}+\sum _{\substack {q\mid y\\ q\in \mathcal{Q}_A}}\frac{1}{q}-\sum _{q\mid (x,y)}\frac{1}{q}, \]
 </div>
-<p> for \(N\) sufficiently large, by Lemma&#160;<a href="chap-techlemmas.html#lem:basic">5.1</a>. It follows that if \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\) then there can be at most one such possible value for \(x_q\in I\) as \(q\) ranges over \(\mathcal{E}_I\), and hence this common shared value of \(x_q\) is an \(x\in I\) divisible by all \(q\in \mathcal{E}_I\), and hence certainly by all \(q\in \mathcal{D}_I\), as required. </p>
+<p> where the third sum is restricted to prime powers. Using our assumed bounds, this implies </p>
+<div class="displaymath" id="a0000000219">
+  \[ \sum _{q\mid (x,y)}\frac{1}{q}\geq \left( 0.7-\frac{2}{3}\right)\log \log N\geq \frac{1}{100}\log \log N, \]
+</div>
+<p> say. </p>
+<p>But since \(x,y\in I\) we have, by Lemma&#160;<a href="chap-techlemmas.html#lem:basic">5.1</a>, </p>
+<div class="displaymath" id="a0000000220">
+  \[ \sum _{q\mid (x,y)}\frac{1}{q}\ll \log \log \log N, \]
+</div>
+<p> which is a contradiction for large enough \(N\). </p>
+<p>Therefore \(\left\lvert X\right\rvert \leq 1\). If \(\mathcal{D}\) is empty then the second conclusion trivially holds, for any \(x\in I\). Therefore there exists some \(q\in \mathcal{D}\), therefore there exists some \(x_q\in X\), and hence \(\left\lvert X\right\rvert =1\). Let \(x\in I\) be the unique element of \(X\). By construction \(x=x_q\) for all \(q\in \mathcal{D}\), and hence in particular \(q\mid x\) for all \(q\in \mathcal{D}_I\) as required. </p>
 
   </div>
 </div>
@@ -330,11 +420,11 @@
     <span class="proposition_thmcaption">
     Proposition
     </span>
-    <span class="proposition_thmlabel">6.4</span>
+    <span class="proposition_thmlabel">6.5</span>
     <span class="proposition_thmtitle">Main Technical Proposition</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techprop.html#prop:techmain">#</a>
-    <a class="icon proof" href="chap-techprop.html#a0000000212"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techprop.html#a0000000221"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -345,7 +435,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/ec3ecbd4d0c90321b0980a97832c0eb4bf067e74/src/main_results.lean#L55">technical_prop</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/4de1c20d8e2557395dc1edbe790965dc5eef4a52/src/main_results.lean#L55">technical_prop</a></li>
         </ul>
 
       </div>
@@ -363,7 +453,7 @@
   <li><p>every prime power \(q\) dividing some \(n\in A\) satisfies \(q\leq N^{1-6/\log \log N}\), and </p>
 </li>
   <li><p>every \(n\in A\) satisfies </p>
-<div class="displaymath" id="a0000000213">
+<div class="displaymath" id="a0000000222">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n) \leq 2\log \log N. \]
 </div>
 </li>
@@ -372,7 +462,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000212">
+<div class="proof_wrapper" id="a0000000221">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -381,24 +471,24 @@
   </div>
   <div class="proof_content">
   <p> Let \(M=N^{1-1/\log \log N}\) and \(d_i = \lceil y \rceil +i\). By repeated applications of Lemma&#160;<a href="chap-techlemmas.html#lem:pisq">5.5</a> we can find a sequence \(A\supset A_0\supset A_1\supset \cdots \supset A_{t}\), where \(d_t=\lceil z/4\rceil -1\), such that </p>
-<div class="displaymath" id="a0000000214">
+<div class="displaymath" id="a0000000223">
   \[ R(A_i)\in [2/d_i-1/M,2/d_i)\quad \textrm{ and }\quad R(A_i;q)\geq (\log N)^{-1/100}\textrm{ for all }q\in \mathcal{Q}_{A_i}. \]
 </div>
 <p> (Note that the hypotheses of Lemma&#160;<a href="chap-techlemmas.html#lem:pisq">5.5</a> continue to hold since </p>
-<div class="displaymath" id="a0000000215">
+<div class="displaymath" id="a0000000224">
   \[ \frac{2}{d_i}-\frac{1}{M}\geq \frac{2}{d_{i}+1}+\frac{1}{(\log N)^{1/200}}\geq \frac{3}{(\log N)^{1/200}} \]
 </div>
 <p> for all \(0\leq i\leq t\).) Let \(0\leq j\leq t\) be minimal such that there is a multiple of \(d_j\) in \(A_j\). Such a \(j\) exists by assumption, since every \(n\in A\) is divisible by some \(d\in [y,z/4)\). </p>
-<p>Suppose first that case (2) of Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.2</a> holds for \(A_j\). The hypotheses of Proposition&#160;<a href="chap-fourier.html#prop:fourier">4.22</a> are now met with \(k=d_j\), \(\eta =1/2(\log N)^{1/100}\), and \(K=MN^{-2/\log \log N}\). This yields some \(S\subset A'\subset A\) such that \(R(S)=1/d_j\) as required. </p>
-<p>Otherwise, Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.2</a> yields some \(B\subset A_j\) such that </p>
-<div class="displaymath" id="a0000000216">
+<p>Suppose first that case (2) of Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.3</a> holds for \(A_j\). The hypotheses of Proposition&#160;<a href="chap-fourier.html#prop:fourier">4.22</a> are now met with \(k=d_j\), \(\eta =1/2(\log N)^{1/100}\), and \(K=MN^{-2/\log \log N}\). This yields some \(S\subset A'\subset A\) such that \(R(S)=1/d_j\) as required. </p>
+<p>Otherwise, Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative">6.3</a> yields some \(B\subset A_j\) such that </p>
+<div class="displaymath" id="a0000000225">
   \[ R(B)\geq 2/3d_j-1/M\geq 1/2d_j+(\log N)^{-1/200} \]
 </div>
 <p> and where \(\sum _{q\in \mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log \log N\). Let \(e_i = 4d_j+i\) and, once again, repeatedly apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisq">5.5</a> to find a sequence \(B\supset B_0\supset \cdots \supset B_r\), where \(e_r=\lfloor z\rfloor \), such that </p>
-<div class="displaymath" id="a0000000217">
+<div class="displaymath" id="a0000000226">
   \[ R(B_i)\in [2/e_i-1/M,2/e_i)\quad \textrm{ and }\quad R(B_i;q)\geq (\log N)^{-1/100}\textrm{ for all }q\in \mathcal{Q}_{B_i}. \]
 </div>
-<p> By minimality of \(j\), no \(d\in [y,d_j)\) divides any element of \(A_j\), and hence every \(n\in A_j\) is divisible by some \(e\in [4d_j,z]\). In particular, there must exist some \(0\leq s\leq r\) such that \(B_s\) contains a multiple of \(e_s\). Furthermore, since \(\sum _{q\in \mathcal{Q}_{B_s}}\frac{1}{q}\leq \sum _{q\in \mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log \log N\) we can apply Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative2">6.3</a>. The hypotheses of Proposition&#160;<a href="chap-fourier.html#prop:fourier">4.22</a> are now met with \(k=e_s\) and \(\eta ,K\) as above, and thus there is some \(S\subset B_j\subset A\) such that \(R(S)=1/e_s\). </p>
+<p> By minimality of \(j\), no \(d\in [y,d_j)\) divides any element of \(A_j\), and hence every \(n\in A_j\) is divisible by some \(e\in [4d_j,z]\). In particular, there must exist some \(0\leq s\leq r\) such that \(B_s\) contains a multiple of \(e_s\). Furthermore, since \(\sum _{q\in \mathcal{Q}_{B_s}}\frac{1}{q}\leq \sum _{q\in \mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log \log N\) we can apply Proposition&#160;<a href="chap-techprop.html#prop:tech_iterative2">6.4</a>. The hypotheses of Proposition&#160;<a href="chap-fourier.html#prop:fourier">4.22</a> are now met with \(k=e_s\) and \(\eta ,K\) as above, and thus there is some \(S\subset B_j\subset A\) such that \(R(S)=1/e_s\). </p>
 
   </div>
 </div>

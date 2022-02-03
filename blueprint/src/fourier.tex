@@ -25,7 +25,7 @@ For any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)
   \label{def:cos_prod}
   \leanok
   \lean{cos_prod}
-  Let $C(B;h,k) = \prod_{n\in B}\abs{\cos(\pi kh/n)}$.
+  For any finite set of naturals $B$ and integer $t$, we define $C(B;t) = \prod_{n\in B}\abs{\cos(\pi t/n)}$.
 \end{definition}
 
 \begin{definition}
@@ -236,7 +236,7 @@ for all $r\in [-K/2k,K/2k]\cap \bbz$, and hence as the sum of non-negative summa
 \begin{lemma}\label{lem:minor_lbound}
   \uses{def:minor_arcs,def:cos_prod}
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$, and there is no $S\subset A$ such that $R(S)=1/k$, and $[A]\leq 2^{\abs{A}-1}$. Then
-\[\sum_{h\in J(A)\backslash \mathfrak{M}(A,k,K)} C(A;h,k)\geq 1/2.\]
+\[\sum_{h\in J(A)\backslash \mathfrak{M}(A,k,K)} C(A;hk)\geq 1/2.\]
 \end{lemma}
 \begin{proof}
 \uses{lem:majorarcs,lem:orthog_simp2}
@@ -252,14 +252,17 @@ as required.
 \end{proof}
 
 \begin{lemma}\label{lem:cos_prod_bound}
+  \leanok
+  \lean{cos_prod_bound}
   \uses{def:cos_prod,def:interval_rare_ppowers}
-For any finite set $A$ such that $n\leq N$ for all $n\in A$, and integers $k,h$, if $kh\equiv h_n\pmod{n}$ for $\abs{h_n}\leq n/2$ for all $n\in A$, then
-\[C(A;h,k)\leq \exp\brac{-\frac{2}{N^2}\sum_{n\in A}h_n^2}.\]
+For any finite set $A$ such that $n\leq N$ for all $n\in A$, and integer $t$, if $t\equiv t_n\pmod{n}$ for $\abs{t_n}\leq n/2$ for all $n\in A$, then
+\[C(A;t)\leq \exp\brac{-\frac{2}{N^2}\sum_{n\in A}t_n^2}.\]
 \end{lemma}
 \begin{proof}
+  \leanok
 \uses{lem:cos_bound}
-We first note that $\abs{\cos(\pi kh/n)}=\abs{\cos(\pi h_n/n)}$ for all $n\in A$, by periodicity of cosine. By Lemma~\ref{lem:cos_bound}, therefore
-\[\abs{\cos(\pi kh/n)}\leq \exp(-2h_n^2/n^2)\leq \exp(-\tfrac{2}{N^2}h_n^2),\]
+We first note that $\abs{\cos(\pi t/n)}=\abs{\cos(\pi t_n/n)}$ for all $n\in A$, by periodicity of cosine. By Lemma~\ref{lem:cos_bound}, therefore
+\[\abs{\cos(\pi t/n)}\leq \exp(-2t_n^2/n^2)\leq \exp(-\tfrac{2}{N^2}t_n^2),\]
 and the lemma follows taking the product over all $n\in A$.
 \end{proof}
 
@@ -267,17 +270,17 @@ and the lemma follows taking the product over all $n\in A$.
 \begin{lemma}\label{lem:minor1_bound}
   \uses{def:minor_arcs}
 Suppose that $N$ is sufficiently large and $M\geq 8$. Let $k\geq 1$ be an integer. Let $A\subset [M,N]$ be a set of integers such that if $q\in\mathcal{Q}_A$ then $q\leq \frac{MK^2}{N^2(\log N)^2}$. Then
-\[\sum_{h\in \mathfrak{m}_1(A,k,K,M/\log N)} C(A;h,k)\leq 1/8.\]
+\[\sum_{h\in \mathfrak{m}_1(A,k,K,M/\log N)} C(A;hk)\leq 1/8.\]
 \end{lemma}
 \begin{proof}
 \uses{lem:smooth_lcm,lem:cos_prod_bound}
 We show in fact that for any $h\in \mathfrak{m}_1(A,k,K,M/\log N)$ we have
-\[C(A;h,k)\leq 1/[A]^2.\]
+\[C(A;hk)\leq 1/[A]^2.\]
 The result then immediately follows since $\abs{\mathfrak{m}_1(A,k,K,M/\log N)}\leq \abs{J(A)}\leq [A]$, assuming $[A]\geq 8$, which is true since $[A]\geq \min(A)\geq M\geq 8$.
 
 By Lemma~\ref{lem:cos_prod_bound},
-\[C(A;h,k)\leq \exp\brac{-\frac{2}{N^2}\sum_{n\in A}h_n^2}.\]
-Let $I_h$ be the interval of length $K$ centred around $kh$. If no element of $I_h$ is divisible by $n$ then $\abs{h_n}>K/2$. Therefore, by definition of $\mathfrak{m}_1$, $\abs{h_n}>K/2$ for at least $M/\log N$ many $n\in A$, and hence $\sum_{n\in A}h_n^2\geq K^2M/4\log N$, and so
+\[C(A;hk)\leq \exp\brac{-\frac{2}{N^2}\sum_{n\in A}h_n^2},\]
+where $kh\equiv h_n\pmod{n}$ and $\abs{h_n}\leq n/2$. Let $I_h$ be the interval of length $K$ centred around $kh$. If no element of $I_h$ is divisible by $n$ then $\abs{h_n}>K/2$. Therefore, by definition of $\mathfrak{m}_1$, $\abs{h_n}>K/2$ for at least $M/\log N$ many $n\in A$, and hence $\sum_{n\in A}h_n^2\geq K^2M/4\log N$, and so
 \[C(A;h)\leq \exp\brac{-\frac{K^2M}{2N^2\log N}}.\]
 It remains to note that by Lemma~\ref{lem:smooth_lcm}
 \[[A]\leq \exp\brac{O\brac{\frac{K^2M}{N^2(\log N)^2}}}\leq \exp\brac{\frac{K^2M}{4N^2\log N}}\]
@@ -285,8 +288,8 @@ assuming $N$ is sufficiently large.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_ind_bound}
-Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $h$ an integer. Let $K,L>0$ be reals and suppose that $q\leq \tfrac{1}{16}LK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L/q)$ where $I$ is the interval of length $K$ centred at $h$. Then
-\[C(A;h,k)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
+Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $t$ an integer. Let $K,L>0$ be reals and suppose that $q\leq \tfrac{1}{16}LK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L)$ where $I$ is the interval of length $K$ centred at $t$. Then
+\[C(A;t)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 \end{lemma}
 \begin{proof}
 \uses{lem:cos_prod_bound,lem:triv_q_bound}
@@ -296,11 +299,13 @@ For any $n\in A$, let $\mathcal{Q}(n)$ denote all those $q\in \mathcal{Q}$ such 
 By Lemma~\ref{lem:triv_q_bound} for any $n\in A$ we have $\abs{\mathcal{Q}(n)}\leq \tfrac{1}{\log 2}\log n\leq 2\log N$, and so if $0\leq x_n\leq 1$,
 \[\prod_{n\in A}x_n\leq \prod_{q\in\mathcal{Q}}\prod_{n\in A_q}x_n^{/2\log N}=\prod_{q\in \mathcal{Q}}\brac{\prod_{n\in A_q}x_n}^{1/2\log N}.\]
 In particular,
- \[C(A;h,k)\leq \prod_{q\in \mathcal{Q}}C(A_q;h,k)^{/2\log N}.\]
- Using the trivial bound $C(A_q;h,k)\leq 1$, to prove the lemma it therefore suffices to show that for every $q\in\mathcal{Q}\backslash\mathcal{D}_h$ we have $C(A_q;h,k)\leq N^{-8\log N}$.
+ \[C(A;t)\leq \prod_{q\in \mathcal{Q}}C(A_q;t)^{/2\log N}.\]
+ Using the trivial bound $C(A_q;t)\leq 1$, to prove the lemma it therefore suffices to show that for every $q\in\mathcal{Q}\backslash\mathcal{D}_h$ we have $C(A_q;t)\leq N^{-8\log N}$.
 
-For any $n\in A$ let $kh\equiv h_n\pmod{n}$, where $\abs{h_n}\leq n/2$. For any $q\in\mathcal{Q}\backslash \mathcal{D}$ there are, by definition of $\mathcal{D}$, at least $L/q$ many $n\in A_q$ such that $\abs{h_n}>K/2$ and hence by Lemma~\ref{lem:cos_prod_bound}
-\[C(A_q;h,k)\leq\exp\brac{-\frac{2}{N^2}\cdot \frac{L}{q}\cdot \frac{K^2}{4}}.\]
+For any $n\in A$ let $t\equiv t_n\pmod{n}$, where $\abs{t_n}\leq n/2$. For any $q\in\mathcal{Q}\backslash \mathcal{D}$ there are, by definition of $\mathcal{D}$, at least $L/q$ many $n\in A_q$ such that $n$ divides no element of the interval of length $K$ centred at $t$. 
+
+Recall that $t_n$ is the integer in $(-n/2,n/2]$ such that $t\equiv t_n\pmod{n}$, so that $n$ divides $t-t_n$. If $\abs{t_n}\leq K/2$ then $t-t_n$ is in the interval of length $K$ centred at $t$, which contradicts the previous paragraph. Therefore $\abs{t_n}>K/2$. Hence by Lemma~\ref{lem:cos_prod_bound}
+\[C(A_q;t)\leq\exp\brac{-\frac{2}{N^2}\cdot \frac{L}{q}\cdot \frac{K^2}{4}}.\]
 By assumption, $q\leq LK^2/16N^2(\log N)^2$, and the proof is complete.
 \end{proof}
 
@@ -326,7 +331,7 @@ For any $h\in\mathfrak{m}_2$, let $I_h$ be the interval of length $K$ centred at
 Therefore, for any $\mathcal{D}\subset \mathcal{Q}$, the number of $h\in\mathfrak{m}_2$ with $\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}$ is at most $M$ times the number of multiples of $[\mathcal{D}]$ in $[1,k[A]]$, which is at most
 \[Mk\frac{[A]}{[\mathcal{D}]} \leq Mk\prod_{q\in\mathcal{Q}\backslash\mathcal{D}}q\leq kN^{\abs{\mathcal{Q}\backslash \mathcal{D}}+1}.\]
 Therefore, for any $\mathcal{D}\subset\mathcal{Q}$, using Lemma~\ref{lem:minor2_ind_bound},
-\[\sum_{h\in \mathfrak{m}_2}1_{\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}}C(A;h,k)\leq kN^{1-3\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
+\[\sum_{h\in \mathfrak{m}_2}1_{\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}}C(A;hk)\leq kN^{1-3\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 
 
 By definition of $\mathfrak{m}$, if $h\in\mathfrak{m}_2$ then $kh$ is distance greater than $K/2$ from any multiple of $[A]$, and hence $\mathcal{D}_{I_h}(A;L/q)\neq \mathcal{Q}$. Therefore (using the trivial estimate $\abs{\mathcal{Q}}\leq N$)
