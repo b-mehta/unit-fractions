@@ -288,10 +288,13 @@ assuming $N$ is sufficiently large.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_ind_bound}
+  \leanok
+  \lean{minor2_ind_bound}
 Suppose that $N\geq 4$. Let $A\subset [1,N]$ be a finite set of integers and $t$ an integer. Let $K,L>0$ be reals and suppose that $q\leq \tfrac{1}{16}LK^2/N^2(\log N)^2$ for all $q\in \mathcal{Q}_A$. Let $\mathcal{D}=\mathcal{D}_I(A;L)$ where $I$ is the interval of length $K$ centred at $t$. Then
 \[C(A;t)\leq N^{-4\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 \end{lemma}
 \begin{proof}
+  \leanok
 \uses{lem:cos_prod_bound,lem:triv_q_bound}
 For any $n\in A$, let $\mathcal{Q}(n)$ denote all those $q\in \mathcal{Q}$ such that $n\in A_q$. Therefore, for any real $x_n\geq 0$,
 \[\prod_{n\in A}x_n=\prod_{n\in A}\prod_{q\in \mathcal{Q}(n)}x_n^{1/\abs{\mathcal{Q}(n)}}
@@ -302,7 +305,7 @@ In particular,
  \[C(A;t)\leq \prod_{q\in \mathcal{Q}}C(A_q;t)^{/2\log N}.\]
  Using the trivial bound $C(A_q;t)\leq 1$, to prove the lemma it therefore suffices to show that for every $q\in\mathcal{Q}\backslash\mathcal{D}_h$ we have $C(A_q;t)\leq N^{-8\log N}$.
 
-For any $n\in A$ let $t\equiv t_n\pmod{n}$, where $\abs{t_n}\leq n/2$. For any $q\in\mathcal{Q}\backslash \mathcal{D}$ there are, by definition of $\mathcal{D}$, at least $L/q$ many $n\in A_q$ such that $n$ divides no element of the interval of length $K$ centred at $t$. 
+For any $n\in A$ let $t\equiv t_n\pmod{n}$, where $\abs{t_n}\leq n/2$. For any $q\in\mathcal{Q}\backslash \mathcal{D}$ there are, by definition of $\mathcal{D}$, at least $L/q$ many $n\in A_q$ such that $n$ divides no element of the interval of length $K$ centred at $t$.
 
 Recall that $t_n$ is the integer in $(-n/2,n/2]$ such that $t\equiv t_n\pmod{n}$, so that $n$ divides $t-t_n$. If $\abs{t_n}\leq K/2$ then $t-t_n$ is in the interval of length $K$ centred at $t$, which contradicts the previous paragraph. Therefore $\abs{t_n}>K/2$. Hence by Lemma~\ref{lem:cos_prod_bound}
 \[C(A_q;t)\leq\exp\brac{-\frac{2}{N^2}\cdot \frac{L}{q}\cdot \frac{K^2}{4}}.\]
