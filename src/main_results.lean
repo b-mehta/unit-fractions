@@ -319,11 +319,11 @@ theorem force_good_properties :
   (∃ B ⊆ A, ((rec_sum A) ≤ 3*rec_sum B) ∧
   ((ppower_rec_sum B : ℝ) ≤ (2/3)* log(log N)))
   ∨
-  (∀ (a : ℕ), let I : finset ℕ := (finset.Icc a
-       ⌊(a:ℝ)+M*(N:ℝ)^(-(2:ℝ)/log(log N))⌋₊) in
-  ( ((M:ℝ)/log N ≤ ((A.filter (λ n, ∀ x ∈ I, ¬ (n ∣ x))).card : ℝ)) ∨
+  (∀ (a : ℕ), let I : finset ℤ := (finset.Icc a
+       ⌊(a:ℝ)+M*(N:ℝ)^(-(2:ℝ)/log(log N))⌋) in
+  ( ((M:ℝ)/log N ≤ ((A.filter (λ n, ∀ x ∈ I, ¬ (↑n ∣ x))).card : ℝ)) ∨
     (∃ x ∈ I, ∀ q : ℕ, (q ∈ interval_rare_ppowers I A
-       (M / (2*q*(log N)^(1/100 : ℝ)))) → q ∣ x)
+       (M / (2*q*(log N)^(1/100 : ℝ)))) → ↑q ∣ x)
   ))) :=
 sorry
 
