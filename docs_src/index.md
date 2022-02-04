@@ -12,10 +12,10 @@ This project structure is adapted from the infrastructure created by Patrick Mas
 for the [Sphere Eversion project](https://github.com/leanprover-community/sphere-eversion).
 
 
-More precisely we will prove that, in any dense set of integers contains
+More precisely we will prove that, any dense set of integers contains
 distinct integers whose reciprocals sum to 1. (This generalises a colouring
-result of Croot, and resolves an old open problem of Erdos and Graham.) For further
-details, precise statements, contex, and so on, we refer to the preprint itself.
+result of Croot, and resolves an old open problem of Erdős and Graham.) For further
+details, precise statements, context, and so on, we refer to the preprint itself.
 
 ### Exploring and helping
 
