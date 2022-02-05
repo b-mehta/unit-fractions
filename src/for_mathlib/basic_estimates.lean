@@ -23,13 +23,6 @@ open filter asymptotics real set
 section to_mathlib
 
 -- TODO (BM): Put this in mathlib
-lemma le_floor_of_le {α : Type*} [linear_ordered_semiring α] [floor_semiring α] {n : ℕ} {a : α}
-  (h : a ≤ n) : ⌊a⌋₊ ≤ n :=
-(le_total a 0).elim
-  (λ h', (nat.floor_of_nonpos h').le.trans (nat.zero_le _))
-  (λ h', nat.cast_le.1 ((nat.floor_le h').trans h))
-
--- TODO (BM): Put this in mathlib
 lemma Ici_diff_Icc {a b : ℝ} (hab : a ≤ b) : Ici a \ Icc a b = Ioi b :=
 begin
   rw [←Icc_union_Ioi_eq_Ici hab, union_diff_left, diff_eq_self],
@@ -152,7 +145,7 @@ lemma abs_summatory_bound {M : Type*} [semi_normed_group M] (a : ℕ → M) (k :
   ∥summatory a x∥ ≤ ∑ i in finset.Icc 1 k, ∥a i∥ :=
 (abs_summatory_le_sum a).trans
   (finset.sum_le_sum_of_subset_of_nonneg
-    (finset.Icc_subset_Icc le_rfl (le_floor_of_le hx)) (by simp))
+    (finset.Icc_subset_Icc le_rfl (nat.floor_le_of_le hx)) (by simp))
 
 open measure_theory
 
@@ -1281,6 +1274,10 @@ lemma prime_counting_asymptotic :
   is_O (λ x, prime_summatory (λ _, (1 : ℝ)) x - summatory Λ x / log x)
     (λ x, x / (log x)^2) at_top :=
 sorry
+
+def prime_log_div_sum_error (x : ℝ) : ℝ := prime_summatory (λ p, real.log p / p) x - log x
+lemma is_O_prime_log_div_sum_error : is_O prime_log_div_sum_error (λ _, (1 : ℝ)) at_top :=
+log_reciprocal
 
 lemma prime_reciprocal : ∃ b,
   is_O (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) x - log (log x) - b) (λ x, 1 / log x) at_top :=
