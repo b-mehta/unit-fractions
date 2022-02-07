@@ -306,6 +306,44 @@ lemma find_good_d : ∃ c C : ℝ, ∀ᶠ (N : ℕ) in at_top, ∀ M k : ℝ,
   :=
 sorry
 
+lemma good_d (N : ℕ) (M δ : ℝ):
+∀ A ⊆ finset.range(N+1),
+   (∀ n ∈ A, M ≤ (n:ℝ)) →
+   (∀ q ∈ ppowers_in_set A,
+    ((2:ℝ)*δ ≤ rec_sum_local A q)) →
+  (∀ I : finset ℤ,
+    (∀ q : ℕ, (q ∈ interval_rare_ppowers I A
+       (M*δ) →
+       (δ ≤ rec_sum_local
+         (A.filter(λ n, ∃ x ∈ I, ↑n ∣ x)) q))
+  )) :=
+begin
+  intros A hA1 hAM hAq I q hq,
+  rw interval_rare_ppowers at hq,
+  let nA : finset ℕ := A.filter (λ n, ∀ x ∈ I, ¬ (↑n ∣ x)),
+  have h1: (rec_sum_local nA q:ℝ) ≤ δ,
+  { -- bound each summand above by q/M using hAM, then
+    -- apply the bound on the cardinality of the set from hq,
+    -- then elementary inequality manipulation
+    sorry },
+  have h2 : rec_sum_local A q = rec_sum_local
+         (A.filter(λ n, ∃ x ∈ I, ↑n ∣ x)) q + rec_sum_local nA q,
+  { simp only [rec_sum_local, local_part],
+    have : A = (A.filter(λ n, ∃ x ∈ I, ↑n ∣ x)) ∪ nA,
+    { -- trivial using lem?
+      sorry },
+    -- should be immediate now using finset.sum_union, but can't
+    -- get it to work?
+    sorry
+    },
+  have h3 : (2:ℝ)*δ ≤ rec_sum_local A q,
+  { apply hAq, rw finset.mem_filter at hq, exact hq.left },
+  have h4 : (2:ℝ)*δ ≤ (rec_sum_local
+         (A.filter(λ n, ∃ x ∈ I, ↑n ∣ x)) q:ℝ) + (rec_sum_local nA q:ℝ),
+  { rw_mod_cast ← h2, exact h3, },
+  linarith,
+end
+
 -- Proposition 3
 theorem force_good_properties :
   ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),

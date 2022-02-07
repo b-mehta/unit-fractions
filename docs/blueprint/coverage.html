@@ -476,23 +476,14 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 6.2 (lem:good_d)</div>
-      <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that, for all \(q\in \mathcal{Q}_A\), </p>
+      <div class="thm_thm_content"><p>   Suppose \(N\) is an integer and \(\delta ,M\in \mathbb {R}\). Suppose that \(A\subset [M,N]\) is a set of integers such that, for all \(q\in \mathcal{Q}_A\), </p>
 <div class="displaymath" id="a0000000191">
-  \[ R(A;q) \geq (\log N)^{-1/100}, \]
+  \[ R(A;q) \geq 2\delta , \]
 </div>
-<p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
-<ol class="enumerate">
-  <li><div class="displaymath" id="a0000000192">
-  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
+<p> Then for any finite set of integers \(I\), for all \(q\in \mathcal{D}_I(A;\delta M)\), if \(A_I\) is the set of those \(n\in A\) that divide some element of \(I\), </p>
+<div class="displaymath" id="a0000000192">
+  \[ R(A_I;q){\gt} \delta . \]
 </div>
-<p> or </p>
-</li>
-  <li><p>for all \(q\in \mathcal{D}_I(A;M/2(\log N)^{1/100})\) </p>
-<div class="displaymath" id="a0000000193">
-  \[ R(A_I;q){\gt} 1/2(\log N)^{1/100}. \]
-</div>
-</li>
-</ol>
 </div>
     </li>
     
@@ -501,27 +492,27 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Proposition 6.3 (prop:tech_iterative)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000198">
+<div class="displaymath" id="a0000000197">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
-<div class="displaymath" id="a0000000199">
+<div class="displaymath" id="a0000000198">
   \[ R(A)\geq (\log N)^{-1/101} \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000200">
+<div class="displaymath" id="a0000000199">
   \[ R(A;q) \geq (\log N)^{-1/100}. \]
 </div>
 <p> Then either </p>
 <ol class="enumerate">
   <li><p>there is some \(B\subset A\) such that \(R(B)\geq \tfrac {1}{3}R(A)\) and </p>
-<div class="displaymath" id="a0000000201">
+<div class="displaymath" id="a0000000200">
   \[ \sum _{q\in \mathcal{Q}_{B}}\frac{1}{q}\leq \frac{2}{3}\log \log N, \]
 </div>
 <p> or </p>
 </li>
   <li><p>for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000202">
+  <li><div class="displaymath" id="a0000000201">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -539,16 +530,16 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Proposition 6.4 (prop:tech_iterative2)</div>
       <div class="thm_thm_content"><p> Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000214">
+<div class="displaymath" id="a0000000213">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000215">
+<div class="displaymath" id="a0000000214">
   \[ R(A;q) \geq (\log N)^{-1/100}, \]
 </div>
 <p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\). Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000216">
+  <li><div class="displaymath" id="a0000000215">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -572,7 +563,7 @@ Click chapter titles to see missing items.
   <li><p>every prime power \(q\) dividing some \(n\in A\) satisfies \(q\leq N^{1-6/\log \log N}\), and </p>
 </li>
   <li><p>every \(n\in A\) satisfies </p>
-<div class="displaymath" id="a0000000222">
+<div class="displaymath" id="a0000000221">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n) \leq 2\log \log N. \]
 </div>
 </li>
@@ -773,40 +764,18 @@ Click chapter titles to see missing items.
     </li>
     
     <li>
-      <div class="thm_thmheading">Lemma 6.2 (lem:good_d)</div>
-      <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000191">
-  \[ R(A;q) \geq (\log N)^{-1/100}, \]
-</div>
-<p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
-<ol class="enumerate">
-  <li><div class="displaymath" id="a0000000192">
-  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
-</div>
-<p> or </p>
-</li>
-  <li><p>for all \(q\in \mathcal{D}_I(A;M/2(\log N)^{1/100})\) </p>
-<div class="displaymath" id="a0000000193">
-  \[ R(A_I;q){\gt} 1/2(\log N)^{1/100}. \]
-</div>
-</li>
-</ol>
-</div>
-    </li>
-    
-    <li>
       <div class="thm_thmheading">Proposition 6.4 (prop:tech_iterative2)</div>
       <div class="thm_thm_content"><p> Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000214">
+<div class="displaymath" id="a0000000213">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000215">
+<div class="displaymath" id="a0000000214">
   \[ R(A;q) \geq (\log N)^{-1/100}, \]
 </div>
 <p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\). Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000216">
+  <li><div class="displaymath" id="a0000000215">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -942,6 +911,24 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
+  
+  <h3>6 Deduction of main technical proposition</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Lemma 6.2 (lem:good_d)</div>
+      <div class="thm_thm_content"><p>   Suppose \(N\) is an integer and \(\delta ,M\in \mathbb {R}\). Suppose that \(A\subset [M,N]\) is a set of integers such that, for all \(q\in \mathcal{Q}_A\), </p>
+<div class="displaymath" id="a0000000191">
+  \[ R(A;q) \geq 2\delta , \]
+</div>
+<p> Then for any finite set of integers \(I\), for all \(q\in \mathcal{D}_I(A;\delta M)\), if \(A_I\) is the set of those \(n\in A\) that divide some element of \(I\), </p>
+<div class="displaymath" id="a0000000192">
+  \[ R(A_I;q){\gt} \delta . \]
+</div>
+</div>
+    </li>
+    
+  </ul>
   
 </section>
 

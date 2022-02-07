@@ -36,25 +36,20 @@ Finally, we need to show that $r\mid x_q$. Let $m\in A_I^{(q)}$ be such that $r\
 \end{proof}
 
 \begin{lemma}\label{lem:good_d}
+\leanok
+\lean{good_d}
   \uses{def:interval_rare_ppowers,def:rec_sum_local}
-Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that, for all $q\in \mathcal{Q}_A$,
-\[R(A;q) \geq (\log N)^{-1/100},\]
-Then for any interval of length $\leq MN^{-2/(\log \log N)}$, either
-\begin{enumerate}
-\item \[\# \{ n\in A : \textrm{no element of }I\textrm{ is divisible by }n\}\geq M/\log N,\]
-or
-\item for all $q\in\mathcal{D}_I(A;M/2(\log N)^{1/100})$
-\[R(A_I;q)> 1/2(\log N)^{1/100}.\]
-\end{enumerate}
+ Suppose $N$ is an integer and $\delta,M\in \mathbb{R}$. Suppose that $A\subset [M,N]$ is a set of integers such that, for all $q\in \mathcal{Q}_A$,
+\[R(A;q) \geq 2\delta,\]
+Then for any finite set of integers $I$, for all $q\in\mathcal{D}_I(A;\delta M)$, if $A_I$ is the set of those $n\in A$ that divide some element of $I$, 
+\[R(A_I;q)> \delta.\]
 \end{lemma}
 \begin{proof}
-Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$, and $\mathcal{D}=\mathcal{D}_I(A;M/2(\log N)^{1/100})$. We may assume that $\abs{A\backslash A_I}< M/\log N$, or else the first part of the conclusion holds and we're done.
-
-For every $q\in \mathcal{D}$, by definition,
-\[\#\{ n\in A_q : n\not\in A_I\} < \frac{M}{2q(\log N)^{1/100}}.\]
+For every $q\in \mathcal{D}_I(A;\delta M$, by definition,
+\[\#\{ n\in A_q : n\not\in A_I\} < \frac{\delta M}{q}.\]
 Therefore
-\[R(A_I;q) = \sum_{\substack{n \in A_q\\n\in A_I}}\frac{q}{n}> \sum_{n \in A_q}\frac{q}{n}-\frac{q}{M}\brac{\frac{M}{2q(\log N)^{1/100}}}.\]
-  \[=R(A;q) - \frac{1}{2(\log N)^{1/100}}\geq \frac{1}{2(\log N)^{1/100}}.\]
+\[R(A_I;q) = \sum_{\substack{n \in A_q\\n\in A_I}}\frac{q}{n}> \sum_{n \in A_q}\frac{q}{n}-\frac{q}{M}\brac{\frac{\delta M}{q}}.\]
+  \[=R(A;q) - \delta \geq \delta.\]
 \end{proof}
 
 
