@@ -12,48 +12,44 @@ Then for any interval of length $\leq MN^{-2/(\log \log N)}$, if $A_I$ is the se
   \uses{lem:usingq,lem:rtop}
 Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$.
 
-Apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k=\frac{\log\log N}{\log 2+\log\log\log N}$, so that $(\log N)^{1/k}=2\log\log N$. We choose $N$ large enough such that $k\leq c\log\log N$ (where $c$ is the constant in the statement of Lemma~\ref{lem:usingq}) and such that $\log k\geq 100$. 
+Apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k=\frac{\log\log N}{\log 2+\log\log\log N}$, so that $(\log N)^{1/k}=2\log\log N$. We choose $N$ large enough such that $k\leq c\log\log N$ (where $c$ is the constant in the statement of Lemma~\ref{lem:usingq}) and such that $\log k\geq 100$.
 
 This produces some $d_q$ such that $qd_q>\abs{I}$ and $\omega(d_q)<\tfrac{1}{500}\log\log N$, and
   \[\sum_{\substack{n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log\log N)^2}\geq \frac{1}{(\log N)^{1/99}},\]
 assuming $N$ is sufficiently large. Let
   \[A_I^{(q)}=\{ n/qd_q : n\in A_I\textrm{ with }qd_q\mid n\textrm{ and }(qd_q,n/qd_q)=1\}\]
-  so that, the above inequality states that $R(A_I^{(q)})\geq (\log N)^{-1/99}$. 
-  
+  so that, the above inequality states that $R(A_I^{(q)})\geq (\log N)^{-1/99}$.
+
 We now claim that $2\log\log N\geq \omega(m) \geq \tfrac{97}{99}\log\log N$ for all $m\in A_I^{(q)}$. This follows from the trivial $\omega(md_q)\geq \omega(m)\geq \omega(md_q)-\omega(d_q)$, and that $2\log\log N\geq \omega(md_q)\geq  \frac{99}{100}\log\log N$ (since $md_q\in A$) and $\omega(d_q)<\frac{1}{500}\log\log N$.
-  
+
 We now apply Lemma~\ref{lem:rtop} with $\epsilon=2/99$. This implies that
   \[\sum_{r\in \mathcal{Q}_{A_I^{(q)}}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N\geq 0.35\log\log N.\]
 
-  
-    By definition of $A_I$, every $n\in A_I$ with $qd_q\mid n$ must divide some $x\in I$, say $x(q;n)$. We claim that $x(q,n)=x(q,m)$ for all $n,m\in A_I$ with $qd_q\mid n$ and $qd_q\mid m$. Otherwise $qd_q$ divides $\abs{x(q,n)-x(q,m)}$, so $\abs{I}<qd_q\leq \abs{x(q,n)-x(q,m)}$, which is an integer in $[1,\abs{I})$, a contradiction.
-  
-  Let $x_q\in I$ be such that $x(q,n)=x_q$ for all $n\in A_I$ with $qd_q \mid n$. We claim that $\mathcal{Q}_{A_I^{(q)}}\subset \{ r\in \mathcal{Q}_A : r\mid x_q\}$, which concludes the proof using the above bound.
-  
-If $r\in \mathcal{Q}_{A_I^{(q)}}$ then there exists some $m\in A_I^{(q)}$ such that $r\mid m$ and $(r,m/r)=1$. Let $m=n/qd_q$ where $n\in A$ with $qd_q\mid n$ and $(qd_q,n/qd_q)=(qd_q,m)=1$. Certainly $r\mid n = mqd_q$, since $r\mid m$. Furthermore, $r$ is coprime to $qd_q$ since $r$ divides $m$. Therefore $(r,n/r)=(r,(m/r)qd_q)=(r,m/r)=1$, and hence $r\in \mathcal{Q}_A$. 
 
-Finally, we need to show that $r\mid x_q$. Let $m\in A_I^{(q)}$ be such that $r\mid m$. Let $n\in A_I$ be such that $qd_q\mid n$ and $m=n/qd_q$. Then $r\mid n=mqd_q$, and hence since $n\mid x_q$ we have $r\mid x_q$ as required.  
+    By definition of $A_I$, every $n\in A_I$ with $qd_q\mid n$ must divide some $x\in I$, say $x(q;n)$. We claim that $x(q,n)=x(q,m)$ for all $n,m\in A_I$ with $qd_q\mid n$ and $qd_q\mid m$. Otherwise $qd_q$ divides $\abs{x(q,n)-x(q,m)}$, so $\abs{I}<qd_q\leq \abs{x(q,n)-x(q,m)}$, which is an integer in $[1,\abs{I})$, a contradiction.
+
+  Let $x_q\in I$ be such that $x(q,n)=x_q$ for all $n\in A_I$ with $qd_q \mid n$. We claim that $\mathcal{Q}_{A_I^{(q)}}\subset \{ r\in \mathcal{Q}_A : r\mid x_q\}$, which concludes the proof using the above bound.
+
+If $r\in \mathcal{Q}_{A_I^{(q)}}$ then there exists some $m\in A_I^{(q)}$ such that $r\mid m$ and $(r,m/r)=1$. Let $m=n/qd_q$ where $n\in A$ with $qd_q\mid n$ and $(qd_q,n/qd_q)=(qd_q,m)=1$. Certainly $r\mid n = mqd_q$, since $r\mid m$. Furthermore, $r$ is coprime to $qd_q$ since $r$ divides $m$. Therefore $(r,n/r)=(r,(m/r)qd_q)=(r,m/r)=1$, and hence $r\in \mathcal{Q}_A$.
+
+Finally, we need to show that $r\mid x_q$. Let $m\in A_I^{(q)}$ be such that $r\mid m$. Let $n\in A_I$ be such that $qd_q\mid n$ and $m=n/qd_q$. Then $r\mid n=mqd_q$, and hence since $n\mid x_q$ we have $r\mid x_q$ as required.
 \end{proof}
 
 \begin{lemma}\label{lem:good_d}
-Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that, for all $q\in \mathcal{Q}_A$,
-\[R(A;q) \geq (\log N)^{-1/100},\]
-Then for any interval of length $\leq MN^{-2/(\log \log N)}$, either
-\begin{enumerate}
-\item \[\# \{ n\in A : \textrm{no element of }I\textrm{ is divisible by }n\}\geq M/\log N,\]
-or
-\item for all $q\in\mathcal{D}_I(A;M/2(\log N)^{1/100})$ 
-\[R(A_I;q)> 1/2(\log N)^{1/100}.\]
-\end{enumerate}
+\leanok
+\lean{good_d}
+  \uses{def:interval_rare_ppowers,def:rec_sum_local}
+ Suppose $N$ is an integer and $\delta,M\in \mathbb{R}$. Suppose that $A\subset [M,N]$ is a set of integers such that, for all $q\in \mathcal{Q}_A$,
+\[R(A;q) \geq 2\delta,\]
+Then for any finite set of integers $I$, for all $q\in\mathcal{D}_I(A;\delta M)$, if $A_I$ is the set of those $n\in A$ that divide some element of $I$, 
+\[R(A_I;q)> \delta.\]
 \end{lemma}
 \begin{proof}
-Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$, and $\mathcal{D}=\mathcal{D}_I(A;M/2(\log N)^{1/100})$. We may assume that $\abs{A\backslash A_I}< M/\log N$, or else the first part of the conclusion holds and we're done.
-
-For every $q\in \mathcal{D}$, by definition,
-\[\#\{ n\in A_q : n\not\in A_I\} < \frac{M}{2q(\log N)^{1/100}}.\]
+For every $q\in \mathcal{D}_I(A;\delta M$, by definition,
+\[\#\{ n\in A_q : n\not\in A_I\} < \frac{\delta M}{q}.\]
 Therefore
-\[R(A_I;q) = \sum_{\substack{n \in A_q\\n\in A_I}}\frac{q}{n}> \sum_{n \in A_q}\frac{q}{n}-\frac{q}{M}\brac{\frac{M}{2q(\log N)^{1/100}}}.\]
-  \[=R(A;q) - \frac{1}{2(\log N)^{1/100}}\geq \frac{1}{2(\log N)^{1/100}}.\]
+\[R(A_I;q) = \sum_{\substack{n \in A_q\\n\in A_I}}\frac{q}{n}> \sum_{n \in A_q}\frac{q}{n}-\frac{q}{M}\brac{\frac{\delta M}{q}}.\]
+  \[=R(A;q) - \delta \geq \delta.\]
 \end{proof}
 
 
@@ -79,7 +75,7 @@ or
 \end{enumerate}
 \end{proposition}
 \begin{proof}
-  \uses{lem:find_multiples,lem:good_d,lem:mertens1,lem:basic,lem:divisor_bound,def:rec_sum_local}
+  \uses{lem:find_multiples,lem:good_d,lem:basic,lem:divisor_bound}
 Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$, and $\mathcal{D}=\mathcal{D}_I(A;M/2(\log N)^{1/00})$. We may assume that $\abs{A\backslash A_I}< M/\log N$.
 
 Let $\mathcal{E}$ be the set of those $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$, so that by Lemma~\ref{lem:good_d} we have $\mathcal{D}\subset \mathcal{E}$. By Lemma~\ref{lem:find_multiples} for each $q\in\mathcal{E}$ there exists $x_q\in I$ such that $q\mid x_q$ and
@@ -88,24 +84,24 @@ Let $\mathcal{E}$ be the set of those $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1
 
 Let $X=\{x_q : q\in \mathcal{E}\}$. Suppose that $\abs{X}\geq 3$, and say $x,y,z\in X$ are three distinct elements. Then
 \[\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\geq \sum_{\substack{q\mid x\\ q\in \mathcal{Q}_A}}\frac{1}{q}+\sum_{\substack{q\mid y\\ q\in \mathcal{Q}_A}}\frac{1}{q}+\sum_{\substack{q\mid z\\ q\in \mathcal{Q}_A}}\frac{1}{q}-\sum_{q\mid (x,y)}\frac{1}{q}-\sum_{q\mid (y,z)}\frac{1}{q}-\sum_{q\mid (x,z)}\frac{1}{q},\]
-where the last three sums are restricted to prime powers. 
+where the last three sums are restricted to prime powers.
 
-Since $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq (1+o(1))\log\log N\leq 1.01\log\log N$, say, by Lemma~\ref{lem:mertens1}, it follows that 
+Since $\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\leq (1+o(1))\log\log N\leq 1.01\log\log N$, say, by Lemma~\ref{lem:mertens1}, it follows that
 \[\sum_{q\mid (x,y)}\frac{1}{q}+\sum_{q\mid (y,z)}\frac{1}{q}+\sum_{q\mid (x,z)}\frac{1}{q}\geq 0.04\log\log N.\]
 
 But since $x,y\in I$ we have, by Lemma~\ref{lem:basic},
   \[\sum_{q\mid (x,y)}\frac{1}{q}\ll \log\log\log N,\]
 and similarly for the other sums, and so the left-hand side is $O(\log\log\log N)$, which is a contradiction for large enough $N$.
 
-Therefore $\abs{X}\leq 2$. If $\mathcal{D}$ is empty the second conclusion trivially holds, and therefore we may assume there is some $q\in \mathcal{E}$ and hence some $x_q\in X$, so $\abs{X}\geq 1$. If $\abs{X}=1$ then we are in the second conclusion, letting $x$ be the unique element of $X$, since by construction $x=x_q$ for all $q\in \mathcal{D}$, and hence in particular $q\mid x$ for all $q\in \mathcal{D}_I$ as required. 
+Therefore $\abs{X}\leq 2$. If $\mathcal{D}$ is empty the second conclusion trivially holds, and therefore we may assume there is some $q\in \mathcal{E}$ and hence some $x_q\in X$, so $\abs{X}\geq 1$. If $\abs{X}=1$ then we are in the second conclusion, letting $x$ be the unique element of $X$, since by construction $x=x_q$ for all $q\in \mathcal{D}$, and hence in particular $q\mid x$ for all $q\in \mathcal{D}_I$ as required.
 
 Finally, we deal with the case $\abs{X}=2$. Say $X=\{w_1,w_2\}$ with $w_1\neq w_2$ (and both are elements of $I$). Let $A^{(i)}=\{n\in A: n\mid w_i\}$ and $A^{(0)}=A\backslash (A^{(1)}\cup A^{(2)})$. Without loss of generality, label the $w_i$ such that $R(A^{(1)})\geq R(A^{(2)}$.  Suppose first that $R(A^{(0)})<R(A)/3$. In this case, since $R(A^{(0)})+R(A^{(1)})+R(A^{(2)})\geq R(A)$, we have $R(A^{(1)}\geq R(A)/3$. Furthermore, note that
 \[\sum_{q\mid w_1}\frac{1}{q}\leq \sum_{q\leq N}\frac{1}{q}-\sum_{q\mid w_2}\frac{1}{q}+\sum_{q\mid (w_1,w_2)}\frac{1}{q}.\]
-As above, by Lemma~\ref{lem:mertens1}, the assumed lower bound on the sum over $q\mid w_2$, and Lemma~\ref{lem:basic}, for sufficiently large $N$ the right-hand side is 
+As above, by Lemma~\ref{lem:mertens1}, the assumed lower bound on the sum over $q\mid w_2$, and Lemma~\ref{lem:basic}, for sufficiently large $N$ the right-hand side is
 \[\leq \brac{1.01-0.35+0.01}\log\log N\leq \tfrac{2}{3}\log\log N.\]
-Every $q\mid \mathcal{Q}_{A^{(1)}}$ divides $w_1$, and hence 
+Every $q\mid \mathcal{Q}_{A^{(1)}}$ divides $w_1$, and hence
 \[\sum_{q\in \mathcal{Q}_{A^{(1)}}}\frac{1}{q}\leq\frac{2}{3}\log\log N,\]
-and we are in case (1) with $B=A^{(1)}$. 
+and we are in case (1) with $B=A^{(1)}$.
 
 Finally, suppose that $R(A^{(0)})\geq R(A)/3$. We will derive a contradiction, assuming $N$ is large enough.  Let $A'\subset A^{(0)}$ be the set of those $n\in A_I\cap A^{(0)}$ such that if $n\in A_q$ then $q\in\mathcal{E}$. By definition of $\mathcal{E}$ and Mertens' estimate \ref{lemma:mertens1},
   \[R(A^{(0)}\backslash A')\leq \frac{\abs{A\backslash A_I}}{M}+\sum_{q\in\mathcal{Q}_A\backslash \mathcal{E}_I}\frac{1}{q}R(A_I;q)\ll \frac{\log\log N}{(\log N)^{1/100}},\]
@@ -121,7 +117,6 @@ Finally, suppose that $R(A^{(0)})\geq R(A)/3$. We will derive a contradiction, a
 \end{proof}
 
 \begin{proposition}\label{prop:tech_iterative2}
-  \uses{def:interval_rare_ppowers}
 Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that
 \[\tfrac{99}{100}\log\log N\leq \omega(n)\leq  2\log\log N\quad\textrm{for all}\quad n\in A,\]
 and, for all $q\in \mathcal{Q}_A$,
@@ -135,25 +130,25 @@ or
 \end{enumerate}
 \end{proposition}
 \begin{proof}
-  \uses{lem:find_multiples,lem:good_dlem:basic,def:rec_sum_local}
-  Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$, and $\mathcal{D}=\mathcal{D}_I(A;M/2q(\log N)^{1/00})$. We may assume that $\abs{A\backslash A_I}< M/\log N$. 
-  
+  \uses{lem:find_multiples,lem:good_d,lem:basic}
+  Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$, and $\mathcal{D}=\mathcal{D}_I(A;M/2q(\log N)^{1/00})$. We may assume that $\abs{A\backslash A_I}< M/\log N$.
+
   By Lemmas~\ref{lem:find_multiples} and \ref{lem:good_d} for each $q\in\mathcal{D}$ there exists $x_q\in I$ such that $q\mid x_q$ and
 \[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\]
 
 
-  
+
 Let $X=\{x_q : q\in \mathcal{D}\}$. Suppose that $\abs{X}\geq 2$, and say $x,y\in X$ are two distinct elements. Then
 \[\sum_{q\in\mathcal{Q}_A}\frac{1}{q}\geq \sum_{\substack{q\mid x\\ q\in \mathcal{Q}_A}}\frac{1}{q}+\sum_{\substack{q\mid y\\ q\in \mathcal{Q}_A}}\frac{1}{q}-\sum_{q\mid (x,y)}\frac{1}{q},\]
-where the third sum is restricted to prime powers. Using our assumed bounds, this implies 
+where the third sum is restricted to prime powers. Using our assumed bounds, this implies
 \[\sum_{q\mid (x,y)}\frac{1}{q}\geq \brac{0.7-\frac{2}{3}}\log\log N\geq \frac{1}{100}\log\log N,\]
-say. 
+say.
 
 But since $x,y\in I$ we have, by Lemma~\ref{lem:basic},
   \[\sum_{q\mid (x,y)}\frac{1}{q}\ll \log\log\log N,\]
   which is a contradiction for large enough $N$.
 
-Therefore $\abs{X}\leq 1$. If $\mathcal{D}$ is empty then the second conclusion trivially holds, for any $x\in I$. Therefore there exists some $q\in \mathcal{D}$, therefore there exists some $x_q\in X$, and hence $\abs{X}=1$. Let $x\in I$ be the unique element of $X$. By construction $x=x_q$ for all $q\in \mathcal{D}$, and hence in particular $q\mid x$ for all $q\in \mathcal{D}_I$ as required. 
+Therefore $\abs{X}\leq 1$. If $\mathcal{D}$ is empty then the second conclusion trivially holds, for any $x\in I$. Therefore there exists some $q\in \mathcal{D}$, therefore there exists some $x_q\in X$, and hence $\abs{X}=1$. Let $x\in I$ be the unique element of $X$. By construction $x=x_q$ for all $q\in \mathcal{D}$, and hence in particular $q\mid x$ for all $q\in \mathcal{D}_I$ as required.
   \end{proof}
 
 \begin{proposition}[Main Technical Proposition]\label{prop:techmain}
