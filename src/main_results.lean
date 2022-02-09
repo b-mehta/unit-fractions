@@ -306,41 +306,35 @@ lemma find_good_d : ∃ c C : ℝ, ∀ᶠ (N : ℕ) in at_top, ∀ M k : ℝ,
   :=
 sorry
 
-lemma good_d (N : ℕ) (M δ : ℝ):
-∀ A ⊆ finset.range(N+1),
-   (∀ n ∈ A, M ≤ (n:ℝ)) →
-   (∀ q ∈ ppowers_in_set A,
-    ((2:ℝ)*δ ≤ rec_sum_local A q)) →
-  (∀ I : finset ℤ,
-    (∀ q : ℕ, (q ∈ interval_rare_ppowers I A
-       (M*δ) →
-       (δ ≤ rec_sum_local
-         (A.filter(λ n, ∃ x ∈ I, ↑n ∣ x)) q))
-  )) :=
+lemma good_d (N : ℕ) (M δ : ℝ) (A : finset ℕ) (hA₁ : A ⊆ finset.range (N + 1)) (hM : 0 < M)
+  (hAM : ∀ n ∈ A, M ≤ (n : ℝ)) (hAq : ∀ q ∈ ppowers_in_set A, (2 : ℝ) * δ ≤ rec_sum_local A q)
+  (I : finset ℤ) (q : ℕ) (hq : q ∈ interval_rare_ppowers I A (M * δ)) :
+  δ ≤ rec_sum_local (A.filter (λ n, ∃ x ∈ I, ↑n ∣ x)) q :=
 begin
-  intros A hA1 hAM hAq I q hq,
-  rw interval_rare_ppowers at hq,
-  let nA : finset ℕ := A.filter (λ n, ∀ x ∈ I, ¬ (↑n ∣ x)),
-  have h1: (rec_sum_local nA q:ℝ) ≤ δ,
-  { -- bound each summand above by q/M using hAM, then
-    -- apply the bound on the cardinality of the set from hq,
-    -- then elementary inequality manipulation
-    sorry },
-  have h2 : rec_sum_local A q = rec_sum_local
-         (A.filter(λ n, ∃ x ∈ I, ↑n ∣ x)) q + rec_sum_local nA q,
-  { simp only [rec_sum_local, local_part],
-    have : A = (A.filter(λ n, ∃ x ∈ I, ↑n ∣ x)) ∪ nA,
-    { -- trivial using lem?
-      sorry },
-    -- should be immediate now using finset.sum_union, but can't
-    -- get it to work?
-    sorry
-    },
-  have h3 : (2:ℝ)*δ ≤ rec_sum_local A q,
-  { apply hAq, rw finset.mem_filter at hq, exact hq.left },
-  have h4 : (2:ℝ)*δ ≤ (rec_sum_local
-         (A.filter(λ n, ∃ x ∈ I, ↑n ∣ x)) q:ℝ) + (rec_sum_local nA q:ℝ),
-  { rw_mod_cast ← h2, exact h3, },
+  rw [interval_rare_ppowers, finset.mem_filter] at hq,
+  set nA : finset ℕ := A.filter (λ n, ∀ x ∈ I, ¬ (↑n ∣ x)),
+  have hnA : nA = A.filter (λ n, ¬ ∃ x ∈ I, ↑n ∣ x),
+  { apply finset.filter_congr,
+    simp },
+  have h1 : (rec_sum_local nA q : ℝ) ≤ δ,
+  { rw [rec_sum_local, local_part, finset.filter_comm, ←local_part, rat.cast_sum],
+    refine (finset.sum_le_of_forall_le _ _ ((q : ℝ) / M) _).trans _,
+    { intros i hi,
+      simp only [finset.mem_filter, mem_local_part, and_assoc] at hi,
+      simp only [rat.cast_div, rat.cast_coe_nat],
+      exact div_le_div_of_le_left (nat.cast_nonneg _) hM (hAM _ hi.1) },
+    rw nsmul_eq_mul,
+    refine (mul_le_mul_of_nonneg_right hq.2.le (div_nonneg (nat.cast_nonneg _) hM.le)).trans _,
+    rw [mul_comm M, mul_div_assoc, mul_assoc, div_mul_div, mul_comm M, div_self, mul_one],
+    simp only [mul_eq_zero, nat.cast_eq_zero, hM.ne', ne.def, or_false],
+    rw [mem_ppowers_in_set, and_assoc] at hq,
+    exact hq.1.ne_zero },
+  have h2 : rec_sum_local A q =
+    rec_sum_local (A.filter (λ n, ∃ x ∈ I, ↑n ∣ x)) q + rec_sum_local nA q,
+  { rw [hnA, ←rec_sum_local_disjoint (finset.disjoint_filter_filter_neg _ _),
+      finset.filter_union_filter_neg_eq] },
+  have h4 : 2 * δ ≤ (rec_sum_local (A.filter (λ n, ∃ x ∈ I, ↑n ∣ x)) q) + (rec_sum_local nA q),
+  { rw_mod_cast ← h2, exact hAq _ hq.1, },
   linarith,
 end
 

@@ -124,3 +124,8 @@ lemma finset.sum_erase_eq_sub {α β : Type*} [decidable_eq α] [add_comm_group 
   {f : α → β} {s : finset α} {a : α} (ha : a ∈ s) :
   ∑ x in s.erase a, f x = (∑ x in s, f x) - f a :=
 by rw [←finset.sum_erase_add _ _ ha, add_sub_cancel]
+
+lemma finset.filter_comm {α : Type*} (p q : α → Prop) [decidable_eq α]
+  [decidable_pred p] [decidable_pred q] (s : finset α) :
+  (s.filter p).filter q = (s.filter q).filter p :=
+by simp only [finset.filter_filter, and_comm]

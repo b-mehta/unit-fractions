@@ -19,7 +19,7 @@ contains associated results useful for that paper.
 -/
 
 open_locale big_operators -- this lets me use ∑ and ∏ notation
-open filter real
+open filter real finset
 open nat (coprime)
 
 open_locale arithmetic_function
@@ -27,26 +27,26 @@ open_locale classical
 noncomputable theory
 
 def upper_density (A : set ℕ) : ℝ := limsup at_top
-   (λ N : ℕ, (((finset.range(N+1)).filter (λ n, n ∈ A)).card : ℝ) / N)
+   (λ N : ℕ, (((range (N+1)).filter (λ n, n ∈ A)).card : ℝ) / N)
 
 -- This is R(A) in the paper.
 def rec_sum (A : finset ℕ) : ℚ := ∑ n in A, 1/n
 
 lemma rec_sum_bUnion_disjoint {A : finset (finset ℕ)}
   (hA : (A : set (finset ℕ)).pairwise_disjoint id) : rec_sum (A.bUnion id) = ∑ s in A, rec_sum s :=
-by simp only [rec_sum, finset.sum_bUnion hA, id.def]
+by simp only [rec_sum, sum_bUnion hA, id.def]
 
 lemma rec_sum_disjoint {A B : finset ℕ} (h : disjoint A B) :
    rec_sum (A ∪ B) = rec_sum A + rec_sum B :=
-by simp only [rec_sum, finset.sum_union h]
+by simp only [rec_sum, sum_union h]
 
 @[simp] lemma rec_sum_empty : rec_sum ∅ = 0 := by simp [rec_sum]
 
 lemma rec_sum_nonneg {A : finset ℕ} : 0 ≤ rec_sum A :=
-finset.sum_nonneg (λ i hi, div_nonneg zero_le_one (nat.cast_nonneg _))
+sum_nonneg (λ i hi, div_nonneg zero_le_one (nat.cast_nonneg _))
 
 lemma rec_sum_mono {A₁ A₂ : finset ℕ} (h : A₁ ⊆ A₂) : rec_sum A₁ ≤ rec_sum A₂ :=
-finset.sum_le_sum_of_subset_of_nonneg h (λ _ _ _, div_nonneg zero_le_one (nat.cast_nonneg _))
+sum_le_sum_of_subset_of_nonneg h (λ _ _ _, div_nonneg zero_le_one (nat.cast_nonneg _))
 
 -- can make this stronger without 0 ∉ A but we never care about that case
 lemma rec_sum_eq_zero_iff {A : finset ℕ} (hA : 0 ∉ A) : rec_sum A = 0 ↔ A = ∅ :=
@@ -56,10 +56,10 @@ begin
   { rintro rfl,
     simp },
   simp_rw [rec_sum, one_div],
-  rw [finset.sum_eq_zero_iff_of_nonneg (λ i hi, _)],
+  rw [sum_eq_zero_iff_of_nonneg (λ i hi, _)],
   { intro h,
     simp only [one_div, inv_eq_zero, nat.cast_eq_zero] at h,
-    apply finset.eq_empty_of_forall_not_mem,
+    apply eq_empty_of_forall_not_mem,
     intros x hx,
     cases h x hx,
     apply hA hx },
@@ -70,7 +70,7 @@ lemma nonempty_of_rec_sum_recip {A : finset ℕ} {d : ℕ} (hd : 1 ≤ d) :
   rec_sum A = 1 / d → A.nonempty :=
 begin -- should be able to simplify this
   intro h,
-  rw [finset.nonempty_iff_ne_empty],
+  rw [nonempty_iff_ne_empty],
   rintro rfl,
   simp only [one_div, zero_eq_inv, rec_sum_empty] at h,
   have : 0 < d := hd,
@@ -84,11 +84,11 @@ def local_part (A : finset ℕ) (q : ℕ) : finset ℕ := A.filter (λ n, q ∣ 
 
 lemma mem_local_part {A : finset ℕ} {q : ℕ} (n : ℕ) :
   n ∈ local_part A q ↔ n ∈ A ∧ q ∣ n ∧ coprime q (n / q) :=
-by rw [local_part, finset.mem_filter]
+by rw [local_part, mem_filter]
 
 lemma local_part_subset {A : finset ℕ} {q : ℕ} :
   local_part A q ⊆ A :=
-finset.filter_subset _ _
+filter_subset _ _
 
 lemma zero_mem_local_part_iff {A : finset ℕ} {q : ℕ} (hA : 0 ∉ A) :
   0 ∉ local_part A q :=
@@ -104,7 +104,7 @@ A.bUnion (λ n, n.divisors.filter (λ q, is_prime_pow q ∧ coprime q (n / q)))
 lemma mem_ppowers_in_set (A : finset ℕ) (q : ℕ) :
   q ∈ ppowers_in_set A ↔ is_prime_pow q ∧ (local_part A q).nonempty :=
 begin
-  simp only [ppowers_in_set, finset.mem_bUnion, finset.mem_filter, exists_prop, nat.mem_divisors,
+  simp only [ppowers_in_set, mem_bUnion, mem_filter, exists_prop, nat.mem_divisors,
     finset.nonempty, mem_local_part, ←exists_and_distrib_left],
   refine exists_congr (λ i, _),
   split,
@@ -119,6 +119,10 @@ end
 
 -- This is R(A;q) in the paper.
 def rec_sum_local (A : finset ℕ) (q : ℕ) : ℚ := ∑ n in local_part A q, q / n
+
+lemma rec_sum_local_disjoint {A B : finset ℕ} {q : ℕ} (h : disjoint A B) :
+   rec_sum_local (A ∪ B) q = rec_sum_local A q + rec_sum_local B q :=
+by { rw [rec_sum_local, local_part, filter_union, sum_union (disjoint_filter_filter h)], refl }
 
 def ppower_rec_sum (A : finset ℕ) : ℚ :=
 ∑ q in ppowers_in_set A, 1 / q
@@ -139,4 +143,4 @@ def interval_rare_ppowers (I : finset ℤ) (A : finset ℕ) (K : ℝ) : finset �
 
 lemma interval_rare_ppowers_subset (I : finset ℤ) {A : finset ℕ} (K : ℝ) :
   interval_rare_ppowers I A K ⊆ ppowers_in_set A :=
-finset.filter_subset _ _
+filter_subset _ _
