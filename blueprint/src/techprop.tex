@@ -41,10 +41,11 @@ Finally, we need to show that $r\mid x_q$. Let $m\in A_I^{(q)}$ be such that $r\
   \uses{def:interval_rare_ppowers,def:rec_sum_local}
  Suppose $N$ is an integer and $\delta,M\in \mathbb{R}$. Suppose that $A\subset [M,N]$ is a set of integers such that, for all $q\in \mathcal{Q}_A$,
 \[R(A;q) \geq 2\delta,\]
-Then for any finite set of integers $I$, for all $q\in\mathcal{D}_I(A;\delta M)$, if $A_I$ is the set of those $n\in A$ that divide some element of $I$, 
+Then for any finite set of integers $I$, for all $q\in\mathcal{D}_I(A;\delta M)$, if $A_I$ is the set of those $n\in A$ that divide some element of $I$,
 \[R(A_I;q)> \delta.\]
 \end{lemma}
 \begin{proof}
+  \leanok
 For every $q\in \mathcal{D}_I(A;\delta M$, by definition,
 \[\#\{ n\in A_q : n\not\in A_I\} < \frac{\delta M}{q}.\]
 Therefore
@@ -103,7 +104,7 @@ Every $q\mid \mathcal{Q}_{A^{(1)}}$ divides $w_1$, and hence
 \[\sum_{q\in \mathcal{Q}_{A^{(1)}}}\frac{1}{q}\leq\frac{2}{3}\log\log N,\]
 and we are in case (1) with $B=A^{(1)}$.
 
-Finally, suppose that $R(A^{(0)})\geq R(A)/3$. We will derive a contradiction, assuming $N$ is large enough.  Let $A'\subset A^{(0)}$ be the set of those $n\in A_I\cap A^{(0)}$ such that if $n\in A_q$ then $q\in\mathcal{E}$. By definition of $\mathcal{E}$ and Mertens' estimate \ref{lemma:mertens1},
+Finally, suppose that $R(A^{(0)})\geq R(A)/3$. We will derive a contradiction, assuming $N$ is large enough.  Let $A'\subset A^{(0)}$ be the set of those $n\in A_I\cap A^{(0)}$ such that if $n\in A_q$ then $q\in\mathcal{E}$. By definition of $\mathcal{E}$ and Mertens' estimate \ref{lem:mertens1},
   \[R(A^{(0)}\backslash A')\leq \frac{\abs{A\backslash A_I}}{M}+\sum_{q\in\mathcal{Q}_A\backslash \mathcal{E}_I}\frac{1}{q}R(A_I;q)\ll \frac{\log\log N}{(\log N)^{1/100}},\]
   and so  in particular, since $R(A)\geq (\log N)^{-1/101}$, we have $R(A')\gg (\log N)^{-1/101}$.
 
