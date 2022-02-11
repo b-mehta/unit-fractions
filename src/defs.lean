@@ -26,8 +26,39 @@ open_locale arithmetic_function
 open_locale classical
 noncomputable theory
 
-def upper_density (A : set ℕ) : ℝ := limsup at_top
-   (λ N : ℕ, (((range (N+1)).filter (λ n, n ∈ A)).card : ℝ) / N)
+def upper_density (A : set ℕ) : ℝ :=
+  limsup at_top (λ N : ℕ, (((range N).filter (λ n, n ∈ A)).card : ℝ) / N)
+
+lemma frequently_nat_of {A : set ℕ} {ε : ℝ} (hA : ε < upper_density A) :
+  ∃ᶠ (N : ℕ) in at_top, ε < ((range N).filter (λ n, n ∈ A)).card / N :=
+begin
+  refine frequently_lt_of_lt_limsup _ hA,
+  apply is_bounded.is_cobounded_le,
+  exact is_bounded_under_of ⟨0, λ x, div_nonneg (nat.cast_nonneg _) (nat.cast_nonneg _)⟩,
+end
+
+lemma exists_nat_of {A : set ℕ} {ε : ℝ} (hA : ε < upper_density A) :
+  ∃ (N : ℕ), 0 < N ∧ ε < ((range N).filter (λ n, n ∈ A)).card / N :=
+by simpa using frequently_at_top'.1 (frequently_nat_of hA) 0
+
+lemma exists_density_of {A : set ℕ} {ε : ℝ} (hA : ε < upper_density A) :
+  ∃ (N : ℕ), 0 < N ∧ ε * N < ((range N).filter (λ n, n ∈ A)).card :=
+begin
+  obtain ⟨N, hN, hN'⟩ := exists_nat_of hA,
+  refine ⟨N, hN, _⟩,
+  rwa lt_div_iff at hN',
+  rwa nat.cast_pos
+end
+
+lemma upper_density_nonneg {A : set ℕ} :
+  0 ≤ upper_density A :=
+begin
+  refine le_limsup_of_frequently_le _ _,
+  { exact frequently_of_forall (λ x, div_nonneg (nat.cast_nonneg _) (nat.cast_nonneg _)) },
+  refine is_bounded_under_of ⟨1, λ x, _⟩,
+  refine div_le_one_of_le (nat.cast_le.2 _) (nat.cast_nonneg _),
+  exact (card_le_of_subset (filter_subset _ _)).trans (by simp),
+end
 
 -- This is R(A) in the paper.
 def rec_sum (A : finset ℕ) : ℚ := ∑ n in A, 1/n

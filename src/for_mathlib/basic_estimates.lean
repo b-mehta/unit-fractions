@@ -66,83 +66,96 @@ Given a function `a : ℕ → M` from the naturals into an additive commutative 
 
 variables {M : Type*} [add_comm_monoid M] (a : ℕ → M)
 
-def summatory (a : ℕ → M) (x : ℝ) : M :=
-∑ n in finset.Icc 1 ⌊x⌋₊, a n
+def summatory (a : ℕ → M) (k : ℕ) (x : ℝ) : M :=
+∑ n in finset.Icc k ⌊x⌋₊, a n
 
-lemma summatory_nat (n : ℕ) :
-  summatory a n = ∑ i in finset.Icc 1 n, a i :=
+lemma summatory_nat (k n : ℕ) :
+  summatory a k n = ∑ i in finset.Icc k n, a i :=
 by simp only [summatory, nat.floor_coe]
 
-lemma summatory_eq_floor (x : ℝ) :
-  summatory a x = summatory a ⌊x⌋₊ :=
+lemma summatory_eq_floor {k : ℕ} (x : ℝ) :
+  summatory a k x = summatory a k ⌊x⌋₊ :=
 by rw [summatory, summatory, nat.floor_coe]
 
-lemma summatory_eq_of_Ico {n : ℕ} {x : ℝ}
+lemma summatory_eq_of_Ico {n k : ℕ} {x : ℝ}
   (hx : x ∈ Ico (n : ℝ) (n + 1)) :
-  summatory a x = summatory a n :=
+  summatory a k x = summatory a k n :=
 by rw [summatory_eq_floor, nat.floor_eq_on_Ico' _ _ hx]
 
-lemma summatory_eq_of_lt_one {x : ℝ} (hx : x < 1) :
-  summatory a x = 0 :=
+lemma summatory_eq_of_lt_one {k : ℕ} {x : ℝ} (hk : k ≠ 0) (hx : x < k) :
+  summatory a k x = 0 :=
 begin
   rw [summatory, finset.Icc_eq_empty_of_lt, finset.sum_empty],
-  rwa [nat.floor_lt' one_ne_zero, nat.cast_one],
+  rwa [nat.floor_lt' hk],
 end
 
-@[simp] lemma summatory_zero : summatory a 0 = 0 :=
-summatory_eq_of_lt_one _ zero_lt_one
+lemma summatory_zero_eq_of_lt {x : ℝ} (hx : x < 1) :
+  summatory a 0 x = a 0 :=
+by rw [summatory_eq_floor, nat.floor_eq_zero.2 hx, summatory_nat, finset.Icc_self,
+  finset.sum_singleton]
 
-@[simp] lemma summatory_one : summatory a 1 = a 1 :=
+@[simp] lemma summatory_zero {k : ℕ} (hk : k ≠ 0) : summatory a k 0 = 0 :=
+summatory_eq_of_lt_one _ hk (by rwa [nat.cast_pos, pos_iff_ne_zero])
+
+@[simp] lemma summatory_self {k : ℕ} : summatory a k k = a k :=
 by simp [summatory]
 
-lemma summatory_succ_sub {M : Type*} [add_comm_group M] (a : ℕ → M) (n : ℕ) :
-  a (n + 1) = summatory a (n + 1) - summatory a n :=
+@[simp] lemma summatory_one : summatory a 1 1 = a 1 :=
+by simp [summatory]
+
+lemma summatory_succ (k n : ℕ) (hk : k ≤ n + 1) :
+  summatory a k (n+1) = a (n + 1) + summatory a k n :=
+by rw [summatory_nat, ←nat.cast_add_one, summatory_nat, ←nat.Ico_succ_right, @add_comm M,
+  finset.sum_Ico_succ_top hk, nat.Ico_succ_right]
+
+lemma summatory_succ_sub {M : Type*} [add_comm_group M] (a : ℕ → M) (k : ℕ) (n : ℕ)
+  (hk : k ≤ n + 1) :
+  a (n + 1) = summatory a k (n + 1) - summatory a k n :=
 begin
-  rw [←nat.cast_add_one, summatory_nat, summatory_nat, ←nat.Ico_succ_right,
+  rwa [←nat.cast_add_one, summatory_nat, summatory_nat, ←nat.Ico_succ_right,
     finset.sum_Ico_succ_top, nat.Ico_succ_right, add_sub_cancel'],
-  simp,
 end
 
 lemma summatory_eq_sub {M : Type*} [add_comm_group M] (a : ℕ → M) :
-  ∀ n, n ≠ 0 → a n = summatory a n - summatory a (n - 1)
+  ∀ n, n ≠ 0 → a n = summatory a 1 n - summatory a 1 (n - 1)
 | 0 h := (h rfl).elim
-| (n+1) _ := by simpa using summatory_succ_sub a n
+| (n+1) _ := by simpa using summatory_succ_sub a 1 n
 
-lemma abs_summatory_le_sum {M : Type*} [semi_normed_group M] (a : ℕ → M) {x : ℝ} :
-  ∥summatory a x∥ ≤ ∑ i in finset.Icc 1 ⌊x⌋₊, ∥a i∥ :=
+lemma abs_summatory_le_sum {M : Type*} [semi_normed_group M] (a : ℕ → M) {k : ℕ} {x : ℝ} :
+  ∥summatory a k x∥ ≤ ∑ i in finset.Icc k ⌊x⌋₊, ∥a i∥ :=
 norm_sum_le _ _
 
 lemma summatory_const_one {x : ℝ} :
-  summatory (λ _, (1 : ℝ)) x = (⌊x⌋₊ : ℝ) :=
+  summatory (λ _, (1 : ℝ)) 1 x = (⌊x⌋₊ : ℝ) :=
 by { rw [summatory, finset.sum_const, nat.card_Icc, nat.smul_one_eq_coe], refl }
 
-lemma summatory_nonneg' {M : Type*} [ordered_add_comm_group M] {a : ℕ → M} (x : ℝ)
-  (ha : ∀ (i : ℕ), 1 ≤ i → (i : ℝ) ≤ x → 0 ≤ a i) :
-  0 ≤ summatory a x :=
+lemma summatory_nonneg' {M : Type*} [ordered_add_comm_group M] {a : ℕ → M} (k : ℕ) (x : ℝ)
+  (ha : ∀ (i : ℕ), k ≤ i → (i : ℝ) ≤ x → 0 ≤ a i) (hk : k ≠ 0) :
+  0 ≤ summatory a k x :=
 begin
   apply finset.sum_nonneg,
   simp only [and_imp, finset.mem_Icc],
   intros i hi₁ hi₂,
-  apply ha i hi₁ ((nat.le_floor_iff' (ne_of_gt hi₁)).1 hi₂),
+  apply ha i hi₁ ((nat.le_floor_iff' (ne_of_gt (lt_of_lt_of_le hk.bot_lt hi₁))).1 hi₂),
 end
 
-lemma summatory_nonneg {M : Type*} [ordered_add_comm_group M] (a : ℕ → M) (x : ℝ)
+lemma summatory_nonneg {M : Type*} [ordered_add_comm_group M] (a : ℕ → M) (x : ℝ) (k : ℕ)
   (ha : ∀ (i : ℕ), 0 ≤ a i) :
-  0 ≤ summatory a x :=
-summatory_nonneg' _ (λ i hi₁ _, ha i)
+  0 ≤ summatory a k x :=
+finset.sum_nonneg (λ i _, ha _)
 
-lemma summatory_monotone_of_nonneg {M : Type*} [ordered_add_comm_group M] (a : ℕ → M)
+lemma summatory_monotone_of_nonneg {M : Type*} [ordered_add_comm_group M] (a : ℕ → M) (k : ℕ)
   (ha : ∀ (i : ℕ), 0 ≤ a i) :
-  monotone (summatory a) :=
+  monotone (summatory a k) :=
 begin
   intros i j h,
   refine finset.sum_le_sum_of_subset_of_nonneg _ (λ k _ _, ha _),
   apply finset.Icc_subset_Icc le_rfl (nat.floor_mono h),
 end
 
-lemma abs_summatory_bound {M : Type*} [semi_normed_group M] (a : ℕ → M) (k : ℕ)
-  {x : ℝ} (hx : x ≤ k) :
-  ∥summatory a x∥ ≤ ∑ i in finset.Icc 1 k, ∥a i∥ :=
+lemma abs_summatory_bound {M : Type*} [semi_normed_group M] (a : ℕ → M) (k z : ℕ)
+  {x : ℝ} (hx : x ≤ z) :
+  ∥summatory a k x∥ ≤ ∑ i in finset.Icc k z, ∥a i∥ :=
 (abs_summatory_le_sum a).trans
   (finset.sum_le_sum_of_subset_of_nonneg
     (finset.Icc_subset_Icc le_rfl (nat.floor_le_of_le hx)) (by simp))
@@ -150,24 +163,24 @@ lemma abs_summatory_bound {M : Type*} [semi_normed_group M] (a : ℕ → M) (k :
 open measure_theory
 
 @[measurability] lemma measurable_summatory {M : Type*} [add_comm_monoid M] [measurable_space M]
-  {a : ℕ → M} :
-  measurable (summatory a) :=
+  {k : ℕ} {a : ℕ → M} :
+  measurable (summatory a k) :=
 begin
-  change measurable ((λ y, ∑ i in finset.Icc 1 y, a i) ∘ _),
+  change measurable ((λ y, ∑ i in finset.Icc k y, a i) ∘ _),
   exact measurable_from_nat.comp nat.measurable_floor,
 end
 
 lemma partial_summation_integrable {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) {f : ℝ → 𝕜} {x y : ℝ}
-  (hf' : integrable_on f (Icc x y)) :
-  integrable_on (summatory a * f) (Icc x y) :=
+  {k : ℕ} (hf' : integrable_on f (Icc x y)) :
+  integrable_on (summatory a k * f) (Icc x y) :=
 begin
-  let b := ∑ i in finset.Icc 1 ⌈y⌉₊, ∥a i∥,
+  let b := ∑ i in finset.Icc k ⌈y⌉₊, ∥a i∥,
   have : integrable_on (b • f) (Icc x y) := integrable.smul b hf',
   refine this.integrable.mono (measurable_summatory.ae_measurable.mul' hf'.1) _,
   rw ae_restrict_iff' (measurable_set_Icc : measurable_set (Icc x _)),
   refine eventually_of_forall (λ z hz, _),
   rw [pi.mul_apply, normed_field.norm_mul, pi.smul_apply, norm_smul],
-  refine mul_le_mul_of_nonneg_right ((abs_summatory_bound _ ⌈y⌉₊ _).trans _) (norm_nonneg _),
+  refine mul_le_mul_of_nonneg_right ((abs_summatory_bound _ _ ⌈y⌉₊ _).trans _) (norm_nonneg _),
   { exact hz.2.trans (nat.le_ceil y) },
   rw real.norm_eq_abs,
   exact le_abs_self b,
@@ -176,64 +189,68 @@ end
 /-- A version of partial summation where the upper bound is a natural number, useful to prove the
 general case. -/
 theorem partial_summation_nat {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜)
-  {N : ℕ} (hN : 1 ≤ N)
-  (hf : ∀ i ∈ Icc (1:ℝ) N, has_deriv_at f (f' i) i) (hf' : integrable_on f' (Icc 1 N)) :
-  ∑ n in finset.Icc 1 N, a n * f n =
-    summatory a N * f N - ∫ t in Icc (1:ℝ) N, summatory a t * f' t :=
+  {k : ℕ} {N : ℕ} (hN : k ≤ N)
+  (hf : ∀ i ∈ Icc (k : ℝ) N, has_deriv_at f (f' i) i) (hf' : integrable_on f' (Icc k N)) :
+  ∑ n in finset.Icc k N, a n * f n =
+    summatory a k N * f N - ∫ t in Icc (k : ℝ) N, summatory a k t * f' t :=
 begin
   rw ←nat.Ico_succ_right,
-  induction N with N ih,
-  { simpa only [le_zero_iff] using hN },
-  rcases N.eq_zero_or_pos with rfl | hN',
+  revert hf hf',
+  refine nat.le_induction _ _ _ hN,
   { simp },
+  intros N hN' ih hf hf',
   have hN'' : (N:ℝ) ≤ N + 1 := by simp only [zero_le_one, le_add_iff_nonneg_right],
-  have : Icc (1:ℝ) (N+1) = Icc 1 N ∪ Icc N (N+1),
+  have : Icc (k:ℝ) (N+1) = Icc k N ∪ Icc N (N+1),
   { refine (Icc_union_Icc_eq_Icc _ hN'').symm,
-    exact nat.one_le_cast.2 hN' },
+    rwa nat.cast_le },
   simp only [nat.cast_succ, this, mem_union_eq, or_imp_distrib, forall_and_distrib,
     integrable_on_union] at ih hf hf' ⊢,
-  rw [finset.sum_Ico_succ_top nat.succ_pos', ih hN' hf.1 hf'.1, add_comm, nat.succ_eq_add_one,
-    summatory_succ_sub a, sub_mul, sub_add_eq_add_sub, eq_sub_iff_add_eq, add_sub_assoc, add_assoc,
-    nat.cast_add_one, add_right_eq_self, sub_add_eq_add_sub, sub_eq_zero, add_comm, ←add_sub_assoc,
-    ←sub_add_eq_add_sub, ←eq_sub_iff_add_eq, ←mul_sub],
-  rw [integral_union_ae _ (measurable_set_Icc.null_measurable_set : null_measurable_set (Icc (_:ℝ) _)),
-    add_sub_cancel', ←set_integral_congr_set_ae (Ico_ae_eq_Icc' volume_singleton)],
-  { have : eq_on (λ x, summatory a x * f' x) (λ x, summatory a N • f' x) (Ico N (N+1)) :=
-      λ x hx, congr_arg2 (*) (summatory_eq_of_Ico _ hx) rfl,
-    rw [set_integral_congr measurable_set_Ico this, integral_smul, algebra.id.smul_eq_mul,
-      set_integral_congr_set_ae (Ico_ae_eq_Ioc' volume_singleton volume_singleton),
-      ←interval_integral.integral_of_le hN'', interval_integral.integral_eq_sub_of_has_deriv_at],
-    { rw interval_of_le hN'',
-      exact hf.2 },
-    { exact (interval_integral.interval_integrable_iff_integrable_Icc_of_le hN'').2 hf'.2 } },
+  replace ih := ih hf.1 hf'.1,
+  have hN''' := hN'.trans le_self_add,
+  rw [finset.sum_Ico_succ_top hN''', ih, summatory_succ _ _ _ hN''', add_mul, add_sub_assoc,
+    add_comm, nat.cast_add_one, add_right_inj, eq_comm, sub_eq_sub_iff_sub_eq_sub, ←mul_sub,
+    integral_union_ae, add_sub_cancel',
+    ←set_integral_congr_set_ae (Ico_ae_eq_Icc' volume_singleton)],
+  rotate, -- the first goal is the only hard one
+  { rw [ae_disjoint, Icc_inter_Icc_eq_singleton _ hN'', volume_singleton],
+    rwa nat.cast_le },
+  { exact measurable_set_Icc.null_measurable_set },
   { exact partial_summation_integrable a hf'.1 },
   { exact partial_summation_integrable a hf'.2 },
-  rw [ae_disjoint, Icc_inter_Icc_eq_singleton _ hN'', volume_singleton],
-  exact nat.one_le_cast.2 hN',
+  have : eq_on (λ x, summatory a k x * f' x) (λ x, summatory a k N • f' x) (Ico N (N+1)) :=
+      λ x hx, congr_arg2 (*) (summatory_eq_of_Ico _ hx) rfl,
+  rw [set_integral_congr measurable_set_Ico this, integral_smul, algebra.id.smul_eq_mul,
+      set_integral_congr_set_ae (Ico_ae_eq_Ioc' volume_singleton volume_singleton),
+      ←interval_integral.integral_of_le hN'', interval_integral.integral_eq_sub_of_has_deriv_at],
+  { rw interval_of_le hN'',
+    exact hf.2 },
+  { exact (interval_integral.interval_integrable_iff_integrable_Icc_of_le hN'').2 hf'.2 },
 end
 
 /--
 Right now this works for functions taking values in R or C, I think it should work for more target
 spaces.
+Also valid if k = 0 and a 0 = 0, not sure which is more interesting
 -/
-theorem partial_summation {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜) {x : ℝ}
-  (hf : ∀ i ∈ Icc (1:ℝ) x, has_deriv_at f (f' i) i) (hf' : integrable_on f' (Icc 1 x)) :
-  summatory (λ n, a n * f n) x = summatory a x * f x - ∫ t in Icc 1 x, summatory a t * f' t :=
+theorem partial_summation {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜) {k : ℕ} {x : ℝ}
+  (hk : k ≠ 0) (hf : ∀ i ∈ Icc (k:ℝ) x, has_deriv_at f (f' i) i)
+  (hf' : integrable_on f' (Icc k x)) :
+  summatory (λ n, a n * f n) k x =
+    summatory a k x * f x - ∫ t in Icc (k : ℝ) x, summatory a k t * f' t :=
 begin
-  cases lt_or_le x 1,
-  { simp only [h, summatory_eq_of_lt_one _ h, zero_mul, sub_zero, Icc_eq_empty_of_lt,
-      integral_zero_measure, measure.restrict_empty] },
-  have hx : (1:ℝ) ≤ ⌊x⌋₊,
-    by rwa [nat.one_le_cast, nat.le_floor_iff (zero_le_one.trans h), nat.cast_one],
-  have hx' : (⌊x⌋₊:ℝ) ≤ x := nat.floor_le (zero_le_one.trans h),
-  have : Icc (1:ℝ) x = Icc 1 ⌊x⌋₊ ∪ Icc ⌊x⌋₊ x :=
-    (Icc_union_Icc_eq_Icc hx hx').symm,
+  cases lt_or_le x k,
+  { rw [Icc_eq_empty_of_lt h, measure.restrict_empty, integral_zero_measure, sub_zero,
+      summatory_eq_of_lt_one _ hk h, summatory_eq_of_lt_one _ hk h, zero_mul] },
+  have hx : k ≤ ⌊x⌋₊ := by rwa [nat.le_floor_iff' hk],
+  have hx' : (⌊x⌋₊ : ℝ) ≤ x := nat.floor_le (le_trans (nat.cast_nonneg _) h),
+  have hx'' : (k : ℝ) ≤ ⌊x⌋₊ := by rwa nat.cast_le,
+  have : Icc (k : ℝ) x = Icc k ⌊x⌋₊ ∪ Icc ⌊x⌋₊ x := (Icc_union_Icc_eq_Icc hx'' hx').symm,
   simp only [this, integrable_on_union, mem_union, or_imp_distrib, forall_and_distrib] at hf hf' ⊢,
-  rw [summatory, partial_summation_nat a f f' (nat.one_le_cast.1 hx) hf.1 hf'.1, eq_comm,
+  rw [summatory, partial_summation_nat a f f' hx hf.1 hf'.1, eq_comm,
     sub_eq_sub_iff_sub_eq_sub, summatory_eq_floor, ←mul_sub,
     integral_union_ae _ (measurable_set_Icc.null_measurable_set : null_measurable_set (Icc (_:ℝ) _)),
     add_sub_cancel'],
-  { have : eq_on (λ y, summatory a y * f' y) (λ y, summatory a ⌊x⌋₊ • f' y) (Icc ⌊x⌋₊ x),
+  { have : eq_on (λ y, summatory a k y * f' y) (λ y, summatory a k ⌊x⌋₊ • f' y) (Icc ⌊x⌋₊ x),
     { intros y hy,
       dsimp,
       rw summatory_eq_floor,
@@ -246,34 +263,38 @@ begin
     { rw interval_of_le hx',
       exact hf.2 },
     { exact (interval_integral.interval_integrable_iff_integrable_Icc_of_le hx').2 hf'.2 } },
-  apply partial_summation_integrable _ hf'.1,
-  apply partial_summation_integrable _ hf'.2,
-  { rw [ae_disjoint, Icc_inter_Icc_eq_singleton hx (nat.floor_le (zero_le_one.trans h)),
+  { apply partial_summation_integrable _ hf'.1 },
+  { apply partial_summation_integrable _ hf'.2 },
+  { rw [ae_disjoint, Icc_inter_Icc_eq_singleton hx'' hx',
       volume_singleton] },
 end
 
-theorem partial_summation_cont {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜) {x : ℝ}
-  (hf : ∀ i ∈ Icc (1:ℝ) x, has_deriv_at f (f' i) i) (hf' : continuous_on f' (Icc 1 x)) :
-  summatory (λ n, a n * f n) x = summatory a x * f x - ∫ t in Icc 1 x, summatory a t * f' t :=
-partial_summation _ _ _ hf hf'.integrable_on_Icc
+theorem partial_summation_cont {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜) {k : ℕ} {x : ℝ}
+  (hk : k ≠ 0) (hf : ∀ i ∈ Icc (k:ℝ) x, has_deriv_at f (f' i) i) (hf' : continuous_on f' (Icc k x)) :
+  summatory (λ n, a n * f n) k x =
+    summatory a k x * f x - ∫ t in Icc (k : ℝ) x, summatory a k t * f' t :=
+partial_summation _ _ _ hk hf hf'.integrable_on_Icc
 
 /--
 A variant of partial summation where we assume differentiability of `f` and integrability of `f'` on
 `[1, ∞)` and derive the partial summation equation for all `x`.
 -/
-theorem partial_summation' {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜)
-  (hf : ∀ i ∈ Ici (1:ℝ), has_deriv_at f (f' i) i) (hf' : integrable_on f' (Ici 1)) {x : ℝ} :
-  summatory (λ n, a n * f n) x = summatory a x * f x - ∫ t in Icc 1 x, summatory a t * f' t :=
-partial_summation _ _ _ (λ i hi, hf _ hi.1) (hf'.mono_set Icc_subset_Ici_self)
+theorem partial_summation' {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜) {k : ℕ} (hk : k ≠ 0)
+  (hf : ∀ i ∈ Ici (k:ℝ), has_deriv_at f (f' i) i) (hf' : integrable_on f' (Ici k)) {x : ℝ} :
+  summatory (λ n, a n * f n) k x =
+    summatory a k x * f x - ∫ t in Icc (k : ℝ) x, summatory a k t * f' t :=
+partial_summation _ _ _ hk (λ i hi, hf _ hi.1) (hf'.mono_set Icc_subset_Ici_self)
 
 /--
 A variant of partial summation where we assume differentiability of `f` and continuity of `f'` on
 `[1, ∞)` and derive the partial summation equation for all `x`.
 -/
-theorem partial_summation_cont' {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜)
-  (hf : ∀ i ∈ Ici (1:ℝ), has_deriv_at f (f' i) i) (hf' : continuous_on f' (Ici 1)) (x : ℝ) :
-  summatory (λ n, a n * f n) x = summatory a x * f x - ∫ t in Icc 1 x, summatory a t * f' t :=
-partial_summation_cont _ _ _ (λ i hi, hf _ hi.1) (hf'.mono Icc_subset_Ici_self)
+theorem partial_summation_cont' {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 𝕜) (f f' : ℝ → 𝕜) {k : ℕ}
+  (hk : k ≠ 0) (hf : ∀ i ∈ Ici (k:ℝ), has_deriv_at f (f' i) i) (hf' : continuous_on f' (Ici k))
+  (x : ℝ) :
+  summatory (λ n, a n * f n) k x =
+    summatory a k x * f x - ∫ t in Icc (k : ℝ) x, summatory a k t * f' t :=
+partial_summation_cont _ _ _ hk (λ i hi, hf _ hi.1) (hf'.mono Icc_subset_Ici_self)
 
 -- BM: A definition of the Euler-Mascheroni constant
 -- Maybe a different form is a better definition, and in any case it would be nice to show the
@@ -437,7 +458,7 @@ begin
 end
 
 lemma harmonic_series_is_O_aux {x : ℝ} (hx : 1 ≤ x) :
-  summatory (λ i, (i : ℝ)⁻¹) x - log x - euler_mascheroni =
+  summatory (λ i, (i : ℝ)⁻¹) 1 x - log x - euler_mascheroni =
     (1 - (∫ t in Ioc 1 x, int.fract t * (t^2)⁻¹) - euler_mascheroni) - int.fract x * x⁻¹ :=
 begin
   have diff : (∀ (i ∈ Ici (1:ℝ)), has_deriv_at (λ x, x⁻¹) (-(i ^ 2)⁻¹) i),
@@ -447,24 +468,26 @@ begin
   { refine ((continuous_pow 2).continuous_on.inv₀ _),
     rintro i (hi : _ ≤ _),
     exact (pow_ne_zero_iff nat.succ_pos').2 (zero_lt_one.trans_le hi).ne' },
-  have ps := partial_summation_cont' (λ _, (1 : ℝ)) _ _ diff cont.neg x,
+  have ps := partial_summation_cont' (λ _, (1 : ℝ)) _ _ one_ne_zero
+    (by exact_mod_cast diff) (by exact_mod_cast cont.neg) x,
   simp only [one_mul] at ps,
   simp only [ps, integral_Icc_eq_integral_Ioc],
   rw [summatory_const_one, nat_floor_eq_int_floor' (zero_le_one.trans hx), ←int.self_sub_floor,
     sub_mul, mul_inv_cancel (zero_lt_one.trans_le hx).ne', sub_sub (1 : ℝ), sub_sub_sub_cancel_left,
-    sub_sub, sub_sub, sub_right_inj, ←add_assoc, add_left_inj, ←eq_sub_iff_add_eq', ←integral_sub],
+    sub_sub, sub_sub, sub_right_inj, ←add_assoc, add_left_inj, ←eq_sub_iff_add_eq', nat.cast_one,
+    ←integral_sub],
   rotate,
   { apply fract_mul_integrable,
     exact (cont.mono Icc_subset_Ici_self).integrable_on_Icc.mono_set Ioc_subset_Icc_self },
   { refine integrable_on.congr_set_ae _ Ioc_ae_eq_Icc,
     exact partial_summation_integrable _ (cont.neg.mono Icc_subset_Ici_self).integrable_on_Icc },
-  have : eq_on (λ a : ℝ, int.fract a * (a ^ 2)⁻¹ - summatory (λ _, (1 : ℝ)) a * -(a ^ 2)⁻¹)
+  have : eq_on (λ a : ℝ, int.fract a * (a ^ 2)⁻¹ - summatory (λ _, (1 : ℝ)) 1 a * -(a ^ 2)⁻¹)
     (λ y : ℝ, y⁻¹) (Ioc 1 x),
   { intros y hy,
     dsimp,
     have : 0 < y := zero_lt_one.trans hy.1,
-    rw [summatory_const_one, nat_floor_eq_int_floor' this.le, mul_neg_eq_neg_mul_symm,
-      sub_neg_eq_add, ←add_mul, int.fract_add_floor, sq, mul_inv₀, mul_inv_cancel_left₀ this.ne'] },
+    rw [summatory_const_one, nat_floor_eq_int_floor' this.le, mul_neg, sub_neg_eq_add, ←add_mul,
+      int.fract_add_floor, sq, mul_inv₀, mul_inv_cancel_left₀ this.ne'] },
   rw [set_integral_congr measurable_set_Ioc this, ←interval_integral.integral_of_le hx,
     integral_inv_of_pos zero_lt_one (zero_lt_one.trans_le hx), div_one],
 end
@@ -481,7 +504,7 @@ begin
 end
 
 lemma harmonic_series_is_O_with :
-  is_O_with 2 (λ x, summatory (λ i, (i : ℝ)⁻¹) x - log x - euler_mascheroni) (λ x, x⁻¹) at_top :=
+  is_O_with 2 (λ x, summatory (λ i, (i : ℝ)⁻¹) 1 x - log x - euler_mascheroni) (λ x, x⁻¹) at_top :=
 begin
   have : is_O_with 1 (λ (x : ℝ), int.fract x * x⁻¹) (λ x, x⁻¹) at_top := is_O_with_one_fract_mul _,
   refine (euler_mascheroni_convergence_rate.sub this).congr' _ _ eventually_eq.rfl,
@@ -501,7 +524,7 @@ lemma harmonic_series_limit :
 (harmonic_series_real_limit.comp tendsto_coe_nat_at_top_at_top).congr (λ x, by simp)
 
 lemma summatory_log_aux {x : ℝ} (hx : 1 ≤ x) :
-  summatory (λ i, log i) x - (x * log x - x) =
+  summatory (λ i, log i) 1 x - (x * log x - x) =
     1 + ((∫ t in 1..x, int.fract t * t⁻¹) - int.fract x * log x) :=
 begin
   rw interval_integral.integral_of_le hx,
@@ -510,13 +533,14 @@ begin
     exact has_deriv_at_log (zero_lt_one.trans_le hi).ne' },
   have cont : continuous_on (λ x : ℝ, x⁻¹) (Ici 1),
   { exact continuous_on_inv₀.mono  (λ x (hx : _ ≤ _), (zero_lt_one.trans_le hx).ne') },
-  have ps := partial_summation_cont' (λ _, (1 : ℝ)) _ _ diff cont x,
+  have ps := partial_summation_cont' (λ _, (1 : ℝ)) _ _ one_ne_zero
+    (by exact_mod_cast diff) (by exact_mod_cast cont) x,
   simp only [one_mul] at ps,
   simp only [ps, integral_Icc_eq_integral_Ioc],
   clear ps,
   rw [summatory_const_one, nat_floor_eq_int_floor' (zero_le_one.trans hx), ←int.self_sub_fract,
     sub_mul, sub_sub (x * log x), sub_sub_sub_cancel_left, sub_eq_iff_eq_add, add_assoc,
-    ←sub_eq_iff_eq_add', ←add_assoc, sub_add_cancel, ←integral_add],
+    ←sub_eq_iff_eq_add', ←add_assoc, sub_add_cancel, nat.cast_one, ←integral_add],
   { rw [←integral_one, interval_integral.integral_of_le hx, set_integral_congr],
     { apply measurable_set_Ioc },
     intros y hy,
@@ -545,7 +569,7 @@ lemma is_o_one_log (c : ℝ) : is_o (λ (x : ℝ), c) log at_top :=
 is_o_const_of_tendsto_at_top _ _ tendsto_log_at_top _
 
 lemma summatory_log {c : ℝ} (hc : 2 < c) :
-  is_O_with c (λ x, summatory (λ i, log i) x - (x * log x - x)) (λ x, log x) at_top :=
+  is_O_with c (λ x, summatory (λ i, log i) 1 x - (x * log x - x)) (λ x, log x) at_top :=
 begin
   have f₁ : is_O_with 1 (λ (x : ℝ), int.fract x * log x) (λ x, log x) at_top :=
     is_O_with_one_fract_mul _,
@@ -587,7 +611,7 @@ end
 
 lemma summatory_mul_floor_eq_summatory_sum_divisors {x y : ℝ}
   (hy : 0 ≤ x) (xy : x ≤ y) (f : ℕ → ℝ) :
-  summatory (λ n, f n * ⌊x / n⌋) y = summatory (λ n, ∑ i in n.divisors, f i) x :=
+  summatory (λ n, f n * ⌊x / n⌋) 1 y = summatory (λ n, ∑ i in n.divisors, f i) 1 x :=
 begin
   simp_rw [summatory, ←nat_floor_eq_int_floor' (div_nonneg hy (nat.cast_nonneg _)),
     ←summatory_const_one, summatory, finset.mul_sum, mul_one, finset.sum_sigma'],
@@ -673,7 +697,7 @@ open nat.arithmetic_function
 --    = f₄ + O(p)
 -- since this is essentially using transitivity of `equal_up_to p` three times
 lemma hyperbola :
-  is_O (λ x : ℝ, summatory (λ i, (τ i : ℝ)) x - x * log x - (2 * euler_mascheroni - 1) * x)
+  is_O (λ x : ℝ, summatory (λ i, (τ i : ℝ)) 1 x - x * log x - (2 * euler_mascheroni - 1) * x)
     sqrt at_top :=
 sorry
 
@@ -729,7 +753,7 @@ begin
   rw [←mul_assoc, div_mul_cancel _ h.ne', one_mul] at h₁,
   apply le_trans _ h₁,
   rw [one_div (real.log 2), log_inv],
-  simp only [one_div, mul_neg_eq_neg_mul_symm, sub_neg_eq_add],
+  simp only [one_div, mul_neg, sub_neg_eq_add],
   suffices : real.log 2 / 2 - 1 ≤ log (real.log 2),
   { field_simp [h],
     rw le_div_iff h,
@@ -829,7 +853,7 @@ begin
 end
 
 lemma von_mangoldt_summatory {x y : ℝ} (hx : 0 ≤ x) (xy : x ≤ y) :
-  summatory (λ n, Λ n * ⌊x / n⌋) y = summatory (λ n, real.log n) x :=
+  summatory (λ n, Λ n * ⌊x / n⌋) 1 y = summatory (λ n, real.log n) 1 x :=
 by simp only [summatory_mul_floor_eq_summatory_sum_divisors hx xy,
   von_mangoldt_sum]
 
@@ -867,11 +891,11 @@ begin
 end
 
 def chebyshev_error (x : ℝ) : ℝ :=
-  (summatory (λ i, real.log i) x - (x * log x - x))
-    - 2 * (summatory (λ i, real.log i) (x/2) - (x/2 * log (x/2) - x/2))
+  (summatory (λ i, real.log i) 1 x - (x * log x - x))
+    - 2 * (summatory (λ i, real.log i) 1 (x/2) - (x/2 * log (x/2) - x/2))
 
 lemma von_mangoldt_floor_sum {x : ℝ} (hx₀ : 0 < x) :
-  summatory (λ n, Λ n * (⌊x / n⌋ - 2 * ⌊x / n / 2⌋)) x = real.log 2 * x + chebyshev_error x :=
+  summatory (λ n, Λ n * (⌊x / n⌋ - 2 * ⌊x / n / 2⌋)) 1 x = real.log 2 * x + chebyshev_error x :=
 begin
   rw [chebyshev_error, mul_sub, log_div hx₀.ne' two_ne_zero, mul_sub, ←mul_assoc,
     mul_div_cancel' x two_ne_zero, mul_sub, sub_right_comm (x * log x), ←sub_add _ (_ - _),
@@ -884,8 +908,10 @@ begin
   ring,
 end
 
+localized "notation `ψ` := summatory Λ 1" in analytic_number_theory
+
 lemma chebyshev_lower_aux {x : ℝ} (hx : 0 < x) :
-  chebyshev_error x ≤ summatory Λ x - real.log 2 * x :=
+  chebyshev_error x ≤ ψ x - real.log 2 * x :=
 begin
   rw [le_sub_iff_add_le', ←von_mangoldt_floor_sum hx],
   apply finset.sum_le_sum,
@@ -896,7 +922,7 @@ begin
 end
 
 lemma chebyshev_upper_aux {x : ℝ} (hx : 0 < x) :
-  summatory Λ x - summatory Λ (x / 2) - real.log 2 * x ≤ chebyshev_error x :=
+  ψ x - ψ (x / 2) - real.log 2 * x ≤ chebyshev_error x :=
 begin
   rw [sub_le_iff_le_add', ←von_mangoldt_floor_sum hx, summatory, summatory],
   have : finset.Icc 1 ⌊x/2⌋₊ ⊆ finset.Icc 1 ⌊x⌋₊,
@@ -937,7 +963,7 @@ begin
 end
 
 lemma chebyshev_lower_explicit {c : ℝ} (hc : c < real.log 2) :
-  ∀ᶠ x : ℝ in at_top, c * x ≤ summatory Λ x :=
+  ∀ᶠ x : ℝ in at_top, c * x ≤ ψ x :=
 begin
   have h₁ := (chebyshev_error_O.trans_is_o is_o_log_id_at_top).bound (sub_pos_of_lt hc),
   filter_upwards [eventually_ge_at_top (1 : ℝ), h₁],
@@ -948,7 +974,7 @@ begin
 end
 
 lemma chebyshev_lower :
-  is_O (λ x, x) (summatory Λ) at_top :=
+  is_O (λ x, x) ψ at_top :=
 begin
   rw [is_O_iff],
   refine ⟨(real.log 2 / 2)⁻¹, _⟩,
@@ -961,7 +987,7 @@ begin
 end
 
 lemma chebyshev_trivial_upper_nat (n : ℕ) :
-  summatory Λ n ≤ n * real.log n :=
+  ψ n ≤ n * real.log n :=
 begin
   rw [summatory_nat, ←nsmul_eq_mul],
   apply (finset.sum_le_of_forall_le _ _ (real.log n) (λ i hi, _)).trans _,
@@ -973,7 +999,7 @@ begin
 end
 
 lemma chebyshev_trivial_upper {x : ℝ} (hx : 1 ≤ x) :
-  summatory Λ x ≤ x * log x :=
+  ψ x ≤ x * log x :=
 begin
   have hx₀ : 0 < x := zero_lt_one.trans_le hx,
   rw [summatory_eq_floor],
@@ -984,7 +1010,7 @@ begin
 end
 
 lemma chebyshev_upper_inductive {c : ℝ} (hc : real.log 2 < c) :
-  ∃ C, 1 ≤ C ∧ ∀ x : ℕ, summatory Λ x ≤ 2 * c * x + C * log C :=
+  ∃ C, 1 ≤ C ∧ ∀ x : ℕ, ψ x ≤ 2 * c * x + C * log C :=
 begin
   have h₁ := (chebyshev_error_O.trans_is_o is_o_log_id_at_top).bound (sub_pos_of_lt hc),
   -- Pull out the constant from h₁. I'd like to use `eventually_at_top` but to make sure the
@@ -996,7 +1022,7 @@ begin
   intros n ih,
   cases le_or_lt (n : ℝ) C with hn hn,
   -- Do the case n ≤ C first.
-  { refine (summatory_monotone_of_nonneg _ _ hn).trans _,
+  { refine (summatory_monotone_of_nonneg _ _ _ hn).trans _,
     { exact λ _, von_mangoldt_nonneg },
     refine (chebyshev_trivial_upper hC₁).trans _,
     refine le_add_of_nonneg_left (mul_nonneg _ (nat.cast_nonneg _)),
@@ -1020,14 +1046,14 @@ begin
 end
 
 lemma chebyshev_upper_real {c : ℝ} (hc : 2 * real.log 2 < c) :
-  ∃ C, 1 ≤ C ∧ is_O_with 1 (summatory Λ) (λ x, c * x + C * log C) at_top :=
+  ∃ C, 1 ≤ C ∧ is_O_with 1 ψ (λ x, c * x + C * log C) at_top :=
 begin
   have hc' : real.log 2 < c / 2 := by rwa lt_div_iff' (zero_lt_two : (0 : ℝ) < _),
   obtain ⟨C, hC₁, hC⟩ := chebyshev_upper_inductive hc',
   refine ⟨C, hC₁, _⟩,
   rw [is_O_with_iff, eventually_at_top],
   refine ⟨0, λ x hx, _⟩,
-  rw [summatory_eq_floor, norm_of_nonneg (summatory_nonneg _ _ _), one_mul,
+  rw [summatory_eq_floor, norm_of_nonneg (summatory_nonneg _ _ _ _), one_mul,
     real.norm_eq_abs],
   { refine (hC ⌊x⌋₊).trans (le_trans _ (le_abs_self _)),
     rw [mul_div_cancel' _ (@two_ne_zero ℝ _ _), add_le_add_iff_right],
@@ -1037,7 +1063,7 @@ begin
 end
 
 lemma chebyshev_upper_explicit {c : ℝ} (hc : 2 * real.log 2 < c) :
-  is_O_with c (summatory Λ) (λ x, x) at_top :=
+  is_O_with c ψ (λ x, x) at_top :=
 begin
   let c' := real.log 2 + c/2,
   have hc'₁ : c' < c,
@@ -1051,7 +1077,7 @@ begin
   exact le_trans (mul_nonneg zero_le_two (log_nonneg one_le_two)) hc'₂.le,
 end
 
-lemma chebyshev_upper : is_O (summatory Λ) (λ x, x) at_top :=
+lemma chebyshev_upper : is_O ψ (λ x, x) at_top :=
 (chebyshev_upper_explicit (lt_add_one _)).is_O
 
 lemma is_O_sum_one_of_summable {f : ℕ → ℝ} (hf : summable f) :
@@ -1236,7 +1262,7 @@ begin
   apply is_O.trans _ chebyshev_upper,
   apply is_O.of_bound 1,
   filter_upwards [eventually_ge_at_top (0 : ℝ)] with x hx,
-  rw [one_mul, norm_eq_abs, norm_of_nonneg (summatory_nonneg _ _ _)],
+  rw [one_mul, norm_eq_abs, norm_of_nonneg (summatory_nonneg _ _ _ _)],
   { exact this _ hx },
   { exact λ _, von_mangoldt_nonneg }
 end
@@ -1271,7 +1297,7 @@ lemma log_reciprocal :
 is_O_von_mangoldt_div_self_sub_log_div_self.symm.triangle is_O_von_mangoldt_div_self
 
 lemma prime_counting_asymptotic :
-  is_O (λ x, prime_summatory (λ _, (1 : ℝ)) x - summatory Λ x / log x)
+  is_O (λ x, prime_summatory (λ _, (1 : ℝ)) x - ψ x / log x)
     (λ x, x / (log x)^2) at_top :=
 sorry
 
