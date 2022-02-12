@@ -13,6 +13,8 @@ import measure_theory.integral.integral_eq_improper
 import data.complex.exponential_bounds
 import analysis.p_series
 import topology.algebra.floor_ring
+import number_theory.prime_counting
+import for_mathlib.misc
 
 noncomputable theory
 
@@ -908,12 +910,75 @@ begin
   ring,
 end
 
-localized "notation `ψ` := summatory Λ 1" in analytic_number_theory
+def chebyshev_first (x : ℝ) : ℝ := ∑ n in (finset.range (⌊x⌋₊ + 1)).filter nat.prime, real.log n
+def chebyshev_second (x : ℝ) : ℝ := ∑ n in finset.range (⌊x⌋₊ + 1), Λ n
+def chebyshev_first' (x : ℝ) : ℝ := ∑ n in (finset.range ⌊x⌋₊).filter nat.prime, real.log n
+def chebyshev_second' (x : ℝ) : ℝ := ∑ n in finset.range ⌊x⌋₊, Λ n
+localized "notation `ϑ` := chebyshev_first" in analytic_number_theory
+localized "notation `ψ` := chebyshev_second" in analytic_number_theory
+localized "notation `ϑ'` := chebyshev_first'" in analytic_number_theory
+localized "notation `ψ'` := chebyshev_second'" in analytic_number_theory
+
+lemma chebyshev_first_eq {x : ℝ} :
+  ϑ x = ∑ n in (finset.range (⌊x⌋₊ + 1)).filter nat.prime, Λ n :=
+finset.sum_congr rfl (by simp [von_mangoldt_apply_prime] {contextual := tt})
+
+lemma chebyshev_first'_eq {x : ℝ} :
+  ϑ' x = ∑ n in (finset.range ⌊x⌋₊).filter nat.prime, Λ n :=
+finset.sum_congr rfl (by simp [von_mangoldt_apply_prime] {contextual := tt})
+
+lemma chebyshev_first_le_chebyshev_second : ϑ ≤ ψ :=
+begin
+  intro x,
+  rw chebyshev_first_eq,
+  exact finset.sum_le_sum_of_subset_of_nonneg (finset.filter_subset _ _)
+    (λ _ _ _, von_mangoldt_nonneg),
+end
+
+lemma chebyshev_first'_le_chebyshev_second' : ϑ' ≤ ψ' :=
+begin
+  intro x,
+  rw chebyshev_first'_eq,
+  exact finset.sum_le_sum_of_subset_of_nonneg (finset.filter_subset _ _)
+    (λ _ _ _, von_mangoldt_nonneg),
+end
+
+lemma chebyshev_first_nonneg : 0 ≤ ϑ :=
+λ x, by { rw chebyshev_first_eq, exact finset.sum_nonneg' (λ _, von_mangoldt_nonneg) }
+
+lemma chebyshev_first'_nonneg : 0 ≤ ϑ' :=
+λ x, by { rw chebyshev_first'_eq, exact finset.sum_nonneg' (λ _, von_mangoldt_nonneg) }
+
+lemma chebyshev_second_nonneg : 0 ≤ ψ :=
+λ x, finset.sum_nonneg' (λ _, von_mangoldt_nonneg)
+
+lemma chebyshev_second'_nonneg : 0 ≤ ψ' :=
+λ x, finset.sum_nonneg' (λ _, von_mangoldt_nonneg)
+
+lemma is_O_chebyshev_first_chebyshev_second : is_O ϑ ψ at_top :=
+is_O_of_le _
+  (λ x, by { rw [norm_of_nonneg (chebyshev_first_nonneg _),
+                 norm_of_nonneg (chebyshev_second_nonneg _)],
+             exact chebyshev_first_le_chebyshev_second _ })
+
+lemma chebyshev_second_eq_summatory : ψ = summatory Λ 1 :=
+begin
+  ext x,
+  rw [chebyshev_second, summatory, eq_comm, finset.sum_subset_zero_on_sdiff],
+  { exact finset.Icc_subset_range_add_one },
+  { intros y hy,
+    rw [finset.mem_sdiff, finset.mem_range, finset.mem_Icc, nat.lt_add_one_iff, not_and', not_le,
+      nat.lt_one_iff] at hy,
+    rw hy.2 hy.1,
+    simp },
+  { intros,
+    refl }
+end
 
 lemma chebyshev_lower_aux {x : ℝ} (hx : 0 < x) :
   chebyshev_error x ≤ ψ x - real.log 2 * x :=
 begin
-  rw [le_sub_iff_add_le', ←von_mangoldt_floor_sum hx],
+  rw [le_sub_iff_add_le', ←von_mangoldt_floor_sum hx, chebyshev_second_eq_summatory],
   apply finset.sum_le_sum,
   intros i hi,
   apply mul_le_of_le_one_right von_mangoldt_nonneg,
@@ -924,10 +989,10 @@ end
 lemma chebyshev_upper_aux {x : ℝ} (hx : 0 < x) :
   ψ x - ψ (x / 2) - real.log 2 * x ≤ chebyshev_error x :=
 begin
-  rw [sub_le_iff_le_add', ←von_mangoldt_floor_sum hx, summatory, summatory],
+  rw [sub_le_iff_le_add', ←von_mangoldt_floor_sum hx, chebyshev_second_eq_summatory, summatory],
   have : finset.Icc 1 ⌊x/2⌋₊ ⊆ finset.Icc 1 ⌊x⌋₊,
   { exact finset.Icc_subset_Icc le_rfl (nat.floor_mono (half_le_self hx.le)) },
-  rw [←finset.sum_sdiff this, add_sub_cancel],
+  rw [summatory, ←finset.sum_sdiff this, add_sub_cancel],
   refine (finset.sum_le_sum _).trans
     (finset.sum_le_sum_of_subset_of_nonneg (finset.sdiff_subset _ _) _),
   { simp_rw [finset.mem_sdiff, finset.mem_Icc, and_imp, not_and, not_le, nat.le_floor_iff hx.le,
@@ -989,7 +1054,7 @@ end
 lemma chebyshev_trivial_upper_nat (n : ℕ) :
   ψ n ≤ n * real.log n :=
 begin
-  rw [summatory_nat, ←nsmul_eq_mul],
+  rw [chebyshev_second_eq_summatory, summatory_nat, ←nsmul_eq_mul],
   apply (finset.sum_le_of_forall_le _ _ (real.log n) (λ i hi, _)).trans _,
   { apply von_mangoldt_upper.trans,
     simp only [finset.mem_Icc] at hi,
@@ -1002,7 +1067,7 @@ lemma chebyshev_trivial_upper {x : ℝ} (hx : 1 ≤ x) :
   ψ x ≤ x * log x :=
 begin
   have hx₀ : 0 < x := zero_lt_one.trans_le hx,
-  rw [summatory_eq_floor],
+  rw [chebyshev_second_eq_summatory, summatory_eq_floor, ←chebyshev_second_eq_summatory],
   apply (chebyshev_trivial_upper_nat _).trans _,
   exact mul_le_mul (nat.floor_le hx₀.le)
     ((log_le_log (by rwa [nat.cast_pos, nat.floor_pos]) hx₀).2 (nat.floor_le hx₀.le))
@@ -1022,8 +1087,10 @@ begin
   intros n ih,
   cases le_or_lt (n : ℝ) C with hn hn,
   -- Do the case n ≤ C first.
-  { refine (summatory_monotone_of_nonneg _ _ _ hn).trans _,
+  { rw chebyshev_second_eq_summatory,
+    refine (summatory_monotone_of_nonneg _ _ _ hn).trans _,
     { exact λ _, von_mangoldt_nonneg },
+    rw ←chebyshev_second_eq_summatory,
     refine (chebyshev_trivial_upper hC₁).trans _,
     refine le_add_of_nonneg_left (mul_nonneg _ (nat.cast_nonneg _)),
     exact mul_nonneg zero_le_two ((log_nonneg one_le_two).trans hc.le) },
@@ -1031,11 +1098,13 @@ begin
   have h₁ := chebyshev_upper_aux (nat.cast_pos.2 hn'),
   rw [sub_sub, sub_le_iff_le_add] at h₁,
   apply h₁.trans, clear h₁,
-  rw [summatory_eq_floor, ←nat.cast_two, nat.floor_div_eq_div, nat.cast_two, ←add_assoc],
+  rw [chebyshev_second_eq_summatory, summatory_eq_floor, ←nat.cast_two, nat.floor_div_eq_div,
+    nat.cast_two, ←add_assoc],
   have h₃ := hC _ hn.le,
   rw real.norm_eq_abs at h₃,
   replace h₃ := le_of_abs_le h₃,
   have h₂ := ih (n / 2) (nat.div_lt_self hn' one_lt_two),
+  rw ←chebyshev_second_eq_summatory,
   apply (add_le_add_right (add_le_add h₃ h₂) _).trans,
   rw [add_right_comm, ←add_assoc, add_le_add_iff_right, norm_coe_nat, ←add_mul, sub_add_cancel,
     mul_assoc _ c n, two_mul (_ * _), add_le_add_iff_left, mul_assoc, mul_left_comm],
@@ -1053,17 +1122,16 @@ begin
   refine ⟨C, hC₁, _⟩,
   rw [is_O_with_iff, eventually_at_top],
   refine ⟨0, λ x hx, _⟩,
-  rw [summatory_eq_floor, norm_of_nonneg (summatory_nonneg _ _ _ _), one_mul,
-    real.norm_eq_abs],
-  { refine (hC ⌊x⌋₊).trans (le_trans _ (le_abs_self _)),
-    rw [mul_div_cancel' _ (@two_ne_zero ℝ _ _), add_le_add_iff_right],
-    refine mul_le_mul_of_nonneg_left (nat.floor_le hx) _,
-    exact (mul_nonneg zero_le_two (log_nonneg one_le_two)).trans hc.le },
-  exact λ _, von_mangoldt_nonneg,
+  rw [norm_of_nonneg (chebyshev_second_nonneg x), chebyshev_second_eq_summatory, summatory_eq_floor,
+    ←chebyshev_second_eq_summatory, one_mul],
+  refine (hC ⌊x⌋₊).trans (le_trans _ (le_abs_self _)),
+  rw [mul_div_cancel' _ (@two_ne_zero ℝ _ _), add_le_add_iff_right],
+  refine mul_le_mul_of_nonneg_left (nat.floor_le hx) _,
+  exact (mul_nonneg zero_le_two (log_nonneg one_le_two)).trans hc.le,
 end
 
 lemma chebyshev_upper_explicit {c : ℝ} (hc : 2 * real.log 2 < c) :
-  is_O_with c ψ (λ x, x) at_top :=
+  is_O_with c ψ id at_top :=
 begin
   let c' := real.log 2 + c/2,
   have hc'₁ : c' < c,
@@ -1077,8 +1145,11 @@ begin
   exact le_trans (mul_nonneg zero_le_two (log_nonneg one_le_two)) hc'₂.le,
 end
 
-lemma chebyshev_upper : is_O ψ (λ x, x) at_top :=
+lemma chebyshev_upper : is_O ψ id at_top :=
 (chebyshev_upper_explicit (lt_add_one _)).is_O
+
+lemma chebyshev_first_upper : is_O ϑ id at_top :=
+is_O_chebyshev_first_chebyshev_second.trans chebyshev_upper
 
 lemma is_O_sum_one_of_summable {f : ℕ → ℝ} (hf : summable f) :
   is_O (λ (n : ℕ), ∑ i in finset.range n, f i) (λ _, (1 : ℝ)) at_top :=
@@ -1262,7 +1333,8 @@ begin
   apply is_O.trans _ chebyshev_upper,
   apply is_O.of_bound 1,
   filter_upwards [eventually_ge_at_top (0 : ℝ)] with x hx,
-  rw [one_mul, norm_eq_abs, norm_of_nonneg (summatory_nonneg _ _ _ _)],
+  rw [one_mul, norm_eq_abs, chebyshev_second_eq_summatory,
+    norm_of_nonneg (summatory_nonneg _ _ _ _)],
   { exact this _ hx },
   { exact λ _, von_mangoldt_nonneg }
 end
@@ -1288,25 +1360,133 @@ end
 Given a function `a : ℕ → M` from the naturals into an additive commutative monoid, this expresses
 ∑ 1 ≤ p ≤ x, a(p) where `p` is prime.
 -/
-def prime_summatory {M : Type*} [add_comm_monoid M] (a : ℕ → M) (x : ℝ) : M :=
-  ∑ n in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, a n
+def prime_summatory {M : Type*} [add_comm_monoid M] (a : ℕ → M) (k : ℕ) (x : ℝ) : M :=
+  ∑ n in (finset.Icc k ⌊x⌋₊).filter nat.prime, a n
 -- BM: equivalently could say it's `summatory (λ n, if (a n).prime then a n else 0) x`
 
+lemma prime_summatory_eq_summatory :
+  prime_summatory a = summatory (λ n, if n.prime then a n else 0) :=
+begin
+  ext k x,
+  exact finset.sum_filter _ _,
+end
+
 lemma log_reciprocal :
-  is_O (λ x, prime_summatory (λ p, real.log p / p) x - log x) (λ _, (1 : ℝ)) at_top :=
+  is_O (λ x, prime_summatory (λ p, real.log p / p) 1 x - log x) (λ _, (1 : ℝ)) at_top :=
 is_O_von_mangoldt_div_self_sub_log_div_self.symm.triangle is_O_von_mangoldt_div_self
 
+open_locale nat
+
+lemma prime_counting_le_self {x : ℕ} : π x ≤ x :=
+begin
+  rw [nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range],
+  have : (finset.range (x + 1)).filter nat.prime ⊆ finset.Ioc 0 x,
+  { simp [finset.subset_iff, nat.lt_add_one_iff, nat.prime.pos] {contextual := tt} },
+  exact (card_le_of_subset this).trans (by simp),
+end
+
+lemma chebyshev_first_eq_prime_summatory :
+  ϑ = prime_summatory (λ n, real.log n) 1 :=
+begin
+  ext x,
+  rw [chebyshev_first, prime_summatory, eq_comm, finset.sum_subset_zero_on_sdiff],
+  { exact filter_subset_filter _ finset.Icc_subset_range_add_one },
+  { simp [nat.lt_add_one_iff, imp_false, le_zero_iff] {contextual := tt} },
+  { intros, refl }
+end
+
+local attribute [pp_nodot] nat.prime_counting
+
+lemma prime_counting_eq_prime_summatory {x : ℕ} :
+  π x = prime_summatory (λ _, 1) 1 x :=
+begin
+  rw [prime_summatory_eq_summatory, summatory, nat.floor_coe, sum_boole, nat.cast_id,
+    nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range, range_eq_Ico,
+    nat.Ico_succ_right],
+  congr' 1,
+  simp [finset.ext_iff, nat.one_le_iff_ne_zero, nat.prime.ne_zero] {contextual := tt},
+end
+
+lemma prime_counting_eq_prime_summatory' {x : ℝ} :
+  (π ⌊x⌋₊ : ℝ) = prime_summatory (λ _, (1 : ℝ)) 1 x :=
+begin
+  rw [prime_counting_eq_prime_summatory],
+  simp only [nat.cast_one, nat.cast_sum, nat.floor_coe, prime_summatory],
+end
+
+lemma chebyshev_first_sub_prime_counting_mul_log_eq {x : ℝ} :
+  (π ⌊x⌋₊ : ℝ) * log x - ϑ x = ∫ t in Icc 1 x, π ⌊t⌋₊ * t⁻¹ :=
+begin
+  have : (λ (n : ℕ), ite (nat.prime n) (real.log n : ℝ) 0) =
+    (λ n : ℕ, ite (nat.prime n) 1 0 * real.log n),
+  { ext n,
+    rw boole_mul },
+  simp only [chebyshev_first_eq_prime_summatory, prime_summatory_eq_summatory,
+    prime_counting_eq_prime_summatory'],
+  rw [sub_eq_iff_eq_add, ←sub_eq_iff_eq_add', this,
+    partial_summation_cont' (λ n, _) real.log (λ y, y⁻¹) one_ne_zero, nat.cast_one],
+  { simp only [nat.cast_one, set.mem_Ici],
+    intros y hy,
+    apply has_deriv_at_log,
+    linarith },
+  { simp only [nat.cast_one],
+    refine continuous_on_inv₀.mono (λ y hy, _),
+    simp only [mem_compl_eq, mem_singleton_iff, set.mem_Ici] at hy ⊢,
+    rintro rfl,
+    linarith }
+end
+
+lemma is_O_chebyshev_first_sub_prime_counting_mul_log :
+  is_O (λ x, (π ⌊x⌋₊ : ℝ) * real.log x - ϑ x) id at_top :=
+begin
+  simp only [chebyshev_first_sub_prime_counting_mul_log_eq],
+  apply is_O.of_bound 1,
+  filter_upwards [eventually_gt_at_top (1 : ℝ)],
+  intros x hx,
+  rw [id.def, one_mul],
+  have b₁ : ∀ (y : ℝ), 1 ≤ y → 0 ≤ (π ⌊y⌋₊ : ℝ) * y⁻¹ :=
+    λ y hy, mul_nonneg (nat.cast_nonneg _) (inv_nonneg.2 (by linarith)),
+  have b₃ : (λ (a : ℝ), (π ⌊a⌋₊ : ℝ) * a⁻¹) ≤ᵐ[volume.restrict (Icc 1 x)] (λ x, 1),
+  { simp only [eventually_le, ae_restrict_iff', measurable_set_Icc],
+    apply eventually_of_forall,
+    rintro y ⟨hy₁, hy₂⟩,
+    rw [←div_eq_mul_inv, div_le_one (zero_lt_one.trans_le hy₁)],
+    exact le_trans (nat.cast_le.2 prime_counting_le_self) (nat.floor_le (by linarith)) },
+  rw [norm_of_nonneg (zero_le_one.trans hx.le),
+    norm_of_nonneg (set_integral_nonneg measurable_set_Icc (λ _ y, b₁ _ y.1))],
+  refine (integral_mono_of_nonneg _ _ b₃).trans _,
+  { simp only [eventually_le, ae_restrict_iff', measurable_set_Icc, pi.zero_apply, set.mem_Icc,
+      and_imp],
+    refine eventually_of_forall (λ y hy₁ hy₂, _),
+    exact mul_nonneg (nat.cast_nonneg _) (inv_nonneg.2 (zero_le_one.trans hy₁)) },
+  { simp [integrable_const_iff] },
+  { simp [hx.le] },
+end
+
+lemma is_O_prime_counting_div_log :
+  is_O (λ x, (π ⌊x⌋₊ : ℝ)) (λ x, x / log x) at_top :=
+begin
+  have : is_O (λ x, (π ⌊x⌋₊ : ℝ) * real.log x) id at_top,
+  { apply (is_O_chebyshev_first_sub_prime_counting_mul_log.add chebyshev_first_upper).congr_left _,
+    simp },
+  refine (is_O.mul this (is_O_refl (λ x, (real.log x)⁻¹) _)).congr' _ _,
+  { filter_upwards [eventually_gt_at_top (1 : ℝ)] with x hx,
+    rw mul_inv_cancel_right₀ (log_pos hx).ne' },
+  filter_upwards with x using by simp [div_eq_mul_inv],
+end
+
 lemma prime_counting_asymptotic :
-  is_O (λ x, prime_summatory (λ _, (1 : ℝ)) x - ψ x / log x)
+  is_O (λ x, prime_summatory (λ _, (1 : ℝ)) 1 x - ψ x / log x)
     (λ x, x / (log x)^2) at_top :=
 sorry
 
-def prime_log_div_sum_error (x : ℝ) : ℝ := prime_summatory (λ p, real.log p / p) x - log x
+def prime_log_div_sum_error (x : ℝ) : ℝ := prime_summatory (λ p, real.log p / p) 1 x - log x
+
 lemma is_O_prime_log_div_sum_error : is_O prime_log_div_sum_error (λ _, (1 : ℝ)) at_top :=
 log_reciprocal
 
 lemma prime_reciprocal : ∃ b,
-  is_O (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) x - log (log x) - b) (λ x, 1 / log x) at_top :=
+  is_O (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) 1 x - log (log x) - b) (λ x, 1 / log x) at_top :=
 sorry
 
 -- BM: I expect there's a nicer way of stating this but this should be good enough for now

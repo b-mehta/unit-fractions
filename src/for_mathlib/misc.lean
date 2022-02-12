@@ -73,6 +73,44 @@ begin
   rwa int.lt_add_one_iff,
 end
 
+lemma finset.Icc_subset_range_add_one {x y : ℕ} : finset.Icc x y ⊆ finset.range (y+1) :=
+begin
+  rw [finset.range_eq_Ico, nat.Ico_succ_right],
+  exact finset.Icc_subset_Icc_left (nat.zero_le _),
+end
+
+lemma Ico_union_Icc_eq_Icc {x y z : ℕ} (h₁ : x ≤ y) (h₂ : y ≤ z) :
+  finset.Ico x y ∪ finset.Icc y z = finset.Icc x z :=
+by rw [←finset.coe_inj, finset.coe_union, finset.coe_Ico, finset.coe_Icc, finset.coe_Icc,
+    set.Ico_union_Icc_eq_Icc h₁ h₂]
+
+@[simp] lemma Ico_inter_Icc_consecutive {α : Type*} [linear_order α]
+  [locally_finite_order α] (a b c : α) : finset.Ico a b ∩ finset.Icc b c = ∅ :=
+begin
+  refine finset.eq_empty_of_forall_not_mem (λ x hx, _),
+  rw [finset.mem_inter, finset.mem_Ico, finset.mem_Icc] at hx,
+  exact hx.1.2.not_le hx.2.1,
+end
+
+lemma Ico_disjoint_Icc_consecutive {α : Type*} [linear_order α]
+  [locally_finite_order α] (a b c : α): disjoint (finset.Ico a b) (finset.Icc b c) :=
+le_of_eq $ Ico_inter_Icc_consecutive a b c
+
+lemma finset.Icc_sdiff_Icc_right {x y z : ℕ} (h₁ : x ≤ y) (h₂ : y ≤ z) :
+  finset.Icc x z \ finset.Icc y z = finset.Ico x y :=
+begin
+  rw ←Ico_union_Icc_eq_Icc h₁ h₂,
+  rw finset.union_sdiff_self,
+  rw finset.sdiff_eq_self_of_disjoint,
+  apply Ico_disjoint_Icc_consecutive,
+end
+
+lemma range_sdiff_Icc {x y : ℕ} (h : x ≤ y) :
+  finset.range (y+1) \ finset.Icc x y = finset.Ico 0 x :=
+begin
+  rw [finset.range_eq_Ico, nat.Ico_succ_right, finset.Icc_sdiff_Icc_right (nat.zero_le _) h],
+end
+
 open_locale big_operators
 
 @[simp, norm_cast] lemma rat.cast_sum {α β : Type*} [division_ring β] [char_zero β] (s : finset α)
