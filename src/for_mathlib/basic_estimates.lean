@@ -14,7 +14,9 @@ import data.complex.exponential_bounds
 import analysis.p_series
 import topology.algebra.floor_ring
 import number_theory.prime_counting
+import analysis.special_functions.logb
 import for_mathlib.misc
+import tactic.equiv_rw
 
 noncomputable theory
 
@@ -54,6 +56,13 @@ lemma is_o_log_id_at_top : is_o log (λ x, x) at_top :=
 begin
   rw is_o_iff_tendsto (λ x (hx : x = 0), (show log x = 0, by simp [hx])),
   simpa using tendsto_log_div_mul_add_at_top 1 0 one_ne_zero,
+end
+
+lemma is_o_log_rpow_at_top {r : ℝ} (hr : 0 < r) : is_o log (λ x, x ^ r) at_top :=
+begin
+  rw ←is_o_const_mul_left_iff hr.ne',
+  refine (is_o_log_id_at_top.comp_tendsto (tendsto_rpow_at_top hr)).congr' _ eventually_eq.rfl,
+  filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx using log_rpow hx _,
 end
 
 end to_mathlib
@@ -955,6 +964,20 @@ lemma chebyshev_second_nonneg : 0 ≤ ψ :=
 lemma chebyshev_second'_nonneg : 0 ≤ ψ' :=
 λ x, finset.sum_nonneg' (λ _, von_mangoldt_nonneg)
 
+lemma log_nat_nonneg : ∀ (n : ℕ), 0 ≤ log (n : ℝ)
+| 0 := by simp
+| (n+1) := log_nonneg (by simp)
+
+lemma chebyshev_first_monotone : monotone ϑ :=
+begin
+  intros x₁ x₂ h,
+  apply finset.sum_le_sum_of_subset_of_nonneg,
+  { apply finset.filter_subset_filter _ (finset.range_mono (add_le_add_right _ _)),
+    exact nat.floor_mono h },
+  rintro i - -,
+  apply log_nat_nonneg,
+end
+
 lemma is_O_chebyshev_first_chebyshev_second : is_O ϑ ψ at_top :=
 is_O_of_le _
   (λ x, by { rw [norm_of_nonneg (chebyshev_first_nonneg _),
@@ -974,6 +997,12 @@ begin
   { intros,
     refl }
 end
+
+@[simp] lemma chebyshev_first_zero : ϑ 0 = 0 :=
+by simp [chebyshev_first_eq, finset.filter_singleton, nat.not_prime_zero]
+@[simp] lemma chebyshev_second_zero : ψ 0 = 0 := by simp [chebyshev_second]
+@[simp] lemma chebyshev_first'_zero : ϑ' 0 = 0 := by simp [chebyshev_first']
+@[simp] lemma chebyshev_second'_zero : ψ' 0 = 0 := by simp [chebyshev_second']
 
 lemma chebyshev_lower_aux {x : ℝ} (hx : 0 < x) :
   chebyshev_error x ≤ ψ x - real.log 2 * x :=
@@ -1039,7 +1068,7 @@ begin
 end
 
 lemma chebyshev_lower :
-  is_O (λ x, x) ψ at_top :=
+  is_O id ψ at_top :=
 begin
   rw [is_O_iff],
   refine ⟨(real.log 2 / 2)⁻¹, _⟩,
@@ -1047,7 +1076,7 @@ begin
     chebyshev_lower_explicit (half_lt_self (log_pos one_lt_two))],
   intros x hx₁ hx₂,
   rw [mul_comm, ←div_eq_mul_inv, le_div_iff' (div_pos (log_pos one_lt_two) zero_lt_two),
-    norm_of_nonneg hx₁, real.norm_eq_abs],
+    id.def, norm_of_nonneg hx₁, real.norm_eq_abs],
   exact hx₂.trans (le_abs_self _),
 end
 
@@ -1206,17 +1235,17 @@ end
 open finset
 
 @[to_additive]
-lemma prod_prime_powers {M : Type*} [comm_monoid M] {x : ℝ} {f : ℕ → M} :
-  ∏ n in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, f n =
-    ∏ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime,
-      ∏ k in (finset.Icc 1 ⌊x⌋₊).filter (λ k, (p ^ k : ℝ) ≤ x), f (p ^ k) :=
+lemma prod_prime_powers' {M : Type*} [comm_monoid M] {x : ℕ} {f : ℕ → M} :
+  ∏ n in (finset.Icc 1 x).filter is_prime_pow, f n =
+    ∏ p in (finset.Icc 1 x).filter nat.prime,
+      ∏ k in (finset.Icc 1 x).filter (λ k, p ^ k ≤ x), f (p ^ k) :=
 begin
   rw [finset.prod_sigma', eq_comm],
   refine finset.prod_bij (λ pk _, pk.1 ^ pk.2) _ _ _ _,
   { rintro ⟨p, k⟩ hpk,
-    simp only [←nat.cast_pow, finset.mem_sigma, finset.mem_filter, finset.mem_Icc] at hpk,
+    simp only [finset.mem_sigma, finset.mem_filter, finset.mem_Icc] at hpk,
     simp only [finset.mem_filter, finset.mem_Icc, is_prime_pow_nat_iff],
-    exact ⟨⟨nat.one_le_pow _ _ hpk.1.1.1, nat.le_floor hpk.2.2⟩, p, k, hpk.1.2, hpk.2.1.1, rfl⟩ },
+    exact ⟨⟨nat.one_le_pow _ _ hpk.1.1.1, hpk.2.2⟩, p, k, hpk.1.2, hpk.2.1.1, rfl⟩ },
   { simp only [nat.cast_pow, eq_self_iff_true, implies_true_iff] },
   { rintro ⟨p₁, k₁⟩ ⟨p₂, k₂⟩ h₁ h₂ t,
     simp only [finset.mem_sigma, finset.mem_filter, finset.mem_Icc] at h₁ h₂,
@@ -1227,9 +1256,23 @@ begin
       exists_and_distrib_left, finset.mem_sigma, exists_prop, sigma.exists, forall_exists_index,
       and_assoc],
     rintro _ hpk₁ hpk₂ p hpn k hkn hp hk rfl,
-    refine ⟨p, hp.pos, hpn.trans hpk₂, hp, k, hk, hkn.trans hpk₂, _, rfl⟩,
-    rwa [nat.le_floor_iff', nat.cast_pow] at hpk₂,
-    exact ne_of_gt hpk₁ },
+    exact ⟨p, hp.pos, hpn.trans hpk₂, hp, k, hk, hkn.trans hpk₂, hpk₂, rfl⟩ },
+end
+
+@[to_additive]
+lemma prod_prime_powers {M : Type*} [comm_monoid M] {x : ℝ} {f : ℕ → M} :
+  ∏ n in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, f n =
+    ∏ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime,
+      ∏ k in (finset.Icc 1 ⌊x⌋₊).filter (λ k, (p ^ k : ℝ) ≤ x), f (p ^ k) :=
+begin
+  rw prod_prime_powers',
+  refine finset.prod_congr rfl _,
+  intros p hp,
+  refine finset.prod_congr (filter_congr _) (λ _ _, rfl),
+  intros k hk,
+  rw [nat.le_floor_iff', nat.cast_pow],
+  rw mem_filter at hp,
+  exact pow_ne_zero _ hp.2.ne_zero,
 end
 
 lemma von_mangoldt_ne_zero_iff {n : ℕ} :
@@ -1298,7 +1341,7 @@ nat.floor_mono.tendsto_at_top_at_top (λ x, ⟨max 0 (x + 1), by simp [nat.le_fl
 
 lemma is_O_von_mangoldt_div_self_sub_log_div_self :
   is_O
-    (λ x, ∑ n in Icc 1 ⌊x⌋₊, Λ n / n - ∑ p in filter nat.prime (Icc 1 ⌊x⌋₊), real.log p / p)
+    (λ x, ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹ - ∑ p in filter nat.prime (Icc 1 ⌊x⌋₊), real.log p * p⁻¹)
     (λ _ : ℝ, (1 : ℝ)) at_top :=
 begin
   have : ∀ x : ℝ,
@@ -1318,7 +1361,7 @@ begin
 end
 
 lemma summatory_log_sub :
-  is_O (λ x, (∑ n in Icc 1 ⌊x⌋₊, log (n : ℝ)) - x * ∑ n in Icc 1 ⌊x⌋₊, Λ n / n) (λ x, x) at_top :=
+  is_O (λ x, (∑ n in Icc 1 ⌊x⌋₊, log (n : ℝ)) - x * ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹) (λ x, x) at_top :=
 begin
   have : ∀ (x : ℝ), 0 ≤ x →
     |(∑ n in Icc 1 ⌊x⌋₊, log (n : ℝ)) - x * ∑ n in Icc 1 ⌊x⌋₊, Λ n / n| ≤
@@ -1340,9 +1383,9 @@ begin
 end
 
 lemma is_O_von_mangoldt_div_self :
-  is_O (λ x : ℝ, ∑ n in Icc 1 ⌊x⌋₊, Λ n / n - log x) (λ _, (1 : ℝ)) at_top :=
+  is_O (λ x : ℝ, ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹ - log x) (λ _, (1 : ℝ)) at_top :=
 begin
-  suffices : is_O (λ x : ℝ, x * ∑ n in Icc 1 ⌊x⌋₊, Λ n / n - x * log x) (λ x, x) at_top,
+  suffices : is_O (λ x : ℝ, x * ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹ - x * log x) (λ x, x) at_top,
   { refine ((is_O_refl (λ (x : ℝ), x⁻¹) _).mul this).congr' _ _,
     { filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx,
       rw [←mul_sub, inv_mul_cancel_left₀ hx.ne'] },
@@ -1371,6 +1414,18 @@ begin
   exact finset.sum_filter _ _,
 end
 
+lemma prime_summatory_one_eq_prime_summatory_two {M : Type*} [add_comm_monoid M] (a : ℕ → M) :
+  prime_summatory a 1 = prime_summatory a 2 :=
+begin
+  ext x,
+  rw [prime_summatory, prime_summatory],
+  refine (sum_subset_zero_on_sdiff (filter_subset_filter _ (finset.Icc_subset_Icc_left one_le_two))
+    (λ y hy, _) (λ _ _, rfl)).symm,
+  simp only [mem_sdiff, mem_filter, finset.mem_Icc, and_imp, not_and', not_le,
+    nat.lt_add_one_iff] at hy {contextual := tt},
+  cases hy.1.2.ne_one ((hy.2 hy.1.2 hy.1.1.2).antisymm hy.1.1.1),
+end
+
 lemma log_reciprocal :
   is_O (λ x, prime_summatory (λ p, real.log p / p) 1 x - log x) (λ _, (1 : ℝ)) at_top :=
 is_O_von_mangoldt_div_self_sub_log_div_self.symm.triangle is_O_von_mangoldt_div_self
@@ -1394,6 +1449,12 @@ begin
   { simp [nat.lt_add_one_iff, imp_false, le_zero_iff] {contextual := tt} },
   { intros, refl }
 end
+
+@[simp] lemma prime_counting'_zero : π' 0 = 0 := rfl
+@[simp] lemma prime_counting'_one : π' 1 = 0 := rfl
+@[simp] lemma prime_counting'_two : π' 2 = 0 := rfl
+@[simp] lemma prime_counting_zero : π 0 = 0 := rfl
+@[simp] lemma prime_counting_one : π 1 = 0 := rfl
 
 local attribute [pp_nodot] nat.prime_counting
 
@@ -1475,19 +1536,595 @@ begin
   filter_upwards with x using by simp [div_eq_mul_inv],
 end
 
-lemma prime_counting_asymptotic :
-  is_O (λ x, prime_summatory (λ _, (1 : ℝ)) 1 x - ψ x / log x)
-    (λ x, x / (log x)^2) at_top :=
-sorry
+lemma chebyshev_second_eq_sum_chebyshev_first {x : ℝ} (hx : 0 ≤ x) :
+  ψ x = ∑ k in Icc 1 ⌊logb 2 x⌋₊, ϑ (x ^ (1 / k : ℝ)) :=
+begin
+  rcases eq_or_lt_of_le hx with rfl | hx,
+  { simp },
+  simp only [chebyshev_first_eq],
+  rw [sum_sigma', chebyshev_second, eq_comm],
+  refine sum_bij_ne_zero (λ pk _ _, pk.2 ^ pk.1) _ _ _ _,
+  { rintro ⟨k, p⟩,
+    simp only [mem_sigma, finset.mem_Icc, mem_filter, finset.mem_range, ne.def, and_imp,
+      nat.lt_add_one_iff],
+    rintro hk₁ hk₂ hp' hp -,
+    apply nat.le_floor,
+    rw nat.le_floor_iff' hp.ne_zero at hp',
+    rw [nat.cast_pow, ←rpow_nat_cast],
+    refine (rpow_le_rpow (nat.cast_nonneg _) hp' (nat.cast_nonneg _)).trans _,
+    rw [←rpow_mul hx.le, one_div, inv_mul_cancel, rpow_one],
+    { rw [nat.cast_ne_zero],
+      exact ne_of_gt hk₁ } },
+  { rintro ⟨k₁, p₁⟩ ⟨k₂, p₂⟩,
+    simp only [one_div, mem_sigma, finset.mem_Icc, mem_filter, finset.mem_range, ne.def, heq_iff_eq,
+      and_imp, nat.lt_add_one_iff],
+    rintro hk₁ hk₁' hp₁' hp₁ - hk₂ hk₂' hp₂' hp₂ - t,
+    cases eq_of_prime_pow_eq (nat.prime_iff.1 hp₁) (nat.prime_iff.1 hp₂) hk₁ t,
+    rw (nat.pow_right_strict_mono hp₁.two_le).injective t,
+    exact ⟨rfl, rfl⟩ },
+  { intro n,
+    simp only [nat.lt_add_one_iff, finset.mem_range, mem_sigma, finset.mem_Icc, mem_filter,
+      one_div, exists_prop, sigma.exists, @von_mangoldt_ne_zero_iff n,
+      is_prime_pow_nat_iff_bounded n, forall_exists_index, and_imp],
+    rintro _ p hp₁ k hk₁ hp₂ hk₂ rfl,
+    rw [nat.le_floor_iff' (pow_ne_zero _ hp₂.ne_zero), nat.cast_pow] at H,
+    refine ⟨_, _, ⟨⟨hk₂, _⟩, _, hp₂⟩, _, rfl⟩,
+    { have : 2 ^ k ≤ x,
+      { refine le_trans (pow_le_pow_of_le_left zero_le_two _ _) H,
+        exact_mod_cast hp₂.two_le },
+      rwa [nat.le_floor_iff' hk₂.ne', le_logb_iff_rpow_le one_lt_two hx, rpow_nat_cast] },
+    { rw nat.le_floor_iff' hp₂.ne_zero,
+      refine le_trans _ (rpow_le_rpow (pow_nonneg (nat.cast_nonneg _) _) H
+        (inv_nonneg.2 (nat.cast_nonneg _))),
+      rw [←rpow_nat_cast, ←rpow_mul (nat.cast_nonneg _), mul_inv_cancel, rpow_one],
+      rw nat.cast_ne_zero,
+      apply hk₂.ne' },
+    rw von_mangoldt_ne_zero_iff,
+    apply prime.is_prime_pow,
+    rwa ←nat.prime_iff },
+  { simp only [one_div, mem_sigma, finset.mem_Icc, mem_filter, finset.mem_range, ne.def, and_imp,
+      sigma.forall],
+    rintro k p hk - - - -,
+    rw von_mangoldt_apply_pow,
+    rwa ←pos_iff_ne_zero },
+end
 
-def prime_log_div_sum_error (x : ℝ) : ℝ := prime_summatory (λ p, real.log p / p) 1 x - log x
+lemma finset.Icc_succ_left {a b : ℕ} : finset.Icc a.succ b = Ioc a b :=
+begin
+  ext n,
+  simp [nat.succ_le_iff],
+end
+
+lemma finset.Icc_eq_insert_Icc_succ {a b : ℕ} {h : a ≤ b} : finset.Icc a b = insert a (Icc (a+1) b) :=
+begin
+  rw finset.Icc_succ_left,
+  rw Ioc_insert_left h,
+end
+
+-- Note this inequality can be improved, eg to
+-- ψ - ϑ << x ^ (1/2) * (log x)
+-- but this is good enough for me!
+lemma chebyshev_second_sub_chebyshev_first_eq {x : ℝ} (hx : 2 ≤ x) :
+  ψ x - ϑ x ≤ x ^ (1 / 2 : ℝ) * (log x)^2 :=
+begin
+  have h₁ : ∑ n in Icc 1 ⌊x⌋₊, Λ n = ∑ n in filter is_prime_pow (Icc 1 ⌊x⌋₊), Λ n,
+  { simp only [sum_filter_of_ne, div_ne_zero_iff, von_mangoldt_ne_zero_iff, implies_true_iff]
+    { contextual := tt } },
+  rw chebyshev_second_eq_sum_chebyshev_first (zero_le_two.trans hx),
+  rw finset.Icc_eq_insert_Icc_succ,
+  { rw [sum_insert, nat.cast_one, div_one, rpow_one, add_tsub_cancel_left],
+    refine (sum_le_of_forall_le _ _ (1/2 * x^(1 / 2 : ℝ) * log x) _).trans _,
+    { intros k hk,
+      simp only [finset.mem_Icc] at hk,
+      have : x ^ (1 / k : ℝ) ≤ x ^ (1 / 2 : ℝ),
+      { apply rpow_le_rpow_of_exponent_le (one_le_two.trans hx),
+        refine one_div_le_one_div_of_le zero_lt_two _,
+        exact_mod_cast hk.1 },
+      apply (chebyshev_first_monotone this).trans _,
+      refine (chebyshev_first_le_chebyshev_second (x ^ (1 / 2 : ℝ))).trans _,
+      apply (chebyshev_trivial_upper _).trans,
+      { rw [log_rpow (zero_lt_two.trans_le hx), mul_left_comm, mul_assoc] },
+      exact one_le_rpow (one_le_two.trans hx) (by norm_num) },
+    { rw [nat.card_Icc, nat.succ_sub_succ_eq_sub, nsmul_eq_mul],
+      suffices : ((⌊logb 2 x⌋₊ - 1 : ℕ) : ℝ) ≤ log x / real.log 2,
+      { apply (mul_le_mul_of_nonneg_right this (mul_nonneg _ (log_nonneg _))).trans,
+        { rw [mul_comm, mul_assoc, mul_div_assoc', mul_assoc, ←sq, mul_div_assoc', mul_div_assoc',
+            mul_comm, mul_div_assoc],
+          refine mul_le_of_le_one_right (mul_nonneg (rpow_nonneg_of_nonneg _ _) (sq_nonneg _)) _,
+          { exact zero_le_two.trans hx },
+          apply div_le_one_of_le;
+          linarith [log_two_gt_d9] },
+        { exact mul_nonneg (by norm_num1) (rpow_nonneg_of_nonneg (zero_le_two.trans hx) _) },
+        { apply one_le_two.trans hx } },
+      transitivity' ⌊logb 2 x⌋₊,
+      { rw nat.cast_le,
+        exact nat.sub_le _ 1 },
+      exact (nat.floor_le (logb_nonneg one_lt_two (one_le_two.trans hx))).trans le_rfl },
+    simp },
+  apply nat.le_floor,
+  rwa [nat.cast_one, logb, one_le_div (log_pos one_lt_two), log_le_log zero_lt_two],
+  linarith
+end
+
+lemma chebyshev_first_lower :
+  is_O id ϑ at_top :=
+begin
+  have : is_O (ψ - ϑ) (λ x, x ^ (1 / 2 : ℝ) * (log x)^2) at_top,
+  { apply is_O.of_bound 1,
+    filter_upwards [eventually_ge_at_top (2 : ℝ)],
+    intros x hx,
+    rw [pi.sub_apply, one_mul, norm_eq_abs, norm_eq_abs, abs_mul, abs_pow, pow_bit0_abs,
+      abs_of_nonneg (sub_nonneg_of_le (chebyshev_first_le_chebyshev_second x)),
+      abs_of_nonneg (rpow_nonneg_of_nonneg (zero_le_two.trans hx) _)],
+    apply chebyshev_second_sub_chebyshev_first_eq hx },
+  have : is_o (ψ - ϑ) id at_top,
+  { refine this.trans_is_o _,
+    have t := (is_o_log_rpow_at_top (show (0 : ℝ) < 1 / 4, by norm_num1)).pow zero_lt_two,
+    refine (is_O.mul_is_o _ t).congr' eventually_eq.rfl _,
+    { exact (λ x, x ^ (1 / 2 : ℝ)) },
+    { filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx,
+      rw [←rpow_nat_cast, ←rpow_mul hx.le, ←rpow_add hx],
+      norm_num },
+    { exact is_O_refl _ _ } },
+  have := this.symm.trans_is_O chebyshev_lower,
+  apply (chebyshev_lower.trans (is_o.right_is_O_add this)).congr_right _,
+  simp
+end
+
+lemma chebyshev_first_trivial_bound {x : ℝ} :
+  ϑ x ≤ π ⌊x⌋₊ * log x :=
+begin
+  rcases le_or_lt x 0 with hx | hx,
+  { rw [chebyshev_first, nat.floor_eq_zero.2 (hx.trans_lt zero_lt_one)],
+    simp [filter_singleton, nat.not_prime_zero] },
+  rw [nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range, ←nsmul_eq_mul],
+  refine sum_le_of_forall_le _ _ (log x) _,
+  intros y hy,
+  simp only [mem_filter, finset.mem_range, nat.lt_add_one_iff] at hy,
+  rw [log_le_log _ hx, ←nat.le_floor_iff'],
+  { exact hy.1 },
+  { exact hy.2.ne_zero },
+  { rw nat.cast_pos,
+    exact hy.2.pos },
+end
+
+lemma is_O_div_log_prime_counting :
+  is_O (λ x, x / log x) (λ x, (π ⌊x⌋₊ : ℝ)) at_top :=
+begin
+  have : is_O ϑ (λ x, (π ⌊x⌋₊ : ℝ) * real.log x) at_top,
+  { apply is_O_of_le _ _,
+    intro x,
+    rw [norm_of_nonneg (chebyshev_first_nonneg x), norm_eq_abs],
+    exact chebyshev_first_trivial_bound.trans (le_abs_self _) },
+  apply ((chebyshev_first_lower.trans this).mul (is_O_refl (λ x, (log x)⁻¹) _)).congr' _ _,
+  { apply eventually_of_forall,
+    intro x,
+    simp only [id.def, div_eq_mul_inv] },
+  { filter_upwards [eventually_gt_at_top (1 : ℝ)] with x hx,
+    rw mul_inv_cancel_right₀ (log_pos hx).ne' }
+end
+
+-- lemma prime_counting_asymptotic :
+--   is_O (λ x, prime_summatory (λ _, (1 : ℝ)) 1 x - ψ x / log x)
+--     (λ x, x / (log x)^2) at_top :=
+-- sorry
+
+def prime_log_div_sum_error (x : ℝ) : ℝ := prime_summatory (λ p, real.log p * p⁻¹) 1 x - log x
+
+lemma prime_summatory_log_mul_inv_eq :
+  prime_summatory (λ p, real.log p * p⁻¹) 2 = log + prime_log_div_sum_error :=
+begin
+  ext x,
+  rw [pi.add_apply, prime_log_div_sum_error, add_sub_cancel'_right,
+    prime_summatory_one_eq_prime_summatory_two]
+end
 
 lemma is_O_prime_log_div_sum_error : is_O prime_log_div_sum_error (λ _, (1 : ℝ)) at_top :=
 log_reciprocal
 
+@[measurability] lemma measurable_prime_log_div_sum_error :
+  measurable prime_log_div_sum_error :=
+begin
+  change measurable (λ x, _),
+  simp only [prime_summatory_one_eq_prime_summatory_two, prime_summatory_eq_summatory],
+  measurability
+end
+
+def prime_reciprocal_integral : ℝ :=
+  ∫ x in Ioi 2, prime_log_div_sum_error x * (x * log x ^ 2)⁻¹.
+
+lemma my_func_continuous_on : continuous_on (λ x, (x * log x ^ 2)⁻¹) (Ioi 1) :=
+begin
+  refine (continuous_on_id.mul ((continuous_on_log.mono _).pow _)).inv₀ _,
+  { simp [imp_not_comm, set.subset_def] },
+  rintro x (hx : _ < _),
+  exact mul_ne_zero (show x ≠ 0, by linarith) (pow_ne_zero _ (log_pos hx).ne'),
+end
+
+lemma integral_inv_self_mul_log_sq {a b : ℝ} (ha : 1 < a) (hb : 1 < b) :
+  ∫ x in a..b, (x * log x ^ 2)⁻¹ = (log a)⁻¹ - (log b)⁻¹ :=
+begin
+  have : (∀ y ∈ interval a b, has_deriv_at (λ x, - (log x)⁻¹) (y * log y ^ 2)⁻¹ y),
+  { intros y hy,
+    have : (y * log y ^ 2)⁻¹ = - ((- y⁻¹) / (log y) ^ 2),
+    { rw [neg_div, neg_neg, div_eq_mul_inv, mul_inv₀] },
+    rw this,
+    have : 1 < y := (lt_min_iff.2 ⟨ha, hb⟩).trans_le hy.1,
+    exact ((has_deriv_at_log (by linarith)).inv (log_pos this).ne').neg },
+  rw [interval_integral.integral_eq_sub_of_has_deriv_at this, neg_sub_neg],
+  apply continuous_on.interval_integrable,
+  apply my_func_continuous_on.mono,
+  intros y hy,
+  exact (lt_min_iff.2 ⟨ha, hb⟩).trans_le hy.1,
+end
+
+lemma integral_Ioi_my_func_tendsto_aux {a : ℝ} (ha : 1 < a)
+  {ι : Type*} {b : ι → ℝ} {l : filter ι} (hb : tendsto b l at_top) :
+  tendsto (λ i, ∫ x in a..b i, (x * log x ^ 2)⁻¹) l (𝓝 (log a)⁻¹) :=
+begin
+  suffices :
+    tendsto (λ i, ∫ x in a..b i, (x * log x ^ 2)⁻¹) l (nhds ((log a)⁻¹ - 0)),
+  { simpa using this },
+  have : ∀ᶠ i in l, ∫ x in a..b i, (x * log x ^ 2)⁻¹ = (log a)⁻¹ - (log (b i))⁻¹,
+  { filter_upwards [hb.eventually (eventually_ge_at_top a)],
+    intros i hi,
+    rw integral_inv_self_mul_log_sq ha (ha.trans_le hi) },
+  rw tendsto_congr' this,
+  exact (tendsto_inv_at_top_zero.comp (tendsto_log_at_top.comp hb)).const_sub _,
+end
+
+-- TODO: Move to mathlib
+lemma integrable_on_my_func_Ioi {a : ℝ} (ha : 1 < a) :
+  integrable_on (λ x, (x * log x ^ 2)⁻¹) (Ioi a) :=
+begin
+  have hb : tendsto (λ (x : ℝ≥0), a + x) at_top at_top :=
+    tendsto_at_top_add_const_left _ _ (nnreal.tendsto_coe_at_top.2 tendsto_id),
+  refine integrable_on_Ioi_of_interval_integral_norm_tendsto (log a)⁻¹ a _ hb _,
+  { intros i,
+    refine (continuous_on.integrable_on_Icc _).mono_set set.Ioc_subset_Icc_self,
+    apply my_func_continuous_on.mono,
+    rintro y ⟨hy, -⟩,
+    exact ha.trans_le hy },
+  apply (integral_Ioi_my_func_tendsto_aux ha hb).congr (λ x, _),
+  refine interval_integral.integral_congr (λ i hi, _),
+  apply (real.norm_of_nonneg _).symm,
+  refine inv_nonneg.2 (mul_nonneg _ (sq_nonneg _)),
+  refine le_trans _ hi.1,
+  exact le_min (by linarith) (add_nonneg (by linarith) x.2),
+end
+
+-- TODO: Move to mathlib
+lemma integral_my_func_Ioi {a : ℝ} (ha : 1 < a) :
+  ∫ x in Ioi a, (x * log x ^ 2)⁻¹ = (log a)⁻¹ :=
+tendsto_nhds_unique
+  (interval_integral_tendsto_integral_Ioi _ (integrable_on_my_func_Ioi ha) tendsto_id)
+  (integral_Ioi_my_func_tendsto_aux ha tendsto_id)
+
+lemma my_func2_continuous_on : continuous_on (λ x, (x * log x)⁻¹) (Ioi 1) :=
+begin
+  refine (continuous_on_id.mul (continuous_on_log.mono _)).inv₀ _,
+  { simp [imp_not_comm, set.subset_def] },
+  rintro x (hx : _ < _),
+  exact mul_ne_zero (show x ≠ 0, by linarith) (log_pos hx).ne',
+end
+
+lemma integral_inv_self_mul_log {a b : ℝ} (ha : 1 < a) (hb : 1 < b) :
+  ∫ x in a..b, (x * log x)⁻¹ = log (log b) - log (log a) :=
+begin
+  have : (∀ y ∈ interval a b, has_deriv_at (λ x, log (log x)) (y * log y)⁻¹ y),
+  { intros y hy,
+    rw [mul_inv₀, ←div_eq_mul_inv],
+    have : 1 < y := (lt_min_iff.2 ⟨ha, hb⟩).trans_le hy.1,
+    exact (has_deriv_at_log (by linarith)).log (log_pos this).ne' },
+  rw [interval_integral.integral_eq_sub_of_has_deriv_at this],
+  apply continuous_on.interval_integrable,
+  apply my_func2_continuous_on.mono,
+  intros y hy,
+  exact (lt_min_iff.2 ⟨ha, hb⟩).trans_le hy.1,
+end
+
+lemma integrable_on_prime_log_div_sum_error :
+  integrable_on (λ x, prime_log_div_sum_error x * (x * log x ^ 2)⁻¹) (Ici 2) :=
+begin
+  obtain ⟨c, hc⟩ := is_O_prime_log_div_sum_error.bound,
+  obtain ⟨k, hk₂, hk : ∀ y, k ≤ y → _ ≤ c * ∥(1 : ℝ)∥⟩ := (at_top_basis' 2).mem_iff.1 hc,
+  have : set.Ici 2 = set.Ico 2 k ∪ set.Ici k,
+  { rw Ico_union_Ici_eq_Ici hk₂ },
+  rw this,
+  have hlog : continuous_on log (Icc 2 k),
+  { apply continuous_on_log.mono _,
+    rintro y ⟨hy, -⟩ (rfl : y = 0),
+    norm_num at hy },
+  have hlog' : continuous_on (λ (i : ℝ), (i * log i ^ 2)⁻¹) (Icc 2 k),
+  { apply continuous_on.inv₀,
+    { exact continuous_on_id.mul (continuous_on.pow hlog 2) },
+    rintro y ⟨hy, -⟩,
+    exact mul_ne_zero (by linarith) (pow_ne_zero _ (log_pos (by linarith)).ne') },
+  apply integrable_on.union,
+  { refine integrable_on.congr_set_ae _ Ico_ae_eq_Icc,
+    simp only [prime_log_div_sum_error, prime_summatory_one_eq_prime_summatory_two,
+      prime_summatory_eq_summatory, sub_mul],
+    apply integrable.sub,
+    { exact partial_summation_integrable _ (continuous_on.integrable_on_Icc hlog') },
+    refine continuous_on.integrable_on_Icc _,
+    exact hlog.mul hlog' },
+  have : ∀ᵐ (x : ℝ) ∂volume.restrict (Ici k),
+    ∥prime_log_div_sum_error x * (x * log x ^ 2)⁻¹∥ ≤ ∥c * (x * log x ^ 2)⁻¹∥,
+  { rw ae_restrict_iff' (@measurable_set_Ici ℝ _ _ _ _ _ _),
+    filter_upwards with x hx,
+    rw [normed_field.norm_mul, normed_field.norm_mul],
+    apply mul_le_mul_of_nonneg_right _ (norm_nonneg _),
+    apply le_trans (hk _ hx) _,
+    simp [norm_eq_abs, le_abs_self] },
+  refine integrable.mono _ (by measurability) this,
+  apply integrable.const_mul,
+  refine integrable_on.congr_set_ae _ Ioi_ae_eq_Ici.symm,
+  apply integrable_on_my_func_Ioi,
+  linarith
+end
+
+lemma prime_reciprocal_eq {x : ℝ} (hx : 2 ≤ x) :
+  prime_summatory (λ p, (p : ℝ)⁻¹) 2 x -
+    (log (log x) + (1 - log (real.log 2) + prime_reciprocal_integral))
+    = prime_log_div_sum_error x / log x -
+      ∫ t in Ici x, prime_log_div_sum_error t / (t * log t ^ 2) :=
+begin
+  let a : ℕ → ℝ := λ n, if n.prime then real.log n * n⁻¹ else 0,
+  let f : ℝ → ℝ := λ x, (log x)⁻¹,
+  let f' : ℝ → ℝ := λ x, ((- x⁻¹) / log x ^ 2),
+  have hdiff : ∀ i ∈ set.Ici ((2 : ℕ) : ℝ), has_deriv_at f (f' i) i,
+  { rintro i (hi : _ ≤ _),
+    rw nat.cast_two at hi,
+    exact (has_deriv_at_log (by linarith)).inv (ne_of_gt (log_pos (by linarith))) },
+  have h : ∀ x : ℝ, x ∈ set.Ici (2 : ℝ) → x ≠ 0,
+  { simp only [imp_not_comm, set.mem_Ici, not_le, forall_eq, zero_lt_bit0, zero_lt_one] },
+  -- have h' : ∀ x : ℝ, x ∈ set.Ici ((2 : ℕ) : ℝ) → x ≠ 0 := by exact_mod_cast h,
+  have hcont : continuous_on f' (Ici ((2 : ℕ) : ℝ)),
+  { rw nat.cast_two,
+    apply continuous_on.div,
+    { exact (continuous_on_inv₀.mono h).neg },
+    { exact (continuous_on_log.mono h).pow _ },
+    intros x hx,
+    refine pow_ne_zero _ (log_pos _).ne',
+    exact one_lt_two.trans_le hx },
+  have := partial_summation_cont' a f f' two_ne_zero hdiff hcont x,
+  rw [sub_eq_iff_eq_add],
+  convert this using 1,
+  { rw prime_summatory_eq_summatory,
+    refine finset.sum_congr rfl _,
+    intros y hy,
+    simp only [],
+    rw [ite_mul, zero_mul, mul_right_comm, mul_inv_cancel, one_mul],
+    apply (log_pos _).ne',
+    rw [nat.one_lt_cast, ←nat.succ_le_iff],
+    simp only [finset.mem_Icc] at hy,
+    apply hy.1 },
+  rw [←prime_summatory_eq_summatory, prime_summatory_log_mul_inv_eq, nat.cast_two],
+  simp only [div_eq_mul_inv, pi.add_apply, add_mul, f', f, neg_mul, mul_neg,
+    integral_neg, sub_neg_eq_add, ←mul_inv₀],
+  have h₁ : integrable (λ a, (a * log a)⁻¹) (volume.restrict (Icc 2 x)),
+  { apply continuous_on.integrable_on_Icc,
+    apply my_func2_continuous_on.mono,
+    intros y hy,
+    exact one_lt_two.trans_le hy.1 },
+  have :
+    ∫ a in Icc 2 x, real.log a * (a * real.log a ^ 2)⁻¹ +
+        prime_log_div_sum_error a * (a * log a ^ 2)⁻¹ =
+    ∫ a in Icc 2 x, (a * real.log a)⁻¹ + prime_log_div_sum_error a * (a * log a ^ 2)⁻¹,
+  { refine set_integral_congr measurable_set_Icc (λ y hy, _),
+    dsimp,
+    rw [mul_inv₀, mul_inv₀, mul_left_comm, ←div_eq_mul_inv, sq, div_self_mul_self'] },
+  rw [mul_inv_cancel (log_pos (one_lt_two.trans_le hx)).ne', this,
+    integral_add h₁ (integrable_on_prime_log_div_sum_error.mono_set Icc_subset_Ici_self),
+    sub_add_eq_add_sub, add_comm (1 : ℝ), add_sub_assoc, add_assoc, add_right_inj,
+    integral_Icc_eq_integral_Ioc, ←interval_integral.integral_of_le hx, ←add_assoc,
+    ←add_assoc (1 : ℝ), add_sub, integral_inv_self_mul_log one_lt_two (one_lt_two.trans_le hx),
+    add_comm (real.log _), add_sub, add_sub_assoc, add_right_inj, sub_eq_iff_eq_add,
+    integral_Icc_eq_integral_Ioc, set_integral_congr_set_ae (Ioi_ae_eq_Ici' volume_singleton).symm,
+    ←integral_union _ _ (integrable_on_prime_log_div_sum_error.mono_set _)
+    (integrable_on_prime_log_div_sum_error.mono_set _),
+    Ioc_union_Ioi_eq_Ioi hx],
+  { refl },
+  { exact disjoint.mono_left set.Ioc_subset_Iic_self (Iic_disjoint_Ioi le_rfl) },
+  { exact measurable_set_Ioi },
+  { exact set.Ioc_subset_Icc_self.trans set.Icc_subset_Ici_self },
+  { rintro y (hy : _ < _),
+    apply hx.trans hy.le },
+end
+
+lemma prime_reciprocal_error :
+  is_O (λ x, prime_log_div_sum_error x / log x -
+      ∫ t in Ici x, prime_log_div_sum_error t / (t * log t ^ 2)) (λ x, (log x)⁻¹) at_top :=
+begin
+  simp only [div_eq_mul_inv],
+  apply is_O.sub,
+  { apply (is_O_prime_log_div_sum_error.mul (is_O_refl _ _)).trans _,
+    simpa using is_O_refl _ _ },
+  obtain ⟨c, hc⟩ := is_O_prime_log_div_sum_error.bound,
+  obtain ⟨k, hk₂, hk : ∀ y, k ≤ y → _ ≤ c * ∥(1 : ℝ)∥⟩ := (at_top_basis' 2).mem_iff.1 hc,
+  have : ∀ y, k ≤ y → ∀ᵐ (x : ℝ) ∂volume.restrict (Ici y),
+    ∥prime_log_div_sum_error x * (x * log x ^ 2)⁻¹∥ ≤ c * (x * log x ^ 2)⁻¹,
+  { intros y hy,
+    rw ae_restrict_iff' (@measurable_set_Ici ℝ _ _ _ _ _ _),
+    filter_upwards with x hx,
+    rw [normed_field.norm_mul],
+    apply (mul_le_mul_of_nonneg_right (hk _ (hy.trans hx)) (norm_nonneg _)).trans _,
+    rw [norm_eq_abs, abs_one, mul_one, norm_eq_abs, abs_inv, abs_mul, abs_sq, abs_of_nonneg],
+    exact zero_le_two.trans (hk₂.trans (hy.trans hx)) },
+  have : is_O (λ y, ∫ x in Ici y, prime_log_div_sum_error x * (x * log x ^ 2)⁻¹)
+          (λ y, ∫ x in Ici y, c * (x * log x ^ 2)⁻¹) at_top,
+  { apply is_O.of_bound 1,
+    filter_upwards [eventually_ge_at_top k] with y hy,
+    apply (norm_integral_le_integral_norm _).trans _,
+    rw [norm_eq_abs, one_mul],
+    apply le_trans _ (le_abs_self _),
+    refine integral_mono_of_nonneg (eventually_of_forall (λ x, norm_nonneg _)) _ (this _ hy),
+    refine integrable.const_mul _ _,
+    refine integrable_on.congr_set_ae _ Ioi_ae_eq_Ici.symm,
+    exact integrable_on_my_func_Ioi (one_lt_two.trans_le (hk₂.trans hy)) },
+  apply this.trans,
+  simp only [←smul_eq_mul, integral_smul],
+  simp only [smul_eq_mul],
+  apply (is_O_const_mul_self c _ _).trans _,
+  apply is_O.of_bound 1,
+  filter_upwards [eventually_gt_at_top (1 : ℝ)] with y hy,
+  rw [set_integral_congr_set_ae (Ioi_ae_eq_Ici' volume_singleton).symm, integral_my_func_Ioi hy,
+    one_mul],
+end
+
 lemma prime_reciprocal : ∃ b,
-  is_O (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) 1 x - log (log x) - b) (λ x, 1 / log x) at_top :=
+  is_O (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) 1 x - (log (log x) + b)) (λ x, (log x)⁻¹) at_top :=
+begin
+  refine ⟨1 - log (real.log 2) + prime_reciprocal_integral, _⟩,
+  apply prime_reciprocal_error.congr' _ eventually_eq.rfl,
+  filter_upwards [eventually_ge_at_top (2 : ℝ)] with x hx,
+  rw [prime_summatory_one_eq_prime_summatory_two, ←prime_reciprocal_eq hx]
+end
+
+lemma sum_thing_has_sum : has_sum (λ n : ℕ, ((n + 1) * (n + 2) : ℝ)⁻¹) 1 :=
+begin
+  refine (has_sum_iff_tendsto_nat_of_nonneg _ _).2 _,
+  { exact λ i, inv_nonneg.2 (by exact_mod_cast zero_le') },
+  have : ∀ i : ℕ, ((i + 1) * (i + 2) : ℝ)⁻¹ = (i + 1)⁻¹ - ((i + 1 : ℕ) + 1)⁻¹,
+  { intro i,
+    simp only [nat.cast_add, nat.cast_one, add_assoc],
+    have i₁ : (i + 2 : ℝ) ≠ 0 := by exact_mod_cast nat.succ_ne_zero (i + 1),
+    field_simp [nat.cast_add_one_ne_zero, i₁, bit0] },
+  simp only [this, sum_range_sub'],
+  simpa using ((tendsto_add_at_top_iff_nat 1).2 tendsto_inverse_at_top_nhds_0_nat).const_sub 1,
+end
+
+----------------------------------------------------------------------------------------------------
+--                    Below this point, this file is a trainwreck. Good luck!                     --
+----------------------------------------------------------------------------------------------------
+
+lemma sum_thing'_has_sum : has_sum (λ n : ℕ, ((n - 1) * n : ℝ)⁻¹) 1 :=
+begin
+  refine (has_sum_nat_add_iff' 2).1 _,
+  convert sum_thing_has_sum,
+  { norm_num [add_sub_assoc] },
+  simp [sum_range_succ],
+end
+
+lemma sum_thing'_summable :
+  summable (λ n : ℕ, ((n - 1) * n : ℝ)⁻¹) :=
+sum_thing'_has_sum.summable
+
+lemma summable_indicator_iff_subtype {α β : Type*} [topological_space α] [add_comm_monoid α]
+  {s : set β} (f : β → α) :
+  summable (f ∘ coe : s → α) ↔ summable (s.indicator f) :=
+exists_congr (λ _, has_sum_subtype_iff_indicator)
+
+lemma prime_sum_thing'_summable :
+  summable (set.indicator (set_of nat.prime) (λ p : ℕ, ((p - 1) * p : ℝ)⁻¹)) :=
+sum_thing'_summable.indicator _
+
+def proper_prime_pow_equiv :
+  {q : ℕ | is_prime_pow q ∧ ¬ q.prime } ≃ {p : ℕ // p.prime} × {r : ℕ // 2 ≤ r} :=
 sorry
+-- { to_fun := λ q, _,
+--   inv_fun := λ pr, ⟨(pr.1 : ℕ) ^ (pr.2 : ℕ), is_prime_pow.pow (begin have := pr.1.2.is_prime_pow, end) _, _⟩,
+
+-- }
+
+lemma prime_power_reciprocal_summable :
+  summable (set.indicator { q : ℕ | is_prime_pow q ∧ ¬ q.prime } (λ q : ℕ, (q : ℝ)⁻¹)) :=
+sorry
+-- begin
+--   rw ←summable_indicator_iff_subtype,
+-- end
+
+-- lemma summable_sigma_of_nonneg {β : Π x : α, Type*} {f : (Σ x, β x) → ℝ} (hf : ∀ x, 0 ≤ f x) :
+--   summable f ↔ (∀ x, summable (λ y, f ⟨x, y⟩)) ∧ summable (λ x, ∑' y, f ⟨x, y⟩) :=
+
+-- lemma summable_prod_of_nonneg {α β : Type*} (f : α → β → ℝ) (hf : ∀ a b, 0 ≤ f a b) :
+--   summable f ↔ (∀ x, summable (f x)) ∧ summable (λ x, tsum (f x)) :=
+-- begin
+
+--   have := summable_sigma_of_nonneg,
+--   -- equiv_rw (equiv.Pi_curry (λ (_ : α) (_ : β), ℝ)).symm at f,
+--   -- convert @@summable_sigma_of_nonneg _ f _,
+--   -- dsimp,
+--   -- have := equiv.Pi_curry
+--   -- equiv_rw equiv.Pi_curry at f,
+--   -- have := equiv.sigma_equiv_prod,
+--   -- convert @@summable_sigma_of_nonneg _ (λ (x : Σ _ : α, β), f x.1 x.2) _,
+--   -- { apply (iff_iff_eq.1 _).symm,
+
+--   --   -- convert (equiv.sigma_equiv_prod α β).summable_iff,
+--   --   -- have := summable_of_is_equivalent
+
+--   -- }
+-- end
+
+open_locale ennreal
+
+example :
+  ∑' (p : {p : ℕ // nat.prime p}), ∑' (r : {r : ℕ // 2 ≤ r}), ((((p : ℝ≥0∞) ^ (r : ℕ)))⁻¹) < ⊤ :=
+begin
+  rw ←ennreal.tsum_prod,
+  rw tsum_prod',
+  -- simp only [_root_.coe_coe],
+end
+
+#exit
+
+example : summable (λ p r : ℕ, if 2 ≤ p ∧ 2 ≤ r then (p ^ r : ℝ≥0∞)⁻¹ else 0) :=
+begin
+
+end
+-- ennreal.summable
+
+--   refine summable_of_sum_range_le _ _,
+--   { exact 2 },
+--   { intro n,
+--     split_ifs,
+--     { exact inv_nonneg.2 (nat.cast_nonneg _) },
+--     { refl } },
+--   intro n,
+--   rw ←sum_filter,
+--   have : (range n).filter is_prime_pow ⊆ (finset.Icc 1 n).filter is_prime_pow,
+--   { rw range_eq_Ico,
+--     refine (filter_subset_filter _ Ico_subset_Icc_self).trans _,
+--     simp [subset_iff, is_prime_pow.one_lt, le_of_lt] {contextual := tt} },
+--   refine (finset.sum_le_sum_of_subset_of_nonneg this _).trans _,
+--   { exact λ n _ _, inv_nonneg.2 (nat.cast_nonneg _) },
+--   rw [sum_prime_powers', ←nat.Ico_succ_right],
+--   simp only [nat.cast_pow],
+
+--   -- squeeze_simp,
+--   -- dsimp,
+
+--   -- refine (finset.sum_mono_set _ this).trans _,
+--   -- dsimp,
+--   -- let f : (Σ (m : {m : ℕ // nat.prime m}), {k : ℕ // 0 < k}) → ℝ := λ mk, (mk.1.1 ^ mk.2.1 : ℕ)⁻¹,
+--   -- have : summable f,
+--   -- { refine (summable_sigma_of_nonneg _).2 ⟨_, _⟩,
+--   --   { rintro ⟨⟨p, hp⟩, k, hk⟩,
+--   --     exact inv_nonneg.2 (nat.cast_nonneg _) },
+--   --   { rintro ⟨p, hp⟩,
+--   --     change summable (λ y, _⁻¹),
+--   --     dsimp,
+--   --     change summable (λ (y : {k // 0 < k}), ((p ^ _ : ℕ) : ℝ)⁻¹),
+
+--   --     -- classical,
+--   --     -- apply summable.subtype,
+
+--   --   }
+
+--   -- },
+-- end
+
+-- #exit
+
+def prime_power_reciprocal : ℝ := ∑' q : ℕ, if is_prime_pow q then (q : ℝ)⁻¹ else 0
+
+lemma prime_power_reciprocal_partial : ∃ b,
+  is_O (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) - (log (log x) + b))
+    (λ x, (log x)⁻¹) at_top :=
+begin
+  sorry
+end
 
 -- BM: I expect there's a nicer way of stating this but this should be good enough for now
 lemma mertens_third :

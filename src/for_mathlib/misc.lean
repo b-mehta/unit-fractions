@@ -79,7 +79,7 @@ begin
   exact finset.Icc_subset_Icc_left (nat.zero_le _),
 end
 
-lemma Ico_union_Icc_eq_Icc {x y z : ℕ} (h₁ : x ≤ y) (h₂ : y ≤ z) :
+lemma finset.Ico_union_Icc_eq_Icc {x y z : ℕ} (h₁ : x ≤ y) (h₂ : y ≤ z) :
   finset.Ico x y ∪ finset.Icc y z = finset.Icc x z :=
 by rw [←finset.coe_inj, finset.coe_union, finset.coe_Ico, finset.coe_Icc, finset.coe_Icc,
     set.Ico_union_Icc_eq_Icc h₁ h₂]
@@ -99,7 +99,7 @@ le_of_eq $ Ico_inter_Icc_consecutive a b c
 lemma finset.Icc_sdiff_Icc_right {x y z : ℕ} (h₁ : x ≤ y) (h₂ : y ≤ z) :
   finset.Icc x z \ finset.Icc y z = finset.Ico x y :=
 begin
-  rw ←Ico_union_Icc_eq_Icc h₁ h₂,
+  rw ←finset.Ico_union_Icc_eq_Icc h₁ h₂,
   rw finset.union_sdiff_self,
   rw finset.sdiff_eq_self_of_disjoint,
   apply Ico_disjoint_Icc_consecutive,
@@ -131,3 +131,38 @@ lemma finset.filter_comm {α : Type*} (p q : α → Prop) [decidable_eq α]
   [decidable_pred p] [decidable_pred q] (s : finset α) :
   (s.filter p).filter q = (s.filter q).filter p :=
 by simp only [finset.filter_filter, and_comm]
+
+section asymp
+
+open filter asymptotics
+
+-- lemma is_O_sum (k : ℕ) (f : ℝ → ℕ) (g₁ g₂ : ℝ → ℝ)
+--   (hf : tendsto f at_top at_top) (hg : is_O g₁ g₂ at_top) :
+--   is_O (λ x, ∑ i in finset.Icc k (f x), g₁ i) (λ x, ∑ i in finset.Icc k (f x), g₂ i) at_top :=
+-- begin
+--   obtain ⟨c, hc⟩ := asymptotics.is_O.bound hg,
+--   obtain ⟨K, hkK, hK : ∀ (x : ℝ), _ ≤ _ → _ ≤ _⟩ := (at_top_basis' (k : ℝ)).mem_iff.1 hc,
+--   suffices :
+--     is_O
+--       (λ x, ∑ i in finset.Ico k ⌊K⌋₊, g₁ i + ∑ i in finset.Icc ⌊K⌋₊ (f x), g₁ i)
+--       (λ x, ∑ i in finset.Ico k ⌊K⌋₊, g₂ i + ∑ i in finset.Icc ⌊K⌋₊ (f x), g₂ i) at_top,
+--   { refine this.congr' _ _,
+--     all_goals {
+--       rw [eventually_eq],
+--       filter_upwards [hf (eventually_ge_at_top ⌊K⌋₊)],
+--       rintro y (hy : _ ≤ _),
+--       rw [←finset.sum_union (Ico_disjoint_Icc_consecutive _ _ _),
+--         finset.Ico_union_Icc_eq_Icc (nat.le_floor hkK) hy] } },
+--   apply is_O.trans _ (is_o.right_is_O_add _),
+
+--   -- have := finset.Ico_union_Icc_eq_Icc,
+--   -- have : ∀ x, ∑ i in finset.Icc k (f x), g₁ i = ∑ i in finset.Ico k K, g₁ i +
+
+--   -- apply asymptotics.is_O.of_bound sorry,
+--   -- filter_upwards [hf (eventually_ge_at_top ⌈c⌉₊)],
+--   -- rintro x (hx : _ ≤ _),
+--   -- rw nat.ceil_le at hx,
+--   -- filter_upwards [hf],
+-- end
+
+end asymp
