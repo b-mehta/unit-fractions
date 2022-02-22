@@ -2087,6 +2087,7 @@ begin
   change summable ((λ x : ℕ, ∑' (y : subtype ((≤) 2)), (x : ℝ)⁻¹ ^ (↑y : ℕ)) ∘ (coe : nat.primes → ℕ)),
   rw summable_indicator_iff_subtype,
   change summable (set.indicator (set_of nat.prime) _),
+  sorry
   -- simp_rw [_root_.tsum_subtype],
 end
 

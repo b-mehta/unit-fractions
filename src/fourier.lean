@@ -763,7 +763,7 @@ begin
   have : 0 < (N : ℝ) := nat.cast_pos.2 (zero_lt_two.trans_le hN),
   rw [←le_log_iff_exp_le (rpow_pos_of_pos this _), log_rpow this, neg_mul, neg_mul, neg_mul,
     neg_le_neg_iff, div_mul_div, div_mul_div, mul_assoc, ←sq, ←one_le_div, div_div_eq_div_mul,
-    ←inv_inv₀ (2 : ℝ), mul_comm, ←div_eq_mul_inv, div_div_eq_div_mul, inv_inv₀ (2 : ℝ), ←mul_assoc,
+    ←inv_inv (2 : ℝ), mul_comm, ←div_eq_mul_inv, div_div_eq_div_mul, inv_inv (2 : ℝ), ←mul_assoc,
     ←mul_assoc, ←mul_assoc, ←mul_assoc, mul_right_comm _ (q : ℝ), mul_right_comm _ (q : ℝ),
     mul_right_comm _ (q : ℝ), ←div_div_eq_div_mul, one_le_div, mul_right_comm _ (N^2 : ℝ),
     mul_right_comm _ (N^2 : ℝ)],
