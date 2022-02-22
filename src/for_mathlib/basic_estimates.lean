@@ -190,7 +190,7 @@ begin
   refine this.integrable.mono (measurable_summatory.ae_measurable.mul' hf'.1) _,
   rw ae_restrict_iff' (measurable_set_Icc : measurable_set (Icc x _)),
   refine eventually_of_forall (λ z hz, _),
-  rw [pi.mul_apply, normed_field.norm_mul, pi.smul_apply, norm_smul],
+  rw [pi.mul_apply, norm_mul, pi.smul_apply, norm_smul],
   refine mul_le_mul_of_nonneg_right ((abs_summatory_bound _ _ ⌈y⌉₊ _).trans _) (norm_nonneg _),
   { exact hz.2.trans (nat.le_ceil y) },
   rw real.norm_eq_abs,
@@ -413,7 +413,7 @@ begin
   refine integrable.mono hf' _ (eventually_of_forall _),
   { exact measurable_fract.ae_measurable.mul' hf'.1 },
   intro x,
-  simp only [normed_field.norm_mul, pi.mul_apply, norm_of_nonneg (int.fract_nonneg _)],
+  simp only [norm_mul, pi.mul_apply, norm_of_nonneg (int.fract_nonneg _)],
   exact mul_le_of_le_one_left (norm_nonneg _) (int.fract_lt_one _).le,
 end
 
@@ -508,7 +508,7 @@ lemma is_O_with_one_fract_mul (f : ℝ → ℝ) :
 begin
   apply is_O_with.of_bound (eventually_of_forall _),
   intro x,
-  simp only [one_mul, normed_field.norm_mul],
+  simp only [one_mul, norm_mul],
   refine mul_le_of_le_one_left (norm_nonneg _) _,
   rw norm_of_nonneg (int.fract_nonneg _),
   exact (int.fract_lt_one x).le,
@@ -609,7 +609,7 @@ begin
         { apply eventually_of_forall,
           intros y hy,
           rw interval_oc_of_le hx at hy,
-          rw [normed_field.norm_mul, normed_field.norm_inv, norm_of_nonneg (int.fract_nonneg _),
+          rw [norm_mul, norm_inv, norm_of_nonneg (int.fract_nonneg _),
             norm_of_nonneg (zero_le_one.trans hy.1.le)],
           apply h₂,
           exact Ioc_subset_Icc_self hy },
@@ -1852,7 +1852,7 @@ begin
     ∥prime_log_div_sum_error x * (x * log x ^ 2)⁻¹∥ ≤ ∥c * (x * log x ^ 2)⁻¹∥,
   { rw ae_restrict_iff' (@measurable_set_Ici ℝ _ _ _ _ _ _),
     filter_upwards with x hx,
-    rw [normed_field.norm_mul, normed_field.norm_mul],
+    rw [norm_mul, norm_mul],
     apply mul_le_mul_of_nonneg_right _ (norm_nonneg _),
     apply le_trans (hk _ hx) _,
     simp [norm_eq_abs, le_abs_self] },
@@ -1947,7 +1947,7 @@ begin
   { intros y hy,
     rw ae_restrict_iff' (@measurable_set_Ici ℝ _ _ _ _ _ _),
     filter_upwards with x hx,
-    rw [normed_field.norm_mul],
+    rw [norm_mul],
     apply (mul_le_mul_of_nonneg_right (hk _ (hy.trans hx)) (norm_nonneg _)).trans _,
     rw [norm_eq_abs, abs_one, mul_one, norm_eq_abs, abs_inv, abs_mul, abs_sq, abs_of_nonneg],
     exact zero_le_two.trans (hk₂.trans (hy.trans hx)) },
@@ -2019,17 +2019,107 @@ lemma prime_sum_thing'_summable :
   summable (set.indicator (set_of nat.prime) (λ p : ℕ, ((p - 1) * p : ℝ)⁻¹)) :=
 sum_thing'_summable.indicator _
 
-def proper_prime_pow_equiv :
-  {q : ℕ | is_prime_pow q ∧ ¬ q.prime } ≃ {p : ℕ // p.prime} × {r : ℕ // 2 ≤ r} :=
-sorry
+lemma is_unit_of_is_unit_pow {α : Type*} [comm_monoid α] {a : α} :
+  ∀ n, n ≠ 0 → (is_unit (a ^ n) ↔ is_unit a)
+| 0 h := (h rfl).elim
+| 1 _ := by simp
+| (n+2) _ :=
+    by rw [pow_succ, is_unit.mul_iff, is_unit_of_is_unit_pow _ (nat.succ_ne_zero _), and_self]
+
+lemma is_prime_pow_and_not_prime_iff {α : Type*} [cancel_comm_monoid_with_zero α] (x : α) :
+  is_prime_pow x ∧ ¬ prime x ↔ (∃ p k, prime p ∧ 1 < k ∧ p ^ k = x) :=
+begin
+  split,
+  { rintro ⟨⟨p, k, hp, hk, rfl⟩, t⟩,
+    refine ⟨_, k, hp, _, rfl⟩,
+    rw ←nat.succ_le_iff at hk,
+    apply lt_of_le_of_ne hk,
+    rintro rfl,
+    apply t,
+    rwa pow_one },
+  { rintro ⟨p, k, hp, hk, rfl⟩,
+    have : k ≠ 0 := by linarith,
+    refine ⟨is_prime_pow.pow hp.is_prime_pow ‹k ≠ 0›, λ t, _⟩,
+    -- rw ←nat.succ_le_iff at hk,
+    have : p ^ k = p * (p ^ (k - 1)),
+    { rw [←pow_succ, tsub_add_cancel_of_le hk.le] },
+    have := (t.irreducible.is_unit_or_is_unit this).resolve_left hp.not_unit,
+    apply hp.not_unit,
+    rwa is_unit_of_is_unit_pow at this,
+    rwa [ne.def, tsub_eq_zero_iff_le, not_le] }
+end
+
+-- def proper_prime_pow_equiv :
+--   {q : ℕ // is_prime_pow q ∧ ¬ q.prime } ≃ {p : ℕ // p.prime} × {r : ℕ // 2 ≤ r} :=
 -- { to_fun := λ q, _,
---   inv_fun := λ pr, ⟨(pr.1 : ℕ) ^ (pr.2 : ℕ), is_prime_pow.pow (begin have := pr.1.2.is_prime_pow, end) _, _⟩,
+--   inv_fun := λ pr, ⟨(pr.1 : ℕ) ^ (pr.2 : ℕ),
+--     pr.1.2.is_prime_pow.pow (zero_lt_two.trans_le pr.2.2).ne',
+--     _⟩,
 
 -- }
 
+lemma summable_iff_has_sum_of_ne_zero_bij {α β γ : Type*} [add_comm_monoid α] [topological_space α]
+  {f : β → α} {g : γ → α} (i : function.support g → β)
+  (hi : ∀ ⦃x y⦄, i x = i y → (x : γ) = y)
+  (hf : function.support f ⊆ set.range i) (hfg : ∀ x, f (i x) = g x) :
+  summable f ↔ summable g :=
+exists_congr (λ a, has_sum_iff_has_sum_of_ne_zero_bij i hi hf hfg)
+
+lemma prime_power_reciprocal_summable' :
+  summable (λ (pr : nat.primes × {r : ℕ // 2 ≤ r}), ((pr.1 : ℝ) ^ (pr.2 : ℕ))⁻¹ : _ → ℝ) :=
+begin
+  simp only [←inv_pow₀],
+  rw [←(equiv.sigma_equiv_prod _ _).summable_iff, summable_sigma_of_nonneg],
+  swap,
+  { rintro ⟨⟨p, hp⟩, ⟨r, hr⟩⟩,
+    simp },
+  split,
+  { rintro ⟨p, hp⟩,
+    dsimp,
+    change summable ((λ y, ((p : ℝ)⁻¹ ^ y)) ∘ (coe : subtype ((≤) 2) → ℕ)),
+    apply summable.subtype,
+    apply summable_geometric_of_lt_1,
+    { simp },
+    apply inv_lt_one,
+    rw nat.one_lt_cast,
+    apply hp.one_lt },
+  dsimp,
+  change summable ((λ x : ℕ, ∑' (y : subtype ((≤) 2)), (x : ℝ)⁻¹ ^ (↑y : ℕ)) ∘ (coe : nat.primes → ℕ)),
+  rw summable_indicator_iff_subtype,
+  change summable (set.indicator (set_of nat.prime) _),
+  -- simp_rw [_root_.tsum_subtype],
+end
+
 lemma prime_power_reciprocal_summable :
   summable (set.indicator { q : ℕ | is_prime_pow q ∧ ¬ q.prime } (λ q : ℕ, (q : ℝ)⁻¹)) :=
-sorry
+begin
+  let g : nat.primes × {r : ℕ // 2 ≤ r} → ℝ := λ pr, ((pr.1 : ℕ) ^ (pr.2 : ℕ))⁻¹,
+  suffices : summable g,
+  { simp only [nat.prime_iff, is_prime_pow_and_not_prime_iff],
+    refine (summable_iff_has_sum_of_ne_zero_bij _ _ _ _).2 this,
+    { intro h,
+      exact h.1.1.1 ^ h.1.2.1 },
+    { rintro ⟨⟨⟨p₁, h₁p₁⟩, k₁, h₁k₁⟩, _⟩ ⟨⟨⟨p₂, h₁p₂⟩, k₂, h₁k₂⟩, _⟩ t,
+      simp only [subtype.coe_mk, prod.mk.inj_iff, subtype.mk_eq_mk],
+      dsimp at t,
+      rw nat.prime_iff at h₁p₁ h₁p₂,
+      cases eq_of_prime_pow_eq h₁p₁ h₁p₂ (by linarith) t,
+      exact ⟨rfl, (nat.pow_right_strict_mono ‹nat.prime p₁›.two_le).injective t⟩ },
+    { simp only [support_indicator, function.support_inv, subtype.val_eq_coe, set.subset_def,
+        mem_inter_eq, mem_set_of_eq, exists_and_distrib_left, function.mem_support, ne.def,
+        nat.cast_eq_zero, set.mem_range, set_coe.exists, inv_eq_zero, subtype.coe_mk, exists_prop,
+        prod.exists, subtype.exists, and_imp, forall_exists_index],
+      rintro _ p hp k hk rfl ht,
+      refine ⟨⟨p, nat.prime_iff.2 hp⟩, k, _, _, rfl⟩,
+      { rwa nat.succ_le_iff },
+      exact_mod_cast ht },
+    rintro ⟨⟨⟨p, hp⟩, ⟨k, hk⟩⟩, _⟩,
+    rw set.indicator_of_mem,
+    { simp [g] },
+    exact ⟨p, k, nat.prime_iff.1 hp, nat.succ_le_iff.1 hk, rfl⟩ },
+  exact prime_power_reciprocal_summable'
+end
+
 -- begin
 --   rw ←summable_indicator_iff_subtype,
 -- end
@@ -2057,22 +2147,6 @@ sorry
 --   -- }
 -- end
 
-open_locale ennreal
-
-example :
-  ∑' (p : {p : ℕ // nat.prime p}), ∑' (r : {r : ℕ // 2 ≤ r}), ((((p : ℝ≥0∞) ^ (r : ℕ)))⁻¹) < ⊤ :=
-begin
-  rw ←ennreal.tsum_prod,
-  rw tsum_prod',
-  -- simp only [_root_.coe_coe],
-end
-
-#exit
-
-example : summable (λ p r : ℕ, if 2 ≤ p ∧ 2 ≤ r then (p ^ r : ℝ≥0∞)⁻¹ else 0) :=
-begin
-
-end
 -- ennreal.summable
 
 --   refine summable_of_sum_range_le _ _,
@@ -2117,7 +2191,7 @@ end
 
 -- #exit
 
-def prime_power_reciprocal : ℝ := ∑' q : ℕ, if is_prime_pow q then (q : ℝ)⁻¹ else 0
+def prime_power_reciprocal : ℝ := ∑' q : ℕ, if is_prime_pow q ∧ ¬ q.prime then (q : ℝ)⁻¹ else 0
 
 lemma prime_power_reciprocal_partial : ∃ b,
   is_O (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) - (log (log x) + b))

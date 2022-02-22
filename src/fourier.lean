@@ -6,6 +6,7 @@ Authors: Bhavik Mehta, Thomas Bloom
 
 import defs
 import for_mathlib.misc
+import for_mathlib.basic_estimates
 import algebra.group_power.order
 import data.complex.exponential_bounds
 
@@ -51,6 +52,9 @@ end
 
 -- this is dangerous but I think I can get away with it in this file
 local notation `[` A `]` := (A.lcm id : ℕ)
+
+lemma lcm_ne_zero_of_zero_not_mem {A : finset ℕ} (hA : 0 ∉ A) : [A] ≠ 0 :=
+by rwa [ne.def, finset.lcm_eq_zero_iff, set.image_id, finset.mem_coe]
 
 /-- Def 4.2 (maybe has a better name?) -/
 def j (A : finset ℕ) : finset ℤ :=
@@ -157,12 +161,147 @@ begin
   { simp [int.add_one_le_iff, hrs₁] },
 end
 
+theorem nat.lcm_smallest {a b d : ℕ} (hda : a ∣ d) (hdb : b ∣ d)
+  (hd : ∀ e : ℕ, a ∣ e → b ∣ e → d ∣ e) : d = a.lcm b :=
+nat.dvd_antisymm (hd _ (nat.dvd_lcm_left _ _) (nat.dvd_lcm_right _ _)) (nat.lcm_dvd hda hdb)
+
+lemma factorization_lcm {x y : ℕ} (hx : x ≠ 0) (hy : y ≠ 0) :
+  (x.lcm y).factorization = x.factorization ⊔ y.factorization :=
+begin
+  have l₂ : ∀ p ∈ (x.factorization ⊔ y.factorization).support, nat.prime p,
+  { simp only [finsupp.support_sup, mem_union, nat.support_factorization, list.mem_to_finset,
+      or_imp_distrib, forall_and_distrib],
+    exact ⟨λ _, nat.prime_of_mem_factors, λ _, nat.prime_of_mem_factors⟩ },
+  rw [eq_comm, nat.eq_factorization_iff (nat.lcm_ne_zero hx hy) l₂],
+  let d := (x.factorization ⊔ y.factorization).prod pow,
+  have d_pos : d ≠ 0 := (nat.factorization_equiv.inv_fun ⟨_, l₂⟩).2.ne.symm,
+  apply nat.lcm_smallest,
+  { rw [←nat.factorization_le_iff_dvd hx d_pos, nat.prod_pow_factorization_eq_self l₂],
+    exact le_sup_left },
+  { rw [←nat.factorization_le_iff_dvd hy d_pos, nat.prod_pow_factorization_eq_self l₂],
+    exact le_sup_right },
+  intros e hae hbe,
+  rcases eq_or_ne e 0 with rfl | he,
+  { simp },
+  rw ←nat.factorization_le_iff_dvd hx he at hae,
+  rw ←nat.factorization_le_iff_dvd hy he at hbe,
+  rw [←nat.factorization_le_iff_dvd d_pos he, nat.prod_pow_factorization_eq_self l₂],
+  simp [hae, hbe],
+end
+
+/-- Lemma 4.7 -/
+lemma lcm_desc {A : finset ℕ} (hA : 0 ∉ A) :
+  [A].factorization = A.sup nat.factorization :=
+begin
+  revert hA,
+  apply finset.induction_on A,
+  { simp },
+  intros a s has ih has',
+  simp only [mem_insert, not_or_distrib] at has',
+  rw [lcm_insert, lcm_eq_nat_lcm, id.def, factorization_lcm (ne.symm has'.1), sup_insert,
+    ih has'.2],
+  rw [ne.def, finset.lcm_eq_zero_iff],
+  simpa only [id.def, set.image_id', mem_coe] using has'.2,
+end
+
+lemma finset.support_sup {α β : Type*}
+  {f : α → β →₀ ℕ} (s : finset α) :
+  (s.sup f).support = s.sup (λ a, (f a).support) :=
+finset.induction_on s (by simp) (by simp {contextual := tt})
+
+lemma finset.sup_eq_mem {α β : Type*} {s : finset α} (f : α → β) [linear_order β] [order_bot β]
+  (hs : s.nonempty) :
+  ∃ x ∈ s, s.sup f = f x :=
+begin
+  revert hs,
+  refine finset.induction_on s (by simp) _,
+  intros a s has ih _,
+  rcases s.eq_empty_or_nonempty with rfl | hs',
+  { simp },
+  obtain ⟨b, hb, hb'⟩ := ih hs',
+  simp only [mem_insert, sup_insert, exists_prop, hb'],
+  cases le_total (f a) (f b),
+  { exact ⟨b, or.inr hb, sup_of_le_right h⟩ },
+  { exact ⟨a, or.inl rfl, sup_of_le_left h⟩ },
+end
+
+lemma finset.finsupp_sup_apply {α β : Type*} {f : α → β →₀ ℕ} (s : finset α) (x : β) :
+  s.sup f x = s.sup (λ a, f a x) :=
+finset.induction_on s (by simp) (by simp {contextual := tt})
+
+lemma smooth_lcm_aux {X : ℕ} {A : finset ℕ} (hX₀ : X ≠ 0)
+  (hX : ∀ q ∈ ppowers_in_set A, q ≤ X) (hA : 0 ∉ A) :
+  [A] ≤ X ^ X.prime_counting :=
+begin
+  have : [A].factorization.prod pow = (A.sup nat.factorization).prod pow,
+  { rw lcm_desc hA },
+  rw nat.factorization_prod_pow_eq_self (lcm_ne_zero_of_zero_not_mem hA) at this,
+  rw [this, finsupp.prod],
+  refine (finset.prod_le_of_forall_le _ _ X _).trans _,
+  { intro p,
+    rw finset.support_sup,
+    rw finset.mem_sup,
+    simp only [ne.def, exists_prop, forall_exists_index, and_imp],
+    intros x hx hx',
+    apply hX,
+    rw mem_ppowers_in_set' _ (nat.prime_of_mem_factorization hx'),
+    simp only [exists_prop],
+    rw finset.finsupp_sup_apply,
+    { obtain ⟨n, hn, hn'⟩ := finset.sup_eq_mem (λ a : ℕ, a.factorization p) ⟨_, hx⟩,
+      exact ⟨n, hn, hn'.symm⟩ },
+    rw [←finsupp.mem_support_iff, finset.support_sup, finset.mem_sup],
+    exact ⟨_, hx, hx'⟩ },
+  apply nat.pow_le_pow_of_le_right hX₀.bot_lt,
+  rw [nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range, range_eq_Ico,
+    nat.Ico_succ_right],
+  apply card_le_of_subset,
+  rintro p hp,
+  have pp : p.prime,
+  { simp only [finset.support_sup, finset.mem_sup] at hp,
+    obtain ⟨n, hn, hn'⟩ := hp,
+    exact nat.prime_of_mem_factorization hn' },
+  simp only [finset.mem_filter, pp, mem_Icc, zero_le', true_and, and_true],
+  rw [finsupp.mem_support_iff] at hp,
+  suffices : p ^ A.sup nat.factorization p ≤ X,
+  { rw [←pos_iff_ne_zero, ←nat.succ_le_iff] at hp,
+    apply le_trans _ this,
+    simpa using nat.pow_le_pow_of_le_right pp.pos hp },
+  apply hX,
+  rw [mem_ppowers_in_set' _ pp hp, finset.finsupp_sup_apply],
+  simp only [←finsupp.mem_support_iff, finset.support_sup, finset.mem_sup,
+    list.mem_to_finset, exists_prop] at hp,
+  obtain ⟨x, hx, -⟩ := hp,
+  obtain ⟨n, hn, hn'⟩ := finset.sup_eq_mem (λ a : ℕ, a.factorization p) ⟨_, hx⟩,
+  exact ⟨n, hn, hn'.symm⟩,
+end
+
+/-- Lemma 4.8 -/
+lemma smooth_lcm :
+  ∃ C : ℝ, ∀ᶠ X : ℝ in filter.at_top,
+    ∀ (A : finset ℕ), 0 ∉ A → (∀ q ∈ ppowers_in_set A, ↑q ≤ X) →
+      ↑[A] ≤ exp (C * X) :=
+begin
+  obtain ⟨c, hc⟩ := is_O_prime_counting_div_log.bound,
+  refine ⟨c, _⟩,
+  filter_upwards [hc, filter.eventually_gt_at_top (1 : ℝ)],
+  intros X hX₁ hX A hA hAX,
+  have : ⌊X⌋₊ ≠ 0 := by simp only [ne.def, nat.floor_eq_zero, not_lt, hX.le],
+  refine (nat.cast_le.2 (smooth_lcm_aux this (λ q hq, nat.le_floor (hAX q hq)) hA)).trans _,
+  simp only [nat.cast_pow],
+  refine (pow_le_pow_of_le_left (nat.cast_nonneg _)
+    (nat.floor_le (zero_le_one.trans hX.le)) _).trans _,
+  simp only [norm_coe_nat, norm_div, norm_of_nonneg (zero_le_one.trans hX.le),
+    norm_of_nonneg (log_pos hX).le] at hX₁,
+  rwa [←log_le_iff_le_exp, log_pow, ←le_div_iff (log_pos hX), mul_div_assoc],
+  exact pow_pos (zero_le_one.trans_lt hX) _,
+end
+
 lemma jordan_apply {x : ℝ} (hx : 0 ≤ x) (hx' : x ≤ 1 / 2) : 2 * x ≤ sin (π * x) :=
 begin
   have : 2 * x ≤ 1,
   { rwa [le_div_iff'] at hx',
     exact zero_lt_two },
-  have t := le_sin_mul (by linarith) this,
+  have t := real.le_sin_mul (by linarith) this,
   rwa [←mul_assoc, div_mul_cancel] at t,
   exact two_ne_zero
 end
@@ -218,31 +357,6 @@ begin
   exact t.symm,
 end
 
-lemma nat.pow_eq_one_iff {n k : ℕ} : n ^ k = 1 ↔ n = 1 ∨ k = 0 :=
-begin
-  rcases eq_or_ne k 0 with rfl | hk,
-  { simp },
-  { simp [pow_eq_one_iff, hk] },
-end
-
-lemma coprime_div_iff {n p k : ℕ} (hp : p.prime) (hn : p ^ k ∣ n) (hk : k ≠ 0) :
-  nat.coprime (p^k) (n / p^k) → k = n.factorization p :=
-begin
-  rcases eq_or_ne n 0 with rfl | hn',
-  { simp [nat.pow_eq_one_iff, hp.ne_one] },
-  intro h,
-  have := nat.factorization_mul_of_coprime h,
-  rw [nat.mul_div_cancel' hn] at this,
-  rw [this, hp.factorization_pow, finsupp.coe_add, pi.add_apply, finsupp.single_eq_same,
-    self_eq_add_right, ←finsupp.not_mem_support_iff],
-  intro i,
-  apply nat.factorization_disjoint_of_coprime h,
-  simp only [inf_eq_inter, mem_inter],
-  refine ⟨_, i⟩,
-  simp only [nat.support_factorization],
-  rw [nat.prime_pow_prime_divisor hk hp, finset.mem_singleton],
-end
-
 /-- Lemma 4.10 -/
 lemma triv_q_bound {A : finset ℕ} (hA : 0 ∉ A) (n : ℕ) :
   ↑((ppowers_in_set A).filter (λ q, n ∈ local_part A q)).card ≤ log n / log 2 :=
@@ -285,9 +399,6 @@ begin
   simp only [finset.mem_powerset] at ht,
   rw finset.prod_insert (λ i, has (ht i)),
 end
-
-lemma lcm_ne_zero_of_zero_not_mem {A : finset ℕ} (hA : 0 ∉ A) : [A] ≠ 0 :=
-by rwa [ne.def, finset.lcm_eq_zero_iff, set.image_id, finset.mem_coe]
 
 /-- Lemma 4.11 -/
 lemma orthog_rat {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0) :

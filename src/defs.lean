@@ -148,6 +148,72 @@ begin
     exact h₁.ne_one h₄ },
 end
 
+
+lemma nat.pow_eq_one_iff {n k : ℕ} : n ^ k = 1 ↔ n = 1 ∨ k = 0 :=
+begin
+  rcases eq_or_ne k 0 with rfl | hk,
+  { simp },
+  { simp [pow_eq_one_iff, hk] },
+end
+
+lemma coprime_div_iff {n p k : ℕ} (hp : p.prime) (hn : p ^ k ∣ n) (hk : k ≠ 0) :
+  nat.coprime (p^k) (n / p^k) → k = n.factorization p :=
+begin
+  rcases eq_or_ne n 0 with rfl | hn',
+  { simp [nat.pow_eq_one_iff, hp.ne_one] },
+  intro h,
+  have := nat.factorization_mul_of_coprime h,
+  rw [nat.mul_div_cancel' hn] at this,
+  rw [this, hp.factorization_pow, finsupp.coe_add, pi.add_apply, finsupp.single_eq_same,
+    self_eq_add_right, ←finsupp.not_mem_support_iff],
+  intro i,
+  apply nat.factorization_disjoint_of_coprime h,
+  simp only [inf_eq_inter, mem_inter],
+  refine ⟨_, i⟩,
+  simp only [nat.support_factorization],
+  rw [nat.prime_pow_prime_divisor hk hp, finset.mem_singleton],
+end
+
+lemma factorization_disjoint_iff {a b : ℕ} (ha : a ≠ 0) (hb : b ≠ 0) :
+  disjoint a.factorization.support b.factorization.support ↔ a.coprime b :=
+begin
+  rw ←@not_not (a.coprime b),
+  simp [disjoint_left, nat.prime.not_coprime_iff_dvd, nat.mem_factors ha, nat.mem_factors hb]
+    {contextual := tt},
+end
+
+lemma factorization_eq_iff {n p k : ℕ} (hp : p.prime) (hk : k ≠ 0) :
+  p ^ k ∣ n ∧ (p ^ k).coprime (n / p ^ k) ↔ n.factorization p = k :=
+begin
+  split,
+  { rintro ⟨h₁, h₂⟩,
+    rw ←coprime_div_iff hp h₁ hk h₂ },
+  intro hk',
+  have : p ^ k ∣ n,
+  { rw ←hk',
+    exact nat.pow_factorization_dvd n p },
+  have hn : n ≠ 0,
+  { rintro rfl,
+    apply hk,
+    simpa using hk'.symm },
+  refine ⟨this, _⟩,
+  rw ←factorization_disjoint_iff (pow_ne_zero _ hp.ne_zero),
+  { rw [nat.factorization_div this, hp.factorization_pow, finsupp.support_single_ne_zero hk,
+      disjoint_singleton_left, finsupp.mem_support_iff, finsupp.coe_tsub, pi.sub_apply, ne.def,
+      tsub_eq_zero_iff_le, not_not, finsupp.single_eq_same, hk'] },
+  rw [ne.def, nat.div_eq_zero_iff (pow_pos hp.pos _), not_lt],
+  apply nat.le_of_dvd hn.bot_lt this,
+end
+
+lemma mem_ppowers_in_set' (A : finset ℕ) {p k : ℕ} (hp : p.prime) (hk : k ≠ 0) :
+  p ^ k ∈ ppowers_in_set A ↔ ∃ n ∈ A, nat.factorization n p = k :=
+begin
+  rw [mem_ppowers_in_set, and_iff_right (hp.is_prime_pow.pow hk)],
+  simp only [finset.nonempty, mem_local_part, exists_prop],
+  refine exists_congr (λ n, and_congr_right' _),
+  rw factorization_eq_iff hp hk,
+end
+
 -- This is R(A;q) in the paper.
 def rec_sum_local (A : finset ℕ) (q : ℕ) : ℚ := ∑ n in local_part A q, q / n
 
