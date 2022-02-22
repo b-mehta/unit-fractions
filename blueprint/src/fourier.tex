@@ -66,6 +66,8 @@ since $e(n)=1$. Therefore $e(n/m)S=S$, and hence since $e(n/m)\neq 1$, this forc
 \end{proof}
 
 \begin{lemma}\label{lem:lcm_desc}
+  \lean{lcm_desc}
+  \leanok
 Let $A$ be a finite set of natural numbers not containing $0$. If
 \[\mathcal{P}_A = \{ p \textrm{ prime}: \exists n\in A : p \mid n\}\]
 and for all $p\in \mathcal{P}_A$ then $r_p\geq 0$ is the greatest integer such that $p^{r_p}$ divides some $n\in A$, then
@@ -73,6 +75,7 @@ and for all $p\in \mathcal{P}_A$ then $r_p\geq 0$ is the greatest integer such t
 \end{lemma}
 (NOTE: This is a generally useful fact when working with lowest common multiples, perhaps this should be in mathlib somewhere.)
 \begin{proof}
+  \leanok
 We first note that if $p\mid [A]$ then $p\in \mathcal{P}_A$. If not, suppose $p\not\in\mathcal{P}_A$ and $p\mid [A]$. Let $M=[A]/p$. We claim every $n\in A$ divides $M$, contradicting the definition of lowest common multiple. It suffices to show that if a prime power $q^r\mid n$ then $q\mid M$. But we know $q^r\mid [A]=Mp$, and $(q^r,p)=1$, so $q\mid M$ as required.
 
 By the fundamental theorem of arithmetic, we can write $[A] = \prod_{p\in \mathcal{P}_A}p^{s_p}$ for some integers $s_p\geq 0$. It remains to show that $s_p=r_p$.
@@ -84,9 +87,12 @@ Suppose that $s_p>r_p$, and as above consider $M=[A]/p$. We claim every $n\in A$
 
 \begin{lemma}\label{lem:smooth_lcm}
   \uses{def:local_part}
+  \lean{smooth_lcm}
+  \leanok
 If $A$ is a finite set of natural numbers not containing $0$ such that if $q\in\mathcal{Q}_A$ then $q\leq X$, then $[A]\leq e^{O(X)}$.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:chebyshev,lem:lcm_desc}
   We have $[A]=\prod_{p\in\mathcal{P}_A}p^{r_p}$, where $p^{r_p}\in \mathcal{Q}_A$, by Lemma~\ref{lem:lcm_desc}. By hypothesis $p^{r_p}\leq X$ and so $[A]\leq X^{\abs{\mathcal{P}_A}}$. The set $\mathcal{P}_A$ is a subset of all primes $\leq X$, and so $\abs{\mathcal{P}_A}\leq \pi(X)\ll X/\log X$ by Chebyshev's estimate Lemma~\ref{lem:chebyshev}. Therefore
   \[[A]\leq X^{O(X/\log X)}=e^{O(X)}.\]
