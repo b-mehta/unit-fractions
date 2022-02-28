@@ -1,9 +1,9 @@
 name: bump lean and dependencies
 on:
+  push:
   workflow_dispatch: ~
   schedule:
-    - cron: '0 */3 * * *' # once a day at 2am UTC
-  push
+    - cron: '0 */3 * * *'
 
 jobs:
   upgrade_lean:
