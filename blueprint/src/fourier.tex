@@ -201,21 +201,27 @@ and so by the triangle inequality $[A]\abs{t_1-t_2}\leq K$. Since $t_1\neq t_2$,
 \end{proof}
 
 \begin{lemma}\label{lem:useful_rewrite}
+  \leanok
+  \lean{useful_rewrite}
   \uses{def:rec_sum}
 For any finite set of natural numbers $A$ and $\theta\in \mathbb{R}$
 \[\Re\brac{\prod_{n\in A}(1+e(\theta/n))}=2^{\abs{A}}\cos(\pi \theta R(A))\prod_{n\in A}\cos(\pi \theta/n).\]
 \end{lemma}
 \begin{proof}
+  \leanok
 Rewrite each factor in the product using $1+e(\theta/n)=2e(\theta/2n)\cos(\pi \theta/n)$, so
 \[\Re\brac{\prod_{n\in A}(1+e(\theta/n))} = \Re\brac{ 2^{\abs{A}}e(\theta R(A)/2)\prod_{n\in A}\cos(\pi \theta/n)}.\]
 Taking out real factors, this is $2^{\abs{A}}\prod_{n\in A}\cos(\pi \theta/n)\Re e(\theta R(A)/2)$, and the claim follows.
 \end{proof}
 
 \begin{lemma}\label{lem:majorarcs}
+  \leanok
+  \lean{majorarcs}
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$.
 \[\sum_{h\in \mathfrak{M}(A,k,K)}\Re\brac{\prod_{n\in A}(1+e(kh/n))} \geq 0.\]
 \end{lemma}
 \begin{proof}
+  \leanok
 \uses{lem:majorarcs_disjoint,lem:useful_rewrite}
 Since $k$ divides $[A]$, we know that $t[A]/k$ is an integer for any $t\in \bbz$, and hence by definition of $\mathfrak{M}(t)$ we can write $h=t[A]/k+r$, where $r$ is an integer satisfying $\abs{r}\leq K/2k$. Therefore, letting
 \[J_t =[-K/2k,K/2k]\cap (J(A)-t[A]/k),\]
@@ -240,7 +246,7 @@ for all $r\in [-K/2k,K/2k]\cap \bbz$, and hence as the sum of non-negative summa
 \end{proof}
 
 \begin{lemma}\label{lem:minor_lbound}
-  \uses{def:minor_arcs,def:cos_prod}
+  \uses{def:cos_prod}
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$, and there is no $S\subset A$ such that $R(S)=1/k$, and $[A]\leq 2^{\abs{A}-1}$. Then
 \[\sum_{h\in J(A)\backslash \mathfrak{M}(A,k,K)} C(A;hk)\geq 1/2.\]
 \end{lemma}
