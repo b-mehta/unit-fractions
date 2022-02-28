@@ -3,7 +3,7 @@ on:
   workflow_dispatch: ~
   schedule:
     - cron: '0 */3 * * *' # once a day at 2am UTC
-  push: ~
+  push
 
 jobs:
   upgrade_lean:
