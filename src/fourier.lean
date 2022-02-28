@@ -960,8 +960,6 @@ begin
   rwa [nat.one_lt_cast, ←nat.succ_le_iff],
 end
 
-#print axioms minor2_ind_bound
-
 -- Proposition 2
 theorem circle_method_prop : ∃ c : ℝ,
   ∀ᶠ (N : ℕ) in filter.at_top, ∀ k : ℕ, ∀ K L M: ℝ,  ∀ A ⊆ finset.range (N+1),

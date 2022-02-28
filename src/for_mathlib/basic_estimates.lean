@@ -41,22 +41,8 @@ begin
   simp,
 end
 
-lemma is_o_pow_exp_at_top {n : ℕ} (hn : 1 ≤ n) : is_o (λ x, x^n) exp at_top :=
-begin
-  rw is_o_iff_tendsto (λ x hx, ((exp_pos x).ne' hx).elim),
-  simpa using tendsto_div_pow_mul_exp_add_at_top 1 0 n zero_ne_one hn,
-end
-
-lemma tendsto_log_div_mul_add_at_top (a b : ℝ) (ha : a ≠ 0) :
-  tendsto (λ x, log x / (a * x + b)) at_top (𝓝 0) :=
-((tendsto_div_pow_mul_exp_add_at_top a b 1 ha.symm le_rfl).comp tendsto_log_at_top).congr'
-  (by filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx using by simp [exp_log hx])
-
-lemma is_o_log_id_at_top : is_o log (λ x, x) at_top :=
-begin
-  rw is_o_iff_tendsto (λ x (hx : x = 0), (show log x = 0, by simp [hx])),
-  simpa using tendsto_log_div_mul_add_at_top 1 0 one_ne_zero,
-end
+lemma is_o_log_id_at_top : is_o log id at_top :=
+is_o_pow_log_id_at_top.congr_left (λ x, pow_one _)
 
 lemma is_o_log_rpow_at_top {r : ℝ} (hr : 0 < r) : is_o log (λ x, x ^ r) at_top :=
 begin
@@ -1062,7 +1048,7 @@ begin
   have h₁ := (chebyshev_error_O.trans_is_o is_o_log_id_at_top).bound (sub_pos_of_lt hc),
   filter_upwards [eventually_ge_at_top (1 : ℝ), h₁],
   intros x hx₁ hx₂,
-  rw [norm_of_nonneg (zero_le_one.trans hx₁), real.norm_eq_abs] at hx₂,
+  rw [id.def, norm_of_nonneg (zero_le_one.trans hx₁), real.norm_eq_abs] at hx₂,
   have := (neg_le_of_abs_le hx₂).trans (chebyshev_lower_aux (zero_lt_one.trans_le hx₁)),
   linarith,
 end
@@ -1395,7 +1381,7 @@ begin
   have h₁ := (summatory_log (lt_add_one _)).is_O,
   apply ((h₁.trans is_o_log_id_at_top.is_O).sub (is_O_refl _ _)).congr_left _,
   intro x,
-  dsimp only [summatory],
+  dsimp only [summatory, id.def],
   ring
 end
 
