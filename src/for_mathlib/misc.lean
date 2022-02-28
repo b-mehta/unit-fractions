@@ -90,6 +90,25 @@ lemma complex.re_sum {α : Type*} (s : finset α) (f : α → ℂ) :
   (∑ i in s, f i).re = ∑ i in s, (f i).re :=
 complex.re_add_group_hom.map_sum f s
 
+lemma prod_of_re {α : Type*} (s : finset α) (f : α → ℝ) :
+  ∏ i in s, (f i : ℂ) = (∏ i in s, f i : ℝ) :=
+begin
+  simp only [complex.of_real_prod],
+end
+
+lemma prod_rpow {ι : Type*} [decidable_eq ι] {s : finset ι} {f : ι → ℝ}
+  (c : ℝ) (hf : ∀ x ∈ s, 0 ≤ f x) :
+  (∏ i in s, f i) ^ c = ∏ i in s, f i ^ c :=
+begin
+  revert hf,
+  apply finset.induction_on s,
+  { simp },
+  intros a s has ih hf,
+  simp only [finset.mem_insert, forall_eq_or_imp] at hf,
+  rw [finset.prod_insert has, real.mul_rpow hf.1 (finset.prod_nonneg hf.2),
+    finset.prod_insert has, ih hf.2],
+end
+
 lemma finset.sum_erase_eq_sub {α β : Type*} [decidable_eq α] [add_comm_group β]
   {f : α → β} {s : finset α} {a : α} (ha : a ∈ s) :
   ∑ x in s.erase a, f x = (∑ x in s, f x) - f a :=
@@ -99,6 +118,25 @@ lemma finset.filter_comm {α : Type*} (p q : α → Prop) [decidable_eq α]
   [decidable_pred p] [decidable_pred q] (s : finset α) :
   (s.filter p).filter q = (s.filter q).filter p :=
 by simp only [finset.filter_filter, and_comm]
+
+@[simp] theorem int.cast_dvd {α : Type*} [field α] {m n : ℤ}
+  (n_dvd : n ∣ m) (n_nonzero : (n:α) ≠ 0) :
+  ((m / n : ℤ) : α) = m / n :=
+begin
+  rcases n_dvd with ⟨k, rfl⟩,
+  have : n ≠ 0, {rintro rfl, simpa using n_nonzero},
+  rw [int.mul_div_cancel_left _ this, int.cast_mul, mul_div_cancel_left _ n_nonzero],
+end
+
+@[simp, norm_cast]
+theorem int.cast_dvd_char_zero {k : Type*} [field k] [char_zero k] {m n : ℤ}
+  (n_dvd : n ∣ m) : ((m / n : ℤ) : k) = m / n :=
+begin
+  rcases eq_or_ne n 0 with rfl | hn,
+  { simp },
+  rw int.cast_dvd n_dvd,
+  exact int.cast_ne_zero.2 hn,
+end
 
 section asymp
 
