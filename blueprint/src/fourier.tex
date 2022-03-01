@@ -41,6 +41,8 @@ For any finite set $A$ of natural numbers and integer $k\geq 1$ we write $F(A;k)
 \begin{definition}
   \label{def:minor_arcs}
   \uses{def:major_arc}
+  \leanok
+  \lean{minor_arc₁}
 Let $I_h(K,k)$ be the interval of length $K$ centred at $kh$, and let $\mathfrak{m}_1(A,k,K,\delta)$ be those $h\in J(A)\backslash \mathfrak{M}(A,k,K)$ such that
 \[\# \{ n\in A : \textrm{no element of }I_h(K,k)\textrm{ is divisible by }n\}\geq \delta.\]
 Let $\mathfrak{m}_2(A,k,K,\delta)$ be the rest of $J(A)\backslash\mathfrak{M}(A,k,K)$.
@@ -246,11 +248,14 @@ for all $r\in [-K/2k,K/2k]\cap \bbz$, and hence as the sum of non-negative summa
 \end{proof}
 
 \begin{lemma}\label{lem:minor_lbound}
+  \leanok
+  \lean{minor_lbound}
   \uses{def:cos_prod}
 Let $M\geq 1$ and $A$ a finite set of naturals such that $n\geq M$ for all $n\in A$. Let $K$ be a real such that $K<M$. Let $k\geq 1$ be an integer. Suppose that $kR(A) \in [2-k/M,2)$, and there is no $S\subset A$ such that $R(S)=1/k$, and $[A]\leq 2^{\abs{A}-1}$. Then
 \[\sum_{h\in J(A)\backslash \mathfrak{M}(A,k,K)} C(A;hk)\geq 1/2.\]
 \end{lemma}
 \begin{proof}
+  \leanok
 \uses{lem:majorarcs,lem:orthog_simp2}
 By Lemma~\ref{lem:orthog_simp2}
 \[\sum_{h\in J(A)}\Re\brac{\prod_{n\in A}(1+e(kh/n))}\leq -2^{\abs{A}-1}.\]
