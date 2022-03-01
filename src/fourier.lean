@@ -121,8 +121,7 @@ def major_arc (A : finset ℕ) (k : ℕ) (K : ℝ) : finset ℤ :=
 (j A).filter (λ h, ∃ t, h ∈ major_arc_at A k K t)
 
 -- meaningless
-def my_range (x : ℝ) : finset ℤ :=
-finset.Icc ⌈-(x : ℝ)⌉ ⌊(x : ℝ)⌋
+def my_range (x : ℝ) : finset ℤ := Icc ⌈-(x : ℝ)⌉ ⌊(x : ℝ)⌋
 
 -- meaningless
 def my_range' (A : finset ℕ) (k : ℕ) (K : ℝ) : finset ℤ :=
@@ -130,7 +129,25 @@ my_range ((K / (2 * ↑k) + ↑(A.lcm id) / 2) / |↑(A.lcm id) / ↑k|)
 
 lemma mem_my_range_iff {x : ℝ} {y : ℤ} :
   y ∈ my_range x ↔ |(y : ℝ)| ≤ x :=
-by rw [my_range, finset.mem_Icc, int.le_floor, int.ceil_le, abs_le]
+by rw [my_range, mem_Icc, int.le_floor, int.ceil_le, abs_le]
+
+def I (h : ℤ) (K : ℝ) (k : ℕ) : finset ℤ := Icc ⌈K - k * h⌉ ⌊K + k * h⌋
+
+lemma mem_I {h : ℤ} {K : ℝ} {k : ℕ} {z : ℤ} :
+  z ∈ I h K k ↔ K - k * h ≤ z ∧ (z : ℝ) ≤ K + k * h :=
+by rw [I, mem_Icc, int.le_floor, int.ceil_le]
+
+lemma mem_I' {h : ℤ} {K : ℝ} {k : ℕ} {z : ℤ} :
+  z ∈ I h K k ↔ |K - z| ≤ k * h :=
+by rw [mem_I, abs_sub_comm, abs_le, le_sub_iff_add_le, neg_add_eq_sub, ←sub_le_iff_le_add']
+
+/-- Def 4.5 -/
+def minor_arc₁ (A : finset ℕ) (k : ℕ) (K : ℝ) (δ : ℝ) : finset ℤ :=
+(j A \ major_arc A k K).filter $
+  λ h, δ ≤ (A.filter (λ n, ∀ z ∈ I h K k, ¬z ∣ ↑n)).card
+
+def minor_arc₂ (A : finset ℕ) (k : ℕ) (K : ℝ) (δ : ℝ) : finset ℤ :=
+(j A \ major_arc A k K) \ minor_arc₁ A k K δ
 
 -- major arc is actually a finite union
 lemma major_arc_eq_union {A k K} (hA : 0 ∉ A) (hk : k ≠ 0) :
@@ -151,6 +168,16 @@ begin
   { rwa [my_range', mem_my_range_iff] },
   rw [abs_pos, div_ne_zero_iff, nat.cast_ne_zero, nat.cast_ne_zero],
   exact ⟨lcm_ne_zero_of_zero_not_mem hA, hk⟩,
+end
+
+lemma minor_arc₂_eq {A k K δ} :
+  minor_arc₂ A k K δ =
+    ((j A \ major_arc A k K).filter $ λ h, ↑(A.filter (λ n, ∀ z ∈ I h K k, ¬z ∣ ↑n)).card < δ) :=
+begin
+  ext z,
+  simp only [minor_arc₂, minor_arc₁, mem_filter, mem_sdiff, not_and, not_le, and_imp,
+    and.congr_right_iff, not_false_iff, forall_true_left, iff_self, implies_true_iff]
+  {contextual := tt},
 end
 
 def exp_circle (x : ℝ) : ℂ := complex.exp (x * (2 * π * complex.I))
@@ -183,6 +210,27 @@ begin
     complex.of_real_one, complex.of_real_mul],
   ring_nf,
 end
+
+lemma abs_exp_circle {x : ℝ} : complex.abs (exp_circle x) = 1 :=
+begin
+  rw [exp_circle, ←mul_assoc],
+  convert complex.abs_exp_of_real_mul_I (x * (2 * π)),
+  simp,
+end
+
+lemma one_add_exp_circle (x : ℝ) : 1 + exp_circle x = 2 * exp_circle (x / 2) * cos (π * x) :=
+begin
+  rw [mul_right_comm, complex.of_real_cos, complex.two_cos, exp_circle, exp_circle, mul_assoc,
+    complex.of_real_div, complex.of_real_bit0, complex.of_real_one, ←mul_assoc (x / 2 : ℂ),
+    div_mul_cancel (x : ℂ) two_ne_zero', mul_left_comm, mul_comm π, complex.of_real_mul, neg_mul,
+    mul_assoc, add_mul, ←complex.exp_add, ←two_mul, ←complex.exp_add, add_left_neg,
+    complex.exp_zero, add_comm]
+end
+
+lemma abs_one_add_exp_circle (x : ℝ) :
+  complex.abs (1 + exp_circle x) = 2 * |cos (π * x)| :=
+by rw [one_add_exp_circle, complex.abs_mul, complex.abs_mul, complex.abs_two, abs_exp_circle,
+    complex.abs_of_real, mul_one]
 
 /-- Lemma 4.6. Note `r` in this statement is different to the `r` in the written proof -/
 lemma orthogonality {n m : ℕ} {r s : ℤ} (hm : m ≠ 0) {I : finset ℤ} (hI : I = finset.Ioc r s)
@@ -602,15 +650,8 @@ lemma useful_rewrite {A : finset ℕ} {θ : ℝ} :
   (∏ n in A, (1 + exp_circle (θ / n))).re =
     2 ^ A.card * cos (π * θ * rec_sum A) * ∏ n in A, cos (π * θ / n) :=
 begin
-  have : ∀ (x : ℝ), 1 + exp_circle x = 2 * exp_circle (x / 2) * cos (π * x),
-  { intro x,
-    rw [mul_right_comm, complex.of_real_cos, complex.two_cos, exp_circle, exp_circle, mul_assoc,
-      complex.of_real_div, complex.of_real_bit0, complex.of_real_one, ←mul_assoc (x / 2 : ℂ),
-      div_mul_cancel (x : ℂ) two_ne_zero', mul_left_comm, mul_comm π, complex.of_real_mul, neg_mul,
-      mul_assoc, add_mul, ←complex.exp_add, ←two_mul, ←complex.exp_add, add_left_neg,
-      complex.exp_zero, add_comm] },
-  simp only [←complex.of_real_nat_cast, ←complex.of_real_div, this, finset.prod_mul_distrib,
-    ←mul_div_assoc],
+  simp only [←complex.of_real_nat_cast, ←complex.of_real_div, one_add_exp_circle,
+    finset.prod_mul_distrib, ←mul_div_assoc],
   rw [prod_const, ←nat.cast_two, ←nat.cast_pow, ←complex.of_real_prod, mul_comm,
     complex.of_real_mul_re, ←complex.of_real_nat_cast, complex.of_real_mul_re, ←exp_circle_sum,
     nat.cast_pow, ←finset.sum_div, nat.cast_two, exp_circle_half_re, mul_comm, rec_sum, mul_assoc π,
@@ -676,8 +717,6 @@ end
 lemma cos_nonneg_of_abs_le {x : ℝ} (hx : |x| ≤ π / 2) : 0 ≤ cos x :=
 cos_nonneg_of_neg_pi_div_two_le_of_le (neg_le_of_abs_le hx) (le_of_abs_le hx)
 
--- set_option trace.simplify true
-
 /-- Lemma 4.16 -/
 lemma majorarcs {M K : ℝ} {A : finset ℕ} (hM : ∀ n : ℕ, n ∈ A → M ≤ n) (hK : 0 < K)
   (hKM : K < M) {k : ℕ} (hk' : k ∣ [A]) (hA₁ : (2 : ℝ) - k / M ≤ k * rec_sum A)
@@ -730,6 +769,58 @@ begin
     apply mul_le_mul_of_nonneg_left _ pi_pos.le,
     convert hr using 1,
     ring_nf }
+end
+
+lemma complex.abs_prod {α : Type*} (s : finset α) {f : α → ℂ} :
+  complex.abs (∏ i in s, f i) = ∏ i in s, (complex.abs (f i))  :=
+finset.induction_on s (by simp) (by simp {contextual := tt})
+
+example {x : ℕ} : (2 : ℝ) ^ (x : ℤ) = 2 ^ x :=
+begin
+  simp only [zpow_coe_nat],
+end
+
+example {x y : ℝ} (h : x ≤ -y) : y ≤ |x| :=
+begin
+  rw [le_abs'],
+  left,
+  apply h,
+end
+
+@[to_additive]
+lemma prod_sdiff' {α M : Type*} [decidable_eq α] [comm_group M] (f : α → M) (s₁ s₂ : finset α)
+  (h : s₁ ⊆ s₂) :
+  ∏ x in (s₂ \ s₁), f x = (∏ x in s₂, f x) / ∏ x in s₁, f x :=
+by rw [eq_div_iff_mul_eq', prod_sdiff h]
+
+/-- Lemma 4.17 -/
+lemma minor_lbound {M : ℝ} {A : finset ℕ} {K : ℝ} {k : ℕ}
+  (hM : 1 ≤ M) (hM : ∀ n ∈ A, M ≤ ↑n) (hK : 0 < K) (hKM : K < M) (hkA : k ∣ [A]) (hk : k ≠ 0)
+  (hA₁ : (2 : ℝ) - k / M ≤ k * rec_sum A) (hA₂ : (k : ℝ) * rec_sum A < 2)
+  (hA₃ : A.nonempty) (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA₄ : ([A] : ℝ) ≤ 2^(A.card - 1 : ℤ)) :
+  1 / 2 ≤ ∑ h in j A \ major_arc A k K, cos_prod A (h * k) :=
+begin
+  have hA : 0 ∉ A,
+  { intro hA, simpa using (hKM.trans_le (hM 0 hA)).trans hK },
+  suffices :
+    (2 : ℝ) ^ (A.card - 1 : ℤ) ≤
+      |∑ h in j A \ major_arc A k K, (∏ n in A, (1 + exp_circle (k * h / n))).re|,
+  { rw ←complex.re_sum at this,
+    replace := (this.trans (complex.abs_re_le_abs _)).trans (abv_sum_le_sum_abv _ _),
+    simp only [complex.abs_prod, abs_one_add_exp_circle, prod_mul_distrib, mul_div_assoc',
+      prod_const, ←finset.mul_sum, ←int.cast_coe_nat k, ←int.cast_mul, mul_comm (k : ℤ)] at this,
+    rwa [←div_le_iff', ←zpow_coe_nat, ←zpow_sub₀, sub_sub_cancel_left, zpow_neg₀, zpow_one,
+      ←one_div] at this,
+    { exact two_ne_zero },
+    exact pow_pos zero_lt_two _ },
+  have hA₂' : rec_sum A < 2 / ↑k,
+  { rw [lt_div_iff'],
+    { exact_mod_cast hA₂ },
+    rwa [nat.cast_pos, pos_iff_ne_zero] },
+  rw [le_abs', sum_sdiff'],
+  { left,
+    linarith [majorarcs hM hK hKM hkA hA₁ hA₂.le hA₃, orthog_simp2 hA hk hS hA₂' hA₄] },
+  apply filter_subset,
 end
 
 lemma function.antiperiodic.abs_periodic {f : ℝ → ℝ} {c : ℝ} (h : function.antiperiodic f c) :
