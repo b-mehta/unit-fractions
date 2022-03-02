@@ -131,20 +131,20 @@ lemma mem_my_range_iff {x : ℝ} {y : ℤ} :
   y ∈ my_range x ↔ |(y : ℝ)| ≤ x :=
 by rw [my_range, mem_Icc, int.le_floor, int.ceil_le, abs_le]
 
-def I (h : ℤ) (K : ℝ) (k : ℕ) : finset ℤ := Icc ⌈K - k * h⌉ ⌊K + k * h⌋
+def I (h : ℤ) (K : ℝ) (k : ℕ) : finset ℤ := Icc ⌈(h : ℝ) * k - K / 2⌉ ⌊(h * k : ℝ) + K / 2⌋
 
 lemma mem_I {h : ℤ} {K : ℝ} {k : ℕ} {z : ℤ} :
-  z ∈ I h K k ↔ K - k * h ≤ z ∧ (z : ℝ) ≤ K + k * h :=
+  z ∈ I h K k ↔ (h * k : ℝ) - K / 2 ≤ z ∧ (z : ℝ) ≤ h * k + K / 2 :=
 by rw [I, mem_Icc, int.le_floor, int.ceil_le]
 
 lemma mem_I' {h : ℤ} {K : ℝ} {k : ℕ} {z : ℤ} :
-  z ∈ I h K k ↔ |K - z| ≤ k * h :=
+  z ∈ I h K k ↔ |(h * k : ℝ) - z| ≤ K / 2 :=
 by rw [mem_I, abs_sub_comm, abs_le, le_sub_iff_add_le, neg_add_eq_sub, ←sub_le_iff_le_add']
 
 /-- Def 4.5 -/
 def minor_arc₁ (A : finset ℕ) (k : ℕ) (K : ℝ) (δ : ℝ) : finset ℤ :=
 (j A \ major_arc A k K).filter $
-  λ h, δ ≤ (A.filter (λ n, ∀ z ∈ I h K k, ¬z ∣ ↑n)).card
+  λ h, δ ≤ (A.filter (λ n, ∀ z ∈ I h K k, ¬↑n ∣ z)).card
 
 def minor_arc₂ (A : finset ℕ) (k : ℕ) (K : ℝ) (δ : ℝ) : finset ℤ :=
 (j A \ major_arc A k K) \ minor_arc₁ A k K δ
@@ -172,7 +172,7 @@ end
 
 lemma minor_arc₂_eq {A k K δ} :
   minor_arc₂ A k K δ =
-    ((j A \ major_arc A k K).filter $ λ h, ↑(A.filter (λ n, ∀ z ∈ I h K k, ¬z ∣ ↑n)).card < δ) :=
+    ((j A \ major_arc A k K).filter $ λ h, ↑(A.filter (λ n, ∀ z ∈ I h K k, ¬↑n ∣ z)).card < δ) :=
 begin
   ext z,
   simp only [minor_arc₂, minor_arc₁, mem_filter, mem_sdiff, not_and, not_le, and_imp,
@@ -903,9 +903,91 @@ begin
   { exact mul_pos (mul_pos (by norm_num1) h₁) (log_pos hN₁') },
 end
 
+lemma exists_representative (t : ℤ) {n : ℕ} (hn : n ≠ 0) :
+  ∃ tn : ℤ, tn % n = t % n ∧ |tn| ≤ n / 2 :=
+begin
+  cases le_or_lt (t % n) (n / 2),
+  { refine ⟨t % n, int.mod_mod _ _, _⟩,
+    rwa abs_of_nonneg,
+    apply int.mod_nonneg,
+    rwa int.coe_nat_ne_zero },
+  refine ⟨t % n - n, _, _⟩,
+  { simp [int.sub_mod] },
+  rw [abs_of_nonpos, neg_sub, tsub_le_iff_right],
+  { rw ←int.add_one_le_iff at h,
+    apply le_trans _ (add_le_add_left h (n / 2)),
+    rw [←add_assoc, ←two_mul, eq_sub_of_add_eq' (int.mod_add_div n 2), sub_add_eq_add_sub,
+      le_sub_iff_add_le, add_le_add_iff_left, ←int.lt_add_one_iff],
+    exact int.mod_lt n two_ne_zero },
+  rw [sub_nonpos],
+  apply (t.mod_lt (int.coe_nat_ne_zero.2 hn)).le.trans _,
+  simp,
+end
+
+lemma missing_bridge_sum {N : ℕ} {A : finset ℕ} {t : ℤ} {K M : ℝ} {I : finset ℤ} {tn : ℕ → ℤ}
+  (hA' : 0 ∉ A) (hA : ∀ n ∈ A, n ≤ N) (hK : 0 < K)
+  (hI : I = finset.Icc ⌈(t : ℝ) - K / 2⌉ ⌊(t : ℝ) + K / 2⌋)
+  (htn₁ : ∀ (n : ℕ), n ∈ A → tn n % ↑n = t % ↑n)
+  (htn₂ : ∀ (n : ℕ), n ∈ A → |tn n| ≤ ↑n / 2)
+  (hI' : M ≤ ((A.filter (λ (n : ℕ), ∀ x ∈ I, ¬ (↑n ∣ x))).card : ℝ)) :
+  M * (K^2 / 4) ≤ ∑ n in A, (tn n : ℝ) ^ 2 :=
+begin
+  let A' := (A.filter (λ (n : ℕ), ∀ (x : ℤ), x ∈ I → ¬↑n ∣ x)),
+  have : A' ⊆ A := filter_subset _ _,
+  refine le_trans _ (sum_le_sum_of_subset_of_nonneg this (λ _ _ _, sq_nonneg _)),
+  have : M * (K^2 / 4) ≤ A'.card * (K / 2)^2 :=
+    mul_le_mul hI' (by norm_num) (div_nonneg (sq_nonneg _) (by norm_num)) (nat.cast_nonneg _),
+  apply this.trans _,
+  rw ←nsmul_eq_mul,
+  apply finset.le_sum_of_forall_le,
+  intros n hn,
+  simp only [mem_filter] at hn,
+  apply sq_le_sq,
+  rw abs_of_pos (div_pos hK zero_lt_two),
+  apply le_of_not_lt,
+  intro i,
+  have : t - tn n ∈ I,
+  { rw [hI, mem_Icc, int.le_floor, int.ceil_le, int.cast_sub, sub_le_sub_iff_left, sub_eq_add_neg,
+      add_le_add_iff_left, neg_le, and_comm, ←abs_le],
+    apply i.le },
+  have := hn.2 _ this,
+  rw [int.dvd_iff_mod_eq_zero, ←int.mod_eq_mod_iff_mod_sub_eq_zero, eq_comm] at this,
+  exact this (htn₁ _ hn.1),
+end
+
+lemma missing_bridge (A : finset ℕ) {N : ℕ} {t : ℤ} {K M : ℝ} (hA' : 0 ∉ A) (hA : ∀ n ∈ A, n ≤ N)
+  {I : finset ℤ} (hK : 0 < K) (hN : 0 < N)
+  (hI : I = finset.Icc ⌈(t : ℝ) - K / 2⌉ ⌊(t : ℝ) + K / 2⌋)
+  (hI' : M ≤ ((A.filter (λ (n : ℕ), ∀ x ∈ I, ¬ (↑n ∣ x))).card : ℝ)) :
+  cos_prod A t ≤ exp (- (M * K^2 / (2 * N^2))) :=
+begin
+  have : ∀ n : ℕ, ∃ (tn : ℤ), n ∈ A → tn % n = t % n ∧ |tn| ≤ n / 2,
+  { intro n,
+    by_cases n ∈ A,
+    { have hn' : n ≠ 0 := ne_of_mem_of_not_mem h hA',
+      obtain ⟨tn, htn⟩ := exists_representative t hn',
+      exact ⟨tn, λ _, htn⟩ },
+    simp [h] },
+  choose tn htn₁ htn₂ using this,
+  refine (cos_prod_bound t hA' hA tn htn₁ _).trans _,
+  { intros n hn,
+    have z := htn₂ _ hn,
+    rw [←int.coe_nat_one, ←int.coe_nat_bit0, ←int.coe_nat_div, ←@int.cast_le ℝ, int.cast_abs,
+      int.cast_coe_nat] at z,
+    exact z.trans (nat.cast_div_le.trans (by simp)) },
+  set A' := A.filter (λ (n : ℕ), ∀ x ∈ my_range (K / 2), ¬ (↑n ∣ (x - t))),
+  have := missing_bridge_sum hA' hA hK hI htn₁ htn₂ hI',
+  apply le_trans (exp_le_exp.2 (mul_le_mul_of_nonpos_left this _)) _,
+  { exact neg_nonpos.2 (div_nonneg zero_le_two (sq_nonneg _)) },
+  apply le_of_eq,
+  rw [neg_mul, mul_div_assoc', div_mul_div, mul_comm _ (4 : ℝ), ←div_mul_div, mul_comm (2 : ℝ),
+    ←div_div_eq_div_mul, div_eq_mul_inv _ (2 : ℝ), mul_comm _ (2⁻¹ : ℝ)],
+  norm_num,
+end
+
 /-- Lemma 4.19 -/
 lemma minor1_bound {K : ℝ} {k : ℕ} {M : ℝ} {A : finset ℕ} (hk : k ≠ 0) (hM : 8 ≤ M)
-  (hA₁ : A.nonempty) (hA₃ : ∀ n ∈ A, M ≤ ↑n) :
+  (hA₁ : A.nonempty) (hA₃ : ∀ n ∈ A, M ≤ ↑n) (hK : 0 < K) :
   ∀ᶠ N : ℕ in filter.at_top,
     (∀ n ∈ A, n ≤ N) →
     (∀ q ∈ ppowers_in_set A, ↑q ≤ (M * K^2) / (N^2 * (log N)^2)) →
@@ -933,10 +1015,28 @@ begin
     { rw [inv_pos, sq_pos_iff, nat.cast_ne_zero],
       exact lcm_ne_zero_of_zero_not_mem hA },
     norm_num1 },
+  have z : 0 < ([A] : ℝ),
+  { rw [nat.cast_pos, pos_iff_ne_zero],
+    apply lcm_ne_zero_of_zero_not_mem hA },
+  have : 0 < N,
+  { obtain ⟨n, hn⟩ := hA₁,
+    refine (show 0 < 8, by norm_num1).trans_le _,
+    exact_mod_cast (hM.trans (hA₃ _ hn)).trans (nat.cast_le.2 (hA₂ _ hn)) },
   intros h hh,
-  specialize hN hA₄,
-  sorry
-
+  rw [minor_arc₁, mem_filter] at hh,
+  let I : finset ℤ := finset.Icc ⌈(h : ℝ) * k - K / 2⌉ ⌊(h : ℝ) * k + K / 2⌋,
+  have hI : finset.Icc ⌈(h : ℝ) * k - K / 2⌉ ⌊(h : ℝ) * k + K / 2⌋ =
+    Icc ⌈↑(h * k) - K / 2⌉ ⌊↑(h * k) + K / 2⌋,
+  { simp },
+  refine (missing_bridge A hA hA₂ hK ‹0 < N› hI hh.2).trans _,
+  rw [mul_div_assoc, div_mul_div, mul_comm (log N), ←le_log_iff_exp_le, log_inv, neg_le_neg_iff,
+    log_pow, nat.cast_two, ←le_div_iff', div_div_eq_div_mul, mul_right_comm,
+    mul_right_comm _ _ (2 : ℝ), log_le_iff_le_exp z],
+  { norm_num,
+    exact hN hA₄ },
+  { norm_num },
+  rw inv_pos,
+  apply pow_pos z,
 end
 
 lemma prod_swapping {A : finset ℕ} (x : ℕ → ℝ) :
@@ -996,59 +1096,6 @@ begin
   exact lt_of_lt_of_le (by norm_num1) hN,
 end
 
-lemma exists_representative (t : ℤ) {n : ℕ} (hn : n ≠ 0) :
-  ∃ tn : ℤ, tn % n = t % n ∧ |tn| ≤ n / 2 :=
-begin
-  cases le_or_lt (t % n) (n / 2),
-  { refine ⟨t % n, int.mod_mod _ _, _⟩,
-    rwa abs_of_nonneg,
-    apply int.mod_nonneg,
-    rwa int.coe_nat_ne_zero },
-  refine ⟨t % n - n, _, _⟩,
-  { simp [int.sub_mod] },
-  rw [abs_of_nonpos, neg_sub, tsub_le_iff_right],
-  { rw ←int.add_one_le_iff at h,
-    apply le_trans _ (add_le_add_left h (n / 2)),
-    rw [←add_assoc, ←two_mul, eq_sub_of_add_eq' (int.mod_add_div n 2), sub_add_eq_add_sub,
-      le_sub_iff_add_le, add_le_add_iff_left, ←int.lt_add_one_iff],
-    exact int.mod_lt n two_ne_zero },
-  rw [sub_nonpos],
-  apply (t.mod_lt (int.coe_nat_ne_zero.2 hn)).le.trans _,
-  simp,
-end
-
-lemma minor2_ind_bound_sum {N : ℕ} {A : finset ℕ} {t : ℤ} {K L : ℝ} {I : finset ℤ} {q : ℕ}
-  {tn : ℕ → ℤ} (hK : 0 < K) (hA : 0 ∉ A) (hA' : ∀ n ∈ A, n ≤ N) (hN : 2 ≤ N)
-  (hI : I = finset.Icc ⌈(t : ℝ) - K / 2⌉ ⌊(t : ℝ) + K / 2⌋)
-  (htn₁ : ∀ (n : ℕ), n ∈ A → tn n % ↑n = t % ↑n)
-  (htn₂ : ∀ (n : ℕ), n ∈ A → |tn n| ≤ ↑n / 2)
-  (hq₁ : q ∈ ppowers_in_set A)
-  (hq₂ : L / q ≤ (((local_part A q).filter (λ (n : ℕ), ∀ (x : ℤ), x ∈ I → ¬↑n ∣ x)).card)) :
-  L / q * (K^2 / 4) ≤ ∑ (n : ℕ) in local_part A q, (tn n : ℝ) ^ 2 :=
-begin
-  let Aq' := ((local_part A q).filter (λ (n : ℕ), ∀ (x : ℤ), x ∈ I → ¬↑n ∣ x)),
-  have : Aq' ⊆ local_part A q := filter_subset _ _,
-  refine le_trans _ (sum_le_sum_of_subset_of_nonneg this (λ _ _ _, sq_nonneg _)),
-  have : L / q * (K^2 / 4) ≤ Aq'.card * (K / 2)^2 :=
-    mul_le_mul hq₂ (by norm_num) (div_nonneg (sq_nonneg _) (by norm_num)) (nat.cast_nonneg _),
-  apply this.trans _,
-  rw ←nsmul_eq_mul,
-  apply finset.le_sum_of_forall_le,
-  intros n hn,
-  simp only [mem_filter] at hn,
-  apply sq_le_sq,
-  rw abs_of_pos (div_pos hK zero_lt_two),
-  apply le_of_not_lt,
-  intro i,
-  have : t - tn n ∈ I,
-  { rw [hI, mem_Icc, int.le_floor, int.ceil_le, int.cast_sub, sub_le_sub_iff_left, sub_eq_add_neg,
-      add_le_add_iff_left, neg_le, and_comm, ←abs_le],
-    apply i.le },
-  have := hn.2 _ this,
-  rw [int.dvd_iff_mod_eq_zero, ←int.mod_eq_mod_iff_mod_sub_eq_zero, eq_comm] at this,
-  exact this (htn₁ _ (local_part_subset hn.1)),
-end
-
 /-- Lemma 4.20 -/
 lemma minor2_ind_bound {N : ℕ} {A : finset ℕ} {t : ℤ} {K L : ℝ} (I : finset ℤ)
   (hA : 0 ∉ A) (hK : 0 < K) (hA' : ∀ n ∈ A, n ≤ N) (hN : 2 ≤ N)
@@ -1084,42 +1131,21 @@ begin
     { exact prod_nonneg (λ i hi, rpow_nonneg_of_nonneg (nat.cast_nonneg _) _) },
     { rw [prod_const, prod_const_one, mul_one, ←rpow_nat_cast, ←rpow_mul (nat.cast_nonneg _)] } },
   intros q hq',
-  have : ∀ n : ℕ, ∃ (tn : ℤ), n ∈ A → tn % n = t % n ∧ |tn| ≤ n / 2,
-  { intro n,
-    by_cases n ∈ A,
-    { have hn' : n ≠ 0 := ne_of_mem_of_not_mem h hA,
-      obtain ⟨tn, htn⟩ := exists_representative t hn',
-      exact ⟨tn, λ _, htn⟩ },
-    simp [h] },
-  choose tn htn₁ htn₂ using this,
-  refine (cos_prod_bound t (zero_mem_local_part_iff hA) (λ _ n, hA' _ (filter_subset _ _ n)) tn
-    (λ _ n, htn₁ _ (filter_subset _ _ n)) _).trans _,
-  { intros n hn,
-    have z := htn₂ _ (filter_subset _ _ hn),
-    rw [←int.coe_nat_one, ←int.coe_nat_bit0, ←int.coe_nat_div, ←@int.cast_le ℝ, int.cast_abs,
-      int.cast_coe_nat] at z,
-    exact z.trans (nat.cast_div_le.trans (by simp)) },
   simp only [interval_rare_ppowers, mem_sdiff, mem_filter, not_and, not_lt] at hq',
   replace hq' := and.intro hq'.1 (hq'.2 hq'.1),
-  have := minor2_ind_bound_sum hK hA hA' hN hI htn₁ htn₂ hq'.1 hq'.2,
-  apply le_trans (exp_le_exp.2 (mul_le_mul_of_nonpos_left this _)) _,
-  { exact neg_nonpos.2 (div_nonneg zero_le_two (sq_nonneg _)) },
+  refine (missing_bridge (local_part A q) (zero_mem_local_part_iff hA)
+    (λ _ n, hA' _ (filter_subset _ _ n)) hK (by linarith) hI hq'.2).trans _,
   have : 0 < (N : ℝ) := nat.cast_pos.2 (zero_lt_two.trans_le hN),
-  rw [←le_log_iff_exp_le (rpow_pos_of_pos this _), log_rpow this, neg_mul, neg_mul, neg_mul,
-    neg_le_neg_iff, div_mul_div, div_mul_div, mul_assoc, ←sq, ←one_le_div, div_div_eq_div_mul,
-    ←inv_inv (2 : ℝ), mul_comm, ←div_eq_mul_inv, div_div_eq_div_mul, inv_inv (2 : ℝ), ←mul_assoc,
-    ←mul_assoc, ←mul_assoc, ←mul_assoc, mul_right_comm _ (q : ℝ), mul_right_comm _ (q : ℝ),
-    mul_right_comm _ (q : ℝ), ←div_div_eq_div_mul, one_le_div, mul_right_comm _ (N^2 : ℝ),
-    mul_right_comm _ (N^2 : ℝ)],
+  rw [←le_log_iff_exp_le (rpow_pos_of_pos this _), log_rpow this, neg_mul, neg_mul, neg_le_neg_iff,
+    div_mul_eq_mul_div, div_div_eq_div_mul, mul_comm (q : ℝ), ←div_div_eq_div_mul, le_div_iff,
+    mul_comm, mul_assoc, ←sq, ←le_div_iff, div_div_eq_div_mul, mul_mul_mul_comm, ←mul_assoc],
   { norm_num,
     exact hq q hq'.1 },
-  { rw nat.cast_pos,
-    have : is_prime_pow q,
-    { rw [mem_ppowers_in_set] at hq',
-      apply hq'.1.1 },
-    exact this.pos },
-  refine mul_pos (by norm_num1) (pow_pos (log_pos _) _),
-  rwa [nat.one_lt_cast, ←nat.succ_le_iff],
+  { refine mul_pos (by norm_num1) (pow_pos (log_pos _) _),
+    rwa [nat.one_lt_cast, ←nat.succ_le_iff] },
+  rw nat.cast_pos,
+  rw [mem_ppowers_in_set] at hq',
+  exact hq'.1.1.pos,
 end
 
 -- Proposition 2
