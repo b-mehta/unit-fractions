@@ -286,6 +286,8 @@ and the lemma follows taking the product over all $n\in A$.
 
 \begin{lemma}\label{lem:minor1_bound}
   \uses{def:minor_arcs}
+  \leanok
+  \lean{minor1_bound}
 Suppose that $N$ is sufficiently large and $M\geq 8$. Let $k\geq 1$ be an integer. Let $A\subset [M,N]$ be a set of integers such that if $q\in\mathcal{Q}_A$ then $q\leq \frac{MK^2}{N^2(\log N)^2}$. Then
 \[\sum_{h\in \mathfrak{m}_1(A,k,K,M/\log N)} C(A;hk)\leq 1/8.\]
 \end{lemma}
@@ -330,7 +332,6 @@ By assumption, $q\leq LK^2/16N^2(\log N)^2$, and the proof is complete.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_bound}
-  \uses{def:minor_arcs}
 Let $N$ be a sufficiently large integer. Let $K,L>0$ be reals. Let $k$ be an integer such that $1\leq k \leq N/2$.  Let $A\subset [1,N]$ be a finite set of integers such that
 \begin{enumerate}
 \item if $q\in\mathcal{Q}_A$ then $q\leq \tfrac{1}{16}\frac{LK^2}{N^2(\log N)^2}$,  and
@@ -345,7 +346,7 @@ Then
 \[\sum_{h\in\mathfrak{m}_2(A,k,K,M/\log N)}\prod_{n\in A}\abs{\cos(\pi kh/n)}\leq 1/8.\]
 \end{lemma}
 \begin{proof}
-\uses{lem:minor2_ind_bound}
+\uses{lem:minor2_ind_bound,lem:minor1_bound}
 For any $h\in\mathfrak{m}_2$, let $I_h$ be the interval of length $K$ centred at $kh$. Since $h\not\in\mathfrak{m}_1$, condition 2(a) cannot hold, and therefore there is some $x\in I_h$ divisible by all $q\in\mathcal{D}_{I_h}(A;L/q)$. In particular, $kh$ is distance at most $K/2\leq M/2$ from some multiple of $[\mathcal{D}_{I_h}(A;L/q)]$.
 
 Therefore, for any $\mathcal{D}\subset \mathcal{Q}$, the number of $h\in\mathfrak{m}_2$ with $\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}$ is at most $M$ times the number of multiples of $[\mathcal{D}]$ in $[1,k[A]]$, which is at most
@@ -382,6 +383,6 @@ or
 There is some $S\subset A$ such that $R(S)=1/k$.
 \end{proposition}
 \begin{proof}
-\uses{lem:minor_lbound,lem:minor1_bound,lem:minor2_bound}
+\uses{lem:minor_lbound,lem:minor2_bound}
 If the conclusion fails, there is an immediate contradiction by combining Lemmas~\ref{lem:minor_lbound}, \ref{lem:minor1_bound} and \ref{lem:minor2_bound} (and the required upper bound $[A]<2^{\abs{A}-1}$ comes from Lemma~\ref{lem:smooth_lcm}).
 \end{proof}
