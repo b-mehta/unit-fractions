@@ -132,6 +132,8 @@ it's the same thing.
 def ppowers_in_set (A : finset ℕ) : finset ℕ :=
 A.bUnion (λ n, n.divisors.filter (λ q, is_prime_pow q ∧ coprime q (n / q)))
 
+@[simp] lemma ppowers_in_set_empty : ppowers_in_set ∅ = ∅ := bUnion_empty
+
 lemma mem_ppowers_in_set (A : finset ℕ) (q : ℕ) :
   q ∈ ppowers_in_set A ↔ is_prime_pow q ∧ (local_part A q).nonempty :=
 begin
@@ -147,7 +149,6 @@ begin
     simp only [nat.zero_div, nat.coprime_zero_right] at h₄,
     exact h₁.ne_one h₄ },
 end
-
 
 lemma nat.pow_eq_one_iff {n k : ℕ} : n ^ k = 1 ↔ n = 1 ∨ k = 0 :=
 begin
@@ -205,13 +206,50 @@ begin
   apply nat.le_of_dvd hn.bot_lt this,
 end
 
-lemma mem_ppowers_in_set' (A : finset ℕ) {p k : ℕ} (hp : p.prime) (hk : k ≠ 0) :
+lemma mem_ppowers_in_set' {A : finset ℕ} {p k : ℕ} (hp : p.prime) (hk : k ≠ 0) :
   p ^ k ∈ ppowers_in_set A ↔ ∃ n ∈ A, nat.factorization n p = k :=
 begin
   rw [mem_ppowers_in_set, and_iff_right (hp.is_prime_pow.pow hk)],
   simp only [finset.nonempty, mem_local_part, exists_prop],
   refine exists_congr (λ n, and_congr_right' _),
   rw factorization_eq_iff hp hk,
+end
+
+lemma ppowers_in_set_nonempty {A : finset ℕ} (hA : ∃ n ∈ A, 2 ≤ n) :
+  (ppowers_in_set A).nonempty :=
+begin
+  obtain ⟨n, hn, hn'⟩ := hA,
+  have : n ≠ 1,
+  { linarith },
+  rw nat.ne_one_iff_exists_prime_dvd at this,
+  obtain ⟨p, hp₁, hp₂⟩ := this,
+  refine ⟨p ^ _, (mem_ppowers_in_set' hp₁ _).2 ⟨n, hn, rfl⟩⟩,
+  rwa [←finsupp.mem_support_iff, nat.support_factorization, list.mem_to_finset,
+    nat.mem_factors_iff_dvd _ hp₁],
+  linarith
+end
+
+lemma ppowers_in_set_eq_empty {A : finset ℕ} (hA : ppowers_in_set A = ∅) :
+  ∀ n ∈ A, n < 2 :=
+begin
+  contrapose hA,
+  rw [←ne.def, ←finset.nonempty_iff_ne_empty],
+  apply ppowers_in_set_nonempty,
+  simpa using hA
+end
+
+lemma ppowers_in_set_eq_empty' {A : finset ℕ} (hA : ppowers_in_set A = ∅) (hA' : 0 ∉ A):
+  A.lcm id = 1 :=
+begin
+  have : A ⊆ {1},
+  { intros n hn,
+    have := ppowers_in_set_eq_empty hA n hn,
+    interval_cases n,
+    { trivial },
+    simp },
+  rw finset.subset_singleton_iff at this,
+  rcases this with rfl | rfl;
+  simp,
 end
 
 -- This is R(A;q) in the paper.

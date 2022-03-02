@@ -350,7 +350,7 @@ begin
     simp only [ne.def, exists_prop, forall_exists_index, and_imp],
     intros x hx hx',
     apply hX,
-    rw mem_ppowers_in_set' _ (nat.prime_of_mem_factorization hx'),
+    rw mem_ppowers_in_set' (nat.prime_of_mem_factorization hx'),
     simp only [exists_prop],
     rw finset.finsupp_sup_apply,
     { obtain ⟨n, hn, hn'⟩ := finset.sup_eq_mem (λ a : ℕ, a.factorization p) ⟨_, hx⟩,
@@ -373,7 +373,7 @@ begin
     apply le_trans _ this,
     simpa using nat.pow_le_pow_of_le_right pp.pos hp },
   apply hX,
-  rw [mem_ppowers_in_set' _ pp hp, finset.finsupp_sup_apply],
+  rw [mem_ppowers_in_set' pp hp, finset.finsupp_sup_apply],
   simp only [←finsupp.mem_support_iff, finset.support_sup, finset.mem_sup,
     list.mem_to_finset, exists_prop] at hp,
   obtain ⟨x, hx, -⟩ := hp,
@@ -383,21 +383,30 @@ end
 
 /-- Lemma 4.8 -/
 lemma smooth_lcm :
-  ∃ C : ℝ, ∀ᶠ X : ℝ in filter.at_top,
+  ∃ C : ℝ, 0 < C ∧ ∀ X : ℝ, 0 ≤ X →
     ∀ (A : finset ℕ), 0 ∉ A → (∀ q ∈ ppowers_in_set A, ↑q ≤ X) →
       ↑[A] ≤ exp (C * X) :=
 begin
-  obtain ⟨c, hc⟩ := is_O_prime_counting_div_log.bound,
-  refine ⟨c, _⟩,
-  filter_upwards [hc, filter.eventually_gt_at_top (1 : ℝ)],
-  intros X hX₁ hX A hA hAX,
+  obtain ⟨c, hc', hc⟩ := prime_counting_le_const_mul_div_log,
+  refine ⟨c, hc', λ X hX₀ A hA hAX, _⟩,
+  rcases le_or_lt X 1 with hX | hX,
+  { have : ppowers_in_set A = ∅,
+    { apply finset.eq_empty_of_forall_not_mem,
+      intros q hq,
+      have := (hAX q hq).trans hX,
+      rw mem_ppowers_in_set at hq,
+      apply not_le_of_lt hq.1.one_lt,
+      simpa only [nat.cast_le_one] using this },
+    rw [ppowers_in_set_eq_empty' this hA, nat.cast_one],
+    exact one_le_exp (mul_nonneg hc'.le hX₀) },
   have : ⌊X⌋₊ ≠ 0 := by simp only [ne.def, nat.floor_eq_zero, not_lt, hX.le],
   refine (nat.cast_le.2 (smooth_lcm_aux this (λ q hq, nat.le_floor (hAX q hq)) hA)).trans _,
   simp only [nat.cast_pow],
   refine (pow_le_pow_of_le_left (nat.cast_nonneg _)
     (nat.floor_le (zero_le_one.trans hX.le)) _).trans _,
+  have hX₁ := hc X,
   simp only [norm_coe_nat, norm_div, norm_of_nonneg (zero_le_one.trans hX.le),
-    norm_of_nonneg (log_pos hX).le] at hX₁,
+    norm_of_nonneg (log_nonneg hX.le)] at hX₁,
   rwa [←log_le_iff_le_exp, log_pow, ←le_div_iff (log_pos hX), mul_div_assoc],
   exact pow_pos (zero_le_one.trans_lt hX) _,
 end
@@ -559,8 +568,8 @@ end
 lemma integer_bound_thing {d : ℤ} (hd₀ : 0 ≤ d) (hd₁ : d ≠ 1) (hd₂ : d < 2) :
   d = 0 :=
 begin
-  interval_cases using hd₀ hd₂,
-  cases hd₁ rfl,
+  refine le_antisymm (int.lt_add_one_iff.1 (lt_of_le_of_ne _ hd₁)) hd₀,
+  rwa ←int.lt_add_one_iff,
 end
 
 lemma orthog_simp_aux {A : finset ℕ} {k : ℕ} (hA : 0 ∉ A) (hk : k ≠ 0)
@@ -869,6 +878,67 @@ begin
   simpa only [nat.abs_cast, nat.cast_pos, pos_iff_ne_zero] using hn',
 end
 
+lemma minor1_bound_aux (K : ℝ) {M : ℝ} {A : finset ℕ} (hM : 8 ≤ M) (hA : 0 ∉ A) :
+  ∀ᶠ N : ℕ in filter.at_top,
+    (∀ q ∈ ppowers_in_set A, ↑q ≤ (M * K^2) / (N^2 * (log N)^2)) →
+      ↑[A] ≤ exp ((M * K^2) / (4 * N^2 * log N)) :=
+begin
+  obtain ⟨C, hC₀, hC⟩ := smooth_lcm,
+  filter_upwards [filter.eventually_gt_at_top 1,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top) (filter.eventually_ge_at_top (4 * C))]
+    with N hN₁ hN' hA₄,
+  change 4 * C ≤ log N at hN',
+  refine (hC _ (div_nonneg _ _) _ hA hA₄).trans _,
+  { exact mul_nonneg (by linarith) (sq_nonneg _) },
+  { exact mul_nonneg (sq_nonneg _) (sq_nonneg _) },
+  have hN₁' : (1 : ℝ) < N := nat.one_lt_cast.2 hN₁,
+  have h₁ : (0 : ℝ) < N ^ 2 := pow_pos (zero_lt_one.trans hN₁') _,
+  rw [exp_le_exp, mul_div_assoc', div_le_div_iff],
+  { have : 0 ≤ M * K ^ 2 * N ^ 2 * log N,
+    { refine mul_nonneg _ (log_nonneg (by simpa using hN₁.le)),
+      exact mul_nonneg (mul_nonneg (by linarith) (sq_nonneg _)) h₁.le },
+    convert (mul_le_mul_of_nonneg_left hN' this) using 1;
+    ring },
+  { exact mul_pos h₁ (pow_pos (log_pos hN₁') _) },
+  { exact mul_pos (mul_pos (by norm_num1) h₁) (log_pos hN₁') },
+end
+
+/-- Lemma 4.19 -/
+lemma minor1_bound {K : ℝ} {k : ℕ} {M : ℝ} {A : finset ℕ} (hk : k ≠ 0) (hM : 8 ≤ M)
+  (hA₁ : A.nonempty) (hA₃ : ∀ n ∈ A, M ≤ ↑n) :
+  ∀ᶠ N : ℕ in filter.at_top,
+    (∀ n ∈ A, n ≤ N) →
+    (∀ q ∈ ppowers_in_set A, ↑q ≤ (M * K^2) / (N^2 * (log N)^2)) →
+      ∑ h in minor_arc₁ A k K (M / log N), cos_prod A (h * k) ≤ 8⁻¹ :=
+begin
+  have hA : 0 ∉ A,
+  { intro hA,
+    have z := hM.trans (hA₃ _ hA),
+    norm_num at z },
+  filter_upwards [minor1_bound_aux K hM hA] with N hN hA₂ hA₄,
+  suffices : ∀ h ∈ minor_arc₁ A k K (M / log N), cos_prod A (h * k) ≤ ([A] ^ 2)⁻¹,
+  { apply (sum_le_of_forall_le _ _ _ this).trans _,
+    have h₁ : (minor_arc₁ A k K (M / log N)).card ≤ [A],
+    { refine (card_le_of_subset ((filter_subset _ _).trans (sdiff_subset _ _))).trans _,
+      refine (card_le_of_subset (erase_subset _ _)).trans _,
+      rw card_valid_sum_range },
+    rw ←@nat.cast_le ℝ at h₁,
+    have h₂ : (8 : ℝ) ≤ [A],
+    { obtain ⟨n, hn⟩ := hA₁,
+      refine (hM.trans (hA₃ n hn)).trans _,
+      exact_mod_cast (nat.le_of_dvd (lcm_ne_zero_of_zero_not_mem hA).bot_lt (dvd_lcm hn)) },
+    rw [nsmul_eq_mul, ←one_div (8 : ℝ), le_div_iff, mul_right_comm, ←le_div_iff, one_div,
+      inv_inv, sq],
+    { exact mul_le_mul h₁ h₂ (by norm_num1) (nat.cast_nonneg _) },
+    { rw [inv_pos, sq_pos_iff, nat.cast_ne_zero],
+      exact lcm_ne_zero_of_zero_not_mem hA },
+    norm_num1 },
+  intros h hh,
+  specialize hN hA₄,
+  sorry
+
+end
+
 lemma prod_swapping {A : finset ℕ} (x : ℕ → ℝ) :
   ∏ (n : ℕ) in A, ∏ (q : ℕ) in (ppowers_in_set A).filter (λ q, n ∈ local_part A q), x n =
   ∏ (q : ℕ) in ppowers_in_set A, ∏ (n : ℕ) in local_part A q, x n :=
@@ -979,6 +1049,7 @@ begin
   exact this (htn₁ _ (local_part_subset hn.1)),
 end
 
+/-- Lemma 4.20 -/
 lemma minor2_ind_bound {N : ℕ} {A : finset ℕ} {t : ℤ} {K L : ℝ} (I : finset ℤ)
   (hA : 0 ∉ A) (hK : 0 < K) (hA' : ∀ n ∈ A, n ≤ N) (hN : 2 ≤ N)
   (hI : I = finset.Icc ⌈(t : ℝ) - K / 2⌉ ⌊(t : ℝ) + K / 2⌋)
