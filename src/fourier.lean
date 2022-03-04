@@ -804,7 +804,7 @@ by rw [eq_div_iff_mul_eq', prod_sdiff h]
 
 /-- Lemma 4.17 -/
 lemma minor_lbound {M : ℝ} {A : finset ℕ} {K : ℝ} {k : ℕ}
-  (hM : 1 ≤ M) (hM : ∀ n ∈ A, M ≤ ↑n) (hK : 0 < K) (hKM : K < M) (hkA : k ∣ [A]) (hk : k ≠ 0)
+  (hM : ∀ n ∈ A, M ≤ ↑n) (hK : 0 < K) (hKM : K < M) (hkA : k ∣ [A]) (hk : k ≠ 0)
   (hA₁ : (2 : ℝ) - k / M ≤ k * rec_sum A) (hA₂ : (k : ℝ) * rec_sum A < 2)
   (hA₃ : A.nonempty) (hS : ∀ S ⊆ A, rec_sum S ≠ 1 / k) (hA₄ : ([A] : ℝ) ≤ 2^(A.card - 1 : ℤ)) :
   1 / 2 ≤ ∑ h in j A \ major_arc A k K, cos_prod A (h * k) :=
@@ -924,11 +924,9 @@ begin
   simp,
 end
 
-lemma missing_bridge_sum {N : ℕ} {A : finset ℕ} {t : ℤ} {K M : ℝ} {I : finset ℤ} {tn : ℕ → ℤ}
-  (hA' : 0 ∉ A) (hA : ∀ n ∈ A, n ≤ N) (hK : 0 < K)
+lemma missing_bridge_sum {A : finset ℕ} {t : ℤ} {K M : ℝ} {I : finset ℤ} {tn : ℕ → ℤ} (hK : 0 < K)
   (hI : I = finset.Icc ⌈(t : ℝ) - K / 2⌉ ⌊(t : ℝ) + K / 2⌋)
   (htn₁ : ∀ (n : ℕ), n ∈ A → tn n % ↑n = t % ↑n)
-  (htn₂ : ∀ (n : ℕ), n ∈ A → |tn n| ≤ ↑n / 2)
   (hI' : M ≤ ((A.filter (λ (n : ℕ), ∀ x ∈ I, ¬ (↑n ∣ x))).card : ℝ)) :
   M * (K^2 / 4) ≤ ∑ n in A, (tn n : ℝ) ^ 2 :=
 begin
@@ -956,8 +954,7 @@ begin
 end
 
 lemma missing_bridge (A : finset ℕ) {N : ℕ} {t : ℤ} {K M : ℝ} (hA' : 0 ∉ A) (hA : ∀ n ∈ A, n ≤ N)
-  {I : finset ℤ} (hK : 0 < K) (hN : 0 < N)
-  (hI : I = finset.Icc ⌈(t : ℝ) - K / 2⌉ ⌊(t : ℝ) + K / 2⌋)
+  {I : finset ℤ} (hK : 0 < K) (hI : I = finset.Icc ⌈(t : ℝ) - K / 2⌉ ⌊(t : ℝ) + K / 2⌋)
   (hI' : M ≤ ((A.filter (λ (n : ℕ), ∀ x ∈ I, ¬ (↑n ∣ x))).card : ℝ)) :
   cos_prod A t ≤ exp (- (M * K^2 / (2 * N^2))) :=
 begin
@@ -976,7 +973,7 @@ begin
       int.cast_coe_nat] at z,
     exact z.trans (nat.cast_div_le.trans (by simp)) },
   set A' := A.filter (λ (n : ℕ), ∀ x ∈ my_range (K / 2), ¬ (↑n ∣ (x - t))),
-  have := missing_bridge_sum hA' hA hK hI htn₁ htn₂ hI',
+  have := missing_bridge_sum hK hI htn₁ hI',
   apply le_trans (exp_le_exp.2 (mul_le_mul_of_nonpos_left this _)) _,
   { exact neg_nonpos.2 (div_nonneg zero_le_two (sq_nonneg _)) },
   apply le_of_eq,
@@ -986,7 +983,7 @@ begin
 end
 
 /-- Lemma 4.19 -/
-lemma minor1_bound {K : ℝ} {k : ℕ} {M : ℝ} {A : finset ℕ} (hk : k ≠ 0) (hM : 8 ≤ M)
+lemma minor1_bound {K : ℝ} {k : ℕ} {M : ℝ} {A : finset ℕ} (hM : 8 ≤ M)
   (hA₁ : A.nonempty) (hA₃ : ∀ n ∈ A, M ≤ ↑n) (hK : 0 < K) :
   ∀ᶠ N : ℕ in filter.at_top,
     (∀ n ∈ A, n ≤ N) →
@@ -1028,7 +1025,7 @@ begin
   have hI : finset.Icc ⌈(h : ℝ) * k - K / 2⌉ ⌊(h : ℝ) * k + K / 2⌋ =
     Icc ⌈↑(h * k) - K / 2⌉ ⌊↑(h * k) + K / 2⌋,
   { simp },
-  refine (missing_bridge A hA hA₂ hK ‹0 < N› hI hh.2).trans _,
+  refine (missing_bridge A hA hA₂ hK hI hh.2).trans _,
   rw [mul_div_assoc, div_mul_div, mul_comm (log N), ←le_log_iff_exp_le, log_inv, neg_le_neg_iff,
     log_pow, nat.cast_two, ←le_div_iff', div_div_eq_div_mul, mul_right_comm,
     mul_right_comm _ _ (2 : ℝ), log_le_iff_le_exp z],
@@ -1058,10 +1055,8 @@ begin
   simpa using rpow_le_rpow_of_exponent_ge hx₀ hx₁ h_one_le
 end
 
-lemma minor2_ind_bound_part_one {N : ℕ} {A : finset ℕ} {t : ℤ} {K L : ℝ} {I : finset ℤ}
-  (hA : 0 ∉ A) (hA' : ∀ n ∈ A, n ≤ N) (hN : 2 ≤ N)
-  (hI : I = finset.Icc ⌈(t : ℝ) - K / 2⌉ ⌊(t : ℝ) + K / 2⌋)
-  (hq : ∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ L * K ^ 2 / (16 * N^2 * (log N)^2)) :
+lemma minor2_ind_bound_part_one {N : ℕ} {A : finset ℕ} {t : ℤ}
+  (hA : 0 ∉ A) (hA' : ∀ n ∈ A, n ≤ N) (hN : 2 ≤ N) :
   cos_prod A t ≤ ∏ q in ppowers_in_set A, (cos_prod (local_part A q) t) ^ (2 * log N)⁻¹ :=
 begin
   let Q_ : ℕ → finset ℕ := λ n, (ppowers_in_set A).filter (λ q, n ∈ local_part A q),
@@ -1103,7 +1098,7 @@ lemma minor2_ind_bound {N : ℕ} {A : finset ℕ} {t : ℤ} {K L : ℝ} (I : fin
   (hq : ∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ L * K ^ 2 / (16 * N^2 * (log N)^2)) :
   cos_prod A t ≤ N ^ (-4 * finset.card (ppowers_in_set A \ interval_rare_ppowers I A L) : ℝ) :=
 begin
-  apply (minor2_ind_bound_part_one hA hA' hN hI hq).trans _,
+  apply (minor2_ind_bound_part_one hA hA' hN).trans _,
   rw ←prod_sdiff (interval_rare_ppowers_subset I L),
   suffices : ∀ q ∈ ppowers_in_set A \ interval_rare_ppowers I A L,
               cos_prod (local_part A q) t ≤ N ^ (-8 * log N),
@@ -1134,7 +1129,7 @@ begin
   simp only [interval_rare_ppowers, mem_sdiff, mem_filter, not_and, not_lt] at hq',
   replace hq' := and.intro hq'.1 (hq'.2 hq'.1),
   refine (missing_bridge (local_part A q) (zero_mem_local_part_iff hA)
-    (λ _ n, hA' _ (filter_subset _ _ n)) hK (by linarith) hI hq'.2).trans _,
+    (λ _ n, hA' _ (filter_subset _ _ n)) hK hI hq'.2).trans _,
   have : 0 < (N : ℝ) := nat.cast_pos.2 (zero_lt_two.trans_le hN),
   rw [←le_log_iff_exp_le (rpow_pos_of_pos this _), log_rpow this, neg_mul, neg_mul, neg_le_neg_iff,
     div_mul_eq_mul_div, div_div_eq_div_mul, mul_comm (q : ℝ), ←div_div_eq_div_mul, le_div_iff,
@@ -1146,6 +1141,32 @@ begin
   rw nat.cast_pos,
   rw [mem_ppowers_in_set] at hq',
   exact hq'.1.1.pos,
+end
+
+lemma counting_lemma {K L M : ℝ} {k : ℕ} {A : finset ℕ} {m₂ : finset ℤ}
+  {D : finset ℕ} (hA : 0 ∉ A)
+  (hK : 0 < K) (hKM : K < M) (hL : 0 < L) (hk : k ≠ 0)
+  (z : ∀ h ∈ m₂, ∃ x ∈ I h K k, ∀ q ∈ interval_rare_ppowers (I h K k) A L, ↑q ∣ x) :
+  ((m₂.filter (λ h, interval_rare_ppowers (I h K k) A L = D)).card : ℝ) ≤
+    M * (k * [A]) / [D] :=
+begin
+  sorry
+end
+
+lemma minor2_bound {K L M : ℝ} {k : ℕ} {A : finset ℕ} (hA : 0 ∉ A)
+  (hK : 0 < K) (hKM : K < M) (hL : 0 < L) (hk : k ≠ 0) :
+  ∀ᶠ N : ℕ in filter.at_top,
+    k ≤ N / 2 →
+    M ≤ N →
+    (∀ n ∈ A, n ≤ N) →
+    (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ L * K ^ 2 / (16 * N^2 * (log N)^2)) →
+    (∀ (t : ℝ) (I : finset ℤ), I = Icc ⌈t - K / 2⌉ ⌊t + K / 2⌋ →
+      M / log N ≤ (A.filter (λ n, ∀ x ∈ I, ¬ ↑n ∣ x)).card ∨
+      ∃ x ∈ I, ∀ q ∈ interval_rare_ppowers I A L, ↑q ∣ x) →
+    ∑ h in minor_arc₂ A k K (M / log N), cos_prod A (h * k) ≤ 8⁻¹  :=
+begin
+  filter_upwards with N hN hA' hq hI,
+  sorry
 end
 
 -- Proposition 2
