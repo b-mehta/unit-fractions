@@ -325,7 +325,7 @@ begin
       exact div_le_div_of_le_left (nat.cast_nonneg _) hM (hAM _ hi.1) },
     rw nsmul_eq_mul,
     refine (mul_le_mul_of_nonneg_right hq.2.le (div_nonneg (nat.cast_nonneg _) hM.le)).trans _,
-    rw [mul_comm M, mul_div_assoc, mul_assoc, div_mul_div, mul_comm M, div_self, mul_one],
+    rw [mul_comm M, mul_div_assoc, mul_assoc, div_mul_div_comm₀, mul_comm M, div_self, mul_one],
     simp only [mul_eq_zero, nat.cast_eq_zero, hM.ne', ne.def, or_false],
     rw [mem_ppowers_in_set, and_assoc] at hq,
     exact hq.1.ne_zero },
