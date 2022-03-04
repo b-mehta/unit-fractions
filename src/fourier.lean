@@ -780,22 +780,6 @@ begin
     ring_nf }
 end
 
-lemma complex.abs_prod {α : Type*} (s : finset α) {f : α → ℂ} :
-  complex.abs (∏ i in s, f i) = ∏ i in s, (complex.abs (f i))  :=
-finset.induction_on s (by simp) (by simp {contextual := tt})
-
-example {x : ℕ} : (2 : ℝ) ^ (x : ℤ) = 2 ^ x :=
-begin
-  simp only [zpow_coe_nat],
-end
-
-example {x y : ℝ} (h : x ≤ -y) : y ≤ |x| :=
-begin
-  rw [le_abs'],
-  left,
-  apply h,
-end
-
 @[to_additive]
 lemma prod_sdiff' {α M : Type*} [decidable_eq α] [comm_group M] (f : α → M) (s₁ s₂ : finset α)
   (h : s₁ ⊆ s₂) :
@@ -977,8 +961,8 @@ begin
   apply le_trans (exp_le_exp.2 (mul_le_mul_of_nonpos_left this _)) _,
   { exact neg_nonpos.2 (div_nonneg zero_le_two (sq_nonneg _)) },
   apply le_of_eq,
-  rw [neg_mul, mul_div_assoc', div_mul_div, mul_comm _ (4 : ℝ), ←div_mul_div, mul_comm (2 : ℝ),
-    ←div_div_eq_div_mul, div_eq_mul_inv _ (2 : ℝ), mul_comm _ (2⁻¹ : ℝ)],
+  rw [neg_mul, mul_div_assoc', div_mul_div_comm₀, mul_comm _ (4 : ℝ), ←div_mul_div_comm₀,
+    mul_comm (2 : ℝ), ←div_div_eq_div_mul, div_eq_mul_inv _ (2 : ℝ), mul_comm _ (2⁻¹ : ℝ)],
   norm_num,
 end
 
@@ -1026,8 +1010,8 @@ begin
     Icc ⌈↑(h * k) - K / 2⌉ ⌊↑(h * k) + K / 2⌋,
   { simp },
   refine (missing_bridge A hA hA₂ hK hI hh.2).trans _,
-  rw [mul_div_assoc, div_mul_div, mul_comm (log N), ←le_log_iff_exp_le, log_inv, neg_le_neg_iff,
-    log_pow, nat.cast_two, ←le_div_iff', div_div_eq_div_mul, mul_right_comm,
+  rw [mul_div_assoc, div_mul_div_comm₀, mul_comm (log N), ←le_log_iff_exp_le, log_inv,
+    neg_le_neg_iff, log_pow, nat.cast_two, ←le_div_iff', div_div_eq_div_mul, mul_right_comm,
     mul_right_comm _ _ (2 : ℝ), log_le_iff_le_exp z],
   { norm_num,
     exact hN hA₄ },
