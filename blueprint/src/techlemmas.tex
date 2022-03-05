@@ -57,14 +57,13 @@ We can therefore bound
 We will control the contribution from those $d$ with $\omega(d)>\omega_0= \frac{5}{\log k}\log\log N$ with the trivial bound
 \[\sum_{\substack{n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} \leq \sum_{\substack{n\leq N\\ qd\mid n}}\frac{qd}{n}\ll \log N\]
 and Mertens' bound \ref{lem:mertens1}. Together these imply
-\begin{align*}
+\[
 \sum_{\substack{d\in D\\ \omega(d)>\omega_0}}\frac{1}{d}\sum_{\substack{n\in A_q\\ qd\mid n}}\frac{qd}{n}
-&\ll \log N\sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N\\ \omega(d)\geq \omega_0}} \frac{1}{d}\\
-&\ll
-k^{-\omega_0}\log N\sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N}} \frac{k^{\omega(d)}}{d}\\
-&\ll C_1^kk^{-\omega_0}\log N\prod_{y<p\leq N}(1+\frac{k}{p-1}) \\
- &\leq k^{-\omega_0}\log N\brac{C_2\frac{\log N}{\log y}}^{k}
-\end{align*}
+\ll \log N\sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N\\ \omega(d)\geq \omega_0}} \frac{1}{d}\]
+\[\ll
+k^{-\omega_0}\log N\sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N}} \frac{k^{\omega(d)}}{d}\]
+\[\ll C_1^kk^{-\omega_0}\log N\prod_{y<p\leq N}(1+\frac{k}{p-1})
+ \leq k^{-\omega_0}\log N\brac{C_2\frac{\log N}{\log y}}^{k}\]
 for some absolute constants $C_1,C_2>0$. Recalling the definitions of $y$ and $\omega_0$, this is
 \[\leq C_2^kk^{-\omega_0}(\log N)^3\leq 1/\log N,\]
 say, for $N$ sufficiently large. It follows that

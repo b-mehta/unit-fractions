@@ -107,7 +107,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/a9ba4aed9128fa4b70bdc5f9000ea318f842d9b0/src/main_results.lean#L25">unit_fractions_upper_density</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/7494da73bcd4eab088a919bc7dd83355ab683a4d/src/main_results.lean#L25">unit_fractions_upper_density</a></li>
         </ul>
 
       </div>
@@ -175,7 +175,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/a9ba4aed9128fa4b70bdc5f9000ea318f842d9b0/src/main_results.lean#L29">unit_fractions_upper_log_density</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/7494da73bcd4eab088a919bc7dd83355ab683a4d/src/main_results.lean#L29">unit_fractions_upper_log_density</a></li>
         </ul>
 
       </div>
@@ -224,9 +224,12 @@
 </div>
 <p> By construction, \(A_i\subset [N_{i+1},N_i]\subset [N_i^{1-1/\log \log N_i},N_i]\), and every \(n\in A_i\) is divisible by some prime \(p\) with \(5\leq p\leq (\log N)^{1/1200}\leq (\log N_i)^{1/500}\). Furthermore, every \(n\in A_i\) satisfies \(\omega (n)\geq \frac{99}{100}\log \log N\geq \frac{99}{100}\log \log N_i\) and \(\omega (n)\leq \frac{101}{99}\log \log N\leq 2\log \log N_i\). </p>
 <p>Finally, it remains to discard the contribution of those \(n\in A_i\) divisible by some large prime power \(q{\gt} N_i^{1-6/\log \log N_i}\). The contribution to \(R(A_i)\) of all such \(n\) is at most </p>
-<span>\begin{align*}  \sum _{N_i^{1-6/\log \log N_i}< q\leq N_i}\sum _{\substack {n\leq N_i\\ \begin{bgroup} q\mid n
-
-\end{bgroup}}}\frac{1}{n} & \ll \sum _{N_i^{1-6/\log \log N_i}< q\leq N_i}\frac{\log (N_i/q)}{q}\\ & \ll \frac{\log N_i}{\log \log N_i}\sum _{N_i^{1-6/\log \log N_i}<q\leq N_i}\frac{1}{q}\\ & \ll \frac{\log N}{(\log \log N)^2}, \end{align*}</span>
+<div class="displaymath" id="a0000000070">
+  \[  \sum _{N_i^{1-6/\log \log N_i}{\lt} q\leq N_i}\sum _{\substack {n\leq N_i\\ q\mid n}}\frac{1}{n} \ll \sum _{N_i^{1-6/\log \log N_i}{\lt} q\leq N_i}\frac{\log (N_i/q)}{q} \]
+</div>
+<div class="displaymath" id="a0000000071">
+  \[ \ll \frac{\log N_i}{\log \log N_i}\sum _{N_i^{1-6/\log \log N_i}{\lt}q\leq N_i}\frac{1}{q}\ll \frac{\log N}{(\log \log N)^2}, \]
+</div>
 <p> using Lemma&#160;<a href="chap-basic.html#lem:mertens1">2.6</a>. Provided we choose \(C\) sufficiently large, this is \(\leq R(A_i)/2\), and hence, if \(A_i'\subset A_i\) is the set of those \(n\) divisible only by prime powers \(q\leq N_i^{1-6/\log \log N_i}\), then \(R(A_i')\geq (\log N)^{1/200}\), say. All of the conditions of Corollary&#160;<a href="chap-tech.html#cor:tech_cor">3.3</a> are now met, and hence there is some \(S\subset A_i'\subset A\) such that \(R(S)=1\), as required. </p>
 
   </div>
@@ -241,7 +244,7 @@
     ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-tech.html#cor:tech_cor">#</a>
-    <a class="icon proof" href="chap-tech.html#a0000000070"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-tech.html#a0000000072"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -252,7 +255,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/a9ba4aed9128fa4b70bdc5f9000ea318f842d9b0/src/main_results.lean#L118">corollary_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/7494da73bcd4eab088a919bc7dd83355ab683a4d/src/main_results.lean#L118">corollary_one</a></li>
         </ul>
 
       </div>
@@ -270,7 +273,7 @@
   <li><p>every prime power \(q\) dividing some \(n\in A\) satisfies \(q\leq N^{1-6/\log \log N}\), and </p>
 </li>
   <li><p>every \(n\in A\) satisfies </p>
-<div class="displaymath" id="a0000000071">
+<div class="displaymath" id="a0000000073">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n) \leq 2\log \log N. \]
 </div>
 </li>
@@ -279,7 +282,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000070">
+<div class="proof_wrapper" id="a0000000072">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -288,7 +291,7 @@
   </div>
   <div class="proof_content">
   <p> Let \(k\) be maximal such that there are disjoint \(S_1,\ldots ,S_k\subset A\) where, for each \(1\leq i\leq k\), there exists some \(d_i\in [1,(\log N)^{1/500}]\) such that \(R(S_i)=1/d_i\). Let \(t(d)\) be the number of \(S_i\) such that \(d_i=d\). If there is any \(d\) with \(t(d)\geq d\) then we are done, taking \(S\) to be the union of any \(d\) disjoint \(S_j\) with \(R(S_j)=1/d\). Otherwise, </p>
-<div class="displaymath" id="a0000000072">
+<div class="displaymath" id="a0000000074">
   \[ \sum _i R(S_i)= \sum _{1\leq d\leq (\log N)^{1/500}} \frac{t(d)}{d}\leq (\log N)^{1/500}, \]
 </div>
 <p> and hence if \(A'=A\backslash (S_1\cup \cdots \cup S_k)\) then \(R(A')\geq (\log N)^{1/500}\). </p>
@@ -306,7 +309,7 @@
     <span class="lemma_thmtitle">Sieve Estimate 1</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-tech.html#lem:sieve1">#</a>
-    <a class="icon proof" href="chap-tech.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-tech.html#a0000000075"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -317,7 +320,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/a9ba4aed9128fa4b70bdc5f9000ea318f842d9b0/src/main_results.lean#L242">sieve_lemma_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/7494da73bcd4eab088a919bc7dd83355ab683a4d/src/main_results.lean#L242">sieve_lemma_one</a></li>
         </ul>
 
       </div>
@@ -327,13 +330,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Let \(N\) be sufficiently large and \(z,y\) be two parameters such that \(\log N \geq z{\gt}y\geq 3\). If \(X\) is the set of all those integers not divisible by any prime in \(p\in [y,z]\) then </p>
-<div class="displaymath" id="a0000000074">
+<div class="displaymath" id="a0000000076">
   \[ \left\lvert  X\cap [N,2N)\right\rvert \ll \frac{\log y}{\log z}N. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000073">
+<div class="proof_wrapper" id="a0000000075">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -342,27 +345,27 @@
   </div>
   <div class="proof_content">
   <p> Lemma&#160;<a href="chap-basic.html#lem:sieve_eratosthenes">2.9</a> yields </p>
-<div class="displaymath" id="a0000000075">
+<div class="displaymath" id="a0000000077">
   \[ \left\lvert X\cap [N,2N)\right\rvert  = \prod _{y\leq p\leq z}\left( 1-\frac{1}{p}\right)N+ O(2^z). \]
 </div>
 <p> Mertens’ estimate <a href="chap-basic.html#lem:mertens2">2.8</a> yields </p>
-<div class="displaymath" id="a0000000076">
+<div class="displaymath" id="a0000000078">
   \[ \prod _{p\leq z}\left( 1-\frac{1}{p}\right)^{-1} \gg \log z \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000077">
+<div class="displaymath" id="a0000000079">
   \[ \prod _{p\leq y}\left( 1-\frac{1}{p}\right)^{-1} \ll \log y, \]
 </div>
 <p> whence </p>
-<div class="displaymath" id="a0000000078">
+<div class="displaymath" id="a0000000080">
   \[ \prod _{y\leq p\leq z}\left( 1-\frac{1}{p}\right)^{-1}\gg \frac{\log z}{\log y}, \]
 </div>
 <p> and hence </p>
-<div class="displaymath" id="a0000000079">
+<div class="displaymath" id="a0000000081">
   \[  \prod _{y\leq p\leq z}\left( 1-\frac{1}{p}\right)\ll \frac{\log y}{\log z}. \]
 </div>
 <p> Therefore the first term above is \(\ll \frac{\log y}{\log z}N\). The second term is </p>
-<div class="displaymath" id="a0000000080">
+<div class="displaymath" id="a0000000082">
   \[ \ll 2^z \leq 2^{\log N}=N^{\log 2}\ll \frac{N}{\log N}\ll \frac{\log y}{\log z}N, \]
 </div>
 <p> and the result follows. </p>
@@ -378,7 +381,7 @@
     <span class="lemma_thmtitle">Sieve Estimate 2</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-tech.html#lem:sieve2">#</a>
-    <a class="icon proof" href="chap-tech.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-tech.html#a0000000083"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -389,7 +392,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/a9ba4aed9128fa4b70bdc5f9000ea318f842d9b0/src/main_results.lean#L265">sieve_lemma_two</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/7494da73bcd4eab088a919bc7dd83355ab683a4d/src/main_results.lean#L265">sieve_lemma_two</a></li>
         </ul>
 
       </div>
@@ -399,13 +402,13 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Let \(N\) be sufficiently large and \(z,y\) be two parameters such that \((\log N)^{1/2}\geq z{\gt}4y\geq 8\). If \(Y\subset [1,N]\) is the set of all those integers divisible by at least two distinct primes \(p_1,p_2\in [y,z]\) where \(4p_1{\lt}p_2\) then </p>
-<div class="displaymath" id="a0000000082">
+<div class="displaymath" id="a0000000084">
   \[ \left\lvert  \{ 1,\ldots ,N\} \backslash Y\right\rvert \ll \left( \frac{\log y}{\log z}\right)^{1/2}N. \]
 </div>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000081">
+<div class="proof_wrapper" id="a0000000083">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -415,15 +418,15 @@
   <div class="proof_content">
   <p> Let \(w\in (4y,z)\) be some parameter to be chosen later. Lemma&#160;<a href="chap-tech.html#lem:sieve1">3.4</a> implies that the number of \(n\in \{ 1,\ldots ,N\} \) not divisible by any prime \(p\in [w,z]\) is \(\ll \frac{\log w}{\log z}N\). </p>
 <p>Similarly, for any \(p\in [w,z]\), the number of those \(n\in [1,N]\) divisible by \(p\) and no prime \(q\in [y,p/4)\) is </p>
-<div class="displaymath" id="a0000000083">
+<div class="displaymath" id="a0000000085">
   \[ \ll \frac{\log y}{\log p}\frac{N}{p}. \]
 </div>
 <p> It follows that the number of \(n\in \{ 1,\ldots ,N\} \backslash Y\) is </p>
-<div class="displaymath" id="a0000000084">
+<div class="displaymath" id="a0000000086">
   \[ \ll \left( \frac{\log w}{\log z}+ \log y\sum _{p\geq w}\frac{1}{p\log p}\right)N. \]
 </div>
 <p> By partial summation, \(\sum _{p\geq w}\frac{1}{p\log p}\ll 1/\log w\), and hence </p>
-<div class="displaymath" id="a0000000085">
+<div class="displaymath" id="a0000000087">
   \[ \left\lvert  \{ 1,\ldots ,N\} \backslash Y\right\rvert \ll \left( \frac{\log w}{\log z}+\frac{ \log y}{\log w}\right)N. \]
 </div>
 <p> Choosing \(w=\exp \left( \sqrt{(\log y)(\log z)}\right)\) completes the proof. </p>

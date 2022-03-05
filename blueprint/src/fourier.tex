@@ -333,14 +333,14 @@ By assumption, $q\leq LK^2/16N^2(\log N)^2$, and the proof is complete.
 \end{proof}
 
 \begin{lemma}\label{lem:minor2_bound}
-Let $N$ be a sufficiently large integer. Let $K,L>0$ be reals. Let $k$ be an integer such that $1\leq k \leq N/2$.  Let $A\subset [1,N]$ be a finite set of integers such that
+Let $N$ be a sufficiently large integer. Let $K,L>0$ be reals such that $0<K\leq N$. Let $k$ be an integer such that $1\leq k \leq N/64$.  Let $A\subset [1,N]$ be a finite set of integers such that
 \begin{enumerate}
 \item if $q\in\mathcal{Q}_A$ then $q\leq \tfrac{1}{16}\frac{LK^2}{N^2(\log N)^2}$,  and
 \item for any interval $I$ of length $K$, either
 \begin{enumerate}
 \item \[\# \{ n\in A : \textrm{no element of }I\textrm{ is divisible by }n\}\geq M/\log N,\]
 or
-\item there is some $x\in I$ divisible by all $q\in\mathcal{D}_I(A;L/q)$.
+\item there is some $x\in I$ divisible by all $q\in\mathcal{D}_I(A;L)$.
 \end{enumerate}
 \end{enumerate}
 Then
@@ -348,42 +348,46 @@ Then
 \end{lemma}
 \begin{proof}
 \uses{lem:minor2_ind_bound,lem:minor1_bound}
-For any $h\in\mathfrak{m}_2$, let $I_h$ be the interval of length $K$ centred at $kh$. Since $h\not\in\mathfrak{m}_1$, condition 2(a) cannot hold, and therefore there is some $x\in I_h$ divisible by all $q\in\mathcal{D}_{I_h}(A;L/q)$. In particular, $kh$ is distance at most $K/2\leq M/2$ from some multiple of $[\mathcal{D}_{I_h}(A;L/q)]$.
+For any $h\in\mathfrak{m}_2$, let $I_h$ be the interval of length $K$ centred at $kh$. Since $h\not\in\mathfrak{m}_1$, condition 2(a) cannot hold, and therefore there is some $x\in I_h$ divisible by all $q\in\mathcal{D}_{I_h}(A;L)$. In particular, $kh$ is distance at most $K/2$ from some multiple of $[\mathcal{D}_{I_h}(A;L)]$.
 
-Therefore, for any $\mathcal{D}\subset \mathcal{Q}$, the number of $h\in\mathfrak{m}_2$ with $\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}$ is at most $M$ times the number of multiples of $[\mathcal{D}]$ in $[1,k[A]]$, which is at most
-\[Mk\frac{[A]}{[\mathcal{D}]} \leq Mk\prod_{q\in\mathcal{Q}\backslash\mathcal{D}}q\leq kN^{\abs{\mathcal{Q}\backslash \mathcal{D}}+1}.\]
+Therefore, for any $\mathcal{D}\subset \mathcal{Q}$, the number of $h\in\mathfrak{m}_2$ with $\mathcal{D}_{I_h}(A;L)=\mathcal{D}$ is at most $K$ times the number of multiples of $[\mathcal{D}]$ in $[1,k[A]+K]$. The number of multiples of $[\mathcal{D}]$ in $[1,k[A]+K]$ is at most $(k[A]/[\mathcal{D}])+K$, and hence the number of $h\in\mathfrak{m}_2$ with $\mathcal{D}_{I_h}(A;L)=\mathcal{D}$ is at most 
+\[Kk\frac{[A]}{[\mathcal{D}]} +K\leq Kk\prod_{q\in\mathcal{Q}\backslash\mathcal{D}}q\leq kN^{\abs{\mathcal{Q}\backslash \mathcal{D}}+1}+N.\]
+In particular, 
+\[\sum_{h\in \mathfrak{m}_2}1_{\mathcal{D}_{I_h}(A;L)=\mathcal{D}}\leq 2kN^{\abs{\mathcal{Q}\backslash \mathcal{D}}+1}.\]
+(Here we have used the fact that $[A]\leq [D}\prod_{q\in \mathcal{Q}\backslash \mathcal{D}}q$, which is true because every prime power dividing $[A]$ is in $\mathcal{Q}$, and hence either divides $[D]$ or divides $\prod_{q\in \mathcal{Q}\backslash \mathcal{D}}q$.)
+
 Therefore, for any $\mathcal{D}\subset\mathcal{Q}$, using Lemma~\ref{lem:minor2_ind_bound},
-\[\sum_{h\in \mathfrak{m}_2}1_{\mathcal{D}_{I_h}(A;L/q)=\mathcal{D}}C(A;hk)\leq kN^{1-3\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
+\[\sum_{h\in \mathfrak{m}_2}1_{\mathcal{D}_{I_h}(A;L)=\mathcal{D}}C(A;hk)\leq 2kN^{1-3\abs{\mathcal{Q}_A\backslash\mathcal{D}}}.\]
 
 
-By definition of $\mathfrak{m}$, if $h\in\mathfrak{m}_2$ then $kh$ is distance greater than $K/2$ from any multiple of $[A]$, and hence $\mathcal{D}_{I_h}(A;L/q)\neq \mathcal{Q}$. Therefore (using the trivial estimate $\abs{\mathcal{Q}}\leq N$)
+By definition of $\mathfrak{m}$, if $h\in\mathfrak{m}_2$ then $kh$ is distance greater than $K/2$ from any multiple of $[A]$, and hence $\mathcal{D}_{I_h}(A;L)\neq \mathcal{Q}$. Therefore (using the trivial estimate $\abs{\mathcal{Q}}\leq N$)
 \begin{align*}
 \sum_{h\in\mathfrak{m}_2}C(A;h,k)
 &\leq
-kN\sum_{\mathcal{D}\subsetneq \mathcal{Q}}N^{-3\abs{\mathcal{Q}\backslash \mathcal{D}}}\\
-&\leq \frac{k}{N}(1+1/N)^{\abs{\mathcal{Q}}}\\
-&\leq 4k/N \leq 1/8.
+2kN\sum_{\mathcal{D}\subsetneq \mathcal{Q}}N^{-3\abs{\mathcal{Q}\backslash \mathcal{D}}}\\
+&\leq \frac{2k}{N}(1+1/N)^{\abs{\mathcal{Q}}}\\
+&\leq 8k/N \leq 1/8.
 \end{align*}
 \end{proof}
 
 \begin{proposition}\label{prop:fourier}
   \leanok
   \lean{circle_method_prop}
-Suppose that $N$ is sufficiently large. Let $K,L,M$ be reals and $k$ an integer such that $1\leq k\leq N/2$ and $M>K$. Let $A\subset [M,N]$ be a set of integers such that
+  There exists a constant $c>0$ such that the following holds. Suppose that $N$ is sufficiently large. Let $K,L,M$ be reals such that $K<M\leq N$ and $k$ an integer such that $1\leq k\leq N/64$. Let $A\subset [M,N]$ be a set of integers such that
 \begin{enumerate}
 \item $R(A)\in [2/k-1/M,2/k)$,
 \item $k$ divides the lowest common multiple of $A$,
-\item if $q\in\mathcal{Q}_A$ then $q\leq \tfrac{1}{16}\min\brac{\abs{A},\frac{LK^2}{N^2(\log N)^2}}$,  and
+\item if $q\in\mathcal{Q}_A$ then $q\leq c\min\brac{\abs{A},\frac{LK^2}{N^2(\log N)^2}}$,  and
 \item for any interval $I$ of length $K$, either
 \begin{enumerate}
 \item \[\# \{ n\in A : \textrm{no element of }I\textrm{ is divisible by }n\}\geq M/\log N,\]
 or
-\item there is some $x\in I$ divisible by all $q\in\mathcal{D}_I(A; L/q)$.
+\item there is some $x\in I$ divisible by all $q\in\mathcal{D}_I(A; L)$.
 \end{enumerate}
 \end{enumerate}
 There is some $S\subset A$ such that $R(S)=1/k$.
 \end{proposition}
 \begin{proof}
 \uses{lem:minor_lbound,lem:minor2_bound}
-If the conclusion fails, there is an immediate contradiction by combining Lemmas~\ref{lem:minor_lbound}, \ref{lem:minor1_bound} and \ref{lem:minor2_bound} (and the required upper bound $[A]<2^{\abs{A}-1}$ comes from Lemma~\ref{lem:smooth_lcm}).
+If the conclusion fails, there is an immediate contradiction by combining Lemmas~\ref{lem:minor_lbound}, \ref{lem:minor1_bound} and \ref{lem:minor2_bound} (and the required upper bound $[A]<2^{\abs{A}-1}$ comes from Lemma~\ref{lem:smooth_lcm}, provided the constant $c>0$ is chosen to be sufficiently small ).
 \end{proof}

@@ -52,12 +52,10 @@ then there is an $S\subset A$ such that $\sum_{n\in S}\frac{1}{n}=1$.
   By construction, $A_i\subset [N_{i+1},N_i]\subset [N_i^{1-1/\log\log N_i},N_i]$, and every $n\in A_i$ is divisible by some prime $p$ with $5\leq p\leq (\log N)^{1/1200}\leq (\log N_i)^{1/500}$. Furthermore, every $n\in A_i$ satisfies $\omega(n)\geq \frac{99}{100}\log\log N\geq \frac{99}{100}\log\log N_i$ and $\omega(n)\leq \frac{101}{99}\log\log N\leq 2\log\log N_i$.
 
   Finally, it remains to discard the contribution of those $n\in A_i$ divisible by some large prime power $q> N_i^{1-6/\log\log N_i}$. The contribution to $R(A_i)$ of all such $n$ is at most
-  \begin{align*}
+\[
   \sum_{N_i^{1-6/\log\log N_i}< q\leq N_i}\sum_{\substack{n\leq N_i\\ q\mid n}}\frac{1}{n}
-  &\ll \sum_{N_i^{1-6/\log\log N_i}< q\leq N_i}\frac{\log(N_i/q)}{q}\\
-  &\ll \frac{\log N_i}{\log\log N_i}\sum_{N_i^{1-6/\log\log N_i}<q\leq N_i}\frac{1}{q}\\
-  &\ll \frac{\log N}{(\log\log N)^2},
-  \end{align*}
+  \ll \sum_{N_i^{1-6/\log\log N_i}< q\leq N_i}\frac{\log(N_i/q)}{q}\]
+  \[\ll \frac{\log N_i}{\log\log N_i}\sum_{N_i^{1-6/\log\log N_i}<q\leq N_i}\frac{1}{q}\ll \frac{\log N}{(\log\log N)^2},\]
   using Lemma~\ref{lem:mertens1}. Provided we choose $C$ sufficiently large, this is $\leq R(A_i)/2$, and hence, if $A_i'\subset A_i$ is the set of those $n$ divisible only by prime powers $q\leq N_i^{1-6/\log\log N_i}$, then $R(A_i')\geq (\log N)^{1/200}$, say. All of the conditions of Corollary~\ref{cor:tech_cor} are now met, and hence there is some $S\subset A_i'\subset A$ such that $R(S)=1$, as required.
 \end{proof}
 
