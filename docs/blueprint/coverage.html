@@ -219,14 +219,14 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.21 (lem:minor2_bound)</div>
-      <div class="thm_thm_content"><p> Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals such that \(0{\lt}K\leq N\). Let \(k\) be an integer such that \(1\leq k \leq N/64\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
+      <div class="thm_thm_content"><p> Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals such that \(0{\lt}K\leq N\). Let \(T{\gt}0\) be any real. Let \(k\) be an integer such that \(1\leq k \leq N/64\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
 <ol class="enumerate">
   <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \tfrac {1}{16}\frac{LK^2}{N^2(\log N)^2}\), and </p>
 </li>
   <li><p>for any interval \(I\) of length \(K\), either </p>
 <ol class="enumerate">
   <li><div class="displaymath" id="a0000000154">
-  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
+  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq T, \]
 </div>
 <p> or </p>
 </li>
@@ -237,7 +237,7 @@ Click chapter titles to see missing items.
 </ol>
 <p> Then </p>
 <div class="displaymath" id="a0000000155">
-  \[ \sum _{h\in \mathfrak {m}_2(A,k,K,M/\log N)}\prod _{n\in A}\left\lvert \cos (\pi kh/n)\right\rvert \leq 1/8. \]
+  \[ \sum _{h\in \mathfrak {m}_2(A,k,K,T)}C(A;hk)\leq 1/8. \]
 </div>
 </div>
     </li>
@@ -246,18 +246,18 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Proposition 4.22 (prop:fourier)</div>
-      <div class="thm_thm_content"><p>  There exists a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\) is sufficiently large. Let \(K,L,M\) be reals such that \(K{\lt}M\leq N\) and \(k\) an integer such that \(1\leq k\leq N/64\). Let \(A\subset [M,N]\) be a set of integers such that </p>
+      <div class="thm_thm_content"><p>  There exists a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\) is sufficiently large. Let \(K,L,M,T\) be reals such that \(T,L{\gt}0\) and \(8\leq K{\lt}M\leq N\), and let \(k\) be an integer such that \(1\leq k\leq M/64\). Let \(A\subset [M,N]\) be a set of integers such that </p>
 <ol class="enumerate">
   <li><p>\(R(A)\in [2/k-1/M,2/k)\), </p>
 </li>
-  <li><p>\(k\) divides the lowest common multiple of \(A\), </p>
+  <li><p>\(k\) divides \([A]\), </p>
 </li>
-  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq c\min \left( \left\lvert A\right\rvert ,\frac{LK^2}{N^2(\log N)^2}\right)\), and </p>
+  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq c\min \left( M/k,\frac{LK^2}{N^2(\log N)^2},\frac{TK^2}{N^2\log N}\right)\), and </p>
 </li>
   <li><p>for any interval \(I\) of length \(K\), either </p>
 <ol class="enumerate">
   <li><div class="displaymath" id="a0000000160">
-  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
+  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq T, \]
 </div>
 <p> or </p>
 </li>
@@ -581,14 +581,14 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 4.21 (lem:minor2_bound)</div>
-      <div class="thm_thm_content"><p> Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals such that \(0{\lt}K\leq N\). Let \(k\) be an integer such that \(1\leq k \leq N/64\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
+      <div class="thm_thm_content"><p> Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals such that \(0{\lt}K\leq N\). Let \(T{\gt}0\) be any real. Let \(k\) be an integer such that \(1\leq k \leq N/64\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
 <ol class="enumerate">
   <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \tfrac {1}{16}\frac{LK^2}{N^2(\log N)^2}\), and </p>
 </li>
   <li><p>for any interval \(I\) of length \(K\), either </p>
 <ol class="enumerate">
   <li><div class="displaymath" id="a0000000154">
-  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
+  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq T, \]
 </div>
 <p> or </p>
 </li>
@@ -599,7 +599,7 @@ Click chapter titles to see missing items.
 </ol>
 <p> Then </p>
 <div class="displaymath" id="a0000000155">
-  \[ \sum _{h\in \mathfrak {m}_2(A,k,K,M/\log N)}\prod _{n\in A}\left\lvert \cos (\pi kh/n)\right\rvert \leq 1/8. \]
+  \[ \sum _{h\in \mathfrak {m}_2(A,k,K,T)}C(A;hk)\leq 1/8. \]
 </div>
 </div>
     </li>
