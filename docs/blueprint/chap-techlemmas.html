@@ -159,7 +159,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/925d75736d6e165b97e2f3d7ca8a4a8e982aff47/src/main_results.lean#L285">rec_qsum_lower_bound</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/eaef708c925792115ed04ffa63bede939a6ae990/src/main_results.lean#L285">rec_qsum_lower_bound</a></li>
         </ul>
 
       </div>
@@ -193,6 +193,11 @@
   \[ (\log N)^{-\epsilon /2}\leq R(A)\leq 2\log \log N\left( \frac{\sum _{q\in \mathcal{Q}_A}\frac{1}{q}}{(1-\epsilon )e^{-1}\log \log N}\right)^{(1-\epsilon )\log \log N}. \]
 </div>
 <p> The claimed bound follows, using the fact that \(e^{-\frac{\epsilon }{2(1-\epsilon )}}\geq 1-\epsilon \) for \(\epsilon \in (0,1/2)\), choosing \(N\) large enough such that \((2\log \log N)^{2/\log \log N}\leq 1+\epsilon ^2\), say. </p>
+<p>To verify the inequality \(e^{-\frac{\epsilon }{2(1-\epsilon )}}\geq 1-\epsilon \) for \(\epsilon \in (0,1/2)\), note that \(\frac{\epsilon }{2(1-\epsilon )}\leq \epsilon \) for all \(\epsilon \in (0,1/2)\), and hence using \(1+x\leq e^{x}\) for all \(x\geq -1\), we have </p>
+<div class="displaymath" id="a0000000168">
+  \[ e^{-\frac{\epsilon }{2(1-\epsilon )}}\geq e^{-\epsilon }\geq 1-\epsilon  \]
+</div>
+<p> as required. </p>
 
   </div>
 </div>
@@ -204,7 +209,7 @@
     <span class="lemma_thmlabel">5.3</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:usingq">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000168"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000169"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -230,7 +235,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/925d75736d6e165b97e2f3d7ca8a4a8e982aff47/src/main_results.lean#L294">find_good_d</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/eaef708c925792115ed04ffa63bede939a6ae990/src/main_results.lean#L294">find_good_d</a></li>
         </ul>
 
       </div>
@@ -246,7 +251,7 @@
 </li>
   <li><p>\(\omega (d)\leq \tfrac {5}{\log k}\log \log N\), and </p>
 </li>
-  <li><div class="displaymath" id="a0000000169">
+  <li><div class="displaymath" id="a0000000170">
   \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}. \]
 </div>
 </li>
@@ -254,7 +259,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000168">
+<div class="proof_wrapper" id="a0000000169">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -263,45 +268,45 @@
   </div>
   <div class="proof_content">
   <p> Fix some \(q\) with \(R(A;q)\geq (\log N)^{-1/2}\). Let \(D\) be the set of all \(d\) such that if \(p\) is a prime and \(p^r \|  d\) then </p>
-<div class="displaymath" id="a0000000170">
+<div class="displaymath" id="a0000000171">
   \[ p^r{\gt}y=\exp ((\log N)^{1-2/k}) \]
 </div>
 <p> and </p>
-<div class="displaymath" id="a0000000171">
+<div class="displaymath" id="a0000000172">
   \[ qd\in (M\exp (-(\log N)^{1-1/k}),N]. \]
 </div>
 <p> We first claim that every \(n\in A_q\) is divisible by some \(qd\) with \(d\in D\), such that \((qd,n/qd)=1\). This can be done greedily, just removing from \(n/q\) all those prime power divisors \(p^r\|  n/q\) such that \(p^r\leq y\), which removes at most </p>
-<div class="displaymath" id="a0000000172">
+<div class="displaymath" id="a0000000173">
   \[ y^{\omega (n)}\leq \exp ((\log N)^{1-1/k}). \]
 </div>
 <p> We can therefore bound </p>
-<div class="displaymath" id="a0000000173">
+<div class="displaymath" id="a0000000174">
   \[ R(A;q) \leq \sum _{d\in D}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}. \]
 </div>
 <p>We will control the contribution from those \(d\) with \(\omega (d){\gt}\omega _0= \frac{5}{\log k}\log \log N\) with the trivial bound </p>
-<div class="displaymath" id="a0000000174">
+<div class="displaymath" id="a0000000175">
   \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} \leq \sum _{\substack {n\leq N\\ qd\mid n}}\frac{qd}{n}\ll \log N \]
 </div>
 <p> and Mertens’ bound <a href="chap-basic.html#lem:mertens1">2.6</a>. Together these imply </p>
-<div class="displaymath" id="a0000000175">
+<div class="displaymath" id="a0000000176">
   \[  \sum _{\substack {d\in D\\ \omega (d){\gt}\omega _0}}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n}}\frac{qd}{n} \ll \log N\sum _{\substack {d\\ p^r\|  d\implies y{\lt}p^r\leq N\\ \omega (d)\geq \omega _0}} \frac{1}{d} \]
 </div>
-<div class="displaymath" id="a0000000176">
+<div class="displaymath" id="a0000000177">
   \[ \ll k^{-\omega _0}\log N\sum _{\substack {d\\ p^r\|  d\implies y{\lt}p^r\leq N}} \frac{k^{\omega (d)}}{d} \]
 </div>
-<div class="displaymath" id="a0000000177">
+<div class="displaymath" id="a0000000178">
   \[ \ll C_1^kk^{-\omega _0}\log N\prod _{y{\lt}p\leq N}(1+\frac{k}{p-1}) \leq k^{-\omega _0}\log N\left( C_2\frac{\log N}{\log y}\right)^{k} \]
 </div>
 <p> for some absolute constants \(C_1,C_2{\gt}0\). Recalling the definitions of \(y\) and \(\omega _0\), this is </p>
-<div class="displaymath" id="a0000000178">
+<div class="displaymath" id="a0000000179">
   \[ \leq C_2^kk^{-\omega _0}(\log N)^3\leq 1/\log N, \]
 </div>
 <p> say, for \(N\) sufficiently large. It follows that </p>
-<div class="displaymath" id="a0000000179">
+<div class="displaymath" id="a0000000180">
   \[ \tfrac {1}{2}R(A;q)\leq \sum _{\substack {d\in D\\ \omega (d)\leq \omega _0}}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} . \]
 </div>
 <p> The result follows since </p>
-<div class="displaymath" id="a0000000180">
+<div class="displaymath" id="a0000000181">
   \[ \sum _{d\in D}\frac{1}{d}\leq \sum _{\substack {d\\ p^r\|  d\implies y{\lt}p^r\leq N}}\frac{1}{d} \ll \prod _{y{\lt}p\leq N}\left( 1-\frac{1}{p-1}\right)^{-1}\ll \frac{\log N}{\log y}\ll (\log N)^{2/k}. \]
 </div>
 
@@ -315,7 +320,7 @@
     <span class="lemma_thmlabel">5.4</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:pisqa">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000181"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000182"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -342,7 +347,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/925d75736d6e165b97e2f3d7ca8a4a8e982aff47/src/main_results.lean#L363">pruning_lemma_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/eaef708c925792115ed04ffa63bede939a6ae990/src/main_results.lean#L363">pruning_lemma_one</a></li>
         </ul>
 
       </div>
@@ -351,15 +356,15 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   Let \(N\) be sufficiently large and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
-<div class="displaymath" id="a0000000182">
-  \[ R(B)\geq R(A)-\frac{1}{(\log N)^{1/200}} \]
+  <p>   Let \(N\) be sufficiently large, and let \(\epsilon {\gt}0\) and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
+<div class="displaymath" id="a0000000183">
+  \[ R(B)\geq R(A)-2\epsilon \log \log N \]
 </div>
-<p> and \(R(B;q)\geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_B\). </p>
+<p> and \(\epsilon {\lt} R(B;q)\) for all \(q\in \mathcal{Q}_B\). </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000181">
+<div class="proof_wrapper" id="a0000000182">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -367,19 +372,35 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p>We construct a sequence of decreasing sets \(A=A_0\supsetneq A_1\supsetneq \cdots \supsetneq A_i\) as follows. Given some \(A_i\), if there is a prime power \(q_i\in \mathcal{Q}_{A_i}\) such that </p>
-<div class="displaymath" id="a0000000183">
-  \[ R(A_i;q_i){\lt} \frac{2}{(\log N)^{1/100}}, \]
-</div>
-<p> then we let \(A_{i+1}=A_i\backslash (A_i)_{q_i}\). If no such \(q_i\) exists then we halt the construction. This process must obviously terminate in some finite time (since some non-empty amount of \(A_i\) is being removed at each step). Suppose that it halts at \(A_j=B\), say. The amount lost from \(R(A)\) at step \(i\) is </p>
+  <p>We will prove the following claim, valid for any finite set \(A\subset \mathbb {N}\) with \(0\not\in A\) and \(\epsilon {\gt}0\), via induction: for all \(i\geq 0\) there exists \(A_i\subseteq A\) and \(Q_i\subseteq \mathcal{Q}_A\) such that </p>
+<ol class="enumerate">
+  <li><p>the sets \(\mathcal{Q}_{A_i}\) and \(Q_i\) are disjoint, </p>
+</li>
+  <li><p>\(R(A_i)\geq R(A)- \epsilon \sum _{q\in Q_i}\frac{1}{q}\), </p>
+</li>
+  <li><p>either \(i\leq \left\lvert A\backslash A_i\right\rvert \) or, for all \(q'\in \mathcal{Q}_{A_i}\), \(\epsilon {\lt} R(A_i;q')\). </p>
+</li>
+</ol>
+<p>Given this claim, the stated lemma follows by choosing \(B=A_{\left\lvert A\right\rvert +1}\), noting that in the 5th point above the first alternative cannot hold, and furthermore </p>
 <div class="displaymath" id="a0000000184">
-  \[ \sum _{n\in (A_i)_{q_i}}\frac{1}{n}=\frac{1}{q_i}R(A_i;q_i){\lt} \frac{2}{q_i(\log N)^{1/100}}, \]
+  \[ \epsilon \sum _{q\in Q_{\left\lvert A\right\rvert +1}}\frac{1}{q}\leq \epsilon \sum _{q\leq N}\frac{1}{q}\leq 2\epsilon \log \log N, \]
 </div>
-<p> and furthermore each \(q\leq N\) can appear as at most one such \(q_i\), since after removing \((A_i)_{q_i}\) anything left in \(A_i\) cannot have \(q_i\) as a coprime divisor. It follows that </p>
+<p> by Lemma&#160;<a href="chap-basic.html#lem:mertens1">2.6</a>, assuming \(N\) is sufficiently large. </p>
+<p>To prove the inductive claim, we begin by choosing \(Q_0=\emptyset \), and \(A_0=A\). All of the properties are trivial to verify. </p>
+<p>Suppose the proposition is true for \(i\geq 0\), with associated \(A_i,Q_i\). We will now prove it for \(i+1\). If it is true that, for all \(q'\in \mathcal{Q}_{A_i}\), we have \(\epsilon {\lt}R(A_i;q')\), then we let \(A_{i+1}=A_i\) and \(Q_{i+1}=Q_i\). </p>
+<p>Otherwise, let \(q'\in \mathcal{Q}_{A_i}\) be such that \(R(A_i;q')\leq \epsilon \), set \(A_{i+1} = A_i\backslash \{  n\in A_i : q'\mid n \textrm{ and }(q',n/q')=1\} \), and \(Q_{i+1}=Q_i\cup \{ q'\} \). </p>
+<p>It remains to verify the required properties. That \(Q_{i+1}\subseteq \mathcal{Q}_A\) follows from \(Q_i\subseteq \mathcal{Q}_A\) and \(q'\in \mathcal{Q}_{A_i}\subseteq \mathcal{Q}_A\) (using the general fact that if \(B\subseteq A\) then \(\mathcal{Q}_B\subseteq \mathcal{Q}_A\)). </p>
+<p>For point (1), since \(A_{i+1}\subseteq A_i\), and hence \(\mathcal{Q}_{A_{i+1}}\subseteq \mathcal{Q}_{A_i}\), it suffices to show that \(q'\not\in \mathcal{Q}_{A_{i+1}}\). If this were not true, there would be some \(n\in A_{i+1}\) such that \(q'\mid n\) and \((q',n/q')=1\), contradiction to the definition of \(A_{i+1}\). </p>
+<p>For point (2), we note that </p>
 <div class="displaymath" id="a0000000185">
-  \[ R(B){\gt} R(A) -\frac{2}{(\log N)^{1/100}}\sum _{q\leq N}\frac{1}{q}\geq R(A)-\frac{1}{(\log N)^{1/200}}, \]
+  \[ R(A_{i+1})= R(A_i)-\sum _{\substack {n\in A_i\\ q’\mid n\\ (q’,n/q’)=1}}\frac{1}{n} = R(A_i)-\frac{1}{q'}R(A_i;q')\geq R(A_i)-\epsilon \frac{1}{q'}, \]
 </div>
-<p> since \(\sum _{q\leq N}\frac{1}{q}\ll \log \log N\). </p>
+<p> and point (2) follows from induction and the observation that </p>
+<div class="displaymath" id="a0000000186">
+  \[ \frac{1}{q'}+\sum _{q\in Q_i}\frac{1}{q}=\sum _{q\in Q_{i+1}}\frac{1}{q}, \]
+</div>
+<p> since \(q'\in \mathcal{Q}_{A_i}\) and hence \(q'\not\in Q_{i}\). </p>
+<p>Finally, for point (3), we note that since we assume that it is not true that for all \(q'\in \mathcal{Q}_{A_i}\), we have \(\epsilon {\lt}R(A_i;q')\), it must be true that \(i\leq \left\lvert A\backslash A_{i}\right\rvert \). We now claim that \(i+1\leq \left\lvert A\backslash A_{i+1}\right\rvert \), for which it suffices to show that \(A_{i+1}\subsetneq A_i\). This is true since \(q'\in \mathcal{Q}_{A_i}\), and hence the set \(\{  n\in A_i : q'\mid n \textrm{ and }(q',n/q')=1\} \) is not empty. </p>
 
   </div>
 </div>
@@ -391,7 +412,7 @@
     <span class="lemma_thmlabel">5.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:pisq">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000186"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000187"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -402,7 +423,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/925d75736d6e165b97e2f3d7ca8a4a8e982aff47/src/main_results.lean#L372">pruning_lemma_two</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/eaef708c925792115ed04ffa63bede939a6ae990/src/main_results.lean#L372">pruning_lemma_two</a></li>
         </ul>
 
       </div>
@@ -411,19 +432,16 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>  Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
-<div class="displaymath" id="a0000000187">
-  \[ R(A) \geq \alpha +\frac{1}{(\log N)^{1/200}} \]
-</div>
-<p> and if \(q\in \mathcal{Q}_A\) then \(q\leq M/(\log N)^{1/100}\). </p>
-<p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), </p>
+  <p>  Suppose that \(N\) is sufficiently large and \(N{\gt}M\). Let \(\epsilon ,\alpha \) be reals such that \(\alpha {\gt} 4\epsilon \log \log N\) and \(A\subset [M,N]\) be a set of integers such that </p>
 <div class="displaymath" id="a0000000188">
-  \[ R(B;q)\geq \frac{1}{(\log N)^{1/100}}. \]
+  \[ R(A) \geq \alpha +2\epsilon \log \log N \]
 </div>
+<p> and if \(q\in \mathcal{Q}_A\) then \(q\leq \epsilon M\). </p>
+<p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), we have \(\epsilon {\lt} R(B;q)\). </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000186">
+<div class="proof_wrapper" id="a0000000187">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -431,13 +449,33 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> We first apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to produce some \(A'\subset A\) such that \(R(A')\geq \alpha \) and \(R(A';q) \geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_{A'}\). </p>
-<p>We now argue that whenever \(D\) is such that \(R(D)\geq \alpha \) and \(R(D;q) \geq (\log N)^{-1/100}\) for all \(q\in \mathcal{Q}_D\) there exists some \(x\in D\) such that \(R(D\backslash \{ x\} ;q)\geq (\log N)^{-1/100}\) for all \(q\in \mathcal{Q}_{D}\). Given this, the lemma immediately follows, since we can continue removing such elements from \(A'\) one at time until \(R(B)\) falls in the required interval. </p>
-<p>To see why the above fact holds, apply Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> to obtain some \(B\subset D\) (such that \(R(B)\geq (\log N)^{-1/200}\), and hence in particular \(B\) is non-empty), and let \(x\) be any element of \(B\). If \(x\not\in D_q\) then by definition \(R(D\backslash \{ x\} ;q)=R(D;q)\geq (\log N)^{-1/100}\). If \(x\in D_q\) then \(x\in B_q\), and so </p>
+  
+<p>We will prove the following, for all \(N\) sufficiently large, real \(0{\lt}M{\lt}N\), reals \(\epsilon {\gt}0\) and \(\alpha {\gt} 4\epsilon \log \log N\) and finite sets \(A\subseteq [M,N]\) such that \(R(A)\geq \alpha \) and \(R(A;q){\gt} \epsilon \) for all \(q\in \mathcal{Q}_A\), by induction: for all \(i\geq 0\) there exists \(A_i\subseteq A\) such that </p>
+<ol class="enumerate">
+  <li><p>\(R(A_i)\geq \alpha -1/M\), </p>
+</li>
+  <li><p>\(R(A_i;q) {\gt} \epsilon \) for all \(q\in \mathcal{Q}_{A_i}\), and </p>
+</li>
+  <li><p>either \(i\leq \left\lvert A\backslash A_i\right\rvert \) or \(R(A_i){\lt}\alpha \). </p>
+</li>
+</ol>
+<p>Given this claim, we prove the lemma as follows. Let \(A'\subseteq A\) be as given by Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a>, so that the hypotheses of the inductive claim are satisfied for \(A'\). We now apply the inductive claim, and choose \(B=A_{\left\lvert A\right\rvert +1}\), noting that the first alternative of point (3) cannot hold. </p>
+<p>It remains to prove the inductive claim. The base case \(i=0\) is immediate by hypotheses, choosing \(A_0=A\). </p>
+<p>We now fix some \(i\geq 0\), with associated \(A_i\) as above, and prove the claim for \(i+1\). If \(R(A_i){\lt}\alpha \) then we set \(A_{i+1}=A_i\). Otherwise, we have \(R(A_i)\geq \alpha \). By Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> there exists \(B\subset A_i\) such that </p>
 <div class="displaymath" id="a0000000189">
-  \[ R(D\backslash \{ x\} ;q)\geq R(B;q)-\frac{q}{x}\geq \frac{2}{(\log N)^{1/100}}-\frac{q}{M}\geq \frac{1}{(\log N)^{1/100}} \]
+  \[ R(B)\geq R(A_i)-4\epsilon \log \log N\geq \alpha - 4\epsilon \log \log N{\gt}0 \]
 </div>
-<p> as required. </p>
+<p> and \(2\epsilon {\lt} R(B;q)\) for all \(q\in \mathcal{Q}_B\). In particular, since \(R(B){\gt}0\), the set \(B\) is not empty. Let \(x\in B\) be arbitrary, and set \(A_{i+1}=A_i\backslash \{ x\} \). </p>
+<p>We note that since \(x\in B\subseteq A\), we have \(x\geq M\), and hence \(R(A_{i+1})=R(A_i)-1/x\geq \alpha -1/M\), so point (1) is satisfied. Furthermore, since \(R(A_i)\geq \alpha \), we have \(i\leq \left\lvert A\backslash A_i\right\rvert \), and hence \(i+1 \leq \left\lvert A\backslash A_{i+1}\right\rvert \) and point (3) is satisfied. </p>
+<p>For point (2), let \(q\in \mathcal{Q}_{A_{i+1}}\subseteq \mathcal{Q}_{A_i}\). If it is not true that \(q\mid x\) and \((q,x/q)=1\) then </p>
+<div class="displaymath" id="a0000000190">
+  \[ R(A_{i+1};q) = R(A_i; q){\gt}\epsilon . \]
+</div>
+<p> Otherwise, if \(q\mid x\) and \((q,x/q)=1\), then \(q\in \mathcal{Q}_B\). It follows that, since \(B\subseteq A_i\), we have </p>
+<div class="displaymath" id="a0000000191">
+  \[ R(A_{i+1};q)\geq R(B;q)-\frac{q}{x}{\gt}2\epsilon -\frac{q}{M}\geq \epsilon , \]
+</div>
+<p> since \(q\leq \epsilon M\). The inductive claim now follows. </p>
 
   </div>
 </div>

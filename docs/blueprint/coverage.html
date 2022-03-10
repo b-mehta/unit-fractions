@@ -328,7 +328,7 @@ Click chapter titles to see missing items.
 </li>
   <li><p>\(\omega (d)\leq \tfrac {5}{\log k}\log \log N\), and </p>
 </li>
-  <li><div class="displaymath" id="a0000000169">
+  <li><div class="displaymath" id="a0000000170">
   \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}. \]
 </div>
 </li>
@@ -340,11 +340,11 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 5.4 (lem:pisqa)</div>
-      <div class="thm_thm_content"><p>   Let \(N\) be sufficiently large and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
-<div class="displaymath" id="a0000000182">
-  \[ R(B)\geq R(A)-\frac{1}{(\log N)^{1/200}} \]
+      <div class="thm_thm_content"><p>   Let \(N\) be sufficiently large, and let \(\epsilon {\gt}0\) and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
+<div class="displaymath" id="a0000000183">
+  \[ R(B)\geq R(A)-2\epsilon \log \log N \]
 </div>
-<p> and \(R(B;q)\geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_B\). </p>
+<p> and \(\epsilon {\lt} R(B;q)\) for all \(q\in \mathcal{Q}_B\). </p>
 </div>
     </li>
     
@@ -352,15 +352,12 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 5.5 (lem:pisq)</div>
-      <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
-<div class="displaymath" id="a0000000187">
-  \[ R(A) \geq \alpha +\frac{1}{(\log N)^{1/200}} \]
-</div>
-<p> and if \(q\in \mathcal{Q}_A\) then \(q\leq M/(\log N)^{1/100}\). </p>
-<p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), </p>
+      <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large and \(N{\gt}M\). Let \(\epsilon ,\alpha \) be reals such that \(\alpha {\gt} 4\epsilon \log \log N\) and \(A\subset [M,N]\) be a set of integers such that </p>
 <div class="displaymath" id="a0000000188">
-  \[ R(B;q)\geq \frac{1}{(\log N)^{1/100}}. \]
+  \[ R(A) \geq \alpha +2\epsilon \log \log N \]
 </div>
+<p> and if \(q\in \mathcal{Q}_A\) then \(q\leq \epsilon M\). </p>
+<p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), we have \(\epsilon {\lt} R(B;q)\). </p>
 </div>
     </li>
     
@@ -378,11 +375,11 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 6.1 (lem:find_multiples)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000191">
+<div class="displaymath" id="a0000000193">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A. \]
 </div>
 <p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), if \(A_I\) is the set of those \(n\in A\) which divide some element of \(I\), for all \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\) there exists some integer \(x_q\in I\) such that \(q\mid x_q\) and </p>
-<div class="displaymath" id="a0000000192">
+<div class="displaymath" id="a0000000194">
   \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log \log N. \]
 </div>
 </div>
@@ -395,27 +392,27 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Proposition 6.3 (prop:tech_iterative)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000203">
+<div class="displaymath" id="a0000000205">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
-<div class="displaymath" id="a0000000204">
+<div class="displaymath" id="a0000000206">
   \[ R(A)\geq (\log N)^{-1/101} \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000205">
+<div class="displaymath" id="a0000000207">
   \[ R(A;q) \geq (\log N)^{-1/100}. \]
 </div>
 <p> Then either </p>
 <ol class="enumerate">
   <li><p>there is some \(B\subset A\) such that \(R(B)\geq \tfrac {1}{3}R(A)\) and </p>
-<div class="displaymath" id="a0000000206">
+<div class="displaymath" id="a0000000208">
   \[ \sum _{q\in \mathcal{Q}_{B}}\frac{1}{q}\leq \frac{2}{3}\log \log N, \]
 </div>
 <p> or </p>
 </li>
   <li><p>for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000207">
+  <li><div class="displaymath" id="a0000000209">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -433,16 +430,16 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Proposition 6.4 (prop:tech_iterative2)</div>
       <div class="thm_thm_content"><p> Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000219">
+<div class="displaymath" id="a0000000221">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000220">
+<div class="displaymath" id="a0000000222">
   \[ R(A;q) \geq (\log N)^{-1/100}, \]
 </div>
 <p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\). Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000221">
+  <li><div class="displaymath" id="a0000000223">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -466,7 +463,7 @@ Click chapter titles to see missing items.
   <li><p>every prime power \(q\) dividing some \(n\in A\) satisfies \(q\leq N^{1-6/\log \log N}\), and </p>
 </li>
   <li><p>every \(n\in A\) satisfies </p>
-<div class="displaymath" id="a0000000227">
+<div class="displaymath" id="a0000000229">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n) \leq 2\log \log N. \]
 </div>
 </li>
@@ -620,11 +617,11 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Lemma 6.1 (lem:find_multiples)</div>
       <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000191">
+<div class="displaymath" id="a0000000193">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A. \]
 </div>
 <p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), if \(A_I\) is the set of those \(n\in A\) which divide some element of \(I\), for all \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\) there exists some integer \(x_q\in I\) such that \(q\mid x_q\) and </p>
-<div class="displaymath" id="a0000000192">
+<div class="displaymath" id="a0000000194">
   \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log \log N. \]
 </div>
 </div>
@@ -633,16 +630,16 @@ Click chapter titles to see missing items.
     <li>
       <div class="thm_thmheading">Proposition 6.4 (prop:tech_iterative2)</div>
       <div class="thm_thm_content"><p> Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000219">
+<div class="displaymath" id="a0000000221">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
 <p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000220">
+<div class="displaymath" id="a0000000222">
   \[ R(A;q) \geq (\log N)^{-1/100}, \]
 </div>
 <p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\). Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
 <ol class="enumerate">
-  <li><div class="displaymath" id="a0000000221">
+  <li><div class="displaymath" id="a0000000223">
   \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
 </div>
 <p> or </p>
@@ -751,25 +748,22 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 5.4 (lem:pisqa)</div>
-      <div class="thm_thm_content"><p>   Let \(N\) be sufficiently large and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
-<div class="displaymath" id="a0000000182">
-  \[ R(B)\geq R(A)-\frac{1}{(\log N)^{1/200}} \]
+      <div class="thm_thm_content"><p>   Let \(N\) be sufficiently large, and let \(\epsilon {\gt}0\) and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
+<div class="displaymath" id="a0000000183">
+  \[ R(B)\geq R(A)-2\epsilon \log \log N \]
 </div>
-<p> and \(R(B;q)\geq 2/(\log N)^{1/100}\) for all \(q\in \mathcal{Q}_B\). </p>
+<p> and \(\epsilon {\lt} R(B;q)\) for all \(q\in \mathcal{Q}_B\). </p>
 </div>
     </li>
     
     <li>
       <div class="thm_thmheading">Lemma 5.5 (lem:pisq)</div>
-      <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\). Let \(\alpha {\gt} 2/(\log N)^{1/200}\) and \(A\subset [M,N]\) be a set of integers such that </p>
-<div class="displaymath" id="a0000000187">
-  \[ R(A) \geq \alpha +\frac{1}{(\log N)^{1/200}} \]
-</div>
-<p> and if \(q\in \mathcal{Q}_A\) then \(q\leq M/(\log N)^{1/100}\). </p>
-<p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), </p>
+      <div class="thm_thm_content"><p>  Suppose that \(N\) is sufficiently large and \(N{\gt}M\). Let \(\epsilon ,\alpha \) be reals such that \(\alpha {\gt} 4\epsilon \log \log N\) and \(A\subset [M,N]\) be a set of integers such that </p>
 <div class="displaymath" id="a0000000188">
-  \[ R(B;q)\geq \frac{1}{(\log N)^{1/100}}. \]
+  \[ R(A) \geq \alpha +2\epsilon \log \log N \]
 </div>
+<p> and if \(q\in \mathcal{Q}_A\) then \(q\leq \epsilon M\). </p>
+<p>There is a subset \(B\subset A\) such that \(R(B)\in [\alpha -1/M,\alpha )\) and, for all \(q\in \mathcal{Q}_B\), we have \(\epsilon {\lt} R(B;q)\). </p>
 </div>
     </li>
     

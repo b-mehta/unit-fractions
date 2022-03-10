@@ -29,6 +29,10 @@ Since, by definition, every integer $n\in A$ can be written uniquely as $q_1\cdo
 Since $(ex/t)^t$ is decreasing in $t$ for $x<t$, either $\sum_{q\in \mathcal{Q}_A}\frac{1}{q}\geq (1-\epsilon)\log\log N$ (and we are done), or the summand is decreasing in $t$, and hence we have
 \[(\log N)^{-\epsilon/2}\leq R(A)\leq 2\log\log N\brac{\frac{\sum_{q\in \mathcal{Q}_A}\frac{1}{q}}{(1-\epsilon)e^{-1}\log\log N}}^{(1-\epsilon)\log\log N}.\]
 The claimed bound follows, using the fact that $e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq 1-\epsilon$ for $\epsilon\in (0,1/2)$, choosing $N$ large enough such that $(2\log\log N)^{2/\log\log N}\leq 1+\epsilon^2$, say.
+
+To verify the inequality $e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq 1-\epsilon$ for $\epsilon\in (0,1/2)$, note that $\frac{\epsilon}{2(1-\epsilon)}\leq \epsilon$ for all $\epsilon\in (0,1/2)$, and hence using $1+x\leq e^{x}$ for all $x\geq -1$, we have 
+\[e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq e^{-\epsilon}\geq 1-\epsilon\]
+as required. 
 \end{proof}
 
 \begin{lemma}\label{lem:usingq}
@@ -76,37 +80,73 @@ The result follows since
   \leanok
   \lean{pruning_lemma_one}
   \uses{def:rec_sum,def:rec_sum_local}
-Let $N$ be sufficiently large and $A\subset [1,N]$. There exists $B\subset A$ such that
-\[R(B)\geq  R(A)-\frac{1}{(\log N)^{1/200}}\]
-and $R(B;q)\geq 2/(\log N)^{1/100}$ for all $q\in \mathcal{Q}_B$.
+Let $N$ be sufficiently large, and let $\epsilon>0$ and $A\subset[1,N]$. There exists $B\subset A$ such that
+\[R(B)\geq  R(A)-2\epsilon\log\log N\]
+and $\epsilon < R(B;q)$ for all $q\in \mathcal{Q}_B$.
 \end{lemma}
 \begin{proof}
-We construct a sequence of decreasing sets $A=A_0\supsetneq A_1\supsetneq\cdots \supsetneq A_i$ as follows. Given some $A_i$, if there is a prime power $q_i\in\mathcal{Q}_{A_i}$ such that
-\[R(A_i;q_i)< \frac{2}{(\log N)^{1/100}},\]
-then we let $A_{i+1}=A_i\backslash (A_i)_{q_i}$. If no such $q_i$ exists then we halt the construction. This process must obviously terminate in some finite time (since some non-empty amount of $A_i$ is being removed at each step). Suppose that it halts at $A_j=B$, say. The amount lost from $R(A)$ at step $i$ is
-\[\sum_{n\in (A_i)_{q_i}}\frac{1}{n}=\frac{1}{q_i}R(A_i;q_i)< \frac{2}{q_i(\log N)^{1/100}},\]
-and furthermore each $q\leq N$ can appear as at most one such $q_i$, since after removing $(A_i)_{q_i}$ anything left in $A_i$ cannot have $q_i$ as a coprime divisor. It follows that
-\[R(B)> R(A) -\frac{2}{(\log N)^{1/100}}\sum_{q\leq N}\frac{1}{q}\geq R(A)-\frac{1}{(\log N)^{1/200}},\]
-since $\sum_{q\leq N}\frac{1}{q}\ll \log\log N$.
+We will prove the following claim, valid for any finite set $A\subset \mathbb{N}$ with $0\not\in A$ and $\epsilon>0$, via induction: for all $i\geq 0$ there exists $A_i\subseteq A$ and $Q_i\subseteq \mathcal{Q}_A$ such that 
+\begin{enumerate}
+\item the sets $\mathcal{Q}_{A_i}$ and $Q_i$ are disjoint,
+\item $R(A_i)\geq R(A)- \epsilon\sum_{q\in Q_i}\frac{1}{q}$,
+\item either $i\leq \abs{A\backslash A_i}$ or, for all $q'\in \mathcal{Q}_{A_i}$, $\epsilon < R(A_i;q')$. 
+\end{enumerate} 
+
+Given this claim, the stated lemma follows by choosing $B=A_{\abs{A}+1}$, noting that in the 5th point above the first alternative cannot hold, and furthermore
+\[\epsilon \sum_{q\in Q_{\abs{A}+1}}\frac{1}{q}\leq \epsilon \sum_{q\leq N}\frac{1}{q}\leq 2\epsilon \log\log N,\]
+by Lemma~\ref{lem:mertens1}, assuming $N$ is sufficiently large. 
+
+To prove the inductive claim, we begin by choosing $Q_0=\emptyset$, and $A_0=A$. All of the properties are trivial to verify.
+
+Suppose the proposition is true for $i\geq 0$, with associated $A_i,Q_i$. We will now prove it for $i+1$. If it is true that, for all $q'\in\mathcal{Q}_{A_i}$, we have $\epsilon <R(A_i;q')$, then we let $A_{i+1}=A_i$ and $Q_{i+1}=Q_i$. 
+
+Otherwise, let $q'\in \mathcal{Q}_{A_i}$ be such that $R(A_i;q')\leq \epsilon$, set $A_{i+1} = A_i\backslash \{ n\in A_i : q'\mid n \textrm{ and }(q',n/q')=1\}$, and $Q_{i+1}=Q_i\cup \{q'\}$.
+
+It remains to verify the required properties. That $Q_{i+1}\subseteq \mathcal{Q}_A$ follows from $Q_i\subseteq \mathcal{Q}_A$ and $q'\in \mathcal{Q}_{A_i}\subseteq \mathcal{Q}_A$  (using the general fact that if $B\subseteq A$ then $\mathcal{Q}_B\subseteq \mathcal{Q}_A$).
+
+For point (1), since $A_{i+1}\subseteq A_i$, and hence $\mathcal{Q}_{A_{i+1}}\subseteq \mathcal{Q}_{A_i}$, it suffices to show that $q'\not\in \mathcal{Q}_{A_{i+1}}$. If this were not true, there would be some $n\in A_{i+1}$ such that $q'\mid n$ and $(q',n/q')=1$, contradiction to the definition of $A_{i+1}$.
+
+For point (2), we note that 
+\[R(A_{i+1})= R(A_i)-\sum_{\substack{n\in A_i\\ q'\mid n\\ (q',n/q')=1}}\frac{1}{n} = R(A_i)-\frac{1}{q'}R(A_i;q')\geq R(A_i)-\epsilon \frac{1}{q'},\]
+and point (2) follows from induction and the observation that
+\[\frac{1}{q'}+\sum_{q\in Q_i}\frac{1}{q}=\sum_{q\in Q_{i+1}}\frac{1}{q},\]
+since $q'\in\mathcal{Q}_{A_i}$ and hence $q'\not\in Q_{i}$. 
+
+Finally, for point (3), we note that since we assume that it is not true that for all $q'\in\mathcal{Q}_{A_i}$, we have $\epsilon <R(A_i;q')$, it must be true that $i\leq \abs{A\backslash A_{i}}$. We now claim that $i+1\leq \abs{A\backslash A_{i+1}}$, for which it suffices to show that $A_{i+1}\subsetneq A_i$. This is true since $q'\in\mathcal{Q}_{A_i}$, and hence the set $\{ n\in A_i : q'\mid n \textrm{ and }(q',n/q')=1\}$ is not empty. 
 \end{proof}
 
 \begin{lemma}\label{lem:pisq}
   \leanok
   \lean{pruning_lemma_two}
-Suppose that $N$ is sufficiently large and $N\geq M\geq N^{1/2}$. Let $\alpha > 2/(\log N)^{1/200}$ and $A\subset [M,N]$ be a set of integers such that
-\[R(A) \geq \alpha+\frac{1}{(\log N)^{1/200}}\]
-and if $q\in\mathcal{Q}_A$ then $q\leq M/(\log N)^{1/100}$.
+Suppose that $N$ is sufficiently large and $N>M$. Let $\epsilon,\alpha$ be reals such that $\alpha > 4\epsilon\log\log N$ and $A\subset [M,N]$ be a set of integers such that
+\[R(A) \geq \alpha+2\epsilon\log\log N\]
+and if $q\in\mathcal{Q}_A$ then $q\leq \epsilon M$.
 
-There is a subset $B\subset A$ such that $R(B)\in [\alpha-1/M,\alpha)$ and, for all $q\in \mathcal{Q}_B$,
-\[R(B;q)\geq \frac{1}{(\log N)^{1/100}}.\]
+There is a subset $B\subset A$ such that $R(B)\in [\alpha-1/M,\alpha)$ and, for all $q\in \mathcal{Q}_B$, we have $\epsilon < R(B;q)$. 
 \end{lemma}
 \begin{proof}
 \uses{lem:pisqa}
-We first apply Lemma~\ref{lem:pisqa} to produce some $A'\subset A$ such that $R(A')\geq \alpha$ and $R(A';q) \geq 2/(\log N)^{1/100}$ for all $q\in\mathcal{Q}_{A'}$.
 
-We now argue that whenever $D$ is such that $R(D)\geq \alpha$ and $R(D;q) \geq (\log N)^{-1/100}$ for all $q\in \mathcal{Q}_D$ there exists some $x\in D$ such that $R(D\backslash \{x\};q)\geq (\log N)^{-1/100}$ for all $q\in\mathcal{Q}_{D}$. Given this, the lemma immediately follows, since we can continue removing such elements from $A'$ one at time until $R(B)$ falls in the required interval.
+We will prove the following, for all $N$ sufficiently large, real $0<M<N$, reals $\epsilon>0$ and $\alpha > 4\epsilon\log\log N$ and finite sets $A\subseteq [M,N]$ such that $R(A)\geq \alpha$ and $R(A;q)> \epsilon$ for all $q\in\mathcal{Q}_A$, by induction: for all $i\geq 0$ there exists $A_i\subseteq A$ such that 
+\begin{enumerate}
+\item $R(A_i)\geq \alpha-1/M$, 
+\item $R(A_i;q) > \epsilon$ for all $q\in\mathcal{Q}_{A_i}$, and
+\item either $i\leq \abs{A\backslash A_i}$ or $R(A_i)<\alpha$. 
+\end{enumerate}
 
-To see why the above fact holds, apply Lemma~\ref{lem:pisqa} to obtain some $B\subset D$ (such that $R(B)\geq (\log N)^{-1/200}$, and hence in particular $B$ is non-empty), and let $x$ be any element of $B$. If $x\not\in D_q$ then by definition $R(D\backslash\{x\};q)=R(D;q)\geq (\log N)^{-1/100}$. If $x\in D_q$ then $x\in B_q$, and so
-\[R(D\backslash\{x\};q)\geq R(B;q)-\frac{q}{x}\geq \frac{2}{(\log N)^{1/100}}-\frac{q}{M}\geq \frac{1}{(\log N)^{1/100}}\]
-as required.
+Given this claim, we prove the lemma as follows. Let $A'\subseteq A$ be as given by Lemma~\ref{lem:pisqa}, so that the hypotheses of the inductive claim are satisfied for $A'$. We now apply the inductive claim, and choose $B=A_{\abs{A}+1}$, noting that the first alternative of point (3) cannot hold. 
+
+It remains to prove the inductive claim. The base case $i=0$ is immediate by hypotheses, choosing $A_0=A$. 
+
+We now fix some $i\geq 0$, with associated $A_i$ as above, and prove the claim for $i+1$. If $R(A_i)<\alpha$ then we set $A_{i+1}=A_i$. Otherwise, we have $R(A_i)\geq \alpha$. By Lemma~\ref{lem:pisqa} there exists $B\subset A_i$ such that
+\[R(B)\geq  R(A_i)-4\epsilon\log\log N\geq \alpha - 4\epsilon\log\log N>0\]
+and $2\epsilon < R(B;q)$ for all $q\in \mathcal{Q}_B$. In particular, since $R(B)>0$, the set $B$ is not empty. Let $x\in B$ be arbitrary, and set $A_{i+1}=A_i\backslash \{x\}$. 
+
+We note that since $x\in B\subseteq A$, we have $x\geq M$, and hence $R(A_{i+1})=R(A_i)-1/x\geq \alpha-1/M$, so point (1) is satisfied. Furthermore, since $R(A_i)\geq \alpha$, we have $i\leq \abs{A\backslash A_i}$, and hence $i+1 \leq \abs{A\backslash A_{i+1}}$ and point (3) is satisfied. 
+
+For point (2), let $q\in \mathcal{Q}_{A_{i+1}}\subseteq \mathcal{Q}_{A_i}$. If it is not true that $q\mid x$ and $(q,x/q)=1$ then
+\[R(A_{i+1};q) = R(A_i; q)>\epsilon.\]
+Otherwise, if $q\mid x$ and $(q,x/q)=1$, then $q\in\mathcal{Q}_B$. It follows that, since $B\subseteq A_i$, we have
+\[R(A_{i+1};q)\geq R(B;q)-\frac{q}{x}>2\epsilon -\frac{q}{M}\geq \epsilon,\]
+since $q\leq \epsilon M$. The inductive claim now follows. 
 \end{proof}
