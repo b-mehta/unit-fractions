@@ -152,6 +152,48 @@ But since $x,y\in I$ we have, by Lemma~\ref{lem:basic},
 Therefore $\abs{X}\leq 1$. If $\mathcal{D}$ is empty then the second conclusion trivially holds, for any $x\in I$. Therefore there exists some $q\in \mathcal{D}$, therefore there exists some $x_q\in X$, and hence $\abs{X}=1$. Let $x\in I$ be the unique element of $X$. By construction $x=x_q$ for all $q\in \mathcal{D}$, and hence in particular $q\mid x$ for all $q\in \mathcal{D}_I$ as required.
   \end{proof}
 
+\begin{lemma}\label{lem:techmainprec}
+Let $N$ be sufficiently large. Let $\epsilon,y,w,M$ be reals such that $M<N$ and $2\leq \lceil y\rceil \leq \lfloor w\rfloor$ and $1/M< \epsilon\log\log N$ and $\frac{2}{w^2}\geq 3\epsilon\log\log N$ and let $A\subset [M,N]$ be such that
+\begin{enumerate}
+\item $R(A)\geq 2/y+2\epsilon\log\log N$,
+\item every $n\in A$ is divisible by some $d\in [y,w]$, 
+\item if $q\in \mathcal{Q}_A$ then $q\leq \epsilon M$.
+\end{enumerate}
+Then there exists some $\emptyset\neq A'\subseteq A$ and $d\in [y,w]$ such that $R(A')\in [2/d-1/M,2/d)$, for all $q\in\mathcal{Q}_{A'}$ we have $R(A';q)>\epsilon$, and there is a multiple of $d$ in $A'$, and there are no multiples of any $m\in [y,d)$ in $A$. 
+\end{lemma}
+\begin{proof}
+\uses{lem:pisq}
+In the proof below, we write $t_i=\min(\lceil y\rceil +i, \lfloor w\rfloor)$ for all integer $i\geq 0$ for simplicity. It is convenient to note at the outset that $t_0=\lceil y\rceil$, $t_i\leq w$ for all $i$, for all $i\geq 0$ we have $t_{i+1}\in [t_i,t_i+1]$, and if $t_i< \lfloor w\rfloor$ then $t_{i+1}=t_i+1$. Furthermore, if $i\geq \lceil y\rceil-\lfloor w\rfloor $, then $t_i=\lfloor w\rfloor$. 
+
+We will prove by induction on $i$ that, for all sufficiently large $N$, for all $\epsilon>0$ and reals $y,w,M$ with $2\leq y+1\leq w$ and $1/M< \epsilon\log\log N$ and $\frac{2}{w^2}\geq 3\epsilon\log\log N$, if $A\subset [M,N]$ is such that every $n\in A$ is divisible by some $d\in[y,w]$ and if $q\in \mathcal{Q}_A$ then $q\leq \epsilon M$, then for all $0\leq i$ there exists $ A_i\subseteq A$ and integer $d_i$ with $y\leq d_i\leq t_i$ such that
+\begin{enumerate}
+\item $R(A_i) \in [2/d_i-1/M, 2/d_i)$, 
+\item for all $q\in \mathcal{Q}_{A_i}$ we have $R(A_i;q)> \epsilon$, 
+\item there are no multiples of any $m\in [y,d_i)$ in $A$, and
+\item either there exists a multiple of $d_i$ in $A_i$, or nothing in $A_i$ is divisible by any $d\in [y,t_i]$. 
+\end{enumerate}
+
+Given this inductive claim, the lemma follows by letting $A' = A_{ \lceil y\rceil-\lfloor w\rfloor }$ and $d=d_{ \lceil y\rceil-\lfloor w\rfloor }$, so that then $t_i=\lfloor w\rfloor$, noting that the assumptions imply that $2/d-1/M\geq 2/w-1/M>0$ and hence $R(A')>0$ and so $A'\neq\emptyset$, and furthermore by assumption the second alternative of point (3) cannot hold. It remains to prove the inductive claim.
+
+For the base case $i=0$, we set $d_0=\lceil y\rceil$ and apply Lemma~\ref{lem:pisq} with $\alpha=2/d_0$ to find some $A_0\subseteq A$ such that $R(A_0)\in[2/d_0-1/M,2/d_0)$ and for all $q\in \mathcal{Q}_{A_0}$ we have $\epsilon < R(A_0;q)$. (To see that point (4) holds, note that $d_0$ is the unique integer in $[y,t_0)$.)
+
+For the inductive step, suppose that $A_i,d_i$ are as given for $i\geq 0$. If there exists a multiple of $d_i$ in $A_i$, then we set $d_{i+1}=d_i$ and $A_{i+1}=A_i$. 
+
+If not, then nothing in $A_i$ is divisible by any $d\in [y,t_i]$. We now set $d_{i+1}=t_{i+1}$ and apply Lemma~\ref{lem:pisq} to $A_i$ with $\alpha=2/d_{i+1}$. To be able to apply this, we need to verify that 
+\[\alpha=2/d_{i+1}> 4\epsilon\log\log N\]
+and
+\[R(A_i)\geq \alpha+2\epsilon\log\log N= 2/d_{i+1}+2\epsilon\log\log N.\]
+For the first, we note that $d_{i+1}\leq w$, and hence we are done since $2/w>4/w^2\geq  6\epsilon\log\log N$. 
+
+For the second, we note that by assumption, every $n\in A$ is divisible by some $d\in [y,w]$, and hence since we are assuming that nothing in $A_i$ is divisible by any $d\in [y,t_i]$, we must have $t_i<\lfloor w\rfloor$, and hence $d_{i+1}=t_{i+1}=t_i+1\geq d_i+1$. Therefore
+\[R(A_i)\geq \frac{2}{d_i}-\frac{1}{M}\geq \frac{2}{d_{i+1}-1}-\frac{1}{M}\geq \frac{2}{d_{i+1}-1}-\epsilon\log\log N,\]
+since $1/M \leq \epsilon\log\log N$, and furthermore
+\[\frac{2}{d_{i+1}-1}-\frac{2}{d_{i+1}}=\frac{2}{d_{i+1}(d_{i+1}-1)}\geq \frac{2}{d_{i+1}^2}\geq \frac{2}{w^2}\geq 3\epsilon\log\log N,\]
+and hence $R(A_i)\geq \alpha+2\epsilon\log\log N$ as required.
+
+Thus we can apply Lemma~\ref{lem:pisq}, to produce some $A_{i+1}\subseteq A_i$ such that $R(A_{i+1})\in [2/d_{i+1}-1/M,2/d_{i+1})$, such that for all $q\in \mathcal{Q}_{A_{i+1}}$ we have $R(A_{i+1};q)>\epsilon$. Furthermore, if there is something in $A_{i+1}$ divisible by some $d\in [y,t_{i+1}]$, then since $A_{i+1}\subseteq A_i$ there must be something in $A_{i+1}$ divisible by some $d\in [y,t_{i+1}]\backslash [y,t_i]$. Since $t_{i+1}\in [t_i,t_i+1]$, the only integer that could be in $[y,t_{i+1}]\backslash [y,t_i]$ is $t_{i+1}=d_{i+1}$, and the proof is complete. 
+\end{proof}
+
 \begin{proposition}[Main Technical Proposition]\label{prop:techmain}
 \leanok
 \lean{technical_prop}
@@ -166,18 +208,14 @@ Let $N$ be sufficiently large. Suppose $A\subset [N^{1-1/\log\log N},N]$ and $1\
 There is some $S\subset A$ such that $R(S)=1/d$ for some $d\in [y,z]$.
 \end{proposition}
 \begin{proof}
-\uses{prop:tech_iterative,lem:pisq,prop:fourier,prop:tech_iterative2}
-Let $M=N^{1-1/\log\log N}$ and $d_i = \lceil y \rceil +i$. By repeated applications of Lemma~\ref{lem:pisq} we can find a sequence $A\supset A_0\supset A_1\supset\cdots \supset A_{t}$, where $d_t=\lceil z/4\rceil-1$, such that
-\[R(A_i)\in [2/d_i-1/M,2/d_i)\quad\textrm{ and }\quad R(A_i;q)\geq (\log N)^{-1/100}\textrm{ for all }q\in \mathcal{Q}_{A_i}.\]
-(Note that the hypotheses of Lemma~\ref{lem:pisq} continue to hold since
-\[\frac{2}{d_i}-\frac{1}{M}\geq \frac{2}{d_{i}+1}+\frac{1}{(\log N)^{1/200}}\geq \frac{3}{(\log N)^{1/200}}\]
-for all $0\leq i\leq t$.) Let $0\leq j\leq t$ be minimal such that there is a multiple of $d_j$ in $A_j$. Such a $j$ exists by assumption, since every $n\in A$ is divisible by some $d\in[y,z/4)$.
+\uses{prop:tech_iterative,lem:techmainprec,prop:fourier,prop:tech_iterative2}
+Let $M=N^{1-1/\log\log N}$. Apply Lemma~\ref{lem:techmainprec} with $w=z/4$ to find some corresponding $A'$ and $d$.  
 
-Suppose first that case (2) of Proposition~\ref{prop:tech_iterative} holds for $A_j$. The hypotheses of Proposition~\ref{prop:fourier} are now met with $k=d_j$, $\eta=1/2(\log N)^{1/100}$, and $K=MN^{-2/\log \log N}$. This yields some $S\subset A'\subset A$ such that $R(S)=1/d_j$ as required.
+Suppose first that case (2) of Proposition~\ref{prop:tech_iterative} holds for $A'$. The hypotheses of Proposition~\ref{prop:fourier} are now met with $k=d$, $\eta=1/2(\log N)^{1/100}$, and $K=MN^{-2/\log \log N}$. This yields some $S\subset A'\subset A$ such that $R(S)=1/d_j$ as required.
 
-Otherwise, Proposition~\ref{prop:tech_iterative} yields some $B\subset A_j$ such that
+Otherwise, Proposition~\ref{prop:tech_iterative} yields some $B\subset A'$ such that
 \[R(B)\geq 2/3d_j-1/M\geq 1/2d_j+(\log N)^{-1/200}\]
-and where $\sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$. Let $e_i = 4d_j+i$ and, once again, repeatedly apply Lemma~\ref{lem:pisq} to find a sequence $B\supset B_0\supset \cdots\supset B_r$, where $e_r=\lfloor z\rfloor$, such that
-\[R(B_i)\in [2/e_i-1/M,2/e_i)\quad\textrm{ and }\quad R(B_i;q)\geq (\log N)^{-1/100}\textrm{ for all }q\in \mathcal{Q}_{B_i}.\]
-By minimality of $j$, no $d\in [y,d_j)$ divides any element of $A_j$, and hence every $n\in A_j$ is divisible by some $e\in [4d_j,z]$. In particular, there must exist some $0\leq s\leq r$ such that $B_s$ contains a multiple of $e_s$. Furthermore, since $\sum_{q\in \mathcal{Q}_{B_s}}\frac{1}{q}\leq \sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$ we can apply Proposition~\ref{prop:tech_iterative2}. The hypotheses of Proposition~\ref{prop:fourier} are now met with $k=e_s$ and $\eta,K$ as above, and thus there is some $S\subset B_j\subset A$ such that $R(S)=1/e_s$.
+and where $\sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$. 
+
+We apply Lemma~\ref{lem:techmainprec} again, with $y=4d$ and $w=z$, to produce some corresponding $B'\subset B$ and $d'\in [4d,z]$. Since $\sum_{q\in \mathcal{Q}_{B'}}\frac{1}{q}\leq \sum_{q\in\mathcal{Q}_B}\frac{1}{q}\leq \frac{2}{3}\log\log N$ we can apply Proposition~\ref{prop:tech_iterative2}. The hypotheses of Proposition~\ref{prop:fourier} are now met with $k=d'$ and $\eta,K$ as above, and thus there is some $S\subset B'\subset A$ such that $R(S)=1/d'$ as required. 
 \end{proof}
