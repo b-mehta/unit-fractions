@@ -134,7 +134,7 @@ A.bUnion (λ n, n.divisors.filter (λ q, is_prime_pow q ∧ coprime q (n / q)))
 
 @[simp] lemma ppowers_in_set_empty : ppowers_in_set ∅ = ∅ := bUnion_empty
 
-lemma mem_ppowers_in_set (A : finset ℕ) (q : ℕ) :
+lemma mem_ppowers_in_set {A : finset ℕ} {q : ℕ} :
   q ∈ ppowers_in_set A ↔ is_prime_pow q ∧ (local_part A q).nonempty :=
 begin
   simp only [ppowers_in_set, mem_bUnion, mem_filter, exists_prop, nat.mem_divisors,
@@ -149,6 +149,9 @@ begin
     simp only [nat.zero_div, nat.coprime_zero_right] at h₄,
     exact h₁.ne_one h₄ },
 end
+
+lemma zero_not_mem_ppowers_in_set {A : finset ℕ} : 0 ∉ ppowers_in_set A :=
+λ t, not_is_prime_pow_zero (mem_ppowers_in_set.1 t).1
 
 lemma nat.pow_eq_one_iff {n k : ℕ} : n ^ k = 1 ↔ n = 1 ∨ k = 0 :=
 begin
