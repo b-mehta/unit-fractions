@@ -943,7 +943,7 @@ begin
     mul_le_mul hI' (by norm_num) (div_nonneg (sq_nonneg _) (by norm_num)) (nat.cast_nonneg _),
   apply this.trans _,
   rw ←nsmul_eq_mul,
-  apply finset.le_sum_of_forall_le,
+  apply finset.card_nsmul_le_sum,
   intros n hn,
   simp only [mem_filter] at hn,
   apply sq_le_sq,
@@ -1328,7 +1328,8 @@ end
 lemma count_real_multiples {m : ℕ} {K : ℝ} {t : ℤ} (hK : 0 < K) (hm : 1 ≤ m) :
   ↑((integer_range t K).filter (λ k, ↑m ∣ k)).card ≤ (2 * K + 1) / m :=
 begin
-  apply (count_real_multiples' _ hm).trans _,
+  sorry,
+  -- apply (count_real_multiples' _ hm).trans _,
 end
 
 lemma candidate_count_one {N : ℕ} {K L T : ℝ} {k : ℕ} {A : finset ℕ} {D : finset ℕ}
