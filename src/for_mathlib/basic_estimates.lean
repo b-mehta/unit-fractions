@@ -1070,7 +1070,7 @@ lemma chebyshev_trivial_upper_nat (n : ℕ) :
   ψ n ≤ n * real.log n :=
 begin
   rw [chebyshev_second_eq_summatory, summatory_nat, ←nsmul_eq_mul],
-  apply (finset.sum_le_of_forall_le _ _ (real.log n) (λ i hi, _)).trans _,
+  apply (finset.sum_le_card_nsmul _ _ (real.log n) (λ i hi, _)).trans _,
   { apply von_mangoldt_upper.trans,
     simp only [finset.mem_Icc] at hi,
     exact (log_le_log (nat.cast_pos.2 hi.1) (nat.cast_pos.2 (hi.1.trans hi.2))).2
@@ -1623,7 +1623,7 @@ begin
   rw chebyshev_second_eq_sum_chebyshev_first (zero_le_two.trans hx),
   rw finset.Icc_eq_insert_Icc_succ,
   { rw [sum_insert, nat.cast_one, div_one, rpow_one, add_tsub_cancel_left],
-    refine (sum_le_of_forall_le _ _ (1/2 * x^(1 / 2 : ℝ) * log x) _).trans _,
+    refine (sum_le_card_nsmul _ _ (1/2 * x^(1 / 2 : ℝ) * log x) _).trans _,
     { intros k hk,
       simp only [finset.mem_Icc] at hk,
       have : x ^ (1 / k : ℝ) ≤ x ^ (1 / 2 : ℝ),
@@ -1688,7 +1688,7 @@ begin
   { rw [chebyshev_first, nat.floor_eq_zero.2 (hx.trans_lt zero_lt_one)],
     simp [filter_singleton, nat.not_prime_zero] },
   rw [nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range, ←nsmul_eq_mul],
-  refine sum_le_of_forall_le _ _ (log x) _,
+  refine sum_le_card_nsmul _ _ (log x) _,
   intros y hy,
   simp only [mem_filter, finset.mem_range, nat.lt_add_one_iff] at hy,
   rw [log_le_log _ hx, ←nat.le_floor_iff'],
