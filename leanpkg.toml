@@ -1,8 +1,8 @@
 [package]
 name = "unit-fractions"
 version = "0.1"
-lean_version = "leanprover-community/lean:3.42.0"
+lean_version = "leanprover-community/lean:3.42.1"
 path = "src"
 
 [dependencies]
-mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "c594e2b97f8ae9362b24c7a8da50d2b06235a96c"}
+mathlib = {git = "https://github.com/leanprover-community/mathlib", rev = "0c3f75bb3c9a9797ad394b77d9df5771d94c05ec"}

@@ -173,7 +173,7 @@ lemma partial_summation_integrable {𝕜 : Type*} [is_R_or_C 𝕜] (a : ℕ → 
 begin
   let b := ∑ i in finset.Icc k ⌈y⌉₊, ∥a i∥,
   have : integrable_on (b • f) (Icc x y) := integrable.smul b hf',
-  refine this.integrable.mono (measurable_summatory.ae_measurable.mul' hf'.1) _,
+  refine this.integrable.mono (measurable_summatory.ae_strongly_measurable.mul hf'.1) _,
   rw ae_restrict_iff' (measurable_set_Icc : measurable_set (Icc x _)),
   refine eventually_of_forall (λ z hz, _),
   rw [pi.mul_apply, norm_mul, pi.smul_apply, norm_smul],
@@ -397,7 +397,7 @@ lemma fract_mul_integrable {f : ℝ → ℝ} (s : set ℝ)
   integrable_on (int.fract * f) s :=
 begin
   refine integrable.mono hf' _ (eventually_of_forall _),
-  { exact measurable_fract.ae_measurable.mul' hf'.1 },
+  { exact measurable_fract.ae_strongly_measurable.mul hf'.1 },
   intro x,
   simp only [norm_mul, pi.mul_apply, norm_of_nonneg (int.fract_nonneg _)],
   exact mul_le_of_le_one_left (norm_nonneg _) (int.fract_lt_one _).le,
@@ -590,7 +590,8 @@ begin
         refine mul_le_of_le_one_left (inv_nonneg.2 _) (int.fract_lt_one _).le,
         exact zero_le_one.trans hy.1 },
       apply interval_integral.integral_mono_on hx _ h₁ h₂,
-      { refine h₁.mono_fun' (by measurability) _,
+      { refine h₁.mono_fun' _ _,
+        { exact measurable.ae_strongly_measurable (by measurability) },
         rw [eventually_le, ae_restrict_iff'],
         { apply eventually_of_forall,
           intros y hy,
@@ -1301,7 +1302,8 @@ begin
     have : insert 1 (filter (λ k, (p ^ k : ℝ) ≤ x) (Icc 2 ⌊x⌋₊)) =
             filter (λ k, (p ^ k : ℝ) ≤ x) (Icc 1 ⌊x⌋₊),
     { rwa [nat.Icc_succ_left 1, ←Ioc_insert_left (hp₁.trans hp₂), filter_insert, pow_one, if_pos] },
-    have h1 : 1 ∉ filter (λ (k : ℕ), (p ^ k : ℝ) ≤ x) (Icc 2 ⌊x⌋₊) := by simp,
+    have h1 : 1 ∉ filter (λ (k : ℕ), (p ^ k : ℝ) ≤ x) (Icc 2 ⌊x⌋₊),
+    { simp [not_and_distrib] },
     rw [←this, sum_insert h1, add_comm, pow_one, pow_one, add_sub_cancel],
     apply (abs_sum_le_sum_abs _ _).trans _,
     refine (sum_le_sum_of_subset_of_nonneg (filter_subset _ _) _).trans _,
@@ -1866,7 +1868,7 @@ begin
     apply mul_le_mul_of_nonneg_right _ (norm_nonneg _),
     apply le_trans (hk _ hx) _,
     simp [norm_eq_abs, le_abs_self] },
-  refine integrable.mono _ (by measurability) this,
+  refine integrable.mono _ (measurable.ae_strongly_measurable (by measurability)) this,
   apply integrable.const_mul,
   refine integrable_on.congr_set_ae _ Ioi_ae_eq_Ici.symm,
   apply integrable_on_my_func_Ioi,

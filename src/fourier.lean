@@ -1189,7 +1189,7 @@ begin
   refine finset.lcm_dvd_iff.2 (λ n hn, _),
   have hn' : n ≠ 0 := ne_of_mem_of_not_mem hn hA,
   have h : [ppowers_in_set A] ≠ 0 := lcm_ne_zero_of_zero_not_mem zero_not_mem_ppowers_in_set,
-  rw [id.def, nat.dvd_iff_prime_pow_dvd_dvd hn' h],
+  rw [id.def, nat.dvd_iff_prime_pow_dvd_dvd],
   intros p k hp z,
   rw hp.pow_dvd_iff_le_factorization hn' at z,
   have : p ^ n.factorization p ∣ [ppowers_in_set A],

@@ -362,8 +362,8 @@ sorry
 -- The inductive heart of Lemma 5.5
 
 lemma pruning_lemma_one_prec (A : finset ℕ) (ε : ℝ) (i: ℕ):
-  ∃ A_i ⊆ A, ∃ Q_i ⊆ fin_ppowers_in_set A,
-  ( disjoint Q_i (fin_ppowers_in_set A_i) ) ∧
+  ∃ A_i ⊆ A, ∃ Q_i ⊆ ppowers_in_set A,
+  ( disjoint Q_i (ppowers_in_set A_i) ) ∧
   ( (rec_sum A : ℝ) - ε * (rec_sum Q_i) ≤ rec_sum A_i ) ∧
   (( i ≤ (A.filter( λ n, ¬ n ∈ A_i)).card ) ∨
   (∀ q ∈ ppowers_in_set A_i, ε < rec_sum_local A_i q))
@@ -438,7 +438,7 @@ begin
   -- For the below, first show rec_sum Q is at most the sum of 1/q over all prime
   -- powers q ≤ N, then use Mertens estimate and N chosen large enough such that
   -- this is ≤ 2*loglog N.
-  have hQs : ε * (rec_sum Q : ℝ) ≤ 2*ε*(log(log N) := sorry,
+  have hQs : ε * (rec_sum Q : ℝ) ≤ 2*ε*(log(log N)) := sorry,
   linarith,
   cases h_local,
   exfalso,
