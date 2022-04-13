@@ -12,21 +12,21 @@ Then for any interval of length $\leq MN^{-2/(\log \log N)}$, if $A_I$ is the se
   \uses{lem:usingq,lem:rtop}
 Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$.
 
-Apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k=\frac{\log\log N}{\log 2+\log\log\log N}$, so that $(\log N)^{1/k}=2\log\log N$. We choose $N$ large enough such that $k\leq c\log\log N$ (where $c$ is the constant in the statement of Lemma~\ref{lem:usingq}) and such that $\log k\geq 100$.
+Apply Lemma~\ref{lem:usingq} with $A$ replaced by $A_I$, and $k=\frac{\log\log N}{\log 2+\log\log\log N}$, so that $(\log N)^{1/k}=2\log\log N$. We choose $N$ large enough such that $k\leq c\log\log N$ (where $c$ is the constant in the statement of Lemma~\ref{lem:usingq}) and such that $\log k\geq 5000$.
 
-This produces some $d_q$ such that $qd_q>\abs{I}$ and $\omega(d_q)<\tfrac{1}{500}\log\log N$, and
+This produces some $d_q$ such that $qd_q>\abs{I}$ and $\omega(d_q)<\tfrac{1}{1000}\log\log N$, and
   \[\sum_{\substack{n\in A_I\\ qd_q\mid n\\ (qd_q,n/qd_q)=1}}\frac{qd_q}{n}\gg \frac{1}{(\log N)^{1/100}(\log\log N)^2}\geq \frac{1}{(\log N)^{1/99}},\]
 assuming $N$ is sufficiently large. Let
   \[A_I^{(q)}=\{ n/qd_q : n\in A_I\textrm{ with }qd_q\mid n\textrm{ and }(qd_q,n/qd_q)=1\}\]
   so that, the above inequality states that $R(A_I^{(q)})\geq (\log N)^{-1/99}$.
 
-We now claim that $2\log\log N\geq \omega(m) \geq \tfrac{97}{99}\log\log N$ for all $m\in A_I^{(q)}$. This follows from the trivial $\omega(md_q)\geq \omega(m)\geq \omega(md_q)-\omega(d_q)$, and that $2\log\log N\geq \omega(md_q)\geq  \frac{99}{100}\log\log N$ (since $md_q\in A$) and $\omega(d_q)<\frac{1}{500}\log\log N$.
+We now claim that $2\log\log N\geq \omega(m) \geq \tfrac{97}{99}\log\log N$ for all $m\in A_I^{(q)}$. This follows from the trivial $\omega(mqd_q)\geq \omega(m)\geq \omega(mqd_q)-\omega(qd_q)$, and that $2\log\log N\geq \omega(mqd_q)\geq  \frac{99}{100}\log\log N$ (since $mqd_q\in A$) and $\omega(qd_q)\leq 1+\omega(d_q)<\frac{1}{500}\log\log N$.
 
 We now apply Lemma~\ref{lem:rtop} with $\epsilon=2/99$. This implies that
   \[\sum_{r\in \mathcal{Q}_{A_I^{(q)}}}\frac{1}{r}\geq \frac{95}{99}e^{-1}\log\log N\geq 0.35\log\log N.\]
 
 
-    By definition of $A_I$, every $n\in A_I$ with $qd_q\mid n$ must divide some $x\in I$, say $x(q;n)$. We claim that $x(q,n)=x(q,m)$ for all $n,m\in A_I$ with $qd_q\mid n$ and $qd_q\mid m$. Otherwise $qd_q$ divides $\abs{x(q,n)-x(q,m)}$, so $\abs{I}<qd_q\leq \abs{x(q,n)-x(q,m)}$, which is an integer in $[1,\abs{I})$, a contradiction.
+    By definition of $A_I$, every $n\in A_I$ with $qd_q\mid n$ must divide some $x\in I$, say $x(n)$. We claim that $x(n)=x(m)$ for all $n,m\in A_I$ with $qd_q\mid n$ and $qd_q\mid m$. Otherwise $\abs{x(q,n)-x(q,m)}$ is a non-zero multiple of $qd_q$, so $\abs{I}<qd_q\leq \abs{x(q,n)-x(q,m)}$, which is an integer in $[1,\abs{I})$, a contradiction.
 
   Let $x_q\in I$ be such that $x(q,n)=x_q$ for all $n\in A_I$ with $qd_q \mid n$. We claim that $\mathcal{Q}_{A_I^{(q)}}\subset \{ r\in \mathcal{Q}_A : r\mid x_q\}$, which concludes the proof using the above bound.
 
@@ -46,7 +46,7 @@ Then for any finite set of integers $I$, for all $q\in\mathcal{D}_I(A;\delta M)$
 \end{lemma}
 \begin{proof}
   \leanok
-For every $q\in \mathcal{D}_I(A;\delta M$, by definition,
+For every $q\in \mathcal{D}_I(A;\delta M)$, by definition,
 \[\#\{ n\in A_q : n\not\in A_I\} < \frac{\delta M}{q}.\]
 Therefore
 \[R(A_I;q) = \sum_{\substack{n \in A_q\\n\in A_I}}\frac{q}{n}> \sum_{n \in A_q}\frac{q}{n}-\frac{q}{M}\brac{\frac{\delta M}{q}}.\]
@@ -77,7 +77,7 @@ or
 \end{proposition}
 \begin{proof}
   \uses{lem:find_multiples,lem:good_d,lem:basic,lem:divisor_bound}
-Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$, and $\mathcal{D}=\mathcal{D}_I(A;M/2(\log N)^{1/00})$. We may assume that $\abs{A\backslash A_I}< M/\log N$.
+Let $I$ be any interval of length $\leq MN^{-2/(\log\log N)}$, and let $A_I$ be those $n\in A$ that divide some element of $I$, and $\mathcal{D}=\mathcal{D}_I(A;M/2(\log N)^{1/100})$. We may assume that $\abs{A\backslash A_I}< M/\log N$.
 
 Let $\mathcal{E}$ be the set of those $q\in\mathcal{Q}_A$ such that $R(A_I;q)> 1/2(\log N)^{1/100}$, so that by Lemma~\ref{lem:good_d} we have $\mathcal{D}\subset \mathcal{E}$. By Lemma~\ref{lem:find_multiples} for each $q\in\mathcal{E}$ there exists $x_q\in I$ such that $q\mid x_q$ and
 \[\sum_{\substack{r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log\log N.\]
@@ -96,23 +96,23 @@ and similarly for the other sums, and so the left-hand side is $O(\log\log\log N
 
 Therefore $\abs{X}\leq 2$. If $\mathcal{D}$ is empty the second conclusion trivially holds, and therefore we may assume there is some $q\in \mathcal{E}$ and hence some $x_q\in X$, so $\abs{X}\geq 1$. If $\abs{X}=1$ then we are in the second conclusion, letting $x$ be the unique element of $X$, since by construction $x=x_q$ for all $q\in \mathcal{D}$, and hence in particular $q\mid x$ for all $q\in \mathcal{D}_I$ as required.
 
-Finally, we deal with the case $\abs{X}=2$. Say $X=\{w_1,w_2\}$ with $w_1\neq w_2$ (and both are elements of $I$). Let $A^{(i)}=\{n\in A: n\mid w_i\}$ and $A^{(0)}=A\backslash (A^{(1)}\cup A^{(2)})$. Without loss of generality, label the $w_i$ such that $R(A^{(1)})\geq R(A^{(2)}$.  Suppose first that $R(A^{(0)})<R(A)/3$. In this case, since $R(A^{(0)})+R(A^{(1)})+R(A^{(2)})\geq R(A)$, we have $R(A^{(1)}\geq R(A)/3$. Furthermore, note that
-\[\sum_{q\mid w_1}\frac{1}{q}\leq \sum_{q\leq N}\frac{1}{q}-\sum_{q\mid w_2}\frac{1}{q}+\sum_{q\mid (w_1,w_2)}\frac{1}{q}.\]
+Finally, we deal with the case $\abs{X}=2$. Say $X=\{w_1,w_2\}$ with $w_1\neq w_2$ (and both are elements of $I$). Let $A^{(i)}=\{n\in A: n\mid w_i\}$ and $A^{(0)}=A\backslash (A^{(1)}\cup A^{(2)})$. Without loss of generality, label the $w_i$ such that $R(A^{(1)})\geq R(A^{(2)})$.  Suppose first that $R(A^{(0)})<R(A)/3$. In this case, since $R(A^{(0)})+R(A^{(1)})+R(A^{(2)})\geq R(A)$, we have $R(A^{(1)})\geq R(A)/3$. Furthermore, note that
+\[\sum_{\substack{q\mid w_1\\ q\in \mathcal{Q}_A}}\frac{1}{q}\leq \sum_{q\leq N}\frac{1}{q}-\sum_{\substack{q\mid w_2\\ q\in \mathcal{Q}_A}}\frac{1}{q}+\sum_{q\mid (w_1,w_2)}\frac{1}{q}.\]
 As above, by Lemma~\ref{lem:mertens1}, the assumed lower bound on the sum over $q\mid w_2$, and Lemma~\ref{lem:basic}, for sufficiently large $N$ the right-hand side is
 \[\leq \brac{1.01-0.35+0.01}\log\log N\leq \tfrac{2}{3}\log\log N.\]
-Every $q\mid \mathcal{Q}_{A^{(1)}}$ divides $w_1$, and hence
+Every $q\mid \mathcal{Q}_{A^{(1)}}$ is in $\mathcal{Q}_A$ and divides $w_1$, and hence
 \[\sum_{q\in \mathcal{Q}_{A^{(1)}}}\frac{1}{q}\leq\frac{2}{3}\log\log N,\]
 and we are in case (1) with $B=A^{(1)}$.
 
-Finally, suppose that $R(A^{(0)})\geq R(A)/3$. We will derive a contradiction, assuming $N$ is large enough.  Let $A'\subset A^{(0)}$ be the set of those $n\in A_I\cap A^{(0)}$ such that if $n\in A_q$ then $q\in\mathcal{E}$. By definition of $\mathcal{E}$ and Mertens' estimate \ref{lem:mertens1},
-  \[R(A^{(0)}\backslash A')\leq \frac{\abs{A\backslash A_I}}{M}+\sum_{q\in\mathcal{Q}_A\backslash \mathcal{E}_I}\frac{1}{q}R(A_I;q)\ll \frac{\log\log N}{(\log N)^{1/100}},\]
+Finally, suppose that $R(A^{(0)})\geq R(A)/3$. We will derive a contradiction, assuming $N$ is large enough.  Let $A'\subset A^{(0)}$ be the set of those $n\in A_I\cap A^{(0)}$ such that if $n\in A_q$ then $q\in\mathcal{E}$. By definition of $\mathcal{E}$ and Mertens' estimate \ref{lem:mertens1}, and the earlier assumption that $\abs{A\backslash A_I}<M/\log N$, 
+  \[R(A^{(0)}\backslash A')\leq \frac{\abs{A\backslash A_I}}{M}+\sum_{q\in\mathcal{Q}_A\backslash \mathcal{E}}\frac{1}{q}R(A_I;q)\ll \frac{\log\log N}{(\log N)^{1/100}},\]
   and so  in particular, since $R(A)\geq (\log N)^{-1/101}$, we have $R(A')\gg (\log N)^{-1/101}$.
 
   In particular, $\abs{A'}\gg M/(\log N)^{-1/101}$. Every $n\in A'$ divides some $x\in I$, and there are at most $MN^{-2/\log\log N}$ many $x\in I$, so by the pigeonhole principle there must exist some $x\in I$ (necessarily $x\neq w_1$ and $x\neq w_2$ since $A'\subset A^{(0)}$) such that, if $A''=\{ n\in A' : n\mid x\}$, then
   \[\abs{A''}\gg N^{2/\log\log N}(\log N)^{-1/101},\]
-  and hence $\abs{A''}\geq N^{3/2\log\log N}$, say.
+  and hence $\abs{A''}\geq N^{3/2\log\log N}$, say, assuming $N$ is sufficiently large.
 
-  However, if $n\in A''$ then both $n\mid x$ and $n\mid w_1w_2$ (since every $q$ with $n\in A_q$ is in $\mathcal{E}_I$ and so divides either $w_1$ or $w_2$), and hence $n$ divides
+  However, if $n\in A''$ then both $n\mid x$ and $n\mid w_1w_2$ (since every $q$ with $n\in A_q$ is in $\mathcal{E}$ and so divides either $w_1$ or $w_2$), and hence $n$ divides
   \[(x,w_1w_2)\leq (x,w_1)(x,w_2)\leq \abs{x-w_1}\abs{x-w_2}\leq N^2.\]
   Therefore the size of $A''$ is at most the number of divisors of some fixed integer $m\leq N^2$, which is at most $N^{(1+o(1))2\log 2/\log\log N}$ by Lemma~\ref{lem:divisor_bound}, and hence we have a contradiction for large enough $N$, since $2\log 2< 3/2$.
 \end{proof}
@@ -163,9 +163,9 @@ Then there exists some $\emptyset\neq A'\subseteq A$ and $d\in [y,w]$ such that 
 \end{lemma}
 \begin{proof}
 \uses{lem:pisq}
-In the proof below, we write $t_i=\min(\lceil y\rceil +i, \lfloor w\rfloor)$ for all integer $i\geq 0$ for simplicity. It is convenient to note at the outset that $t_0=\lceil y\rceil$, $t_i\leq w$ for all $i$, for all $i\geq 0$ we have $t_{i+1}\in [t_i,t_i+1]$, and if $t_i< \lfloor w\rfloor$ then $t_{i+1}=t_i+1$. Furthermore, if $i\geq \lceil y\rceil-\lfloor w\rfloor $, then $t_i=\lfloor w\rfloor$. 
+In the proof below, we write $t_i=\min(\lceil y\rceil +i, \lfloor w\rfloor)$ for all integer $i\geq 0$ for simplicity. It is convenient to note at the outset that $t_0=\lceil y\rceil$, $t_i\leq w$ for all $i$, for all $i\geq 0$ we have $t_{i+1}\in [t_i,t_i+1]$, and if $t_i< \lfloor w\rfloor$ then $t_{i+1}=t_i+1$. Furthermore, if $i\geq \lfloor w\rfloor -\lceil y\rceil$, then $t_i=\lfloor w\rfloor$. 
 
-We will prove by induction on $i$ that, for all sufficiently large $N$, for all $\epsilon>0$ and reals $y,w,M$ with $2\leq y+1\leq w$ and $1/M< \epsilon\log\log N$ and $\frac{2}{w^2}\geq 3\epsilon\log\log N$, if $A\subset [M,N]$ is such that every $n\in A$ is divisible by some $d\in[y,w]$ and if $q\in \mathcal{Q}_A$ then $q\leq \epsilon M$, then for all $0\leq i$ there exists $ A_i\subseteq A$ and integer $d_i$ with $y\leq d_i\leq t_i$ such that
+We will prove by induction on $i$ that, under the same hypotheses as in the lemma, for all $0\leq i$ there exists $ A_i\subseteq A$ and integer $d_i$ with $y\leq d_i\leq t_i$ such that
 \begin{enumerate}
 \item $R(A_i) \in [2/d_i-1/M, 2/d_i)$, 
 \item for all $q\in \mathcal{Q}_{A_i}$ we have $R(A_i;q)> \epsilon$, 
@@ -173,9 +173,9 @@ We will prove by induction on $i$ that, for all sufficiently large $N$, for all 
 \item either there exists a multiple of $d_i$ in $A_i$, or nothing in $A_i$ is divisible by any $d\in [y,t_i]$. 
 \end{enumerate}
 
-Given this inductive claim, the lemma follows by letting $A' = A_{ \lceil y\rceil-\lfloor w\rfloor }$ and $d=d_{ \lceil y\rceil-\lfloor w\rfloor }$, so that then $t_i=\lfloor w\rfloor$, noting that the assumptions imply that $2/d-1/M\geq 2/w-1/M>0$ and hence $R(A')>0$ and so $A'\neq\emptyset$, and furthermore by assumption the second alternative of point (3) cannot hold. It remains to prove the inductive claim.
+Given this inductive claim, the lemma follows by letting $A' = A_{\lfloor w\rfloor -\lceil y\rceil}$ and $d=d_{\lfloor w\rfloor -\lceil y\rceil}$, so that then $t_{\lfloor w\rfloor -\lceil y\rceil}=\lfloor w\rfloor$, noting that the assumptions imply that $2/d-1/M\geq 2/w-1/M>0$ and hence $R(A')>0$ and so $A'\neq\emptyset$, and furthermore by assumption the second alternative of point (3) cannot hold. It remains to prove the inductive claim.
 
-For the base case $i=0$, we set $d_0=\lceil y\rceil$ and apply Lemma~\ref{lem:pisq} with $\alpha=2/d_0$ to find some $A_0\subseteq A$ such that $R(A_0)\in[2/d_0-1/M,2/d_0)$ and for all $q\in \mathcal{Q}_{A_0}$ we have $\epsilon < R(A_0;q)$. (To see that point (4) holds, note that $d_0$ is the unique integer in $[y,t_0)$.)
+For the base case $i=0$, we set $d_0=\lceil y\rceil$ and apply Lemma~\ref{lem:pisq} with $\alpha=2/d_0$ to find some $A_0\subseteq A$ such that $R(A_0)\in[2/d_0-1/M,2/d_0)$ and for all $q\in \mathcal{Q}_{A_0}$ we have $\epsilon < R(A_0;q)$. (To see that point (4) holds, note that $d_0$ is the unique integer in $[y,t_0]$.)
 
 For the inductive step, suppose that $A_i,d_i$ are as given for $i\geq 0$. If there exists a multiple of $d_i$ in $A_i$, then we set $d_{i+1}=d_i$ and $A_{i+1}=A_i$. 
 
@@ -209,7 +209,7 @@ There is some $S\subset A$ such that $R(S)=1/d$ for some $d\in [y,z]$.
 \end{proposition}
 \begin{proof}
 \uses{prop:tech_iterative,lem:techmainprec,prop:fourier,prop:tech_iterative2}
-Let $M=N^{1-1/\log\log N}$. Apply Lemma~\ref{lem:techmainprec} with $w=z/4$ to find some corresponding $A'$ and $d$.  
+Let $M=N^{1-1/\log\log N}$. Apply Lemma~\ref{lem:techmainprec} with $w=z/4$ and $\epsilon=N^{-5/\log\log N}$ to find some corresponding $A'$ and $d$.  
 
 Suppose first that case (2) of Proposition~\ref{prop:tech_iterative} holds for $A'$. The hypotheses of Proposition~\ref{prop:fourier} are now met with $k=d$, $\eta=1/2(\log N)^{1/100}$, and $K=MN^{-2/\log \log N}$. This yields some $S\subset A'\subset A$ such that $R(S)=1/d_j$ as required.
 

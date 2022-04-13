@@ -159,7 +159,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/05b64a26d384cb8ddd89ad1aa155f13046d154e2/src/main_results.lean#L285">rec_qsum_lower_bound</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1c59d493c7196c8144bece625260b7e40eb1a0c8/src/main_results.lean#L285">rec_qsum_lower_bound</a></li>
         </ul>
 
       </div>
@@ -201,15 +201,60 @@
 
   </div>
 </div>
-<p><div class="lemma_thmwrapper" id="lem:usingq">
+<p><div class="lemma_thmwrapper" id="lem:smoothsum">
   <div class="lemma_thmheading">
     <span class="lemma_thmcaption">
     Lemma
     </span>
     <span class="lemma_thmlabel">5.3</span>
     <div class="thm_icons">
-    <a class="icon proof" href="chap-techlemmas.html#lem:usingq">#</a>
+    <a class="icon proof" href="chap-techlemmas.html#lem:smoothsum">#</a>
     <a class="icon proof" href="chap-techlemmas.html#a0000000169"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> There is a constant \(C{\gt}0\) such that the following holds. Let \(0{\lt}y{\lt}N\) be some reals, and suppose that \(D\) is a finite set of integers such that if \(d\in D\) and \(p^r\|  d\) then \(y{\lt}p^r\leq N\). Then, for any real \(k\geq 1\), </p>
+<div class="displaymath" id="a0000000170">
+  \[ \sum _{d\in D}\frac{k^{\omega (d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000169">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> We can write every \(d\in D\) uniquely as a product of prime powers \(d=p_1^{r_1}\cdots p_k^{r_k}\), where for each \(i\) either \(r_i=1\) and \(y{\lt}p_i\leq N\), or \(r_i\geq 2\) and \(p_i\leq N\). Therefore the left-hand side is at most </p>
+<div class="displaymath" id="a0000000171">
+  \[ \prod _{y{\lt}p\leq N}\left(1+\frac{k}{p}\right)\prod _{p\leq N}\left(1+\frac{k}{p^2}+\cdots \right). \]
+</div>
+<p> The second product is, using \(1+kx\leq (1+x)^k\), </p>
+<div class="displaymath" id="a0000000172">
+  \[ =\prod _{p\leq N}\left(1+\frac{k}{p(p-1)}\right)\leq \left(\prod _{p\leq N}\left(1+\frac{1}{p(p-1)}\right)\right)^k\leq C_1^k \]
+</div>
+<p> for some constant \(C_1{\gt}0\), since the product converges. Similarly, </p>
+<div class="displaymath" id="a0000000173">
+  \[ \prod _{y{\lt}p\leq N}\left(1+\frac{k}{p}\right)\leq \left(\prod _{y{\lt}p\leq N}\left(1+\frac{1}{p}\right)\right)^k, \]
+</div>
+<p> and the product here is \(\ll (\log N/\log y)\) by Mertens’ bound <a href="chap-basic.html#lem:mertens1">2.6</a>. Combining these yields the required estimate. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:usingq">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">5.4</span>
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-techlemmas.html#lem:usingq">#</a>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000174"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -235,7 +280,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/05b64a26d384cb8ddd89ad1aa155f13046d154e2/src/main_results.lean#L294">find_good_d</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1c59d493c7196c8144bece625260b7e40eb1a0c8/src/main_results.lean#L294">find_good_d</a></li>
         </ul>
 
       </div>
@@ -244,14 +289,14 @@
   </div>
   </div>
   <div class="lemma_thmcontent">
-  <p>   There is a constant \(c{\gt}0\) such that the following holds. Let \(N\geq M\geq N^{1/2}\) be sufficiently large, and suppose that \(1\leq k \leq c\log \log N\). Suppose that \(A\subset [M,N]\) is a set of integers such that \(\omega (n)\leq (\log N)^{1/k}\) for all \(n\in A\). </p>
-<p>For all \(q\) such that \(R(A;q)\geq (\log N)^{-1/2}\) there exists \(d\) such that </p>
+  <p>   There is a constant \(c{\gt}0\) such that the following holds. Let \(N\geq M\geq N^{1/2}\) be sufficiently large, and suppose that \(k\) is a real number such that \(1\leq k \leq c\log \log N\). Suppose that \(A\subset [M,N]\) is a set of integers such that \(\omega (n)\leq (\log N)^{1/k}\) for all \(n\in A\). </p>
+<p>For all \(q\) such that \(R(A;q)\geq 1/\log N\) there exists \(d\) such that </p>
 <ol class="enumerate">
   <li><p>\(qd {\gt} M\exp (-(\log N)^{1-1/k})\), </p>
 </li>
   <li><p>\(\omega (d)\leq \tfrac {5}{\log k}\log \log N\), and </p>
 </li>
-  <li><div class="displaymath" id="a0000000170">
+  <li><div class="displaymath" id="a0000000175">
   \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}. \]
 </div>
 </li>
@@ -259,7 +304,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000169">
+<div class="proof_wrapper" id="a0000000174">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -267,47 +312,54 @@
     <span class="expand-proof">▼</span>
   </div>
   <div class="proof_content">
-  <p> Fix some \(q\) with \(R(A;q)\geq (\log N)^{-1/2}\). Let \(D\) be the set of all \(d\) such that if \(p\) is a prime and \(p^r \|  d\) then </p>
-<div class="displaymath" id="a0000000171">
-  \[ p^r{\gt}y=\exp ((\log N)^{1-2/k}) \]
-</div>
-<p> and </p>
-<div class="displaymath" id="a0000000172">
+  <p> Fix some \(q\) with \(R(A;q)\geq (\log N)^{-1/2}\). Let \(y=\exp ((\log N)^{1-2/k})\). Let \(D\) be the set of all \(d\) such that if \(r\) is a prime power such that \(r\mid d\) and \((r,d/r)=1\) then \(y{\lt}r\leq N\), and furthermore </p>
+<div class="displaymath" id="a0000000176">
   \[ qd\in (M\exp (-(\log N)^{1-1/k}),N]. \]
 </div>
-<p> We first claim that every \(n\in A_q\) is divisible by some \(qd\) with \(d\in D\), such that \((qd,n/qd)=1\). This can be done greedily, just removing from \(n/q\) all those prime power divisors \(p^r\|  n/q\) such that \(p^r\leq y\), which removes at most </p>
-<div class="displaymath" id="a0000000173">
-  \[ y^{\omega (n)}\leq \exp ((\log N)^{1-1/k}). \]
+<p> We first claim that every \(n\in A_q\) is divisible by some \(qd\) with \(d\in D\), such that \((qd,n/qd)=1\). Let \(Q_n\) be the set of prime powers \(r\) dividing \(n\) such that \((r,n/r)=1\), so that \(n=\prod _{r\in Q_n}r\). Let </p>
+<div class="displaymath" id="a0000000177">
+  \[ Q_n'=\{  r\in Q_n: r\neq q\textrm{ and }r{\gt}y\} . \]
 </div>
-<p> We can therefore bound </p>
-<div class="displaymath" id="a0000000174">
-  \[ R(A;q) \leq \sum _{d\in D}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}. \]
+<p> We let \(d=\prod _{r\in Q_n'}r\). We need to check that \(d\in D\) and \(qd\mid n\). It is immediate from the definitions that if a prime power \(r\) divides \(d\) with \((r,d/r)=1\) then \(r\in Q_n'\), whence \(r{\gt}y\). It is also straightforward to check, by comparing prime powers, that \(qd\mid n\), and hence \(qd\leq n\leq N\). Furthermore, </p>
+<div class="displaymath" id="a0000000178">
+  \[ \frac{n}{qd}=\prod _{r\in Q_n\backslash Q_n'\cup \{ q\} }r\leq y^{\left\lvert Q_n\right\rvert }=y^{\omega (n)}\leq \exp ((\log N)^{1-1/k}), \]
+</div>
+<p> by definition of \(y\) and the hypothesis that \(\omega (n)\leq (\log N)^{1/k}\). It follows that \(d\in D\) as required. </p>
+<p>If we let \(A_q(d)=\{  n \in A_q : qd\mid n\textrm{ and }(qd,n/qd)=1\} \) then we have shown that \(A_q\subseteq \bigcup _{d\in D}A_q(d)\). Therefore </p>
+<div class="displaymath" id="a0000000179">
+  \[ R(A;q) = \sum _{n\in A_q}\frac{q}{n}\leq \sum _{d\in D}\sum _{n\in A_q(d)}\frac{q}{n}. \]
 </div>
 <p>We will control the contribution from those \(d\) with \(\omega (d){\gt}\omega _0= \frac{5}{\log k}\log \log N\) with the trivial bound </p>
-<div class="displaymath" id="a0000000175">
-  \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} \leq \sum _{\substack {n\leq N\\ qd\mid n}}\frac{qd}{n}\ll \log N \]
-</div>
-<p> and Mertens’ bound <a href="chap-basic.html#lem:mertens1">2.6</a>. Together these imply </p>
-<div class="displaymath" id="a0000000176">
-  \[  \sum _{\substack {d\in D\\ \omega (d){\gt}\omega _0}}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n}}\frac{qd}{n} \ll \log N\sum _{\substack {d\\ p^r\|  d\implies y{\lt}p^r\leq N\\ \omega (d)\geq \omega _0}} \frac{1}{d} \]
-</div>
-<div class="displaymath" id="a0000000177">
-  \[ \ll k^{-\omega _0}\log N\sum _{\substack {d\\ p^r\|  d\implies y{\lt}p^r\leq N}} \frac{k^{\omega (d)}}{d} \]
-</div>
-<div class="displaymath" id="a0000000178">
-  \[ \ll C_1^kk^{-\omega _0}\log N\prod _{y{\lt}p\leq N}(1+\frac{k}{p-1}) \leq k^{-\omega _0}\log N\left( C_2\frac{\log N}{\log y}\right)^{k} \]
-</div>
-<p> for some absolute constants \(C_1,C_2{\gt}0\). Recalling the definitions of \(y\) and \(\omega _0\), this is </p>
-<div class="displaymath" id="a0000000179">
-  \[ \leq C_2^kk^{-\omega _0}(\log N)^3\leq 1/\log N, \]
-</div>
-<p> say, for \(N\) sufficiently large. It follows that </p>
 <div class="displaymath" id="a0000000180">
-  \[ \tfrac {1}{2}R(A;q)\leq \sum _{\substack {d\in D\\ \omega (d)\leq \omega _0}}\frac{1}{d}\sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} . \]
+  \[ \sum _{A_q(d)}\frac{q}{n} \leq \sum _{\substack {n\leq N\\ qd\mid n}}\frac{q}{n}\leq \sum _{m\leq N}\frac{q}{dqm}\leq 2\frac{\log N}{d}, \]
 </div>
-<p> The result follows since </p>
+<p> using the harmonic sum bound \(\sum _{m\leq N}\frac{1}{m}\leq \log N+1\leq 2\log N\). Therefore </p>
 <div class="displaymath" id="a0000000181">
-  \[ \sum _{d\in D}\frac{1}{d}\leq \sum _{\substack {d\\ p^r\|  d\implies y{\lt}p^r\leq N}}\frac{1}{d} \ll \prod _{y{\lt}p\leq N}\left( 1-\frac{1}{p-1}\right)^{-1}\ll \frac{\log N}{\log y}\ll (\log N)^{2/k}. \]
+  \[  \sum _{\substack {d\in D\\ \omega (d){\gt}\omega _0}}\sum _{n\in A_q(d)}\frac{q}{n} \leq 2\log N\sum _{\substack {d\in D\\ \omega (d){\gt} \omega _0}} \frac{1}{d} \]
+</div>
+<div class="displaymath" id="a0000000182">
+  \[ \leq 2k^{-\omega _0}\log N\sum _{d\in D} \frac{k^{\omega (d)}}{d}. \]
+</div>
+<p> By <a href="chap-techlemmas.html#lem:smoothsum">5.3</a> we have </p>
+<div class="displaymath" id="a0000000183">
+  \[ \sum _{d\in D}\frac{k^{\omega (d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k. \]
+</div>
+<p> and therefore </p>
+<div class="displaymath" id="a0000000184">
+  \[ \sum _{\substack {d\in D\\ \omega (d){\gt}\omega _0}}\sum _{n\in A_q(d)}\frac{q}{n}\leq 2k^{-\omega _0}\log N \left(C\frac{\log N}{\log y}\right)^k. \]
+</div>
+<p> Recalling \(\omega _0=\frac{5}{\log k}\log \log N\) and \(y=\exp ((\log N)^{1-2/k})\) the right-hand side here is at most </p>
+<div class="displaymath" id="a0000000185">
+  \[ 2(\log N)^{-5}C^k\leq 1/2\log N\leq \tfrac {1}{2}R(A;q), \]
+</div>
+<p> for sufficiently large \(N\), assuming \(k\leq c\log \log N\) for sufficiently small \(c\). </p>
+<p>It follows that </p>
+<div class="displaymath" id="a0000000186">
+  \[ \tfrac {1}{2}R(A;q)\leq \sum _{\substack {d\in D\\ \omega (d)\leq \omega _0}}\sum _{d\in D}\frac{q}{n} . \]
+</div>
+<p> The result follows by averaging, since by <a href="chap-techlemmas.html#lem:smoothsum">5.3</a> </p>
+<div class="displaymath" id="a0000000187">
+  \[ \sum _{d\in D}\frac{1}{d} \ll \frac{\log N}{\log y}\ll (\log N)^{2/k}. \]
 </div>
 
   </div>
@@ -317,10 +369,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.4</span>
+    <span class="lemma_thmlabel">5.5</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:pisqa">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000182"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000188"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
 </button>
@@ -347,7 +399,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/05b64a26d384cb8ddd89ad1aa155f13046d154e2/src/main_results.lean#L363">pruning_lemma_one</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1c59d493c7196c8144bece625260b7e40eb1a0c8/src/main_results.lean#L363">pruning_lemma_one</a></li>
         </ul>
 
       </div>
@@ -357,14 +409,14 @@
   </div>
   <div class="lemma_thmcontent">
   <p>   Let \(N\) be sufficiently large, and let \(\epsilon {\gt}0\) and \(A\subset [1,N]\). There exists \(B\subset A\) such that </p>
-<div class="displaymath" id="a0000000183">
+<div class="displaymath" id="a0000000189">
   \[ R(B)\geq R(A)-2\epsilon \log \log N \]
 </div>
 <p> and \(\epsilon {\lt} R(B;q)\) for all \(q\in \mathcal{Q}_B\). </p>
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000182">
+<div class="proof_wrapper" id="a0000000188">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -382,7 +434,7 @@
 </li>
 </ol>
 <p>Given this claim, the stated lemma follows by choosing \(B=A_{\left\lvert A\right\rvert +1}\), noting that in the 5th point above the first alternative cannot hold, and furthermore </p>
-<div class="displaymath" id="a0000000184">
+<div class="displaymath" id="a0000000190">
   \[ \epsilon \sum _{q\in Q_{\left\lvert A\right\rvert +1}}\frac{1}{q}\leq \epsilon \sum _{q\leq N}\frac{1}{q}\leq 2\epsilon \log \log N, \]
 </div>
 <p> by Lemma&#160;<a href="chap-basic.html#lem:mertens1">2.6</a>, assuming \(N\) is sufficiently large. </p>
@@ -392,11 +444,11 @@
 <p>It remains to verify the required properties. That \(Q_{i+1}\subseteq \mathcal{Q}_A\) follows from \(Q_i\subseteq \mathcal{Q}_A\) and \(q'\in \mathcal{Q}_{A_i}\subseteq \mathcal{Q}_A\) (using the general fact that if \(B\subseteq A\) then \(\mathcal{Q}_B\subseteq \mathcal{Q}_A\)). </p>
 <p>For point (1), since \(A_{i+1}\subseteq A_i\), and hence \(\mathcal{Q}_{A_{i+1}}\subseteq \mathcal{Q}_{A_i}\), it suffices to show that \(q'\not\in \mathcal{Q}_{A_{i+1}}\). If this were not true, there would be some \(n\in A_{i+1}\) such that \(q'\mid n\) and \((q',n/q')=1\), contradiction to the definition of \(A_{i+1}\). </p>
 <p>For point (2), we note that </p>
-<div class="displaymath" id="a0000000185">
+<div class="displaymath" id="a0000000191">
   \[ R(A_{i+1})= R(A_i)-\sum _{\substack {n\in A_i\\ q’\mid n\\ (q’,n/q’)=1}}\frac{1}{n} = R(A_i)-\frac{1}{q'}R(A_i;q')\geq R(A_i)-\epsilon \frac{1}{q'}, \]
 </div>
 <p> and point (2) follows from induction and the observation that </p>
-<div class="displaymath" id="a0000000186">
+<div class="displaymath" id="a0000000192">
   \[ \frac{1}{q'}+\sum _{q\in Q_i}\frac{1}{q}=\sum _{q\in Q_{i+1}}\frac{1}{q}, \]
 </div>
 <p> since \(q'\in \mathcal{Q}_{A_i}\) and hence \(q'\not\in Q_{i}\). </p>
@@ -409,10 +461,10 @@
     <span class="lemma_thmcaption">
     Lemma
     </span>
-    <span class="lemma_thmlabel">5.5</span>
+    <span class="lemma_thmlabel">5.6</span>
     <div class="thm_icons">
     <a class="icon proof" href="chap-techlemmas.html#lem:pisq">#</a>
-    <a class="icon proof" href="chap-techlemmas.html#a0000000187"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+    <a class="icon proof" href="chap-techlemmas.html#a0000000193"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
 </a>
     <button class="modal lean">L∃∀N</button>
     <div class="modal-container">
@@ -423,7 +475,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/05b64a26d384cb8ddd89ad1aa155f13046d154e2/src/main_results.lean#L372">pruning_lemma_two</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1c59d493c7196c8144bece625260b7e40eb1a0c8/src/main_results.lean#L372">pruning_lemma_two</a></li>
         </ul>
 
       </div>
@@ -433,7 +485,7 @@
   </div>
   <div class="lemma_thmcontent">
   <p>  Suppose that \(N\) is sufficiently large and \(N{\gt}M\). Let \(\epsilon ,\alpha \) be reals such that \(\alpha {\gt} 4\epsilon \log \log N\) and \(A\subset [M,N]\) be a set of integers such that </p>
-<div class="displaymath" id="a0000000188">
+<div class="displaymath" id="a0000000194">
   \[ R(A) \geq \alpha +2\epsilon \log \log N \]
 </div>
 <p> and if \(q\in \mathcal{Q}_A\) then \(q\leq \epsilon M\). </p>
@@ -441,7 +493,7 @@
 
   </div>
 </div> </p>
-<div class="proof_wrapper" id="a0000000187">
+<div class="proof_wrapper" id="a0000000193">
   <div class="proof_heading">
     <span class="proof_caption">
     Proof
@@ -459,20 +511,20 @@
   <li><p>either \(i\leq \left\lvert A\backslash A_i\right\rvert \) or \(R(A_i){\lt}\alpha \). </p>
 </li>
 </ol>
-<p>Given this claim, we prove the lemma as follows. Let \(A'\subseteq A\) be as given by Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a>, so that the hypotheses of the inductive claim are satisfied for \(A'\). We now apply the inductive claim, and choose \(B=A_{\left\lvert A\right\rvert +1}\), noting that the first alternative of point (3) cannot hold. </p>
+<p>Given this claim, we prove the lemma as follows. Let \(A'\subseteq A\) be as given by Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.5</a>, so that the hypotheses of the inductive claim are satisfied for \(A'\). We now apply the inductive claim, and choose \(B=A_{\left\lvert A\right\rvert +1}\), noting that the first alternative of point (3) cannot hold. </p>
 <p>It remains to prove the inductive claim. The base case \(i=0\) is immediate by hypotheses, choosing \(A_0=A\). </p>
-<p>We now fix some \(i\geq 0\), with associated \(A_i\) as above, and prove the claim for \(i+1\). If \(R(A_i){\lt}\alpha \) then we set \(A_{i+1}=A_i\). Otherwise, we have \(R(A_i)\geq \alpha \). By Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.4</a> there exists \(B\subset A_i\) such that </p>
-<div class="displaymath" id="a0000000189">
+<p>We now fix some \(i\geq 0\), with associated \(A_i\) as above, and prove the claim for \(i+1\). If \(R(A_i){\lt}\alpha \) then we set \(A_{i+1}=A_i\). Otherwise, we have \(R(A_i)\geq \alpha \). By Lemma&#160;<a href="chap-techlemmas.html#lem:pisqa">5.5</a> there exists \(B\subset A_i\) such that </p>
+<div class="displaymath" id="a0000000195">
   \[ R(B)\geq R(A_i)-4\epsilon \log \log N\geq \alpha - 4\epsilon \log \log N{\gt}0 \]
 </div>
 <p> and \(2\epsilon {\lt} R(B;q)\) for all \(q\in \mathcal{Q}_B\). In particular, since \(R(B){\gt}0\), the set \(B\) is not empty. Let \(x\in B\) be arbitrary, and set \(A_{i+1}=A_i\backslash \{ x\} \). </p>
 <p>We note that since \(x\in B\subseteq A\), we have \(x\geq M\), and hence \(R(A_{i+1})=R(A_i)-1/x\geq \alpha -1/M\), so point (1) is satisfied. Furthermore, since \(R(A_i)\geq \alpha \), we have \(i\leq \left\lvert A\backslash A_i\right\rvert \), and hence \(i+1 \leq \left\lvert A\backslash A_{i+1}\right\rvert \) and point (3) is satisfied. </p>
 <p>For point (2), let \(q\in \mathcal{Q}_{A_{i+1}}\subseteq \mathcal{Q}_{A_i}\). If it is not true that \(q\mid x\) and \((q,x/q)=1\) then </p>
-<div class="displaymath" id="a0000000190">
+<div class="displaymath" id="a0000000196">
   \[ R(A_{i+1};q) = R(A_i; q){\gt}\epsilon . \]
 </div>
 <p> Otherwise, if \(q\mid x\) and \((q,x/q)=1\), then \(q\in \mathcal{Q}_B\). It follows that, since \(B\subseteq A_i\), we have </p>
-<div class="displaymath" id="a0000000191">
+<div class="displaymath" id="a0000000197">
   \[ R(A_{i+1};q)\geq R(B;q)-\frac{q}{x}{\gt}2\epsilon -\frac{q}{M}\geq \epsilon , \]
 </div>
 <p> since \(q\leq \epsilon M\). The inductive claim now follows. </p>

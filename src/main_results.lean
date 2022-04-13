@@ -359,14 +359,94 @@ theorem force_good_properties :
   ))) :=
 sorry
 
--- Lemma 6
-lemma pruning_lemma_one :
-  ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range(N+1), ∃ B ⊆ A,
-  ((rec_sum B : ℝ) ≥ rec_sum A - (log N)^(-(1/200:ℝ))) ∧
-  (∀ q ∈ ppowers_in_set B,
-  (2:ℝ)*(log N)^(-(1/100:ℝ)) ≤ rec_sum_local B q )
+-- The inductive heart of Lemma 5.5
+
+lemma pruning_lemma_one_prec (A : finset ℕ) (ε : ℝ) (i: ℕ):
+  ∃ A_i ⊆ A, ∃ Q_i ⊆ fin_ppowers_in_set A,
+  ( disjoint Q_i (fin_ppowers_in_set A_i) ) ∧
+  ( (rec_sum A : ℝ) - ε * (rec_sum Q_i) ≤ rec_sum A_i ) ∧
+  (( i ≤ (A.filter( λ n, ¬ n ∈ A_i)).card ) ∨
+  (∀ q ∈ ppowers_in_set A_i, ε < rec_sum_local A_i q))
   :=
-sorry
+begin
+  induction i,
+  use A,
+  split,
+  simp only [finset.subset.refl],
+  use ∅,
+  simp only [finset.empty_subset, finset.disjoint_empty_left,
+   le_refl, nat.nat_zero_eq_zero, true_or, sub_zero, and_self,
+   zero_le', rat.cast_le, mul_zero, rec_sum_empty, rat.cast_zero],
+  cases i_ih with A' i_ih,
+  cases i_ih with hA' i_ih,
+  cases i_ih with Q' i_ih,
+  cases i_ih with hQ' i_ih,
+  by_cases hq : ∀ q ∈ ppowers_in_set A', ε < rec_sum_local A' q,
+  use A',
+  split,
+  exact hA',
+  use Q',
+  split,
+  exact hQ',
+  split,
+  exact i_ih.1,
+  split,
+  exact i_ih.2.1,
+  right,
+  exact hq,
+  have h4: ∃ q ∈ ppowers_in_set A', ¬ ε < rec_sum_local A' q,
+  { exact not_ball.mp hq, },
+  cases h4 with q' h4,
+  cases h4 with hq' h4,
+  let A'' := A'.filter(λ n,  (q'∣n) ∧ coprime q' (n/q')),
+  use A'',
+  split,
+  have h6 : A'' ⊆ A', {simp only [finset.filter_subset],},
+  exact finset.subset.trans h6 hA',
+  let Q'' := insert q' Q',
+  use Q'',
+  split,
+  -- Pausing proof here
+  sorry,
+  sorry,
+end
+
+-- Lemma 5.5
+lemma pruning_lemma_one :
+  ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range(N+1), ∀ ε : ℝ,
+  ∃ B ⊆ A,
+  ( (rec_sum A : ℝ) - 2*ε*log(log N) ≤ (rec_sum B : ℝ) ) ∧
+  (∀ q ∈ ppowers_in_set B,
+  ε < rec_sum_local B q )
+  :=
+begin
+  -- Not actually the right filter, just a placeholder - see use of Mertens below.
+  filter_upwards [eventually_ge_at_top 1],
+  intros  N hN A hA ε,
+  let i := A.card + 1,
+  obtain ⟨B, haux⟩ :=  pruning_lemma_one_prec A ε i,
+  cases haux with hB haux,
+  cases haux with Q haux,
+  cases haux with hQ haux,
+  have h_recsums := haux.2.1,
+  have h_local := haux.2.2,
+  clear haux,
+  use B,
+  split,
+  exact hB,
+  split,
+  -- For the below, first show rec_sum Q is at most the sum of 1/q over all prime
+  -- powers q ≤ N, then use Mertens estimate and N chosen large enough such that
+  -- this is ≤ 2*loglog N.
+  have hQs : ε * (rec_sum Q : ℝ) ≤ 2*ε*(log(log N) := sorry,
+  linarith,
+  cases h_local,
+  exfalso,
+  have hi : (A.filter( λ n, ¬ n ∈ B)).card ≤ A.card,
+  { apply finset.card_filter_le, },
+  linarith,
+  exact h_local,
+end
 
 -- Lemma 7
 lemma pruning_lemma_two :

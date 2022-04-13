@@ -35,45 +35,67 @@ To verify the inequality $e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq 1-\epsilon$ fo
 as required. 
 \end{proof}
 
+\begin{lemma}\label{lem:smoothsum}
+There is a constant $C>0$ such that the following holds. Let $0<y<N$ be some reals, and suppose that $D$ is a finite set of integers such that if $d\in D$ and $p^r\| d$ then $y<p^r\leq N$. Then, for any real $k\geq 1$, 
+\[\sum_{d\in D}\frac{k^{\omega(d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k.\]
+\end{lemma}
+\begin{proof}
+\uses{lem:mertens1}
+We can write every $d\in D$ uniquely as a product of prime powers $d=p_1^{r_1}\cdots p_k^{r_k}$, where for each $i$ either $r_i=1$ and $y<p_i\leq N$, or $r_i\geq 2$ and $p_i\leq N$. Therefore the left-hand side is at most
+\[\prod_{y<p\leq N}\left(1+\frac{k}{p}\right)\prod_{p\leq N}\left(1+\frac{k}{p^2}+\cdots\right).\]
+The second product is, using $1+kx\leq (1+x)^k$,
+\[=\prod_{p\leq N}\left(1+\frac{k}{p(p-1)}\right)\leq \left(\prod_{p\leq N}\left(1+\frac{1}{p(p-1)}\right)\right)^k\leq C_1^k\]
+for some constant $C_1>0$, since the product converges. Similarly, 
+\[\prod_{y<p\leq N}\left(1+\frac{k}{p}\right)\leq \left(\prod_{y<p\leq N}\left(1+\frac{1}{p}\right)\right)^k,\]
+and the product here is $\ll (\log N/\log y)$ by Mertens' bound \ref{lem:mertens1}. Combining these yields the required estimate. 
+\end{proof}
+
+
 \begin{lemma}\label{lem:usingq}
   \leanok
   \lean{find_good_d}
   \uses{def:rec_sum_local}
-There is a constant $c>0$ such that the following holds. Let $N\geq M\geq N^{1/2}$ be sufficiently large, and suppose that $1\leq k \leq c\log\log N$. Suppose that $A\subset [M,N]$ is a set of integers such that $\omega(n)\leq (\log N)^{1/k}$ for all $n\in A$.
+There is a constant $c>0$ such that the following holds. Let $N\geq M\geq N^{1/2}$ be sufficiently large, and suppose that $k$ is a real number such that $1\leq k \leq c\log\log N$. Suppose that $A\subset [M,N]$ is a set of integers such that $\omega(n)\leq (\log N)^{1/k}$ for all $n\in A$.
 
-For all $q$ such that $R(A;q)\geq (\log N)^{-1/2}$ there exists $d$ such that
+For all $q$ such that $R(A;q)\geq 1/\log N$ there exists $d$ such that
 \begin{enumerate}
 \item $qd > M\exp(-(\log N)^{1-1/k})$,
 \item $\omega(d)\leq \tfrac{5}{\log k}\log\log N$, and
 \item \[\sum_{\substack{n\in A_q\\qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}.\]
 \end{enumerate}
 \end{lemma}
-\begin{proof}\uses{lem:mertens1}
-Fix some $q$ with $R(A;q)\geq (\log N)^{-1/2}$. Let $D$ be the set of all $d$ such that if $p$ is a prime and $p^r \| d$ then
-\[p^r>y=\exp((\log N)^{1-2/k})\]
-and
+\begin{proof}\uses{lem:smoothsum}
+Fix some $q$ with $R(A;q)\geq (\log N)^{-1/2}$. Let $y=\exp((\log N)^{1-2/k})$. Let $D$ be the set of all $d$ such that if $r$ is a prime power such that $r\mid d$ and $(r,d/r)=1$ then $y<r\leq N$, and furthermore 
 \[qd\in (M\exp(-(\log N)^{1-1/k}),N].\]
-We first claim that every $n\in A_q$ is divisible by some $qd$ with $d\in D$, such that $(qd,n/qd)=1$. This can be done greedily, just removing from $n/q$ all those prime power divisors $p^r\| n/q$ such that $p^r\leq y$, which removes at most
-\[y^{\omega(n)}\leq  \exp((\log N)^{1-1/k}).\]
-We can therefore bound
-\[R(A;q) \leq \sum_{d\in D}\frac{1}{d}\sum_{\substack{n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}.\]
+We first claim that every $n\in A_q$ is divisible by some $qd$ with $d\in D$, such that $(qd,n/qd)=1$. Let $Q_n$ be the set of prime powers $r$ dividing $n$ such that $(r,n/r)=1$, so that $n=\prod_{r\in Q_n}r$. Let 
+\[Q_n'=\{ r\in Q_n: r\neq q\textrm{ and }r>y\}.\]
+We let $d=\prod_{r\in Q_n'}r$. We need to check that $d\in D$ and $qd\mid n$. It is immediate from the definitions that if a prime power $r$ divides $d$ with $(r,d/r)=1$ then $r\in Q_n'$, whence $r>y$. It is also straightforward to check, by comparing prime powers, that $qd\mid n$, and hence $qd\leq n\leq N$. Furthermore, 
+\[\frac{n}{qd}=\prod_{r\in Q_n\backslash Q_n'\cup\{q\}}r\leq y^{\abs{Q_n}}=y^{\omega(n)}\leq \exp((\log N)^{1-1/k}),\]
+by definition of $y$ and the hypothesis that $\omega(n)\leq (\log N)^{1/k}$. It follows that $d\in D$ as required. 	
+
+If we let $A_q(d)=\{ n \in A_q : qd\mid n\textrm{ and }(qd,n/qd)=1\}$ then we have shown that $A_q\subseteq \bigcup_{d\in D}A_q(d)$. Therefore
+\[R(A;q) = \sum_{n\in A_q}\frac{q}{n}\leq \sum_{d\in D}\sum_{n\in A_q(d)}\frac{q}{n}.\]
 
 We will control the contribution from those $d$ with $\omega(d)>\omega_0= \frac{5}{\log k}\log\log N$ with the trivial bound
-\[\sum_{\substack{n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} \leq \sum_{\substack{n\leq N\\ qd\mid n}}\frac{qd}{n}\ll \log N\]
-and Mertens' bound \ref{lem:mertens1}. Together these imply
+\[\sum_{A_q(d)}\frac{q}{n} \leq \sum_{\substack{n\leq N\\ qd\mid n}}\frac{q}{n}\leq \sum_{m\leq N}\frac{q}{dqm}\leq 2\frac{\log N}{d},\]
+using the harmonic sum bound $\sum_{m\leq N}\frac{1}{m}\leq \log N+1\leq 2\log N$. 
+Therefore 
 \[
-\sum_{\substack{d\in D\\ \omega(d)>\omega_0}}\frac{1}{d}\sum_{\substack{n\in A_q\\ qd\mid n}}\frac{qd}{n}
-\ll \log N\sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N\\ \omega(d)\geq \omega_0}} \frac{1}{d}\]
-\[\ll
-k^{-\omega_0}\log N\sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N}} \frac{k^{\omega(d)}}{d}\]
-\[\ll C_1^kk^{-\omega_0}\log N\prod_{y<p\leq N}(1+\frac{k}{p-1})
- \leq k^{-\omega_0}\log N\brac{C_2\frac{\log N}{\log y}}^{k}\]
-for some absolute constants $C_1,C_2>0$. Recalling the definitions of $y$ and $\omega_0$, this is
-\[\leq C_2^kk^{-\omega_0}(\log N)^3\leq 1/\log N,\]
-say, for $N$ sufficiently large. It follows that
-\[\tfrac{1}{2}R(A;q)\leq \sum_{\substack{d\in D\\ \omega(d)\leq \omega_0}}\frac{1}{d}\sum_{\substack{n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n} .\]
-The result follows since
-\[\sum_{d\in D}\frac{1}{d}\leq \sum_{\substack{d\\ p^r\| d\implies y<p^r\leq N}}\frac{1}{d} \ll \prod_{y<p\leq N}\brac{1-\frac{1}{p-1}}^{-1}\ll \frac{\log N}{\log y}\ll (\log N)^{2/k}.\]
+\sum_{\substack{d\in D\\ \omega(d)>\omega_0}}\sum_{n\in A_q(d)}\frac{q}{n}
+\leq 2\log N\sum_{\substack{d\in D\\ \omega(d)> \omega_0}} \frac{1}{d}\]
+\[\leq 2k^{-\omega_0}\log N\sum_{d\in D} \frac{k^{\omega(d)}}{d}.\]
+By \ref{lem:smoothsum} we have
+\[\sum_{d\in D}\frac{k^{\omega(d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k.\]
+and therefore
+\[\sum_{\substack{d\in D\\ \omega(d)>\omega_0}}\sum_{n\in A_q(d)}\frac{q}{n}\leq 2k^{-\omega_0}\log N \left(C\frac{\log N}{\log y}\right)^k.\]
+Recalling $\omega_0=\frac{5}{\log k}\log\log N$ and  $y=\exp((\log N)^{1-2/k})$ the right-hand side here is at most 
+\[2(\log N)^{-5}C^k\leq 1/2\log N\leq \tfrac{1}{2}R(A;q),\]
+for sufficiently large $N$, assuming $k\leq c\log\log N$ for sufficiently small $c$.  
+
+It follows that
+\[\tfrac{1}{2}R(A;q)\leq \sum_{\substack{d\in D\\ \omega(d)\leq \omega_0}}\sum_{d\in D}\frac{q}{n} .\]
+The result follows by averaging, since by \ref{lem:smoothsum}
+\[\sum_{d\in D}\frac{1}{d} \ll \frac{\log N}{\log y}\ll (\log N)^{2/k}.\]
 \end{proof}
 
 \begin{lemma}\label{lem:pisqa}
