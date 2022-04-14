@@ -218,6 +218,11 @@ begin
   rw factorization_eq_iff hp hk,
 end
 
+-- TB - this lemma will frequently be useful
+lemma ppowers_in_set_subset { A B : finset ℕ} (hAB : A ⊆ B) :
+  ppowers_in_set A ⊆ ppowers_in_set B :=
+sorry
+
 lemma ppowers_in_set_nonempty {A : finset ℕ} (hA : ∃ n ∈ A, 2 ≤ n) :
   (ppowers_in_set A).nonempty :=
 begin

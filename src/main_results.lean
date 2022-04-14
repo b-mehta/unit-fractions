@@ -398,7 +398,7 @@ begin
   { exact not_ball.mp hq, },
   cases h4 with q' h4,
   cases h4 with hq' h4,
-  let A'' := A'.filter(λ n,  (q'∣n) ∧ coprime q' (n/q')),
+  let A'' := A'.filter(λ n,  ¬ ((q'∣n) ∧ coprime q' (n/q'))),
   use A'',
   split,
   have h6 : A'' ⊆ A', {simp only [finset.filter_subset],},
@@ -406,23 +406,64 @@ begin
   let Q'' := insert q' Q',
   use Q'',
   split,
-  -- Pausing proof here
+  intros x hx,
+  rw finset.mem_insert at hx,
+  cases hx with hx1 hx2,
+  rw hx1,
+  have hApp : ppowers_in_set A' ⊆ ppowers_in_set A,
+  { apply ppowers_in_set_subset, exact hA', },
+  exact hApp hq',
+  exact hQ' hx2,
+  split,
+  rw finset.disjoint_left,
+  intros x hx,
+  rw finset.mem_insert at hx,
+  cases hx with hx1 hx2,
+  rw ppowers_in_set,
+  rw hx1,
+  rw finset.mem_bUnion,
+  intro ha,
+  cases ha with a ha,
+  cases ha with ha2 ha,
+  rw finset.mem_filter at ha,
+  rw finset.mem_filter at ha2,
+  apply ha2.2,
+  split,
+  apply nat.dvd_of_mem_divisors,
+  exact ha.1,
+  exact ha.2.2,
+  intro hx3,
+  have hdis : disjoint Q' (ppowers_in_set A'), { exact i_ih.1,},
+  rw finset.disjoint_left at hdis,
+  specialize hdis hx2,
+  apply hdis,
+  have hA'' : A'' ⊆ A', { simp only [finset.filter_subset], },
+  have hApp : ppowers_in_set A'' ⊆ ppowers_in_set A',
+  { apply ppowers_in_set_subset, exact hA'', },
+  exact hApp hx3,
+  split,
+   -- Pausing proof here
   sorry,
   sorry,
 end
 
+lemma explicit_mertens :
+  ∀ᶠ (N : ℕ) in at_top,
+  ((∑ q in (finset.range(N+1)).filter(λ q, is_prime_pow q), (1:ℚ)/q):ℝ) ≤ 2*log(log N) :=
+sorry
+
 -- Lemma 5.5
 lemma pruning_lemma_one :
   ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range(N+1), ∀ ε : ℝ,
-  ∃ B ⊆ A,
-  ( (rec_sum A : ℝ) - 2*ε*log(log N) ≤ (rec_sum B : ℝ) ) ∧
+  ( 0 < ε ) →
+  (∃ B ⊆ A,
+  ( (rec_sum A : ℝ) - ε*2*log(log N) ≤ (rec_sum B : ℝ) ) ∧
   (∀ q ∈ ppowers_in_set B,
-  ε < rec_sum_local B q )
+  ε < rec_sum_local B q ))
   :=
 begin
-  -- Not actually the right filter, just a placeholder - see use of Mertens below.
-  filter_upwards [eventually_ge_at_top 1],
-  intros  N hN A hA ε,
+  filter_upwards [explicit_mertens],
+  intros  N hN A hA ε hε,
   let i := A.card + 1,
   obtain ⟨B, haux⟩ :=  pruning_lemma_one_prec A ε i,
   cases haux with hB haux,
@@ -435,10 +476,34 @@ begin
   split,
   exact hB,
   split,
-  -- For the below, first show rec_sum Q is at most the sum of 1/q over all prime
-  -- powers q ≤ N, then use Mertens estimate and N chosen large enough such that
-  -- this is ≤ 2*loglog N.
-  have hQs : ε * (rec_sum Q : ℝ) ≤ 2*ε*(log(log N)) := sorry,
+  have hQu : Q ⊆ (finset.range(N+1)).filter(λ q, is_prime_pow q),
+  { intros q hq,
+    rw finset.mem_filter,
+    have hqA : q ∈ ppowers_in_set A, { exact hQ hq, },
+    rw [ppowers_in_set,finset.mem_bUnion] at hqA,
+    cases hqA with a hqA,
+    cases hqA with ha hqA,
+    rw finset.mem_filter at hqA,
+    rw finset.mem_range,
+    split,
+    have hq2 : q ≤ a, { apply nat.divisor_le, exact hqA.1, },
+    have ha2 : a ∈ finset.range(N+1), { exact hA ha, },
+    rw finset.mem_range at ha2,
+    linarith,
+    exact hqA.2.1,
+     },
+  have hQr : rec_sum Q ≤ ∑ q in (finset.range(N+1)).filter(λ q, is_prime_pow q), (1:ℚ)/q,
+  { rw rec_sum,
+    apply finset.sum_le_sum_of_subset_of_nonneg,
+    exact hQu,
+    intros i hi1 hi2,
+    simp only [one_div, inv_nonneg, nat.cast_nonneg],},
+  have hQt : (rec_sum Q : ℝ) ≤ (∑ q in (finset.range(N+1)).filter(λ q, is_prime_pow q), (1:ℚ) /q),
+  { exact_mod_cast hQr, },
+  have hQs : (rec_sum Q : ℝ) ≤ 2*(log(log N)),
+  { exact_mod_cast le_trans hQt hN, },
+  have hQu : ε * (rec_sum Q : ℝ) ≤ ε*(2*(log(log N))),
+  { exact (mul_le_mul_left hε).mpr hQs, },
   linarith,
   cases h_local,
   exfalso,
@@ -447,6 +512,7 @@ begin
   linarith,
   exact h_local,
 end
+
 
 -- Lemma 7
 lemma pruning_lemma_two :
