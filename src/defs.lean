@@ -267,6 +267,10 @@ lemma rec_sum_local_disjoint {A B : finset ℕ} {q : ℕ} (h : disjoint A B) :
    rec_sum_local (A ∪ B) q = rec_sum_local A q + rec_sum_local B q :=
 by { rw [rec_sum_local, local_part, filter_union, sum_union (disjoint_filter_filter h)], refl }
 
+lemma rec_sum_local_mono {A₁ A₂ : finset ℕ} {q : ℕ} (h : A₁ ⊆ A₂) :
+  rec_sum_local A₁ q ≤ rec_sum_local A₂ q :=
+sorry
+
 def ppower_rec_sum (A : finset ℕ) : ℚ :=
 ∑ q in ppowers_in_set A, 1 / q
 
