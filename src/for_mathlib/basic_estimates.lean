@@ -1262,6 +1262,28 @@ begin
   exact pow_ne_zero _ hp.2.ne_zero,
 end
 
+@[to_additive]
+lemma exact_prod_prime_powers {M : Type*} [comm_monoid M] {x : ℝ} {f : ℕ → M} :
+  ∏ n in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, f n =
+    ∏ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime,
+      ∏ k in (finset.Icc 1 ⌊log x / real.log p⌋₊), f (p ^ k) :=
+begin
+  refine prod_prime_powers.trans (finset.prod_congr rfl (λ p hp, finset.prod_congr _ (λ _ _, rfl))),
+  rw [mem_filter, finset.mem_Icc, and_assoc] at hp,
+  rcases hp with ⟨hp₁, hp₂, hp⟩,
+  rw nat.le_floor_iff' hp.ne_zero at hp₂,
+  ext k,
+  have hx : 0 < x := zero_lt_one.trans_le ((nat.one_le_cast.2 hp₁).trans hp₂),
+  rw [mem_filter, finset.mem_Icc, finset.mem_Icc, nat.le_floor_iff hx.le, and_assoc,
+    and_congr_right (λ hk, _)],
+  rw [nat.le_floor_iff' (nat.succ_le_iff.1 hk).ne', log_div_log, le_logb_iff_rpow_le _ hx,
+    rpow_nat_cast, and_iff_right_iff_imp],
+  { intros hk',
+    apply le_trans _ hk',
+    exact_mod_cast (k.lt_pow_self hp.one_lt).le },
+  exact_mod_cast hp.one_lt,
+end
+
 lemma von_mangoldt_ne_zero_iff {n : ℕ} :
   Λ n ≠ 0 ↔ is_prime_pow n :=
 begin
@@ -1389,7 +1411,7 @@ end
 
 /--
 Given a function `a : ℕ → M` from the naturals into an additive commutative monoid, this expresses
-∑ 1 ≤ p ≤ x, a(p) where `p` is prime.
+∑ k ≤ p ≤ x, a(p) where `p` is prime.
 -/
 def prime_summatory {M : Type*} [add_comm_monoid M] (a : ℕ → M) (k : ℕ) (x : ℝ) : M :=
   ∑ n in (finset.Icc k ⌊x⌋₊).filter nat.prime, a n
@@ -1607,7 +1629,7 @@ begin
   simp [nat.succ_le_iff],
 end
 
-lemma finset.Icc_eq_insert_Icc_succ {a b : ℕ} {h : a ≤ b} : finset.Icc a b = insert a (Icc (a+1) b) :=
+lemma finset.Icc_eq_insert_Icc_succ {a b : ℕ} (h : a ≤ b) : finset.Icc a b = insert a (Icc (a+1) b) :=
 begin
   rw finset.Icc_succ_left,
   rw Ioc_insert_left h,
@@ -1993,50 +2015,258 @@ begin
   rw [prime_summatory_one_eq_prime_summatory_two, ←prime_reciprocal_eq hx]
 end
 
-lemma sum_thing_has_sum : has_sum (λ n : ℕ, ((n + 1) * (n + 2) : ℝ)⁻¹) 1 :=
+lemma is_o_log_inv_one {c : ℝ} (hc : c ≠ 0) : is_o (λ x : ℝ, (log x)⁻¹) (λ x, (c : ℝ)) at_top :=
+(is_o.inv_rev (is_o_one_log c⁻¹) (by simp [hc])).congr_right (by simp)
+
+lemma is_o_const_log_log (c : ℝ) : is_o (λ x : ℝ, (c : ℝ)) (λ x : ℝ, log (log x)) at_top :=
+is_o_const_of_tendsto_at_top _ _ (tendsto_log_at_top.comp tendsto_log_at_top) _
+
+lemma prime_reciprocal_upper :
+  is_O (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) 1 x) (λ x, log (log x)) at_top :=
+let ⟨b, hb⟩ := prime_reciprocal in
+((hb.trans ((is_o_log_inv_one one_ne_zero).trans (is_o_const_log_log _)).is_O).add
+  ((is_O_refl _ _).add_is_o (is_o_const_log_log b))).congr (λ x, sub_add_cancel _ _) (λ _, rfl)
+
+lemma mul_add_one_inv (x : ℝ) (hx₀ : x ≠ 0) (hx₁ : x + 1 ≠ 0) :
+  (x * (x + 1))⁻¹ = x⁻¹ - (x + 1)⁻¹ :=
+by field_simp [hx₀, hx₁]
+
+lemma sum_thing_has_sum (k : ℕ) : has_sum (λ n : ℕ, ((n + k + 1) * (n + k + 2) : ℝ)⁻¹) (k + 1)⁻¹ :=
 begin
   refine (has_sum_iff_tendsto_nat_of_nonneg _ _).2 _,
   { exact λ i, inv_nonneg.2 (by exact_mod_cast zero_le') },
-  have : ∀ i : ℕ, ((i + 1) * (i + 2) : ℝ)⁻¹ = (i + 1)⁻¹ - ((i + 1 : ℕ) + 1)⁻¹,
+  have : ∀ i : ℕ, ((i + k + 1 : ℝ) * (i + k + 2))⁻¹ = (↑(i + (k + 1)))⁻¹ - (↑(i + 1 + (k + 1)))⁻¹,
   { intro i,
-    simp only [nat.cast_add, nat.cast_one, add_assoc],
-    have i₁ : (i + 2 : ℝ) ≠ 0 := by exact_mod_cast nat.succ_ne_zero (i + 1),
-    field_simp [nat.cast_add_one_ne_zero, i₁, bit0] },
-  simp only [this, sum_range_sub'],
-  simpa using ((tendsto_add_at_top_iff_nat 1).2 tendsto_inverse_at_top_nhds_0_nat).const_sub 1,
+    simp only [nat.cast_add_one, nat.cast_add _ (_ + _), add_right_comm (i : ℝ) 1,
+      ←add_assoc (i : ℝ)],
+    convert mul_add_one_inv (i + k + 1) _ _ using 2,
+    { norm_num [add_assoc] },
+    { exact_mod_cast nat.succ_ne_zero (i + k) },
+    { exact_mod_cast nat.succ_ne_zero (i + k + 1) } },
+  simp only [this, sum_range_sub', zero_add, nat.cast_add_one],
+  simpa using (tendsto_inverse_at_top_nhds_0_nat.comp (tendsto_add_at_top_nat (k + 1))).const_sub
+    (k + 1 : ℝ)⁻¹,
 end
 
-----------------------------------------------------------------------------------------------------
---                    Below this point, this file is a trainwreck. Good luck!                     --
-----------------------------------------------------------------------------------------------------
+-- -- summable_of_nonneg_of_le
+-- lemma prime_sum_thing_summable : summable (λ n, ((n + k + 1) * (n + k + 2) : ℝ)⁻¹)
+
+-- #exit
 
 lemma sum_thing'_has_sum : has_sum (λ n : ℕ, ((n - 1) * n : ℝ)⁻¹) 1 :=
 begin
   refine (has_sum_nat_add_iff' 2).1 _,
-  convert sum_thing_has_sum,
+  convert sum_thing_has_sum 0,
   { norm_num [add_sub_assoc] },
   simp [sum_range_succ],
 end
 
-lemma sum_thing'_summable :
-  summable (λ n : ℕ, ((n - 1) * n : ℝ)⁻¹) :=
-sum_thing'_has_sum.summable
+lemma sum_thing'''_has_sum {k : ℕ} (hk : 1 ≤ k) :
+  has_sum (λ n : ℕ, ((n + k) * (n + k + 1) : ℝ)⁻¹) k⁻¹ :=
+begin
+  -- have : (↑(k - 2) : ℝ) + 1 = k - 1,
+  -- { rw [nat.cast_sub hk, nat.cast_two],
+  --   ring },
+  convert sum_thing_has_sum (k - 1),
+  { ext n,
+    rw [add_assoc, add_assoc, nat.cast_sub hk, nat.cast_one, sub_add_cancel, add_sub, sub_add],
+    norm_num [add_assoc] },
+  simp [hk]
+end
+
+-- lemma sum_thing''_has_sum {k : ℕ} (hk : 2 ≤ k) :
+--   has_sum (λ n : ℕ, ((n + k - 1) * (n + k) : ℝ)⁻¹) (k - 1)⁻¹ :=
+-- begin
+--   have : (↑(k - 2) : ℝ) + 1 = k - 1,
+--   { rw [nat.cast_sub hk, nat.cast_two],
+--     ring },
+--   convert sum_thing_has_sum (k - 2),
+--   { ext n,
+--     rw [add_assoc, add_assoc, this, nat.cast_sub hk, nat.cast_two, sub_add_cancel, add_sub] },
+--   { rw this }
+-- end
+
+lemma sum_thing''_indicator_has_sum {k : ℕ} (hk : 1 ≤ k) :
+  has_sum ({n | k < n}.indicator (λ n, ((n - 1) * n : ℝ)⁻¹)) k⁻¹ :=
+begin
+  have : set.range (λ i, i + (k + 1)) = {n | k < n},
+  { ext i,
+    simp only [set.mem_range, mem_set_of_eq, ←nat.add_one_le_iff, le_iff_exists_add,
+      add_comm (k + 1), eq_comm] },
+  rw ←this,
+  have : function.injective (λ i, i + (k + 1)) := add_left_injective (k + 1),
+  apply (function.injective.has_sum_iff this _).1,
+  { convert sum_thing'''_has_sum hk using 1,
+    ext n,
+    simp [←add_assoc, set.indicator_of_mem] },
+  simp [set.indicator_apply, if_false] {contextual := tt},
+end
+
+lemma prime_sum_thing_summable' (s : set ℕ) :
+  summable (s.indicator ((set_of nat.prime).indicator (λ n, ((n - 1) * n : ℝ)⁻¹))) :=
+(sum_thing'_has_sum.summable.indicator _).indicator _
+
+lemma indicator_mono {α β : Type*} [ordered_add_comm_monoid β] {s t : set α} {f : α → β} (h : s ⊆ t)
+  (hf : ∀ x, x ∉ s → x ∈ t → 0 ≤ f x) :
+  indicator s f ≤ indicator t f :=
+begin
+  intros x,
+  simp only [set.indicator_apply],
+  split_ifs,
+  { refl },
+  { cases h_2 (h h_1) },
+  { apply hf _ h_1 h_2 },
+  { refl },
+end
+
+lemma prime_sum_thing {k : ℕ} (hk : 1 ≤ k) :
+  tsum ({n | k < n}.indicator ((set_of nat.prime).indicator (λ n, ((n - 1) * n : ℝ)⁻¹))) ≤ k⁻¹ :=
+begin
+  refine has_sum_mono ((prime_sum_thing_summable' _).has_sum) (sum_thing''_indicator_has_sum hk) _,
+  rw [indicator_indicator, set.inter_comm, ←indicator_indicator],
+  refine indicator_le_self' (λ _ _, indicator_nonneg (λ n (hn : _ < _), _) _),
+  simp [inv_nonneg, hk.trans hn.le, mul_nonneg],
+end
+
+lemma intermediate_bound :
+  ∃ c, is_O (λ x, prime_summatory (λ p, ((p - 1) * p : ℝ)⁻¹) 1 x - c) (λ x, x⁻¹) at_top :=
+begin
+  use ∑' (x : ℕ), (set_of nat.prime).indicator (λ n, ((n - 1) * n : ℝ)⁻¹) x,
+  rw is_O_comm,
+  apply is_O.of_bound 2,
+  filter_upwards [eventually_ge_at_top (1 : ℝ)] with x hx,
+  have hx' : 1 ≤ ⌊x⌋₊ := by rwa [nat.le_floor_iff' one_ne_zero, nat.cast_one],
+  have hx'' : (1 : ℝ) ≤ ⌊x⌋₊ := by simpa,
+  rw [norm_inv, ←@sum_add_tsum_compl _ _ _ _ _ _ _ (finset.Icc 1 ⌊x⌋₊)
+    (sum_thing'_has_sum.summable.indicator (set_of nat.prime)), prime_summatory, sum_filter],
+  simp only [set.indicator_apply, mem_set_of_eq, add_tsub_cancel_left, norm_inv, one_mul],
+  convert_to ∥tsum (set.indicator (set_of nat.prime) (λ y : ℕ, ((y - 1) * y : ℝ)⁻¹) ∘
+    (coe : ((finset.Icc 1 ⌊x⌋₊) : set ℕ)ᶜ → ℕ))∥ ≤ 2 * ∥_∥⁻¹ using 3,
+  { ext n,
+    simp only [function.comp_app, set.indicator_apply, mem_set_of_eq] },
+  rw [_root_.tsum_subtype, norm_of_nonneg (tsum_nonneg _), norm_of_nonneg (zero_le_one.trans hx),
+    finset.coe_Icc],
+  { convert (prime_sum_thing hx').trans _,
+    { ext n,
+      rw [indicator_indicator, indicator_indicator],
+      congr' 1 with m,
+      simp only [mem_inter_eq, mem_compl_eq, set.mem_Icc, mem_set_of_eq, and.congr_left_iff,
+        not_and, not_le, imp_iff_right_iff],
+      intro hm,
+      exact or.inl (hm.one_lt.le) },
+    rw [←div_eq_mul_inv, le_div_iff (zero_lt_one.trans_le hx), mul_comm, ←div_eq_mul_inv,
+      div_le_iff (zero_lt_one.trans_le hx''), two_mul],
+    exact (nat.lt_floor_add_one x).le.trans (add_le_add_left hx'' _) },
+  refine λ b, indicator_apply_nonneg (λ _, indicator_apply_nonneg (λ hb : nat.prime b, _)),
+  simp [mul_nonneg, hb.one_lt.le],
+end
+
+lemma prime_proper_powers {x : ℝ} {f : ℕ → ℝ} :
+  (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, f q) - prime_summatory f 1 x =
+    ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime,
+      ∑ k in (finset.Icc 2 ⌊log x / real.log p⌋₊), f (p ^ k) :=
+begin
+  rw [exact_sum_prime_powers, prime_summatory, sub_eq_iff_eq_add, ←sum_add_distrib],
+  refine finset.sum_congr rfl (λ p hp, _),
+  rw [mem_filter, finset.mem_Icc] at hp,
+  have : 0 < p := hp.1.1,
+  rw [nat.le_floor_iff' this.ne'] at hp,
+  have : (0 : ℝ) < p := by exact_mod_cast this,
+  have : 1 ≤ ⌊log x / real.log p⌋₊,
+  { rw [nat.le_floor_iff' one_ne_zero, nat.cast_one, one_le_div, log_le_log ‹_›
+      (this.trans_le hp.1.2)],
+    { exact hp.1.2 },
+    apply log_pos,
+    exact_mod_cast hp.2.one_lt },
+  rw [finset.Icc_eq_insert_Icc_succ this, sum_insert, pow_one, add_comm],
+  rw [finset.mem_Icc],
+  norm_num,
+end
+
+lemma is_O_reciprocal_difference_aux {x : ℝ} :
+  |(∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) -
+    prime_summatory (λ p, p⁻¹) 1 x - prime_summatory (λ p, (((p - 1) * p : ℝ)⁻¹)) 1 x| ≤
+      ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, (2 * x⁻¹) :=
+begin
+  rw [prime_proper_powers, prime_summatory, ←sum_sub_distrib],
+  refine (abs_sum_le_sum_abs _ _).trans (sum_le_sum (λ p hp, _)),
+  rw [mem_filter, finset.mem_Icc] at hp,
+  have : 0 < p := hp.1.1,
+  rw [nat.le_floor_iff' this.ne'] at hp,
+  have hp₀ : (0 : ℝ) < p := by exact_mod_cast this,
+  have hp₁ : (1 : ℝ) < (p : ℝ) := by simpa using hp.2.one_lt,
+  have hx : 0 < x := hp₀.trans_le hp.1.2,
+  have hf : 1 ≤ ⌊log x / real.log p⌋₊,
+  { rw [nat.le_floor_iff' one_ne_zero, nat.cast_one, one_le_div, log_le_log ‹_› hx],
+    { exact hp.1.2 },
+    apply log_pos,
+    exact_mod_cast hp.2.one_lt },
+  simp only [←nat.Ico_succ_right, nat.cast_pow, ←inv_pow₀],
+  rw [geom_sum_Ico', inv_pow₀, inv_pow₀, ←one_div (p : ℝ), one_sub_div hp₀.ne', div_div_eq_mul_div,
+    sq, pow_succ', mul_inv₀, mul_inv₀, ←sub_mul, inv_mul_cancel_right₀ hp₀.ne', sub_div,
+    div_eq_mul_inv, mul_inv₀, mul_comm, sub_sub_cancel_left, abs_neg, abs_div, abs_inv, abs_pow,
+    abs_of_nonneg (sub_nonneg_of_le hp₁.le), nat.abs_cast, div_le_iff (sub_pos_of_lt hp₁)],
+  rotate 1,
+  { simpa only [ne.def, inv_eq_one₀] using hp₁.ne' },
+  { rwa nat.succ_le_succ_iff },
+  transitivity x⁻¹ * p,
+  { rw [mul_comm, ←div_eq_mul_inv, le_div_iff' hx, ←div_eq_mul_inv, div_le_iff, ←pow_succ,
+      ←rpow_nat_cast, ←logb_le_iff_le_rpow hp₁ hx, log_div_log],
+    { exact (nat.lt_floor_add_one _).le },
+    { exact pow_pos hp₀ _, } },
+  rw [mul_comm (2 : ℝ), mul_assoc],
+  refine mul_le_mul_of_nonneg_left _ _,
+  { norm_cast,
+    linarith [hp.2.two_le] },
+  exact inv_nonneg.2 hx.le,
+end
+
+lemma is_O_reciprocal_difference : ∃ c,
+  is_O (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) -
+          prime_summatory (λ p, p⁻¹) 1 x - c)
+    (λ x, (log x)⁻¹) at_top :=
+begin
+  obtain ⟨c, hc⟩ := intermediate_bound,
+  refine ⟨c, _⟩,
+  have hc' : is_O (λ x, prime_summatory (λ p, ((p - 1) * p : ℝ)⁻¹) 1 x - c) (λ x, (log x)⁻¹) at_top,
+  { refine hc.trans (is_o_log_id_at_top.is_O.inv_rev _),
+    filter_upwards [eventually_gt_at_top (1 : ℝ)] with x hx using (log_pos hx).ne' },
+  refine is_O.triangle _ hc',
+  have : is_O (λ x, (π ⌊x⌋₊ * (2 * x⁻¹) : ℝ)) (λ x, (log x)⁻¹) at_top,
+  { simp_rw [mul_left_comm],
+    apply is_O.const_mul_left,
+    refine (is_O_prime_counting_div_log.mul (is_O_refl _ _)).congr' eventually_eq.rfl _,
+    filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx,
+    rw [div_eq_mul_inv, mul_right_comm, mul_inv_cancel hx.ne', one_mul] },
+  refine is_O.trans (is_O_of_le _ _) this,
+  intro x,
+  rw [norm_eq_abs, norm_eq_abs],
+  apply is_O_reciprocal_difference_aux.trans (le_trans (le_of_eq _) (le_abs_self _)),
+  rw [sum_const, nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range,
+    range_eq_Ico, nat.Ico_succ_right, nsmul_eq_mul],
+  congr' 3,
+  simp [finset.ext_iff, nat.one_le_iff_ne_zero, nat.prime.ne_zero] {contextual := tt},
+end
+
+lemma prime_power_reciprocal : ∃ b,
+  is_O (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) - (log (log x) + b))
+    (λ x, (log x)⁻¹) at_top :=
+begin
+  obtain ⟨c, hc⟩ := is_O_reciprocal_difference,
+  obtain ⟨b, hb⟩ := prime_reciprocal,
+  exact ⟨b + c, (hc.add hb).congr_left (λ x, by ring)⟩,
+end
 
 lemma summable_indicator_iff_subtype {α β : Type*} [topological_space α] [add_comm_monoid α]
   {s : set β} (f : β → α) :
   summable (f ∘ coe : s → α) ↔ summable (s.indicator f) :=
 exists_congr (λ _, has_sum_subtype_iff_indicator)
 
-lemma prime_sum_thing'_summable :
-  summable (set.indicator (set_of nat.prime) (λ p : ℕ, ((p - 1) * p : ℝ)⁻¹)) :=
-sum_thing'_summable.indicator _
-
 lemma is_unit_of_is_unit_pow {α : Type*} [comm_monoid α] {a : α} :
   ∀ n, n ≠ 0 → (is_unit (a ^ n) ↔ is_unit a)
 | 0 h := (h rfl).elim
 | 1 _ := by simp
-| (n+2) _ :=
-    by rw [pow_succ, is_unit.mul_iff, is_unit_of_is_unit_pow _ (nat.succ_ne_zero _), and_self]
+| (n+2) _ := by rw [pow_succ, is_unit.mul_iff, is_unit_of_is_unit_pow _ n.succ_ne_zero, and_self]
 
 lemma is_prime_pow_and_not_prime_iff {α : Type*} [cancel_comm_monoid_with_zero α] (x : α) :
   is_prime_pow x ∧ ¬ prime x ↔ (∃ p k, prime p ∧ 1 < k ∧ p ^ k = x) :=
@@ -2059,160 +2289,6 @@ begin
     apply hp.not_unit,
     rwa is_unit_of_is_unit_pow at this,
     rwa [ne.def, tsub_eq_zero_iff_le, not_le] }
-end
-
--- lemma big_O_of_tail_bound {f : ℕ → ℝ}
-
--- def proper_prime_pow_equiv :
---   {q : ℕ // is_prime_pow q ∧ ¬ q.prime } ≃ {p : ℕ // p.prime} × {r : ℕ // 2 ≤ r} :=
--- { to_fun := λ q, _,
---   inv_fun := λ pr, ⟨(pr.1 : ℕ) ^ (pr.2 : ℕ),
---     pr.1.2.is_prime_pow.pow (zero_lt_two.trans_le pr.2.2).ne',
---     _⟩,
-
--- }
-
--- lemma summable_iff_has_sum_of_ne_zero_bij {α β γ : Type*} [add_comm_monoid α] [topological_space α]
---   {f : β → α} {g : γ → α} (i : function.support g → β)
---   (hi : ∀ ⦃x y⦄, i x = i y → (x : γ) = y)
---   (hf : function.support f ⊆ set.range i) (hfg : ∀ x, f (i x) = g x) :
---   summable f ↔ summable g :=
--- exists_congr (λ a, has_sum_iff_has_sum_of_ne_zero_bij i hi hf hfg)
-
--- lemma prime_power_reciprocal_summable' :
---   summable (λ (pr : nat.primes × {r : ℕ // 2 ≤ r}), ((pr.1 : ℝ) ^ (pr.2 : ℕ))⁻¹ : _ → ℝ) :=
--- begin
---   simp only [←inv_pow₀],
---   rw [←(equiv.sigma_equiv_prod _ _).summable_iff, summable_sigma_of_nonneg],
---   swap,
---   { rintro ⟨⟨p, hp⟩, ⟨r, hr⟩⟩,
---     simp },
---   split,
---   { rintro ⟨p, hp⟩,
---     dsimp,
---     change summable ((λ y, ((p : ℝ)⁻¹ ^ y)) ∘ (coe : subtype ((≤) 2) → ℕ)),
---     apply summable.subtype,
---     apply summable_geometric_of_lt_1,
---     { simp },
---     apply inv_lt_one,
---     rw nat.one_lt_cast,
---     apply hp.one_lt },
---   dsimp,
---   change summable ((λ x : ℕ, ∑' (y : subtype ((≤) 2)), (x : ℝ)⁻¹ ^ (↑y : ℕ)) ∘ (coe : nat.primes → ℕ)),
---   rw summable_indicator_iff_subtype,
---   change summable (set.indicator (set_of nat.prime) _),
---   sorry
---   -- simp_rw [_root_.tsum_subtype],
--- end
-
--- lemma prime_power_reciprocal_summable :
---   summable (set.indicator { q : ℕ | is_prime_pow q ∧ ¬ q.prime } (λ q : ℕ, (q : ℝ)⁻¹)) :=
--- begin
---   let g : nat.primes × {r : ℕ // 2 ≤ r} → ℝ := λ pr, ((pr.1 : ℕ) ^ (pr.2 : ℕ))⁻¹,
---   suffices : summable g,
---   { simp only [nat.prime_iff, is_prime_pow_and_not_prime_iff],
---     refine (summable_iff_has_sum_of_ne_zero_bij _ _ _ _).2 this,
---     { intro h,
---       exact h.1.1.1 ^ h.1.2.1 },
---     { rintro ⟨⟨⟨p₁, h₁p₁⟩, k₁, h₁k₁⟩, _⟩ ⟨⟨⟨p₂, h₁p₂⟩, k₂, h₁k₂⟩, _⟩ t,
---       simp only [subtype.coe_mk, prod.mk.inj_iff, subtype.mk_eq_mk],
---       dsimp at t,
---       rw nat.prime_iff at h₁p₁ h₁p₂,
---       cases eq_of_prime_pow_eq h₁p₁ h₁p₂ (by linarith) t,
---       exact ⟨rfl, (nat.pow_right_strict_mono ‹nat.prime p₁›.two_le).injective t⟩ },
---     { simp only [support_indicator, function.support_inv, subtype.val_eq_coe, set.subset_def,
---         mem_inter_eq, mem_set_of_eq, exists_and_distrib_left, function.mem_support, ne.def,
---         nat.cast_eq_zero, set.mem_range, set_coe.exists, inv_eq_zero, subtype.coe_mk, exists_prop,
---         prod.exists, subtype.exists, and_imp, forall_exists_index],
---       rintro _ p hp k hk rfl ht,
---       refine ⟨⟨p, nat.prime_iff.2 hp⟩, k, _, _, rfl⟩,
---       { rwa nat.succ_le_iff },
---       exact_mod_cast ht },
---     rintro ⟨⟨⟨p, hp⟩, ⟨k, hk⟩⟩, _⟩,
---     rw set.indicator_of_mem,
---     { simp [g] },
---     exact ⟨p, k, nat.prime_iff.1 hp, nat.succ_le_iff.1 hk, rfl⟩ },
---   exact prime_power_reciprocal_summable'
--- end
-
--- begin
---   rw ←summable_indicator_iff_subtype,
--- end
-
--- lemma summable_sigma_of_nonneg {β : Π x : α, Type*} {f : (Σ x, β x) → ℝ} (hf : ∀ x, 0 ≤ f x) :
---   summable f ↔ (∀ x, summable (λ y, f ⟨x, y⟩)) ∧ summable (λ x, ∑' y, f ⟨x, y⟩) :=
-
--- lemma summable_prod_of_nonneg {α β : Type*} (f : α → β → ℝ) (hf : ∀ a b, 0 ≤ f a b) :
---   summable f ↔ (∀ x, summable (f x)) ∧ summable (λ x, tsum (f x)) :=
--- begin
-
---   have := summable_sigma_of_nonneg,
---   -- equiv_rw (equiv.Pi_curry (λ (_ : α) (_ : β), ℝ)).symm at f,
---   -- convert @@summable_sigma_of_nonneg _ f _,
---   -- dsimp,
---   -- have := equiv.Pi_curry
---   -- equiv_rw equiv.Pi_curry at f,
---   -- have := equiv.sigma_equiv_prod,
---   -- convert @@summable_sigma_of_nonneg _ (λ (x : Σ _ : α, β), f x.1 x.2) _,
---   -- { apply (iff_iff_eq.1 _).symm,
-
---   --   -- convert (equiv.sigma_equiv_prod α β).summable_iff,
---   --   -- have := summable_of_is_equivalent
-
---   -- }
--- end
-
--- ennreal.summable
-
---   refine summable_of_sum_range_le _ _,
---   { exact 2 },
---   { intro n,
---     split_ifs,
---     { exact inv_nonneg.2 (nat.cast_nonneg _) },
---     { refl } },
---   intro n,
---   rw ←sum_filter,
---   have : (range n).filter is_prime_pow ⊆ (finset.Icc 1 n).filter is_prime_pow,
---   { rw range_eq_Ico,
---     refine (filter_subset_filter _ Ico_subset_Icc_self).trans _,
---     simp [subset_iff, is_prime_pow.one_lt, le_of_lt] {contextual := tt} },
---   refine (finset.sum_le_sum_of_subset_of_nonneg this _).trans _,
---   { exact λ n _ _, inv_nonneg.2 (nat.cast_nonneg _) },
---   rw [sum_prime_powers', ←nat.Ico_succ_right],
---   simp only [nat.cast_pow],
-
---   -- squeeze_simp,
---   -- dsimp,
-
---   -- refine (finset.sum_mono_set _ this).trans _,
---   -- dsimp,
---   -- let f : (Σ (m : {m : ℕ // nat.prime m}), {k : ℕ // 0 < k}) → ℝ := λ mk, (mk.1.1 ^ mk.2.1 : ℕ)⁻¹,
---   -- have : summable f,
---   -- { refine (summable_sigma_of_nonneg _).2 ⟨_, _⟩,
---   --   { rintro ⟨⟨p, hp⟩, k, hk⟩,
---   --     exact inv_nonneg.2 (nat.cast_nonneg _) },
---   --   { rintro ⟨p, hp⟩,
---   --     change summable (λ y, _⁻¹),
---   --     dsimp,
---   --     change summable (λ (y : {k // 0 < k}), ((p ^ _ : ℕ) : ℝ)⁻¹),
-
---   --     -- classical,
---   --     -- apply summable.subtype,
-
---   --   }
-
---   -- },
--- end
-
--- #exit
-
-def prime_power_reciprocal : ℝ := ∑' q : ℕ, if is_prime_pow q ∧ ¬ q.prime then (q : ℝ)⁻¹ else 0
-
-lemma prime_power_reciprocal_partial : ∃ b,
-  is_O (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) - (log (log x) + b))
-    (λ x, (log x)⁻¹) at_top :=
-begin
-  sorry
 end
 
 -- BM: I expect there's a nicer way of stating this but this should be good enough for now
