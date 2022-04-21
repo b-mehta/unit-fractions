@@ -930,3 +930,320 @@ begin
  exact h2.1,
  exact h2.2.1,
 end
+
+
+lemma main_tech_lemma_ind :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M ε y w : ℝ, ∀ A ⊆ finset.range(N+1),
+  (0 < M) → (M < N) → (0 < ε) → (2*M > w) → (1/M < ε*log(log N)) →
+  (1 < y) → ( y + 1 ≤ w) →
+  (3*ε*log(log N) ≤ 2/(w^2)) → (∀ n ∈ A, M ≤ (n: ℝ)) →
+  (2/y + 2*ε*log(log N) ≤ rec_sum A ) →
+  (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε*M) →
+  (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ w) ∧ d ∣ n) →
+  (∀ i : ℕ, ∃ A_i ⊆ A, ∃ d_i : ℕ, (y ≤ d_i) ∧ d_i ≤ (⌈y⌉₊+i) ∧ d_i ≤ ⌊w⌋₊ ∧
+   rec_sum A_i < 2/d_i ∧ (2:ℝ)/d_i-1/M ≤ rec_sum A_i ∧
+   (∀ q ∈ ppowers_in_set A_i, ε < rec_sum_local A_i q) ∧
+   (∀ n ∈ A_i, ∀ k : ℕ, k ∣ n → k < d_i → (k:ℝ) < y) ∧
+   ((∃ n ∈ A_i, d_i ∣ n) ∨
+   (∀ n ∈ A_i, ∀ k : ℕ, k ∣ n → k ≤ (⌈y⌉₊+i) → k ≤ ⌊w⌋₊ → (k:ℝ) < y)))
+  :=
+begin
+     sorry,
+    /-
+ filter_upwards [pruning_lemma_two],
+ intros N hN M ε y w A hA hM hMN hε hMw hMN2 hy hyw hNw hMA hrec hsmooth hdiv i,
+ have h_largeN : 0 < log(log N), { sorry, },
+ -- Preliminary estimates that will be convenient later
+ have hy01 : 0 < y, {
+   apply @lt_of_lt_of_le _ _ 0 1 y zero_lt_one (le_of_lt hy), },
+ have hy12 : 2 ≤ y + 1, {refine add_le_add_right _ 1, apply le_of_lt hy, },
+ have hobvaux : (⌈y⌉₊:ℝ) < y + 1, { apply nat.ceil_lt_add_one,
+   apply le_of_lt hy01, },
+ have hwzero : 0 ≤ w, { apply @le_trans _ _ 0 (y+1) w,
+   apply @le_trans _ _ 0 2 (y+1) zero_le_two hy12, exact hyw, },
+ have hyw2 : ⌈y⌉₊ ≤ ⌊w⌋₊, {
+   rw nat.le_floor_iff, apply @le_trans _ _ (⌈y⌉₊:ℝ) (y+1) w,
+   apply le_of_lt, apply nat.ceil_lt_add_one,
+   apply @le_trans _ _ 0 1 y zero_le_one (le_of_lt hy), exact hyw, exact hwzero,
+   },
+ have hqaux : (⌊w⌋₊:ℝ) ≤ w, { apply nat.floor_le hwzero, },
+ have hεNaux : 4*ε*log(log N) < 2*(3*ε*log(log N)), {
+     rw ← mul_assoc, apply mul_lt_mul, rw ← mul_assoc,
+     apply mul_lt_mul, norm_num, refl, exact hε,
+     apply mul_nonneg zero_le_two, apply le_of_lt, exact zero_lt_three, refl,
+     exact h_largeN, apply mul_nonneg zero_le_two,
+     apply mul_nonneg (le_of_lt zero_lt_three) (le_of_lt hε),
+   },
+ have hεNaux2 : 2*(3*ε*log(log N)) ≤ 2*((2:ℝ)/w^2), {
+     apply (mul_le_mul_left zero_lt_two).mpr hNw, },
+ have hwaux : 2* w ≤ w^2,
+   { rw pow_two, apply mul_le_mul, apply @le_trans _ _ 2 (y+1) w hy12 hyw,
+     refl, exact hwzero, exact hwzero, },
+ -- The actual proof begins, by induction
+ induction i,
+ -- The case i=0
+ let α := (2:ℚ)/⌈y⌉₊,
+ have hα : 4*ε*log(log N) < α, {
+   have hα1 : 2*((2:ℝ)/w^2) ≤ 2/⌈y⌉₊, { rw ← mul_div_assoc,
+   rw div_le_div_iff, rw mul_assoc, apply mul_le_mul, refl,
+   have hyw2' : (⌈y⌉₊:ℝ) ≤ ⌊w⌋₊, { exact_mod_cast hyw2,},
+   apply @le_trans _ _ ((2:ℝ)*⌈y⌉₊) (2*w) (w^2), apply mul_le_mul, refl,
+   apply @le_trans _ _ (⌈y⌉₊:ℝ) (⌊w⌋₊:ℝ) w hyw2' hqaux, exact nat.cast_nonneg ⌈y⌉₊,
+   exact zero_le_two, exact hwaux, apply mul_nonneg zero_le_two (nat.cast_nonneg ⌈y⌉₊),
+   exact zero_le_two, rw sq_pos_iff, rw ne_iff_lt_or_gt, right,
+   apply @lt_of_lt_of_le _ _ 0 (y+1) w,
+   apply @lt_of_lt_of_le _ _ 0 2 (y+1) zero_lt_two hy12, exact hyw,
+   norm_cast, rw nat.lt_ceil, norm_cast, exact hy01,
+    },
+  push_cast,
+  apply @lt_of_lt_of_le _ _ (4*ε*log(log N)) (2*(3*ε*log(log N))) (2 /⌈y⌉₊) hεNaux,
+  apply @le_trans _ _ (2*(3*ε*log(log N))) (2*((2:ℝ)/w^2)) (2/⌈y⌉₊) hεNaux2 hα1,
+  },
+ have hαaux : (α : ℝ) = 2/⌈y⌉₊, { push_cast,},
+ have hrec2 : (α:ℝ) + 2*ε*log(log N) ≤ rec_sum A, {
+   rw hαaux, apply @add_le_of_add_le_right _ (2/y) (2*ε*log(log N))
+      (rec_sum A) ((2:ℝ)/⌈y⌉₊), exact hrec,
+      refine div_le_div_of_le_left zero_le_two _ _, exact hy01, apply nat.le_ceil,
+  },
+ specialize hN M α ε A hA hM hMN hε hα hMA hrec2 hsmooth,
+ rcases hN with ⟨B,hB,hN⟩,
+ refine ⟨B, hB, ⌈y⌉₊, nat.le_ceil y, _⟩,
+ split, refl, split,
+ apply nat.le_floor, apply @le_trans _ _ (⌈y⌉₊:ℝ) (⌊w⌋₊:ℝ) w, norm_cast,
+ exact hyw2, exact hqaux,
+ split, exact_mod_cast hN.1, split, rw ← hαaux, exact hN.2.1,
+ refine ⟨hN.2.2, λ n hn k hk1 hk2, _, _⟩,
+ rw ← nat.lt_ceil, exact hk2,
+ by_cases hp : (∃ (n : ℕ) (H : n ∈ B), ⌈y⌉₊ ∣ n),
+ left, exact hp, right, intros n hn k hk1 hk2 hk3,
+ simp only [add_zero, nat.nat_zero_eq_zero] at hk2,
+ rw ← nat.lt_ceil,
+ have hkaux : k ≠ ⌈y⌉₊, {
+   intro hky,
+   apply hp, use n, rw ← hky, refine ⟨hn,hk1⟩,
+   },
+ exact (ne.le_iff_lt hkaux).mp hk2,
+ -- The inductive case
+ rcases i_ih with ⟨A_i, hA_i, d_i, hstock⟩,
+ obtain hstock1 := hstock.2.2.2.2.2.2.1,
+ by_cases hdiv2 : (∃ n ∈ A_i, d_i ∣ n),
+ use A_i, split, exact hA_i, use d_i, split, exact hstock.1,
+ split, apply le_trans hstock.2.1 _, apply add_le_add_left (nat.le_succ i_n),
+ refine ⟨hstock.2.2.1, hstock.2.2.2.1, hstock.2.2.2.2.1, hstock.2.2.2.2.2.1,
+   hstock.2.2.2.2.2.2.1, _⟩,
+ left, exact hdiv2,
+ let d_i' := min (⌈y⌉₊+i_n+1) ⌊w⌋₊,
+ have hd_i' : d_i + 1 ≤ d_i', {
+   rw le_min_iff, split, apply add_le_add_right hstock.2.1, rw nat.succ_le_iff,
+   rw ← ne.le_iff_lt, exact hstock.2.2.1, intro htaux,
+   have hA_in : A_i.nonempty, {
+     cases finset.eq_empty_or_nonempty A_i with hy1 hy2, exfalso,
+     obtain hstock2 := hstock.2.2.2.2.1, rw hy1 at hstock2, rw rec_sum_empty at hstock2,
+     norm_cast at hstock2, rw sub_nonpos at hstock2, rw div_le_div_iff at hstock2,
+     have hA_in' : (d_i:ℝ) ≤ w, { rw htaux, exact hqaux, },
+     rw one_mul at hstock2, apply @not_lt_of_le _ _ (2*M) w (hstock2.trans hA_in') hMw,
+     apply lt_of_lt_of_le hy01 hstock.1, exact hM, exact hy2,
+      },
+   obtain ⟨x,hx⟩ := hA_in,
+   have hx' : x ∈ A, { exact hA_i hx, },
+   specialize hdiv x hx',
+   cases hdiv with d hdiv,
+   have hd_i'1 : d < d_i, {
+     rw ← ne.le_iff_lt, rw htaux, rw nat.le_floor_iff, exact hdiv.2.1, exact hwzero,
+     intro hdaux1, apply hdiv2, use x, split, exact hx, rw ← hdaux1, exact hdiv.2.2,
+  },
+   specialize hstock1 x hx d hdiv.2.2 hd_i'1,
+   apply @not_le_of_lt _ _ (d:ℝ) y hstock1 hdiv.1,
+    },
+ let α' := (2:ℚ)/d_i',
+ have hα'aux : (α' : ℝ) = 2/d_i', { push_cast, },
+ have hqaux' : (d_i':ℝ) ≤ ⌊w⌋₊, {
+      norm_cast, apply min_le_right, },
+ have hqaux'' : (d_i':ℝ) ≤ w, { exact hqaux'.trans hqaux, },
+  have hrec5'''aux : (0:ℝ) < d_i, { apply lt_of_lt_of_le hy01 hstock.1, },
+  have hrec5''': 0 < d_i, { exact_mod_cast hrec5'''aux, },
+  have hrec6''': 1 ≤ d_i, { rw nat.succ_le_iff, exact hrec5''', },
+  have hqauxx : (1:ℝ) < d_i', { norm_cast,
+  apply @lt_of_lt_of_le _ _ 1 (d_i+1) d_i', apply nat.succ_lt_succ hrec5''', exact hd_i',
+   },
+ have hα' : 4*ε*log(log N) < α', {
+   have hα'1 : 2*((2:ℝ)/w^2) ≤ 2/d_i', { rw ← mul_div_assoc,
+   rw div_le_div_iff, rw mul_assoc, apply mul_le_mul, refl,
+   linarith, apply mul_nonneg, norm_num, linarith, norm_num,
+   rw sq_pos_iff, linarith, linarith,
+    },
+   linarith,
+  },
+
+ have hrec2 : (α':ℝ) + 2*ε*log(log N) ≤ rec_sum A_i, {
+  rw hα'aux,
+  have hrec3p : (d_i:ℝ) ≤ (d_i':ℝ)-1, {
+    have hrec3p' : (d_i:ℝ) + 1 ≤ d_i', {exact_mod_cast hd_i',},
+    linarith, },
+  have hrec3 : (2:ℝ)/(d_i'-1) - 1/M  ≤ rec_sum A_i, {
+    have hrec3' : (2:ℝ)/(d_i'-1) ≤ 2/d_i, {
+      refine div_le_div_of_le_left _ _ _, norm_num, exact hrec5'''aux,
+      exact hrec3p,
+     },
+    linarith,
+     },
+  have hrec5 : (2:ℝ)/d_i'^2 ≤ 2/(d_i'-1) - 2/d_i', {
+    rw div_sub_div,
+    have hrec5'' : ((d_i':ℝ)-1)*d_i' = d_i'^2 - d_i', {
+      rw sub_mul, rw ← pow_two, linarith,},
+    have hrec5' : (2:ℝ)*d_i' - (d_i'-1)*2 = 2, {
+      rw sub_mul, linarith, },
+    rw hrec5',
+    refine div_le_div_of_le_left _ _ _, norm_num,
+    rw hrec5'', rw sub_pos, nth_rewrite 0 ← pow_one (d_i':ℝ),
+    apply pow_lt_pow, norm_cast,
+    linarith, norm_num, rw hrec5'', apply sub_le_self,
+    linarith, intro hwaste, rw sub_eq_iff_eq_add at hwaste,
+    simp only [zero_add] at hwaste, linarith, linarith,
+    },
+
+  have hrec6 :(2:ℝ)/w^2 ≤ 2/d_i'^2, {
+    refine div_le_div_of_le_left _ _ _, norm_num,
+    apply sq_pos_of_ne_zero, norm_cast, intro hrecaux,
+    rw min_eq_iff at hrecaux,
+    cases hrecaux with hpaux1 hpaux2,
+    obtain hpaux1' := hpaux1.1, linarith,
+    obtain hpaux2' := hpaux2.1, rw nat.floor_eq_zero at hpaux2',
+    linarith, apply sq_le_sq',
+    linarith, linarith, },
+  linarith,
+   },
+ have hA_i' : A_i ⊆ finset.range(N+1),
+ { exact finset.subset.trans hA_i hA, },
+ have hMA' : (∀ (n : ℕ), n ∈ A_i → M ≤ n), {
+   intros n hn, have haux9 : n ∈ A, { exact hA_i hn, },
+   exact hMA n haux9,
+    },
+ have hsmooth' : (∀ q ∈ ppowers_in_set A_i, (q : ℝ) ≤ ε*M), {
+   intros q hq,
+   have hpp' : ppowers_in_set A_i ⊆ ppowers_in_set A,
+   { exact ppowers_in_set_subset hA_i, },
+   have hq' : q ∈ ppowers_in_set A, { exact hpp' hq, },
+   exact hsmooth q hq',},
+specialize hN M α' ε A_i hA_i' hM hMN hε hα' hMA' hrec2 hsmooth',
+ rcases hN with ⟨B, hB, hN⟩,
+ use B, split, exact finset.subset.trans hB hA_i,
+ use d_i', split, rw ← nat.ceil_le, rw le_min_iff,
+ split, linarith, exact hyw2,
+ split, apply min_le_left, split, apply min_le_right,
+ split, exact_mod_cast hN.1, split,
+ have hα'aux : (α' : ℝ) = 2/d_i', { push_cast, },
+ rw ← hα'aux, exact hN.2.1, split, exact hN.2.2,
+ split,
+ intros n hn k hk1 hk2,
+ have hn2 : n ∈ A_i, { exact hB hn, },
+ have hk2' : k ≤ d_i, {
+   rw hd_i' at hk2, exact nat.lt_succ_iff.mp hk2,},
+ have hk2'' : k < d_i, {
+   rw ← ne.le_iff_lt, exact hk2',
+   intro hkdiv, apply hdiv2, use n, use hn2, rw ← hkdiv,
+   exact hk1, },
+ exact hstock1 n hn2 k hk1 hk2'',
+ by_cases hd_i'div : (∃ (n : ℕ) (H : n ∈ B), d_i' ∣ n),
+ left, exact hd_i'div, right,
+ intros n hn k hk1 hk2 hk3,
+ have hn2 : n ∈ A_i, { exact hB hn, },
+ have hk2' : k ≤ d_i', { rw le_min_iff, split,
+   exact hk2, exact hk3, },
+ have hk2'' : k < d_i', {
+   rw ← ne.le_iff_lt, exact hk2', intro hkaux4,
+   apply hd_i'div, use n, split, exact hn,
+   rw ← hkaux4, exact hk1, },
+ have hk2''' : k ≤ d_i, { rw hd_i' at hk2'',
+     exact nat.lt_succ_iff.mp hk2'', },
+ have hk2'''' : k < d_i, { rw ← ne.le_iff_lt, exact hk2''',
+ intro haux5, apply hdiv2, use n, split, exact hn2,
+  rw ← haux5, exact hk1, },
+ exact hstock1 n hn2 k hk1 hk2'''',-/
+end
+
+
+lemma main_tech_lemma :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M ε y w : ℝ, ∀ A ⊆ finset.range(N+1),
+  (0 < M) → (M < N) → (0 < ε) → (2*M > w) → (1/M < ε*log(log N)) →
+  (1 < y) → ( y + 1 ≤ w) →
+  (3*ε*log(log N) ≤ 2/(w^2)) → (∀ n ∈ A, M ≤ (n: ℝ)) →
+  (2/y + 2*ε*log(log N) ≤ rec_sum A ) →
+  (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε*M) →
+  (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ w) ∧ d ∣ n) →
+  (∃ A' ⊆ A, ∃ d : ℕ, A' ≠ ∅ ∧ (y ≤ d) ∧ ((d:ℝ) ≤ w) ∧ rec_sum A' < 2/d ∧
+  (2:ℝ)/d-1/M ≤ rec_sum A' ∧ (∀ q ∈ ppowers_in_set A', ε < rec_sum_local A' q)
+  ∧ (∃ n ∈ A', d ∣ n) ∧ (∀ n ∈ A', ∀ k : ℕ, k ∣ n → k < d → (k:ℝ) < y))
+  :=
+begin
+  sorry,
+  /-
+ -- Also filter so that log log N > 0
+ filter_upwards [main_tech_lemma_ind],
+ intros N hN M ε y w A hA hM hMN hε hMw hMN2 hy hyw hNw hAM hrec hsmooth hdiv,
+ have h_largeN : 0 < log(log N), { sorry, },
+ have hy01 : 0 < y, {
+   apply @lt_of_lt_of_le _ _ 0 1 y zero_lt_one (le_of_lt hy), },
+ have hy12 : 2 ≤ y + 1, {refine add_le_add_right _ 1, apply le_of_lt hy, },
+ have hwzero : 0 ≤ w, { apply @le_trans _ _ 0 (y+1) w,
+   apply @le_trans _ _ 0 2 (y+1) zero_le_two hy12, exact hyw, },
+ let i := ⌊w⌋₊ - ⌈y⌉₊,
+ specialize hN M ε y w A hA hM hMN hε hMw hMN2 hy hyw hNw hAM hrec hsmooth hdiv i,
+ rcases hN with ⟨A', hA', d, hN⟩,
+ use A', split, exact hA', use d,
+ have hdw : (d:ℝ) ≤ w, {
+   have hauxw : (⌊w⌋₊:ℝ) ≤ w, { apply nat.floor_le hwzero, },
+  have hauxw2 : (d:ℝ) ≤ (⌊w⌋₊:ℝ), {exact nat.cast_le.mpr hN.2.2.1, },
+  exact hauxw2.trans hauxw,
+  },
+ have hA'ne : A' ≠ ∅, {
+ intro hA'em,
+ have hreczero : rec_sum A' = 0, {  rw hA'em, apply rec_sum_empty, },
+ rw hreczero at hN,
+ norm_cast at hN,
+ have haux1 : (2:ℝ)/d ≤ 1/M, { apply sub_nonpos.mp hN.2.2.2.2.1, },
+ have haux2 : (2:ℝ)/w ≤ 2/d,
+ { refine div_le_div_of_le_left zero_le_two _ _,
+   apply @lt_of_lt_of_le _ _ 0 y (d:ℝ), exact hy01, exact hN.1, exact hdw,
+   },
+ have haux3 : (2:ℝ)/w^2 ≤ 2/w,
+ { refine div_le_div_of_le_left zero_le_two _ _,
+   apply @lt_of_lt_of_le _ _ 0 (y+1) w,
+   apply @lt_of_lt_of_le _ _ 0 y (y+1), exact hy01, exact le_add_of_nonneg_right zero_le_one,
+   exact hyw, refine le_self_pow _ _, apply le_trans one_le_two _,
+   apply le_trans hy12 hyw, exact one_le_two, },
+ have haux4: 3*ε*log(log N) < ε*log(log N), {
+   apply lt_of_le_of_lt hNw, apply lt_of_le_of_lt haux3, apply lt_of_le_of_lt haux2,
+   apply lt_of_le_of_lt haux1 hMN2,
+  },
+ rw mul_lt_mul_right at haux4, rw mul_lt_iff_lt_one_left at haux4,
+ norm_num at haux4, exact hε, exact h_largeN,},
+ split, exact hA'ne, split, exact hN.1,
+ split, exact hdw, split, exact hN.2.2.2.1, split, exact hN.2.2.2.2.1,
+ split, exact hN.2.2.2.2.2.1, split,
+ cases hN.2.2.2.2.2.2.2 with hv1 hv2, exact hv1,
+ exfalso,
+ have hAexists : ∃ (x : ℕ), x ∈ A', {
+    by_contra, apply hA'ne, rw finset.eq_empty_iff_forall_not_mem,
+    intros x hx, apply h, use x, exact hx,
+    },
+ cases hAexists with x hx,
+ have hx2 : x ∈ A, {exact hA' hx,},
+ specialize hdiv x hx2,
+ cases hdiv with m hdiv,
+ have htempw : m ≤ ⌊w⌋₊, {
+   apply nat.le_floor, exact hdiv.2.1,
+  },
+ have htemp : m ≤ ⌈y⌉₊ + i, {
+   have hobvious : ⌈y⌉₊ + i = ⌊w⌋₊, {
+     rw ← add_tsub_assoc_of_le, simp only [add_tsub_cancel_left, eq_self_iff_true],
+     apply nat.le_floor,
+     have hobvaux : (⌈y⌉₊:ℝ) < y + 1, { apply nat.ceil_lt_add_one, apply le_of_lt hy01,  },
+     apply le_of_lt, apply lt_of_lt_of_le hobvaux hyw,
+     },
+   rw hobvious, exact htempw,
+  },
+ specialize hv2 x hx m hdiv.2.2 htemp htempw, linarith,
+ exact hN.2.2.2.2.2.2.1,
+ -/
+end
