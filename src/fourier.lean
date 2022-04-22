@@ -1502,9 +1502,7 @@ theorem circle_method_prop :
     rec_sum A < 2 / k → (2 : ℝ) / k - 1 / M ≤ rec_sum A →
     k ∣ [A] →
     (∀ q ∈ ppowers_in_set A, ↑q ≤ min (L * K^2 / (16 * N^2 * (log N)^2)) (min (c * M / k) (T * K^2 / (N^2 * log N)))) →
-    (∀ (t : ℝ) (I : finset ℤ), I = Icc ⌈t - K / 2⌉ ⌊t + K / 2⌋ →
-      T ≤ (A.filter (λ n, ∀ x ∈ I, ¬ ↑n ∣ x)).card ∨
-      ∃ x ∈ I, ∀ q ∈ interval_rare_ppowers I A L, ↑q ∣ x) →
+    good_condition A K T L →
     ∃ S ⊆ A, rec_sum S = 1 / k :=
 begin
   let c : ℝ := sorry,

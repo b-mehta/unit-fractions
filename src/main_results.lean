@@ -51,19 +51,6 @@ sorry
 --   the inequality part I've got a real on the LHS anyway, so it would convert to rationals and
 --   then to reals, so might as well go straight to ℝ.
 
--- Prop 1
-theorem technical_prop :
-  ∀ᶠ (N : ℕ) in at_top, ∀ (A ⊆ finset.range (N+1)) (y z : ℝ),
-  (1 ≤ y) → (y ≤ z) → (z ≤ (log N)^((1/500 : ℝ)))
-  → (∀ n ∈ A, ( (N:ℝ)^(1-(1:ℝ)/(log(log N))) ≤ n ))
-  → 2 / y + (log N)^(-(1/200 : ℝ)) ≤ (rec_sum A : ℝ)
-  → (∀ n ∈ A, ∃ d₁ d₂ : ℕ, (d₁ ∣ n) ∧ (d₂ ∣ n) ∧ (y ≤ d₁) ∧ (4*d₁ ≤ d₂) ∧ ((d₂ : ℝ) ≤ z) )
-  → (∀ n ∈ A, is_smooth ((N:ℝ)^(1-(6:ℝ)/(log(log N)))) n)
-  → arith_regular N A
-  → ∃ S ⊆ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ z) ∧
-    rec_sum S = 1/d
-  :=
-sorry
 
 -- (written before getting anywhere)
 -- I have a suspicion that an alternative phrasing might be nicer
@@ -82,139 +69,7 @@ lemma tendsto_coe_log_pow_at_top (c : ℝ) (hc : 0 < c) :
   tendsto (λ (x : ℕ), (log x)^c) at_top at_top :=
 (tendsto_rpow_at_top hc).comp (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top)
 
-lemma prop_one_specialise :
-  ∀ᶠ N : ℕ in at_top, ∀ A ⊆ finset.range (N + 1),
-    (∀ n ∈ A, (N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) ≤ n)
-  → log N ^ (1 / 500 : ℝ) ≤ (rec_sum A : ℝ)
-  → (∀ n ∈ A, ∃ d₂ : ℕ, d₂ ∣ n ∧ 4 ≤ d₂ ∧ (d₂ : ℝ) ≤ log N ^ (1 / 500 : ℝ))
-  → (∀ n ∈ A, is_smooth ((N : ℝ) ^ (1 - (6 : ℝ) / log (log N))) n)
-  → arith_regular N A
-  → ∃ S ⊆ A, ∃ d : ℕ, 1 ≤ d ∧ (d : ℝ) ≤ log N ^ (1 / 500 : ℝ) ∧ rec_sum S = 1 / d :=
-begin
-  have hf : tendsto (λ (x : ℕ), log x ^ (1 / 500 : ℝ)) at_top at_top :=
-    tendsto_coe_log_pow_at_top _ (by norm_num1),
-  have hf' : tendsto (λ (x : ℕ), log x ^ (1 / 200 : ℝ)) at_top at_top :=
-    tendsto_coe_log_pow_at_top _ (by norm_num1),
-  filter_upwards [technical_prop, hf (eventually_ge_at_top 3), hf' (eventually_ge_at_top 1),
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top) (eventually_ge_at_top 0)],
-  intros N hN hN' hN'' hN''' A A_upper_bound A_lower_bound hA₁ hA₂ hA₃ hA₄,
-  simp only [set.mem_set_of_eq, set.preimage_set_of_eq] at hN' hN'' hN''',
-  exact_mod_cast hN A A_upper_bound 1 _ le_rfl _ le_rfl A_lower_bound _ _ hA₃ hA₄,
-  { exact le_trans (by norm_num1) hN' },
-  { apply (le_trans _ hN').trans hA₁,
-    rw [←le_sub_iff_add_le', rpow_neg],
-    { norm_num1,
-      exact inv_le_one hN'' },
-    { exact hN''' } },
-  intros n hn,
-  obtain ⟨d₂, hd₂, hd₂', hd₂''⟩ := hA₂ n hn,
-  exact ⟨1, d₂, one_dvd _, hd₂, by simp, by simpa, hd₂''⟩,
-end
 
--- Corollary 1
-theorem corollary_one :
-  ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range (N + 1),
-  (∀ n ∈ A, (N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) ≤ n)
-  → 2 * log N ^ (1 / 500 : ℝ) ≤ rec_sum A
-  → (∀ n ∈ A, ∃ p : ℕ, p ∣ n ∧ 4 ≤ p ∧ (p : ℝ) ≤ log N ^ (1/500 : ℝ))
-  → (∀ n ∈ A, is_smooth ((N : ℝ) ^ (1 - (6 : ℝ) / log (log N))) n)
-  → arith_regular N A
-  → ∃ S ⊆ A, rec_sum S = 1 :=
-begin
-  filter_upwards [prop_one_specialise, eventually_ge_at_top 1],
-  intros N p1 hN₁ A A_upper_bound A_lower_bound hA₁ hA₂ hA₃ hA₄,
-  -- `good_set` expresses the families of subsets that we like
-  -- instead of saying we have S_1, ..., S_k, I'll say we have k-many subsets (+ same conditions)
-  let good_set : finset (finset ℕ) → Prop :=
-    λ S, (∀ s ∈ S, s ⊆ A) ∧ (S : set (finset ℕ)).pairwise_disjoint id ∧
-      ∀ s, ∃ (d : ℕ), s ∈ S → 1 ≤ d ∧ (d : ℝ) ≤ (log N)^(1/500 : ℝ) ∧ rec_sum s = 1 / d,
-    -- the last condition involving `d` is chosen weirdly so that `choose` later gives a more
-    -- convenient function
-  let P : ℕ → Prop := λ k, ∃ S : finset (finset ℕ), S.card = k ∧ good_set S,
-  let k : ℕ := nat.find_greatest P (A.card + 1), -- A.card is a trivial upper bound
-  have P0 : P 0 := ⟨∅, by simp [good_set]⟩, -- we clearly have that 0 satisfies p by using ∅
-  have Pk : P k := nat.find_greatest_spec (nat.zero_le _) P0,
-  obtain ⟨S, hk, hS₁, hS₂, hS₃⟩ := Pk,
-  choose d' hd'₁ hd'₂ hd'₃ using hS₃,
-  let t : ℕ → ℕ := λ d, (S.filter (λ s, d' s = d)).card,
-  -- If we do have an appropriate d, take it
-  by_cases h : ∃ d : ℕ, 0 < d ∧ d ≤ t d,
-  { obtain ⟨d, d_pos, ht⟩ := h,
-    -- there are ≥ d things with R(s) = 1/d, pick a subset so we have exactly d
-    obtain ⟨T', hT', hd₂⟩ := finset.exists_smaller_set _ _ ht,
-    have hT'S := hT'.trans (finset.filter_subset _ _),
-    refine ⟨T'.bUnion id, _, _⟩,
-    { refine (finset.bUnion_subset_bUnion_of_subset_left _ hT'S).trans _,
-      rwa finset.bUnion_subset },
-    rw [rec_sum_bUnion_disjoint (hS₂.subset hT'S), finset.sum_congr rfl, finset.sum_const, hd₂,
-      nsmul_eq_mul, mul_div_cancel'],
-    { rw nat.cast_ne_zero, exact d_pos.ne' },
-    intros i hi,
-    rw [hd'₃ _ (hT'S hi), (finset.mem_filter.1 (hT' hi)).2] },
-  push_neg at h,
-  exfalso,
-  -- otherwise make A' as in the paper
-  let A' := A \ S.bUnion id,
-  have hS : (∑ s in S, rec_sum s : ℝ) ≤ (log N)^(1/500 : ℝ),
-  { transitivity (∑ d in finset.Icc 1 ⌊(log N)^(1/500 : ℝ)⌋₊, t d / d : ℝ),
-    { have : ∀ s ∈ S, d' s ∈ finset.Icc 1 ⌊(log N)^(1/500 : ℝ)⌋₊,
-      { intros s hs,
-        simp only [finset.mem_Icc, hd'₁ s hs, nat.le_floor (hd'₂ s hs), and_self] },
-      rw ←finset.sum_fiberwise_of_maps_to this,
-      apply finset.sum_le_sum,
-      intros d hd,
-      rw [div_eq_mul_one_div, ←nsmul_eq_mul],
-      apply finset.sum_le_card_nsmul,
-      intros s hs,
-      simp only [finset.mem_filter] at hs,
-      rw [hd'₃ _ hs.1, hs.2, rat.cast_div, rat.cast_one, rat.cast_coe_nat] },
-    refine (finset.sum_le_card_nsmul _ _ 1 _).trans _,
-    { simp only [one_div, and_imp, finset.mem_Icc],
-      rintro d hd -,
-      exact div_le_one_of_le (nat.cast_le.2 ((h d hd).le)) (nat.cast_nonneg _) },
-    { simp only [nat.add_succ_sub_one, add_zero, nat.card_Icc, nat.smul_one_eq_coe],
-      exact nat.floor_le (rpow_nonneg_of_nonneg (log_nonneg (nat.one_le_cast.2 hN₁)) _) } },
-  have hAS : disjoint A' (S.bUnion id) := finset.sdiff_disjoint,
-  have RA'_ineq : (log N)^(1/500 : ℝ) ≤ rec_sum A',
-  { have : rec_sum A = rec_sum A' + rec_sum (S.bUnion id),
-    { rw [←rec_sum_disjoint hAS, finset.sdiff_union_of_subset],
-      rwa finset.bUnion_subset },
-    rw [this] at hA₁,
-    simp only [rat.cast_add] at hA₁,
-    rw ←sub_le_iff_le_add at hA₁,
-    apply le_trans _ hA₁,
-    rw [rec_sum_bUnion_disjoint hS₂, rat.cast_sum],
-    linarith [hS] },
-  have hA' : A' ⊆ A := finset.sdiff_subset _ _,
-  obtain ⟨S', hS', d, hd, hd', hS'₂⟩ :=
-    p1 A' (hA'.trans A_upper_bound) (λ n hn, A_lower_bound n (hA' hn))
-      RA'_ineq (λ n hn, hA₂ n (hA' hn)) (λ n hn, hA₃ n (hA' hn)) (hA₄.subset hA'),
-  have hS'' : ∀ s ∈ S, disjoint S' s :=
-    λ s hs, disjoint.mono hS' (finset.subset_bUnion_of_mem id hs) hAS,
-  have hS''' : S' ∉ S,
-  { intro t,
-    exact (nonempty_of_rec_sum_recip hd hS'₂).ne_empty (disjoint_self.1 (hS'' _ t)) },
-  have : P (k+1),
-  { refine ⟨insert S' S, _, _⟩,
-    { rw [finset.card_insert_of_not_mem hS''', hk] },
-    refine ⟨_, _, _⟩,
-    { simpa [hS'.trans hA'] using hS₁ },
-    { simpa [set.pairwise_disjoint_insert, hS₂] using λ s hs _, hS'' _ hs },
-    intros s,
-    rcases eq_or_ne s S' with rfl | hs,
-    { exact ⟨d, λ _, ⟨hd, hd', hS'₂⟩⟩ },
-    refine ⟨d' s, λ i, _⟩,
-    have : s ∈ S := finset.mem_of_mem_insert_of_ne i hs,
-    exact ⟨hd'₁ _ this, hd'₂ _ this, hd'₃ _ this⟩ },
-  have hk_bound : k + 1 ≤ A.card + 1,
-  { rw [←hk, add_le_add_iff_right],
-    apply le_trans _ (finset.card_le_of_subset (finset.bUnion_subset.2 hS₁)),
-    apply finset.card_le_card_bUnion hS₂,
-    intros s hs,
-    exact nonempty_of_rec_sum_recip (hd'₁ s hs) (hd'₃ s hs) },
-  have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
-  simpa using this,
-end
 
 -- define the X in Lemma 1 as a separate definition?
 def X (y z : ℝ) : set ℕ := sorry
@@ -334,27 +189,6 @@ begin
   { rw_mod_cast ← h2, exact hAq _ hq.1, },
   linarith,
 end
-
--- Proposition 3
-theorem force_good_properties :
-  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
-  ((N:ℝ)^2 ≤ M) →
-  (∀ n ∈ A, M ≤ (n:ℝ) ∧
-    (((99:ℝ)/100)*log(log N) ≤ ω n ) ∧
-    ( (ω n : ℝ) ≤ 2*(log (log N)))) →
-  ( (log N)^(-(1/101 : ℝ)) ≤ rec_sum A ) →
-  (∀ q ∈ ppowers_in_set A,
-    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) → (
-  (∃ B ⊆ A, ((rec_sum A) ≤ 3*rec_sum B) ∧
-  ((ppower_rec_sum B : ℝ) ≤ (2/3)* log(log N)))
-  ∨
-  (∀ (a : ℕ), let I : finset ℤ := (finset.Icc a
-       ⌊(a:ℝ)+M*(N:ℝ)^(-(2:ℝ)/log(log N))⌋) in
-  ( ((M:ℝ)/log N ≤ ((A.filter (λ n, ∀ x ∈ I, ¬ (↑n ∣ x))).card : ℝ)) ∨
-    (∃ x ∈ I, ∀ q : ℕ, (q ∈ interval_rare_ppowers I A
-       (M / (2*q*(log N)^(1/100 : ℝ)))) → ↑q ∣ x)
-  ))) :=
-sorry
 
 -- The inductive heart of Lemma 5.5
 lemma pruning_lemma_one_prec (A : finset ℕ) (ε : ℝ) (i : ℕ) :
@@ -896,4 +730,197 @@ begin
   },
  specialize hv2 x hx m hdiv.2.2 htemp htempw, linarith,
  exact hN.2.2.2.2.2.2.1,
+end
+
+-- Proposition 6.3
+theorem force_good_properties :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
+  ((N:ℝ) ≤ M^(2:ℝ)) → arith_regular N A →
+  ( (log N)^(-(1/101 : ℝ)) ≤ rec_sum A ) →
+  (∀ q ∈ ppowers_in_set A,
+    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) → (
+  (∃ B ⊆ A, ((rec_sum A) ≤ 3*rec_sum B) ∧
+  ((ppower_rec_sum B : ℝ) ≤ (2/3)* log(log N)))
+  ∨ good_condition A (M*(N:ℝ)^(-(2:ℝ)/log(log N))) ((M:ℝ)/log N)
+  (M / (2*(log N)^(1/100 : ℝ))) ) :=
+sorry
+
+-- Proposition 6.4
+theorem force_good_properties2 :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
+  ((N:ℝ) ≤ M^(2:ℝ)) → arith_regular N A →
+  (∀ q ∈ ppowers_in_set A,
+    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) →
+  ((ppower_rec_sum A : ℝ) ≤ (2/3)* log(log N)) →
+  good_condition A (M*(N:ℝ)^(-(2:ℝ)/log(log N))) ((M:ℝ)/log N)
+  (M / (2*(log N)^(1/100 : ℝ)))
+ :=
+sorry
+
+
+lemma one_lt_four : (1:ℝ) < 4 :=
+begin
+  norm_num,
+end
+
+lemma large_enough_N  :  ∀ᶠ (N : ℕ) in at_top,
+ (N:ℝ)^(1-(6:ℝ)/(log(log N))) = (N:ℝ)^(-(5:ℝ)/(log(log N)))*((N:ℝ)^(1-(1:ℝ)/(log(log N)))) ∧
+ 1/((N:ℝ)^(1-(1:ℝ)/(log(log N)))) < (N:ℝ)^(-(5:ℝ)/(log(log N)))*log(log N) ∧
+ 0 < (N:ℝ)^(-(5:ℝ)/(log(log N))) ∧
+ (N:ℝ) ≤ ((N:ℝ)^(1-(1:ℝ)/(log(log N))))^(2:ℝ) ∧
+ ((N:ℝ)^(1-(1:ℝ)/(log(log N)))) < N ∧
+ 0 < ((N:ℝ)^(1-(1:ℝ)/(log(log N)))) ∧ (0:ℝ) < log N ∧
+ 8 ≤ (N:ℝ)^(1-(3:ℝ)/(log(log N))) ∧
+ (N:ℝ)^(1-(3:ℝ)/(log(log N))) < ((N:ℝ)^(1-(1:ℝ)/(log(log N)))) ∧
+ (log N)^((1/500 : ℝ)) < 2*(N:ℝ)^(1-(1:ℝ)/(log(log N))) ∧
+  2*(N:ℝ)^(-(5:ℝ)/(log(log N)))*log(log N) ≤ (log N)^(-(1/200 : ℝ)) ∧
+  3*(N:ℝ)^(-(5:ℝ)/(log(log N)))*log(log N) ≤ 2 / ((log N)^((1/500 : ℝ)))^2 :=
+ sorry
+
+-- Proposition 6.6
+theorem technical_prop :
+  ∀ᶠ (N : ℕ) in at_top, ∀ (A ⊆ finset.range (N+1)) (y z : ℝ),
+  (1 ≤ y) → (4*y + 4 ≤ z) → (z ≤ (log N)^((1/500 : ℝ)))
+  → (∀ n ∈ A, ( (N:ℝ)^(1-(1:ℝ)/(log(log N))) ≤ n ))
+  → 2 / y + (log N)^(-(1/200 : ℝ)) ≤ rec_sum A
+  → (∀ n ∈ A, ∃ d₁ d₂ : ℕ, (d₁ ∣ n) ∧ (d₂ ∣ n) ∧ (y ≤ d₁) ∧ (4*d₁ ≤ d₂) ∧ ((d₂ : ℝ) ≤ z) )
+  → (∀ n ∈ A, is_smooth ((N:ℝ)^(1-(6:ℝ)/(log(log N)))) n)
+  → arith_regular N A
+  → ∃ S ⊆ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ z) ∧
+    rec_sum S = 1/d
+  :=
+  sorry
+
+lemma prop_one_specialise :
+  ∀ᶠ N : ℕ in at_top, ∀ A ⊆ finset.range (N + 1),
+    (∀ n ∈ A, (N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) ≤ n)
+  → log N ^ (1 / 500 : ℝ) ≤ (rec_sum A : ℝ)
+  → (∀ n ∈ A, ∃ d₂ : ℕ, d₂ ∣ n ∧ 4 ≤ d₂ ∧ (d₂ : ℝ) ≤ log N ^ (1 / 500 : ℝ))
+  → (∀ n ∈ A, is_smooth ((N : ℝ) ^ (1 - (6 : ℝ) / log (log N))) n)
+  → arith_regular N A
+  → ∃ S ⊆ A, ∃ d : ℕ, 1 ≤ d ∧ (d : ℝ) ≤ log N ^ (1 / 500 : ℝ) ∧ rec_sum S = 1 / d :=
+begin
+  have hf : tendsto (λ (x : ℕ), log x ^ (1 / 500 : ℝ)) at_top at_top :=
+    tendsto_coe_log_pow_at_top _ (by norm_num1),
+  have hf' : tendsto (λ (x : ℕ), log x ^ (1 / 200 : ℝ)) at_top at_top :=
+    tendsto_coe_log_pow_at_top _ (by norm_num1),
+  filter_upwards [technical_prop, hf (eventually_ge_at_top 8), hf' (eventually_ge_at_top 1),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top) (eventually_ge_at_top 0)],
+  intros N hN hN' hN'' hN''' A A_upper_bound A_lower_bound hA₁ hA₂ hA₃ hA₄,
+  simp only [set.mem_set_of_eq, set.preimage_set_of_eq] at hN' hN'' hN''',
+  exact_mod_cast hN A A_upper_bound 1 _ le_rfl _ le_rfl A_lower_bound _ _ hA₃ hA₄,
+  { exact le_trans (by norm_num1) hN' },
+  { apply (le_trans _ hN').trans hA₁,
+    rw [←le_sub_iff_add_le', rpow_neg],
+    { norm_num1, apply @le_trans _ _ _ (1:ℝ) 6,
+      exact inv_le_one hN'', norm_num, },
+    { exact hN''' } },
+  intros n hn,
+  obtain ⟨d₂, hd₂, hd₂', hd₂''⟩ := hA₂ n hn,
+  exact ⟨1, d₂, one_dvd _, hd₂, by simp, by simpa, hd₂''⟩,
+end
+
+-- Corollary 1
+theorem corollary_one :
+  ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range (N + 1),
+  (∀ n ∈ A, (N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) ≤ n)
+  → 2 * log N ^ (1 / 500 : ℝ) ≤ rec_sum A
+  → (∀ n ∈ A, ∃ p : ℕ, p ∣ n ∧ 4 ≤ p ∧ (p : ℝ) ≤ log N ^ (1/500 : ℝ))
+  → (∀ n ∈ A, is_smooth ((N : ℝ) ^ (1 - (6 : ℝ) / log (log N))) n)
+  → arith_regular N A
+  → ∃ S ⊆ A, rec_sum S = 1 :=
+begin
+  filter_upwards [prop_one_specialise, eventually_ge_at_top 1],
+  intros N p1 hN₁ A A_upper_bound A_lower_bound hA₁ hA₂ hA₃ hA₄,
+  -- `good_set` expresses the families of subsets that we like
+  -- instead of saying we have S_1, ..., S_k, I'll say we have k-many subsets (+ same conditions)
+  let good_set : finset (finset ℕ) → Prop :=
+    λ S, (∀ s ∈ S, s ⊆ A) ∧ (S : set (finset ℕ)).pairwise_disjoint id ∧
+      ∀ s, ∃ (d : ℕ), s ∈ S → 1 ≤ d ∧ (d : ℝ) ≤ (log N)^(1/500 : ℝ) ∧ rec_sum s = 1 / d,
+    -- the last condition involving `d` is chosen weirdly so that `choose` later gives a more
+    -- convenient function
+  let P : ℕ → Prop := λ k, ∃ S : finset (finset ℕ), S.card = k ∧ good_set S,
+  let k : ℕ := nat.find_greatest P (A.card + 1), -- A.card is a trivial upper bound
+  have P0 : P 0 := ⟨∅, by simp [good_set]⟩, -- we clearly have that 0 satisfies p by using ∅
+  have Pk : P k := nat.find_greatest_spec (nat.zero_le _) P0,
+  obtain ⟨S, hk, hS₁, hS₂, hS₃⟩ := Pk,
+  choose d' hd'₁ hd'₂ hd'₃ using hS₃,
+  let t : ℕ → ℕ := λ d, (S.filter (λ s, d' s = d)).card,
+  -- If we do have an appropriate d, take it
+  by_cases h : ∃ d : ℕ, 0 < d ∧ d ≤ t d,
+  { obtain ⟨d, d_pos, ht⟩ := h,
+    -- there are ≥ d things with R(s) = 1/d, pick a subset so we have exactly d
+    obtain ⟨T', hT', hd₂⟩ := finset.exists_smaller_set _ _ ht,
+    have hT'S := hT'.trans (finset.filter_subset _ _),
+    refine ⟨T'.bUnion id, _, _⟩,
+    { refine (finset.bUnion_subset_bUnion_of_subset_left _ hT'S).trans _,
+      rwa finset.bUnion_subset },
+    rw [rec_sum_bUnion_disjoint (hS₂.subset hT'S), finset.sum_congr rfl, finset.sum_const, hd₂,
+      nsmul_eq_mul, mul_div_cancel'],
+    { rw nat.cast_ne_zero, exact d_pos.ne' },
+    intros i hi,
+    rw [hd'₃ _ (hT'S hi), (finset.mem_filter.1 (hT' hi)).2] },
+  push_neg at h,
+  exfalso,
+  -- otherwise make A' as in the paper
+  let A' := A \ S.bUnion id,
+  have hS : (∑ s in S, rec_sum s : ℝ) ≤ (log N)^(1/500 : ℝ),
+  { transitivity (∑ d in finset.Icc 1 ⌊(log N)^(1/500 : ℝ)⌋₊, t d / d : ℝ),
+    { have : ∀ s ∈ S, d' s ∈ finset.Icc 1 ⌊(log N)^(1/500 : ℝ)⌋₊,
+      { intros s hs,
+        simp only [finset.mem_Icc, hd'₁ s hs, nat.le_floor (hd'₂ s hs), and_self] },
+      rw ←finset.sum_fiberwise_of_maps_to this,
+      apply finset.sum_le_sum,
+      intros d hd,
+      rw [div_eq_mul_one_div, ←nsmul_eq_mul],
+      apply finset.sum_le_card_nsmul,
+      intros s hs,
+      simp only [finset.mem_filter] at hs,
+      rw [hd'₃ _ hs.1, hs.2, rat.cast_div, rat.cast_one, rat.cast_coe_nat] },
+    refine (finset.sum_le_card_nsmul _ _ 1 _).trans _,
+    { simp only [one_div, and_imp, finset.mem_Icc],
+      rintro d hd -,
+      exact div_le_one_of_le (nat.cast_le.2 ((h d hd).le)) (nat.cast_nonneg _) },
+    { simp only [nat.add_succ_sub_one, add_zero, nat.card_Icc, nat.smul_one_eq_coe],
+      exact nat.floor_le (rpow_nonneg_of_nonneg (log_nonneg (nat.one_le_cast.2 hN₁)) _) } },
+  have hAS : disjoint A' (S.bUnion id) := finset.sdiff_disjoint,
+  have RA'_ineq : (log N)^(1/500 : ℝ) ≤ rec_sum A',
+  { have : rec_sum A = rec_sum A' + rec_sum (S.bUnion id),
+    { rw [←rec_sum_disjoint hAS, finset.sdiff_union_of_subset],
+      rwa finset.bUnion_subset },
+    rw [this] at hA₁,
+    simp only [rat.cast_add] at hA₁,
+    rw ←sub_le_iff_le_add at hA₁,
+    apply le_trans _ hA₁,
+    rw [rec_sum_bUnion_disjoint hS₂, rat.cast_sum],
+    linarith [hS] },
+  have hA' : A' ⊆ A := finset.sdiff_subset _ _,
+  obtain ⟨S', hS', d, hd, hd', hS'₂⟩ :=
+    p1 A' (hA'.trans A_upper_bound) (λ n hn, A_lower_bound n (hA' hn))
+      RA'_ineq (λ n hn, hA₂ n (hA' hn)) (λ n hn, hA₃ n (hA' hn)) (hA₄.subset hA'),
+  have hS'' : ∀ s ∈ S, disjoint S' s :=
+    λ s hs, disjoint.mono hS' (finset.subset_bUnion_of_mem id hs) hAS,
+  have hS''' : S' ∉ S,
+  { intro t,
+    exact (nonempty_of_rec_sum_recip hd hS'₂).ne_empty (disjoint_self.1 (hS'' _ t)) },
+  have : P (k+1),
+  { refine ⟨insert S' S, _, _⟩,
+    { rw [finset.card_insert_of_not_mem hS''', hk] },
+    refine ⟨_, _, _⟩,
+    { simpa [hS'.trans hA'] using hS₁ },
+    { simpa [set.pairwise_disjoint_insert, hS₂] using λ s hs _, hS'' _ hs },
+    intros s,
+    rcases eq_or_ne s S' with rfl | hs,
+    { exact ⟨d, λ _, ⟨hd, hd', hS'₂⟩⟩ },
+    refine ⟨d' s, λ i, _⟩,
+    have : s ∈ S := finset.mem_of_mem_insert_of_ne i hs,
+    exact ⟨hd'₁ _ this, hd'₂ _ this, hd'₃ _ this⟩ },
+  have hk_bound : k + 1 ≤ A.card + 1,
+  { rw [←hk, add_le_add_iff_right],
+    apply le_trans _ (finset.card_le_of_subset (finset.bUnion_subset.2 hS₁)),
+    apply finset.card_le_card_bUnion hS₂,
+    intros s hs,
+    exact nonempty_of_rec_sum_recip (hd'₁ s hs) (hd'₃ s hs) },
+  have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
+  simpa using this,
 end

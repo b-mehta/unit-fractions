@@ -222,7 +222,6 @@ begin
   rw factorization_eq_iff hp hk,
 end
 
--- TB - this lemma will frequently be useful
 lemma ppowers_in_set_subset { A B : finset ℕ} (hAB : A ⊆ B) :
   ppowers_in_set A ⊆ ppowers_in_set B :=
 bUnion_subset_bUnion_of_subset_left _ hAB
@@ -295,3 +294,10 @@ def interval_rare_ppowers (I : finset ℤ) (A : finset ℕ) (K : ℝ) : finset �
 lemma interval_rare_ppowers_subset (I : finset ℤ) {A : finset ℕ} (K : ℝ) :
   interval_rare_ppowers I A K ⊆ ppowers_in_set A :=
 filter_subset _ _
+
+-- This is the awkward condition that 'bridges' the hypothesis of the Fourier stuff
+-- with the conclusion of the combinatorial bits
+def good_condition (A : finset ℕ) (K T L : ℝ) : Prop :=
+(∀ (t : ℝ) (I : finset ℤ), I = finset.Icc ⌈t - K / 2⌉ ⌊t + K / 2⌋ →
+      T ≤ (A.filter (λ n, ∀ x ∈ I, ¬ ↑n ∣ x)).card ∨
+      ∃ x ∈ I, ∀ q ∈ interval_rare_ppowers I A L, ↑q ∣ x)
