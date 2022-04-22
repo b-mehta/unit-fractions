@@ -117,6 +117,10 @@ lemma mem_local_part {A : finset ℕ} {q : ℕ} (n : ℕ) :
   n ∈ local_part A q ↔ n ∈ A ∧ q ∣ n ∧ coprime q (n / q) :=
 by rw [local_part, mem_filter]
 
+lemma local_part_mono {A₁ A₂ : finset ℕ} {q : ℕ} (h : A₁ ⊆ A₂) :
+  local_part A₁ q ⊆ local_part A₂ q :=
+filter_subset_filter _ h
+
 lemma local_part_subset {A : finset ℕ} {q : ℕ} :
   local_part A q ⊆ A :=
 filter_subset _ _
@@ -221,7 +225,7 @@ end
 -- TB - this lemma will frequently be useful
 lemma ppowers_in_set_subset { A B : finset ℕ} (hAB : A ⊆ B) :
   ppowers_in_set A ⊆ ppowers_in_set B :=
-sorry
+bUnion_subset_bUnion_of_subset_left _ hAB
 
 lemma ppowers_in_set_nonempty {A : finset ℕ} (hA : ∃ n ∈ A, 2 ≤ n) :
   (ppowers_in_set A).nonempty :=
@@ -269,7 +273,7 @@ by { rw [rec_sum_local, local_part, filter_union, sum_union (disjoint_filter_fil
 
 lemma rec_sum_local_mono {A₁ A₂ : finset ℕ} {q : ℕ} (h : A₁ ⊆ A₂) :
   rec_sum_local A₁ q ≤ rec_sum_local A₂ q :=
-sorry
+sum_le_sum_of_subset_of_nonneg (local_part_mono h) (λ i _ _, div_nonneg (by simp) (by simp))
 
 def ppower_rec_sum (A : finset ℕ) : ℚ :=
 ∑ q in ppowers_in_set A, 1 / q

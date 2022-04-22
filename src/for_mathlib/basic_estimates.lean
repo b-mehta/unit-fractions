@@ -682,7 +682,7 @@ lemma sigma_zero_apply_eq_card_divisors {i : ℕ} :
 
 end nat.arithmetic_function
 
-localized "notation `τ` := σ 0" in arithmetic_function
+localized "notation `τ` := nat.arithmetic_function.sigma 0" in arithmetic_function
 open nat.arithmetic_function
 
 -- BM: Bounds like these make me tempted to define a relation
@@ -2282,13 +2282,25 @@ begin
   { rintro ⟨p, k, hp, hk, rfl⟩,
     have : k ≠ 0 := by linarith,
     refine ⟨is_prime_pow.pow hp.is_prime_pow ‹k ≠ 0›, λ t, _⟩,
-    -- rw ←nat.succ_le_iff at hk,
     have : p ^ k = p * (p ^ (k - 1)),
     { rw [←pow_succ, tsub_add_cancel_of_le hk.le] },
     have := (t.irreducible.is_unit_or_is_unit this).resolve_left hp.not_unit,
     apply hp.not_unit,
     rwa is_unit_of_is_unit_pow at this,
     rwa [ne.def, tsub_eq_zero_iff_le, not_le] }
+end
+
+lemma log_one_sub_recip {p : ℕ} (hp : p.prime) :
+  |(p : ℝ)⁻¹ + log (1 - (p : ℝ)⁻¹)| ≤ ((p - 1) * p)⁻¹ :=
+begin
+  have hp₁ : (1 : ℝ) < p := nat.one_lt_cast.2 hp.one_lt,
+  have hp₀ : (0 : ℝ) < p := zero_le_one.trans_lt hp₁,
+  have hp_inv : |(p : ℝ)⁻¹| < 1,
+  { rwa [abs_inv, nat.abs_cast, inv_lt_one_iff_of_pos hp₀] },
+  have := abs_log_sub_add_sum_range_le hp_inv 1,
+  rwa [range_one, sum_singleton, nat.cast_zero, abs_inv, nat.abs_cast, zero_add, zero_add, div_one,
+    pow_one, inv_pow₀ _ 2, inv_div_left, sq, ←mul_assoc, sub_mul, one_mul,
+    inv_mul_cancel hp₀.ne'] at this,
 end
 
 -- BM: I expect there's a nicer way of stating this but this should be good enough for now
