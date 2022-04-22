@@ -614,12 +614,10 @@ begin
  exact h2.2.1,
 end
 
-set_option profiler true
-
 lemma main_tech_lemma_ind :
   ∀ᶠ (N : ℕ) in at_top, ∀ M ε y w : ℝ, ∀ A ⊆ finset.range(N+1),
   (0 < M) → (M < N) → (0 < ε) → (2*M > w) → (1/M < ε*log(log N)) →
-  (1 < y) → ( y + 1 ≤ w) →
+  (1 ≤ y) → (2 ≤ w ) → (⌈y⌉₊ ≤ ⌊w⌋₊) →
   (3*ε*log(log N) ≤ 2/(w^2)) → (∀ n ∈ A, M ≤ (n: ℝ)) →
   (2/y + 2*ε*log(log N) ≤ rec_sum A ) →
   (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε*M) →
@@ -635,21 +633,19 @@ begin
   have : tendsto (λ N : ℕ, log (log N)) at_top at_top :=
     tendsto_log_at_top.comp (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top),
   filter_upwards [pruning_lemma_two, this (eventually_gt_at_top 0)],
-  intros N hN h_largeN M ε y w A hA hM hMN hε hMw hMN2 hy hyw hNw hMA hrec hsmooth hdiv i,
+  intros N hN h_largeN M ε y w A hA hM hMN hε hMw hMN2 hy h2w hyw2 hNw hMA hrec hsmooth hdiv i,
   -- Preliminary estimates that will be convenient later
-  have hy01 : 0 < y := zero_le_one.trans_lt hy,
-  have hy12 : 2 ≤ y + 1 := add_le_add_right hy.le 1,
+  have hy01 : 0 < y := by apply lt_of_lt_of_le zero_lt_one hy,
+  have hy12 : 2 ≤ y + 1 := add_le_add_right hy 1,
   have hobvaux : (⌈y⌉₊ : ℝ) < y + 1 := nat.ceil_lt_add_one hy01.le,
-  have hwzero : 0 < w := (zero_lt_two.trans_le hy12).trans_le hyw,
-  have hyw2 : ⌈y⌉₊ ≤ ⌊w⌋₊ := (nat.le_floor_iff hwzero.le).2 (hobvaux.le.trans hyw),
+  have hwzero : 0 < w := by apply lt_of_lt_of_le zero_lt_two h2w,
   have hqaux : (⌊w⌋₊ : ℝ) ≤ w := nat.floor_le hwzero.le,
   have hεNaux : 4 * ε * log(log N) < 2 * (3 * ε * log (log N)),
   { have h₁ : (4 : ℝ) < 2 * 3 := by norm_num1,
     simpa only [mul_assoc] using (mul_lt_mul_right (mul_pos hε h_largeN)).2 h₁ },
   have hεNaux2 : 2 * (3 * ε * log (log N)) ≤ 2 * (2 / w ^ 2) := (mul_le_mul_left zero_lt_two).2 hNw,
   have hwaux : 2 * w ≤ w^2,
-  { rw pow_two,
-    exact mul_le_mul_of_nonneg_right (hy12.trans hyw) hwzero.le },
+  { rw pow_two, exact mul_le_mul_of_nonneg_right h2w hwzero.le },
   -- The actual proof begins, by induction
   induction i,
   -- The case i=0
@@ -824,14 +820,13 @@ begin
     apply nat.le_of_lt_succ hk2''.1, },
   have hk2'''' : k ≤ ⌊w⌋₊, {
     rw lt_min_iff at hk2'', apply le_of_lt hk2''.2,},
-  exact hnew2 n hn2 k hk1 hk2''' hk2''''
+  exact hnew2 n hn2 k hk1 hk2''' hk2'''',
 end
-
 
 lemma main_tech_lemma :
   ∀ᶠ (N : ℕ) in at_top, ∀ M ε y w : ℝ, ∀ A ⊆ finset.range(N+1),
   (0 < M) → (M < N) → (0 < ε) → (2*M > w) → (1/M < ε*log(log N)) →
-  (1 < y) → ( y + 1 ≤ w) →
+  (1 ≤ y) → (2 ≤ w) → (⌈y⌉₊ ≤ ⌊w⌋₊) →
   (3*ε*log(log N) ≤ 2/(w^2)) → (∀ n ∈ A, M ≤ (n: ℝ)) →
   (2/y + 2*ε*log(log N) ≤ rec_sum A ) →
   (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε*M) →
@@ -844,18 +839,17 @@ begin
   have : tendsto (λ N : ℕ, log (log N)) at_top at_top :=
     tendsto_log_at_top.comp (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top),
  filter_upwards [main_tech_lemma_ind, this (eventually_gt_at_top 0)],
- intros N hN h_largeN M ε y w A hA hM hMN hε hMw hMN2 hy hyw hNw hAM hrec hsmooth hdiv,
+ intros N hN h_largeN M ε y w A hA hM hMN hε hMw hMN2 hy h2w hyw hNw hAM hrec hsmooth hdiv,
  have hy01 : 0 < y, {
-   apply @lt_of_lt_of_le _ _ 0 1 y zero_lt_one (le_of_lt hy), },
- have hy12 : 2 ≤ y + 1, {refine add_le_add_right _ 1, apply le_of_lt hy, },
- have hwzero : 0 ≤ w, { apply @le_trans _ _ 0 (y+1) w,
-   apply @le_trans _ _ 0 2 (y+1) zero_le_two hy12, exact hyw, },
+   apply @lt_of_lt_of_le _ _ 0 1 y zero_lt_one hy, },
+ have hy12 : 2 ≤ y + 1, {refine add_le_add_right hy 1, },
+ have hwzero : 0 < w := by apply lt_of_lt_of_le  zero_lt_two h2w,
  let i := ⌊w⌋₊ - ⌈y⌉₊,
- specialize hN M ε y w A hA hM hMN hε hMw hMN2 hy hyw hNw hAM hrec hsmooth hdiv i,
+ specialize hN M ε y w A hA hM hMN hε hMw hMN2 hy h2w hyw hNw hAM hrec hsmooth hdiv i,
  rcases hN with ⟨A', hA', d, hN⟩,
  use A', split, exact hA', use d,
  have hdw : (d:ℝ) ≤ w, {
-   have hauxw : (⌊w⌋₊:ℝ) ≤ w, { apply nat.floor_le hwzero, },
+   have hauxw : (⌊w⌋₊:ℝ) ≤ w, { apply nat.floor_le (le_of_lt hwzero), },
   have hauxw2 : (d:ℝ) ≤ (⌊w⌋₊:ℝ), {exact nat.cast_le.mpr hN.2.2.1, },
   exact hauxw2.trans hauxw,
   },
@@ -870,11 +864,8 @@ begin
    apply @lt_of_lt_of_le _ _ 0 y (d:ℝ), exact hy01, exact hN.1, exact hdw,
    },
  have haux3 : (2:ℝ)/w^2 ≤ 2/w,
- { refine div_le_div_of_le_left zero_le_two _ _,
-   apply @lt_of_lt_of_le _ _ 0 (y+1) w,
-   apply @lt_of_lt_of_le _ _ 0 y (y+1), exact hy01, exact le_add_of_nonneg_right zero_le_one,
-   exact hyw, refine le_self_pow _ _, apply le_trans one_le_two _,
-   apply le_trans hy12 hyw, exact one_le_two, },
+ { refine div_le_div_of_le_left zero_le_two hwzero _, refine le_self_pow _ one_le_two,
+   apply le_trans one_le_two h2w, },
  have haux4: 3*ε*log(log N) < ε*log(log N), {
    apply lt_of_le_of_lt hNw, apply lt_of_le_of_lt haux3, apply lt_of_le_of_lt haux2,
    apply lt_of_le_of_lt haux1 hMN2,
@@ -900,10 +891,7 @@ begin
  have htemp : m ≤ ⌈y⌉₊ + i, {
    have hobvious : ⌈y⌉₊ + i = ⌊w⌋₊, {
      rw ← add_tsub_assoc_of_le, simp only [add_tsub_cancel_left, eq_self_iff_true],
-     apply nat.le_floor,
-     have hobvaux : (⌈y⌉₊:ℝ) < y + 1, { apply nat.ceil_lt_add_one, apply le_of_lt hy01,  },
-     apply le_of_lt, apply lt_of_lt_of_le hobvaux hyw,
-     },
+     exact hyw, },
    rw hobvious, exact htempw,
   },
  specialize hv2 x hx m hdiv.2.2 htemp htempw, linarith,
