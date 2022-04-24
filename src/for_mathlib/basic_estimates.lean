@@ -2064,9 +2064,6 @@ end
 lemma sum_thing'''_has_sum {k : ℕ} (hk : 1 ≤ k) :
   has_sum (λ n : ℕ, ((n + k) * (n + k + 1) : ℝ)⁻¹) k⁻¹ :=
 begin
-  -- have : (↑(k - 2) : ℝ) + 1 = k - 1,
-  -- { rw [nat.cast_sub hk, nat.cast_two],
-  --   ring },
   convert sum_thing_has_sum (k - 1),
   { ext n,
     rw [add_assoc, add_assoc, nat.cast_sub hk, nat.cast_one, sub_add_cancel, add_sub, sub_add],
@@ -2128,37 +2125,51 @@ begin
   simp [inv_nonneg, hk.trans hn.le, mul_nonneg],
 end
 
-lemma intermediate_bound :
-  ∃ c, is_O (λ x, prime_summatory (λ p, ((p - 1) * p : ℝ)⁻¹) 1 x - c) (λ x, x⁻¹) at_top :=
+lemma my_mul_thing : ∀ {n : ℕ}, (0 : ℝ) ≤ (n - 1) * n
+| 0 := by simp
+| (n+1) := mul_nonneg (by simp) (nat.cast_nonneg _)
+
+lemma my_mul_thing' : ∀ {n : ℕ}, (0 : ℝ) ≤ ((n - 1) * n)⁻¹ := λ n, inv_nonneg.2 my_mul_thing
+
+lemma is_O_partial_of_bound {f : ℕ → ℝ} (hf : ∀ n, f n ≤ ((n - 1) * n)⁻¹) (hf' : ∀ n, 0 ≤ f n) :
+  ∃ c, is_O (λ x : ℝ, ∑ i in range (⌊x⌋₊ + 1), f i - c) (λ x, x⁻¹) at_top :=
 begin
-  use ∑' (x : ℕ), (set_of nat.prime).indicator (λ n, ((n - 1) * n : ℝ)⁻¹) x,
-  rw is_O_comm,
-  apply is_O.of_bound 2,
+  have hf'' : summable f := summable_of_nonneg_of_le hf' hf sum_thing'_has_sum.summable,
+  refine ⟨tsum f, (is_O.of_bound 2 _).symm⟩,
   filter_upwards [eventually_ge_at_top (1 : ℝ)] with x hx,
   have hx' : 1 ≤ ⌊x⌋₊ := by rwa [nat.le_floor_iff' one_ne_zero, nat.cast_one],
   have hx'' : (1 : ℝ) ≤ ⌊x⌋₊ := by simpa,
-  rw [norm_inv, ←@sum_add_tsum_compl _ _ _ _ _ _ _ (finset.Icc 1 ⌊x⌋₊)
-    (sum_thing'_has_sum.summable.indicator (set_of nat.prime)), prime_summatory, sum_filter],
-  simp only [set.indicator_apply, mem_set_of_eq, add_tsub_cancel_left, norm_inv, one_mul],
-  convert_to ∥tsum (set.indicator (set_of nat.prime) (λ y : ℕ, ((y - 1) * y : ℝ)⁻¹) ∘
-    (coe : ((finset.Icc 1 ⌊x⌋₊) : set ℕ)ᶜ → ℕ))∥ ≤ 2 * ∥_∥⁻¹ using 3,
-  { ext n,
-    simp only [function.comp_app, set.indicator_apply, mem_set_of_eq] },
-  rw [_root_.tsum_subtype, norm_of_nonneg (tsum_nonneg _), norm_of_nonneg (zero_le_one.trans hx),
-    finset.coe_Icc],
-  { convert (prime_sum_thing hx').trans _,
-    { ext n,
-      rw [indicator_indicator, indicator_indicator],
-      congr' 1 with m,
-      simp only [mem_inter_eq, mem_compl_eq, set.mem_Icc, mem_set_of_eq, and.congr_left_iff,
-        not_and, not_le, imp_iff_right_iff],
-      intro hm,
-      exact or.inl (hm.one_lt.le) },
-    rw [←div_eq_mul_inv, le_div_iff (zero_lt_one.trans_le hx), mul_comm, ←div_eq_mul_inv,
-      div_le_iff (zero_lt_one.trans_le hx''), two_mul],
-    exact (nat.lt_floor_add_one x).le.trans (add_le_add_left hx'' _) },
-  refine λ b, indicator_apply_nonneg (λ _, indicator_apply_nonneg (λ hb : nat.prime b, _)),
-  simp [mul_nonneg, hb.one_lt.le],
+  rw [←sum_add_tsum_nat_add _ hf'', add_tsub_cancel_left, norm_inv,
+    norm_of_nonneg (tsum_nonneg (λ i, hf' (i + _))), norm_of_nonneg (zero_le_one.trans hx)],
+  transitivity (⌊x⌋₊ : ℝ)⁻¹,
+  { refine has_sum_le (λ n, _) ((summable_nat_add_iff _).2 hf'').has_sum (sum_thing'''_has_sum hx'),
+    refine (hf _).trans _,
+    rw [nat.cast_add, nat.cast_add_one, ←add_assoc, add_sub_cancel] },
+  rw [←div_eq_mul_inv, le_div_iff' (zero_lt_one.trans_le hx), ←div_eq_mul_inv,
+    div_le_iff (zero_lt_one.trans_le hx'')],
+  linarith [nat.lt_floor_add_one x],
+end
+
+lemma is_O_partial_of_bound' {f : ℕ → ℝ} (hf : ∀ n, f n ≤ ((n - 1) * n)⁻¹) (hf' : ∀ n, 0 ≤ f n) :
+  ∃ c, is_O (λ x : ℝ, ∑ i in Icc 1 ⌊x⌋₊, f i - c) (λ x, x⁻¹) at_top :=
+begin
+  obtain ⟨c, hc⟩ := is_O_partial_of_bound hf hf',
+  refine ⟨c, hc.congr_left (λ x, eq.symm _)⟩,
+  rw [range_eq_Ico, sum_subset, nat.Ico_succ_right],
+  { exact Icc_subset_Icc_left zero_le_one },
+  simp only [finset.mem_Icc, zero_le', true_and, and_true, not_le, nat.lt_one_iff]
+    {contextual := tt},
+  intros _ _ _,
+  exact (hf' 0).antisymm' (by simpa using hf 0),
+end
+
+lemma intermediate_bound :
+  ∃ c, is_O (λ x, prime_summatory (λ p, ((p - 1) * p : ℝ)⁻¹) 1 x - c) (λ x, x⁻¹) at_top :=
+begin
+  simp only [prime_summatory, sum_filter],
+  refine is_O_partial_of_bound' (λ n, _) (λ n, _);
+  split_ifs;
+  exact my_mul_thing' <|> refl
 end
 
 lemma prime_proper_powers {x : ℝ} {f : ℕ → ℝ} :
@@ -2301,6 +2312,13 @@ begin
   rwa [range_one, sum_singleton, nat.cast_zero, abs_inv, nat.abs_cast, zero_add, zero_add, div_one,
     pow_one, inv_pow₀ _ 2, inv_div_left, sq, ←mul_assoc, sub_mul, one_mul,
     inv_mul_cancel hp₀.ne'] at this,
+end
+
+lemma real.abs_exp_sub_one_le {x : ℝ} (hx : |x| ≤ 1) :
+  |exp x - 1| ≤ 2 * |x| :=
+begin
+  have : complex.abs x ≤ 1 := by exact_mod_cast hx,
+  exact_mod_cast complex.abs_exp_sub_one_le this,
 end
 
 -- BM: I expect there's a nicer way of stating this but this should be good enough for now
