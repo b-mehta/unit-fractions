@@ -297,7 +297,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 5.1 (lem:basic)</div>
-      <div class="thm_thm_content"><p> If \(0{\lt}\left\lvert n_1-n_2\right\rvert \leq N\) then </p>
+      <div class="thm_thm_content"><p>  If \(0{\lt}\left\lvert n_1-n_2\right\rvert \leq N\) then </p>
 <div class="displaymath" id="a0000000162">
   \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N, \]
 </div>
@@ -321,7 +321,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Lemma 5.3 (lem:smoothsum)</div>
-      <div class="thm_thm_content"><p> There is a constant \(C{\gt}0\) such that the following holds. Let \(0{\lt}y{\lt}N\) be some reals, and suppose that \(D\) is a finite set of integers such that if \(d\in D\) and \(p^r\|  d\) then \(y{\lt}p^r\leq N\). Then, for any real \(k\geq 1\), </p>
+      <div class="thm_thm_content"><p>  There is a constant \(C{\gt}0\) such that the following holds. Let \(0{\lt}y{\lt}N\) be some reals, and suppose that \(D\) is a finite set of integers such that if \(d\in D\) and \(p^r\|  d\) then \(y{\lt}p^r\leq N\). Then, for any real \(k\geq 1\), </p>
 <div class="displaymath" id="a0000000170">
   \[ \sum _{d\in D}\frac{k^{\omega (d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k. \]
 </div>
@@ -357,14 +357,14 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>6 Deduction of main technical proposition <span class="partial">16%</span></h3>
+  <h3>6 Deduction of main technical proposition <span class="partial">33%</span></h3>
   
   <ul class="coverage">
     
     
     <li>
       <div class="thm_thmheading">Lemma 6.1 (lem:find_multiples)</div>
-      <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
+      <div class="thm_thm_content"><p>   Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
 <div class="displaymath" id="a0000000199">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A. \]
 </div>
@@ -419,7 +419,7 @@ Click chapter titles to see missing items.
     
     <li>
       <div class="thm_thmheading">Proposition 6.4 (prop:tech_iterative2)</div>
-      <div class="thm_thm_content"><p> Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
+      <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
 <div class="displaymath" id="a0000000227">
   \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
 </div>
@@ -441,21 +441,6 @@ Click chapter titles to see missing items.
     </li>
     
     
-    
-    <li>
-      <div class="thm_thmheading">Lemma 6.5 (lem:techmainprec)</div>
-      <div class="thm_thm_content"><p> Let \(N\) be sufficiently large. Let \(\epsilon ,y,w,M\) be reals such that \(M{\lt}N\) and \(2\leq \lceil y\rceil \leq \lfloor w\rfloor \) and \(1/M{\lt} \epsilon \log \log N\) and \(\frac{2}{w^2}\geq 3\epsilon \log \log N\) and let \(A\subset [M,N]\) be such that </p>
-<ol class="enumerate">
-  <li><p>\(R(A)\geq 2/y+2\epsilon \log \log N\), </p>
-</li>
-  <li><p>every \(n\in A\) is divisible by some \(d\in [y,w]\), </p>
-</li>
-  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \epsilon M\). </p>
-</li>
-</ol>
-<p> Then there exists some \(\emptyset \neq A'\subseteq A\) and \(d\in [y,w]\) such that \(R(A')\in [2/d-1/M,2/d)\), for all \(q\in \mathcal{Q}_{A'}\) we have \(R(A';q){\gt}\epsilon \), and there is a multiple of \(d\) in \(A'\), and there are no multiples of any \(m\in [y,d)\) in \(A\). </p>
-</div>
-    </li>
     
     
     
@@ -614,79 +599,9 @@ Click chapter titles to see missing items.
 
 <section>
   
-  <h3>5 Technical Lemmas</h3>
-  <ul class="coverage">
-    
-    <li>
-      <div class="thm_thmheading">Lemma 5.3 (lem:smoothsum)</div>
-      <div class="thm_thm_content"><p> There is a constant \(C{\gt}0\) such that the following holds. Let \(0{\lt}y{\lt}N\) be some reals, and suppose that \(D\) is a finite set of integers such that if \(d\in D\) and \(p^r\|  d\) then \(y{\lt}p^r\leq N\). Then, for any real \(k\geq 1\), </p>
-<div class="displaymath" id="a0000000170">
-  \[ \sum _{d\in D}\frac{k^{\omega (d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k. \]
-</div>
-</div>
-    </li>
-    
-  </ul>
-  
 </section>
 
 <section>
-  
-  <h3>6 Deduction of main technical proposition</h3>
-  <ul class="coverage">
-    
-    <li>
-      <div class="thm_thmheading">Lemma 6.1 (lem:find_multiples)</div>
-      <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000199">
-  \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A. \]
-</div>
-<p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), if \(A_I\) is the set of those \(n\in A\) which divide some element of \(I\), for all \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\) there exists some integer \(x_q\in I\) such that \(q\mid x_q\) and </p>
-<div class="displaymath" id="a0000000200">
-  \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log \log N. \]
-</div>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Proposition 6.4 (prop:tech_iterative2)</div>
-      <div class="thm_thm_content"><p> Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
-<div class="displaymath" id="a0000000227">
-  \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
-</div>
-<p> and, for all \(q\in \mathcal{Q}_A\), </p>
-<div class="displaymath" id="a0000000228">
-  \[ R(A;q) \geq (\log N)^{-1/100}, \]
-</div>
-<p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\). Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
-<ol class="enumerate">
-  <li><div class="displaymath" id="a0000000229">
-  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
-</div>
-<p> or </p>
-</li>
-  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A;M/2(\log N)^{1/100})\). </p>
-</li>
-</ol>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Lemma 6.5 (lem:techmainprec)</div>
-      <div class="thm_thm_content"><p> Let \(N\) be sufficiently large. Let \(\epsilon ,y,w,M\) be reals such that \(M{\lt}N\) and \(2\leq \lceil y\rceil \leq \lfloor w\rfloor \) and \(1/M{\lt} \epsilon \log \log N\) and \(\frac{2}{w^2}\geq 3\epsilon \log \log N\) and let \(A\subset [M,N]\) be such that </p>
-<ol class="enumerate">
-  <li><p>\(R(A)\geq 2/y+2\epsilon \log \log N\), </p>
-</li>
-  <li><p>every \(n\in A\) is divisible by some \(d\in [y,w]\), </p>
-</li>
-  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \epsilon M\). </p>
-</li>
-</ol>
-<p> Then there exists some \(\emptyset \neq A'\subseteq A\) and \(d\in [y,w]\) such that \(R(A')\in [2/d-1/M,2/d)\), for all \(q\in \mathcal{Q}_{A'}\) we have \(R(A';q){\gt}\epsilon \), and there is a multiple of \(d\) in \(A'\), and there are no multiples of any \(m\in [y,d)\) in \(A\). </p>
-</div>
-    </li>
-    
-  </ul>
   
 </section>
 
@@ -782,11 +697,125 @@ Click chapter titles to see missing items.
 </div>
     </li>
     
+    <li>
+      <div class="thm_thmheading">Lemma 5.4 (lem:usingq)</div>
+      <div class="thm_thm_content"><p>   There is a constant \(c{\gt}0\) such that the following holds. Let \(N\geq M\geq N^{1/2}\) be sufficiently large, and suppose that \(k\) is a real number such that \(1\leq k \leq c\log \log N\). Suppose that \(A\subset [M,N]\) is a set of integers such that \(\omega (n)\leq (\log N)^{1/k}\) for all \(n\in A\). </p>
+<p>For all \(q\) such that \(R(A;q)\geq 1/\log N\) there exists \(d\) such that </p>
+<ol class="enumerate">
+  <li><p>\(qd {\gt} M\exp (-(\log N)^{1-1/k})\), </p>
+</li>
+  <li><p>\(\omega (d)\leq \tfrac {5}{\log k}\log \log N\), and </p>
+</li>
+  <li><div class="displaymath" id="a0000000175">
+  \[ \sum _{\substack {n\in A_q\\ qd\mid n\\ (qd,n/qd)=1}}\frac{qd}{n}\gg \frac{R(A;q)}{(\log N)^{2/k}}. \]
+</div>
+</li>
+</ol>
+</div>
+    </li>
+    
   </ul>
   
 </section>
 
 <section>
+  
+  <h3>6 Deduction of main technical proposition</h3>
+  <ul class="coverage">
+    
+    <li>
+      <div class="thm_thmheading">Lemma 6.1 (lem:find_multiples)</div>
+      <div class="thm_thm_content"><p>   Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
+<div class="displaymath" id="a0000000199">
+  \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A. \]
+</div>
+<p> Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), if \(A_I\) is the set of those \(n\in A\) which divide some element of \(I\), for all \(q\in \mathcal{Q}_A\) such that \(R(A_I;q){\gt} 1/2(\log N)^{1/100}\) there exists some integer \(x_q\in I\) such that \(q\mid x_q\) and </p>
+<div class="displaymath" id="a0000000200">
+  \[ \sum _{\substack {r\mid x_q\\ r\in \mathcal{Q}_A}}\frac{1}{r}\geq 0.35\log \log N. \]
+</div>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Proposition 6.3 (prop:tech_iterative)</div>
+      <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
+<div class="displaymath" id="a0000000211">
+  \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
+</div>
+<div class="displaymath" id="a0000000212">
+  \[ R(A)\geq (\log N)^{-1/101} \]
+</div>
+<p> and, for all \(q\in \mathcal{Q}_A\), </p>
+<div class="displaymath" id="a0000000213">
+  \[ R(A;q) \geq (\log N)^{-1/100}. \]
+</div>
+<p> Then either </p>
+<ol class="enumerate">
+  <li><p>there is some \(B\subset A\) such that \(R(B)\geq \tfrac {1}{3}R(A)\) and </p>
+<div class="displaymath" id="a0000000214">
+  \[ \sum _{q\in \mathcal{Q}_{B}}\frac{1}{q}\leq \frac{2}{3}\log \log N, \]
+</div>
+<p> or </p>
+</li>
+  <li><p>for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
+<ol class="enumerate">
+  <li><div class="displaymath" id="a0000000215">
+  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
+</div>
+<p> or </p>
+</li>
+  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A;M/2(\log N)^{1/100})\). </p>
+</li>
+</ol>
+</li>
+</ol>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Proposition 6.4 (prop:tech_iterative2)</div>
+      <div class="thm_thm_content"><p>  Suppose \(N\) is sufficiently large and \(N\geq M\geq N^{1/2}\), and suppose that \(A\subset [M,N]\) is a set of integers such that </p>
+<div class="displaymath" id="a0000000227">
+  \[ \tfrac {99}{100}\log \log N\leq \omega (n)\leq 2\log \log N\quad \textrm{for all}\quad n\in A, \]
+</div>
+<p> and, for all \(q\in \mathcal{Q}_A\), </p>
+<div class="displaymath" id="a0000000228">
+  \[ R(A;q) \geq (\log N)^{-1/100}, \]
+</div>
+<p> and \(\sum _{q\in \mathcal{Q}_A}\frac{1}{q}\leq \frac{2}{3}\log \log N\). Then for any interval of length \(\leq MN^{-2/(\log \log N)}\), either </p>
+<ol class="enumerate">
+  <li><div class="displaymath" id="a0000000229">
+  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq M/\log N, \]
+</div>
+<p> or </p>
+</li>
+  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A;M/2(\log N)^{1/100})\). </p>
+</li>
+</ol>
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Proposition 6.6 (prop:techmain)</div>
+      <div class="thm_thm_content"><p>  Let \(N\) be sufficiently large. Suppose \(A\subset [N^{1-1/\log \log N},N]\) and \(1\leq y\leq z\leq (\log N)^{1/500}\) are such that </p>
+<ol class="enumerate">
+  <li><p>\(R(A)\geq 2/y+(\log N)^{-1/200}\), </p>
+</li>
+  <li><p>every \(n\in A\) is divisible by some \(d_1\) and \(d_2\) where \(y\leq d_1\) and \(4d_1\leq d_2\leq z\), </p>
+</li>
+  <li><p>every prime power \(q\) dividing some \(n\in A\) satisfies \(q\leq N^{1-6/\log \log N}\), and </p>
+</li>
+  <li><p>every \(n\in A\) satisfies </p>
+<div class="displaymath" id="a0000000240">
+  \[ \tfrac {99}{100}\log \log N\leq \omega (n) \leq 2\log \log N. \]
+</div>
+</li>
+</ol>
+<p> There is some \(S\subset A\) such that \(R(S)=1/d\) for some \(d\in [y,z]\). </p>
+</div>
+    </li>
+    
+  </ul>
   
 </section>
 
