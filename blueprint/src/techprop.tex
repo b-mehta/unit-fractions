@@ -2,6 +2,8 @@
 \label{chap:techprop}
 
 \begin{lemma}\label{lem:find_multiples}
+\leanok
+\lean{find_good_x}
   \uses{def:interval_rare_ppowers}
 Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that
 \[\tfrac{99}{100}\log\log N\leq \omega(n)\leq  2\log\log N\quad\textrm{for all}\quad n\in A.\]
@@ -118,6 +120,8 @@ Finally, suppose that $R(A^{(0)})\geq R(A)/3$. We will derive a contradiction, a
 \end{proof}
 
 \begin{proposition}\label{prop:tech_iterative2}
+  \leanok
+  \lean{force_good_properties2}
 Suppose $N$ is sufficiently large and $N\geq M\geq N^{1/2}$, and suppose that $A\subset [M,N]$ is a set of integers such that
 \[\tfrac{99}{100}\log\log N\leq \omega(n)\leq  2\log\log N\quad\textrm{for all}\quad n\in A,\]
 and, for all $q\in \mathcal{Q}_A$,
@@ -153,6 +157,8 @@ Therefore $\abs{X}\leq 1$. If $\mathcal{D}$ is empty then the second conclusion 
   \end{proof}
 
 \begin{lemma}\label{lem:techmainprec}
+\leanok
+\lean{main_tech_lemma}
 Let $N$ be sufficiently large. Let $\epsilon,y,w,M$ be reals such that $M<N$ and $2\leq \lceil y\rceil \leq \lfloor w\rfloor$ and $1/M< \epsilon\log\log N$ and $\frac{2}{w^2}\geq 3\epsilon\log\log N$ and let $A\subset [M,N]$ be such that
 \begin{enumerate}
 \item $R(A)\geq 2/y+2\epsilon\log\log N$,
@@ -162,6 +168,7 @@ Let $N$ be sufficiently large. Let $\epsilon,y,w,M$ be reals such that $M<N$ and
 Then there exists some $\emptyset\neq A'\subseteq A$ and $d\in [y,w]$ such that $R(A')\in [2/d-1/M,2/d)$, for all $q\in\mathcal{Q}_{A'}$ we have $R(A';q)>\epsilon$, and there is a multiple of $d$ in $A'$, and there are no multiples of any $m\in [y,d)$ in $A$. 
 \end{lemma}
 \begin{proof}
+\leanok
 \uses{lem:pisq}
 In the proof below, we write $t_i=\min(\lceil y\rceil +i, \lfloor w\rfloor)$ for all integer $i\geq 0$ for simplicity. It is convenient to note at the outset that $t_0=\lceil y\rceil$, $t_i\leq w$ for all $i$, for all $i\geq 0$ we have $t_{i+1}\in [t_i,t_i+1]$, and if $t_i< \lfloor w\rfloor$ then $t_{i+1}=t_i+1$. Furthermore, if $i\geq \lfloor w\rfloor -\lceil y\rceil$, then $t_i=\lfloor w\rfloor$. 
 

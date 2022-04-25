@@ -277,6 +277,9 @@ sum_le_sum_of_subset_of_nonneg (local_part_mono h) (λ i _ _, div_nonneg (by sim
 def ppower_rec_sum (A : finset ℕ) : ℚ :=
 ∑ q in ppowers_in_set A, 1 / q
 
+lemma ppower_rec_sum_mono  {A₁ A₂ : finset ℕ} (h : A₁ ⊆ A₂) :
+  ppower_rec_sum A₁ ≤ ppower_rec_sum A₂ := sorry
+
 -- Replace nat.prime here with prime_power
 def is_smooth (y : ℝ) (n : ℕ) : Prop := ∀ q : ℕ, is_prime_pow q → q ∣ n → (q : ℝ) ≤ y
 

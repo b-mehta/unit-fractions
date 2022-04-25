@@ -22,6 +22,328 @@ open_locale arithmetic_function
 open_locale classical
 noncomputable theory
 
+lemma main_tech_lemma :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M ε y w : ℝ, ∀ A ⊆ finset.range(N+1),
+  (0 < M) → (M < N) → (0 < ε) → (2*M > w) → (1/M < ε*log(log N)) →
+  (1 ≤ y) → (2 ≤ w) → (⌈y⌉₊ ≤ ⌊w⌋₊) →
+  (3*ε*log(log N) ≤ 2/(w^2)) → (∀ n ∈ A, M ≤ (n: ℝ)) →
+  (2/y + 2*ε*log(log N) ≤ rec_sum A ) →
+  (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε*M) →
+  (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ w) ∧ d ∣ n) →
+  (∃ A' ⊆ A, ∃ d : ℕ, A' ≠ ∅ ∧ (y ≤ d) ∧ ((d:ℝ) ≤ w) ∧ rec_sum A' < 2/d ∧
+  (2:ℝ)/d-1/M ≤ rec_sum A' ∧ (∀ q ∈ ppowers_in_set A', ε < rec_sum_local A' q)
+  ∧ (∃ n ∈ A', d ∣ n) ∧ (∀ n ∈ A', ∀ k : ℕ, k ∣ n → k < d → (k:ℝ) < y))
+  :=
+begin
+  sorry,
+end
+
+-- Proposition 6.3
+theorem force_good_properties :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
+  ((N:ℝ) ≤ M^(2:ℝ)) → arith_regular N A →
+  ( (log N)^(-(1/101 : ℝ)) ≤ rec_sum A ) →
+  (∀ q ∈ ppowers_in_set A,
+    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) → (
+  (∃ B ⊆ A, ((rec_sum A) ≤ 3*rec_sum B) ∧
+  ((ppower_rec_sum B : ℝ) ≤ (2/3)* log(log N)))
+  ∨ good_condition A (M*(N:ℝ)^(-(2:ℝ)/log(log N))) ((M:ℝ)/log N)
+  (M / (2*(log N)^(1/100 : ℝ))) ) :=
+sorry
+
+-- Proposition 6.4
+theorem force_good_properties2 :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
+  ((N:ℝ) ≤ M^(2:ℝ)) → arith_regular N A →
+  (∀ q ∈ ppowers_in_set A,
+    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) →
+  ((ppower_rec_sum A : ℝ) ≤ (2/3)* log(log N)) →
+  good_condition A (M*(N:ℝ)^(-(2:ℝ)/log(log N))) ((M:ℝ)/log N)
+  (M / (2*(log N)^(1/100 : ℝ)))
+ :=
+sorry
+
+
+lemma one_lt_four : (1:ℝ) < 4 :=
+begin
+  norm_num,
+end
+
+theorem circle_method_prop :
+  ∃ c : ℝ, 0 < c ∧
+    ∀ᶠ (N : ℕ) in filter.at_top,
+    ∀ {K L M T : ℝ} {k : ℕ} {A : finset ℕ},
+    0 < T → 0 < L → 8 ≤ K → K < M → M ≤ N → k ≠ 0 → (k : ℝ) ≤ M / 128 → (∀ n ∈ A, M ≤ ↑n) →
+    (∀ n ∈ A, n ≤ N) →
+    rec_sum A < 2 / k → (2 : ℝ) / k - 1 / M ≤ rec_sum A →
+    k ∣ A.lcm id →
+    (∀ q ∈ ppowers_in_set A, ↑q ≤ min (L * K^2 / (16 * N^2 * (log N)^2)) (min (c * M / k) (T * K^2 / (N^2 * log N)))) →
+    good_condition A K T L →
+    ∃ S ⊆ A, rec_sum S = 1 / k :=
+sorry
+
+lemma large_enough_N  :  ∀ᶠ (N : ℕ) in at_top,
+ (N:ℝ)^(1-(6:ℝ)/(log(log N))) = (N:ℝ)^(-(5:ℝ)/(log(log N)))*((N:ℝ)^(1-(1:ℝ)/(log(log N)))) ∧
+ 1/((N:ℝ)^(1-(1:ℝ)/(log(log N)))) < (N:ℝ)^(-(5:ℝ)/(log(log N)))*log(log N) ∧
+ 0 < (N:ℝ)^(-(5:ℝ)/(log(log N))) ∧
+ (N:ℝ) ≤ ((N:ℝ)^(1-(1:ℝ)/(log(log N))))^(2:ℝ) ∧
+ ((N:ℝ)^(1-(1:ℝ)/(log(log N)))) < N ∧
+ 0 < ((N:ℝ)^(1-(1:ℝ)/(log(log N)))) ∧ (0:ℝ) < log N ∧
+ 8 ≤ (N:ℝ)^(1-(3:ℝ)/(log(log N))) ∧
+ (N:ℝ)^(1-(3:ℝ)/(log(log N))) < ((N:ℝ)^(1-(1:ℝ)/(log(log N)))) ∧
+ (log N)^((1/500 : ℝ)) < 2*(N:ℝ)^(1-(1:ℝ)/(log(log N))) ∧
+  2*(N:ℝ)^(-(5:ℝ)/(log(log N)))*log(log N) ≤ (log N)^(-(1/200 : ℝ)) ∧
+  3*(N:ℝ)^(-(5:ℝ)/(log(log N)))*log(log N) ≤ 2 / ((log N)^((1/500 : ℝ)))^2 ∧
+  3 * (2 * (N:ℝ)^(-(5:ℝ)/(log(log N))) * log (log ↑N)) +
+     1 / (N:ℝ)^(1-(1:ℝ)/(log(log N))) ≤ (1/(2*(log N)^((1/500 : ℝ)))) ∧
+  (log N)^((1/500 : ℝ)) ≤ (N:ℝ)^(1-(1:ℝ)/(log(log N)))/128  :=
+ sorry
+
+-- Proposition 6.6
+theorem technical_prop :
+  ∀ᶠ (N : ℕ) in at_top, ∀ (A ⊆ finset.range (N+1)) (y z : ℝ),
+  (1 ≤ y) → (4*y + 4 ≤ z) → (z ≤ (log N)^((1/500 : ℝ)))
+  → (∀ n ∈ A, ( (N:ℝ)^(1-(1:ℝ)/(log(log N))) ≤ n ))
+  → 2 / y + (log N)^(-(1/200 : ℝ)) ≤ rec_sum A
+  → (∀ n ∈ A, ∃ d₁ d₂ : ℕ, (d₁ ∣ n) ∧ (d₂ ∣ n) ∧ (y ≤ d₁) ∧ (4*d₁ ≤ d₂) ∧ ((d₂ : ℝ) ≤ z) )
+  → (∀ n ∈ A, is_smooth ((N:ℝ)^(1-(6:ℝ)/(log(log N)))) n)
+  → arith_regular N A
+  → ∃ S ⊆ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ z) ∧
+    rec_sum S = 1/d
+  :=
+begin
+  obtain ⟨c,hc,circle_method⟩ := circle_method_prop,
+  filter_upwards [main_tech_lemma, force_good_properties,
+     force_good_properties2, circle_method,large_enough_N],
+  clear circle_method,
+  intros N htechlemma hforce1 hforce2 hcircle hlargeN,
+  let M := (N:ℝ)^(1-(1:ℝ)/(log(log N))),
+  let ε := (N:ℝ)^(-(5:ℝ)/(log(log N))),
+  let K := (N:ℝ)^(1-(3:ℝ)/(log(log N))),
+  let η := (1:ℝ)/(2*(log N)^((1:ℝ)/100)),
+  let L := M / (2 * log N ^ ((1:ℝ)/100)),
+  let T := M / log N,
+  rcases hlargeN with ⟨hεM, hMε, hε, hM3, hM2, hM1, hlogN3, heK, hKM, hlogN4,
+     hlogN5, hlogN6, hlargeNnew, hlargenew2⟩,
+  have hM2aux : M ≤ N, { apply le_of_lt hM2, },
+  intros A hA y z h1y hyz hzN hA2 hrec hdiv hsmooth hreg,
+  have hzT : 0 < T, { apply div_pos hM1 hlogN3, },
+  have hzL : 0 < L, {
+    apply div_pos hM1, apply mul_pos, exact zero_lt_two,
+    apply rpow_pos_of_pos hlogN3, },
+  have hyzaux : y ≤ z, { apply @le_trans _ _ y (4*y) z, apply le_mul_of_one_le_left,
+    apply le_trans zero_le_one h1y, apply le_of_lt one_lt_four,
+    apply le_trans _ hyz, apply le_add_of_nonneg_right,
+    apply le_trans zero_le_one, apply le_of_lt one_lt_four,},
+  have hz_pos : 0 < z, {
+    apply @lt_of_lt_of_le _ _ 0 1 z, exact zero_lt_one, apply le_trans h1y hyzaux, },
+  have hwM : (z/4) < 2*M, {
+    apply @lt_of_lt_of_le _ _ (z/4) z (2*M), rw div_lt_iff,
+    apply lt_mul_of_one_lt_right hz_pos one_lt_four,
+    exact zero_lt_four, apply le_trans hzN, apply le_of_lt hlogN4,
+  },
+  have h8z : 8 ≤ z, { apply le_trans _ hyz, apply add_le_add_right,
+    apply le_mul_of_one_le_right (le_of_lt zero_lt_four) h1y, },
+  have h2z : 2 ≤ z/4, { rw le_div_iff, norm_num1,
+     exact h8z, exact zero_lt_four,  },
+  have hyz' : ⌈y⌉₊ ≤ ⌊z/4⌋₊, {
+    sorry, /-
+    rw nat.ceil_le, apply @le_trans _ _ y (z/4 - 1) _,
+    apply le_sub_right_of_add_le,
+    rw [le_div_iff, add_mul, one_mul, mul_comm],
+    exact hyz, exact zero_lt_four, rw sub_le_iff_le_add,
+    apply @le_trans _ _ (z/4) (⌊z/4⌋₊.succ) _,
+    apply le_of_lt, apply nat.lt_succ_floor, rw nat.succ_eq_add_one,
+    push_cast,-/
+   },
+  let ε' := (log N)^(-(1/100 : ℝ)),
+  have h0ε' : 0 < ε', { sorry, },
+  have hε'M : 1/M < ε'*log(log N), { sorry, },
+  have hε'w2 : (3*ε'*log(log N) ≤ 2/(z^2)), { sorry, },
+  have hε'z : 3*ε'*log(log N) ≤ 2/((z/4)^2), {
+    sorry, /-
+    have hεzaux : (z/4)^2 ≤ z^2, {
+      apply sq_le_sq', apply @le_trans _ _ _ 0 (z/4),
+      rw left.neg_nonpos_iff, apply le_of_lt hz_pos,
+      apply le_of_lt (div_pos hz_pos zero_lt_four),
+      rw div_le_iff, rw le_mul_iff_one_le_right,
+      apply le_of_lt one_lt_four, exact hz_pos, exact zero_lt_four,
+    },
+    have hεzaux2 : 0 < (log N)^((1/500 : ℝ)), {
+      apply rpow_pos_of_pos hlogN3, },
+    apply le_trans hlogN6, rw div_le_div_iff, rw mul_le_mul_left,
+    apply le_trans hεzaux, apply sq_le_sq',
+    apply @le_trans _ _ _ 0 z, rw left.neg_nonpos_iff, apply le_of_lt hεzaux2,
+    apply le_of_lt hz_pos, exact hzN, exact zero_lt_two,
+    apply sq_pos_of_pos hεzaux2, apply sq_pos_of_pos,
+    apply div_pos hz_pos zero_lt_four,-/
+   },
+  have hrec' : 2/y + 2*ε'*log(log N) ≤ rec_sum A, {
+    sorry,
+    --apply le_trans _ hrec, apply add_le_add, refl, exact hlogN5,
+     },
+  have hsmooth' : ∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε'*M, {
+    sorry, /-
+    intros q hq, rw [ppowers_in_set,finset.mem_bUnion] at hq,
+    rcases hq with ⟨a,ha,hq⟩, rw finset.mem_filter at hq, simp_rw is_smooth at hsmooth,
+    specialize hsmooth a ha q hq.2.1, rw ← hεM,
+    apply hsmooth (nat.dvd_of_mem_divisors hq.1), -/
+      },
+  have hdiv' : (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ (z/4)) ∧ d ∣ n),
+   { intros n hn, specialize hdiv n hn, rcases hdiv with ⟨d_1,d_2,hdiv⟩,
+     refine ⟨d_1,hdiv.2.2.1,_,hdiv.1⟩, rw le_div_iff',
+     apply le_trans _ hdiv.2.2.2.2, exact_mod_cast hdiv.2.2.2.1, exact zero_lt_four, },
+  have htech2 := htechlemma,
+  specialize htechlemma M ε' y (z/4) A hA hM1 hM2 h0ε' hwM hε'M h1y h2z hyz' hε'z
+      hA2 hrec' hsmooth' hdiv',
+  rcases htechlemma with ⟨A',hA',d,htech⟩,
+  have hzd : d ≠ 0, {
+    apply ne_of_gt, apply lt_of_lt_of_le zero_lt_one,
+    exact_mod_cast le_trans h1y htech.2.1, exact nat.nontrivial,
+   },
+  by_cases hgoodsubset : (∃ B ⊆ A', ((rec_sum A') ≤ 3*rec_sum B) ∧
+    ((ppower_rec_sum B : ℝ) ≤ (2/3)* log(log N))),
+  -- The first case
+  clear hforce1,
+  rcases hgoodsubset with ⟨B, hB, hrecB, hppB⟩,
+  have hB2 : B ⊆ finset.range(N+1), { apply subset_trans (subset_trans hB hA') hA, },
+  have hzM : z < 2*M, {
+     apply lt_of_le_of_lt hzN hlogN4, },
+  have h14d : 1 ≤ ((4:ℝ)*d), {
+    norm_cast, rw nat.one_le_iff_ne_zero, apply mul_ne_zero,
+    refine ne_of_gt zero_lt_four, exact hzd, },
+  have h2z' : 2 ≤ z, { apply le_trans _ h8z, norm_num1, },
+  have hdz : ⌈(4:ℝ)*d⌉₊ ≤ ⌊z⌋₊, {
+    sorry, /-
+    rw nat.ceil_le, norm_cast, rw nat.le_floor_iff',
+    have : (4:ℝ)*d ≤ z, {
+      rw ← le_div_iff', exact htech.2.2.1, exact zero_lt_four,},
+    exact_mod_cast this, refine ne_of_gt _,
+    have : (0:ℝ) < 4*d , { apply lt_of_lt_of_le zero_lt_one h14d, },
+    exact_mod_cast this, -/
+   },
+  have hB3 : ∀ (n:ℕ), n ∈ B → M ≤ n, { intros n hn,
+  specialize hA2 n, apply hA2 (hA' (hB hn)), },
+  have hrecB : 2/((4:ℝ)*d) + 2*ε'*log(log N) ≤ rec_sum B, {
+    sorry, /-
+    have : (3:ℝ)*(2/(4*d)) = (3/2)/d, {
+        rw [div_mul_eq_div_mul_one_div, ← mul_assoc],
+        rw div_eq_mul_one_div ((3:ℝ)/2) d, norm_num1, refl,
+     },
+    refine (mul_le_mul_left zero_lt_three).mp _,
+    apply @le_trans _ _ _ (rec_sum A' : ℝ) (3*rec_sum B),
+    apply le_trans _ htech.2.2.2.2.1, apply le_sub_right_of_add_le,
+    rw mul_add, rw add_assoc, apply add_le_of_le_sub_left,
+    rw this, rw div_sub_div_same,
+    apply @le_trans _ _ _ ((1:ℝ)/(2*z)) ((2-3/2)/d),
+    apply @le_trans _ _ _ (1/(2*(log N)^((1/500 : ℝ)))) ((1:ℝ)/(2*z)),
+    exact hlargeNnew, rw one_div_le_one_div, apply mul_le_mul_of_nonneg_left hzN,
+    exact zero_le_two, refine mul_pos zero_lt_two _,
+    refine lt_of_lt_of_le hz_pos hzN, refine mul_pos zero_lt_two hz_pos,
+    rw [div_le_div_iff,one_mul], apply le_trans htech.2.2.1,
+    rw div_eq_inv_mul, rw ← mul_assoc, rw mul_le_mul_right, norm_num1, exact hz_pos,
+    refine mul_pos zero_lt_two hz_pos, refine lt_of_lt_of_le zero_lt_one _,
+    refine le_trans h1y htech.2.1, exact_mod_cast hrecB, -/
+   },
+  have hsmoothB : ∀ q ∈ ppowers_in_set B, (q : ℝ) ≤ ε'*M, {
+    sorry, /-
+    intros q hq, specialize hsmooth' q,
+    apply hsmooth' ((ppowers_in_set_subset (subset_trans hB hA')) hq),-/
+  },
+  have hdivB : (∀ (n : ℕ), n ∈ B → (∃ (d_1 : ℕ), (4:ℝ)*d ≤ d_1 ∧ (d_1:ℝ) ≤ z ∧ d_1 ∣ n)),
+    { sorry, /-
+      intros n hn, specialize hdiv n (hA' (hB hn)),
+     rcases hdiv with ⟨d_1,d_2,hdiv⟩,
+     have : d ≤ d_1, {
+       obtain htech' := htech.2.2.2.2.2.2.2,
+       specialize htech' n (hB hn) d_1 hdiv.1,
+       apply le_of_not_gt, intro hfoo, specialize htech' hfoo,
+       apply (not_le.mpr htech') hdiv.2.2.1,
+      },
+     refine ⟨d_2,_,hdiv.2.2.2.2,hdiv.2.1⟩,
+     norm_cast, apply le_trans _ hdiv.2.2.2.1,
+     exact (mul_le_mul_left zero_lt_four).mpr this, -/
+     },
+  specialize htech2 M ε' ((4:ℝ)*d) z B hB2 hM1 hM2 h0ε' hzM hε'M
+      h14d h2z' hdz hε'w2 hB3 hrecB hsmoothB hdivB,
+  rcases htech2 with ⟨B',hB',d',htech2⟩,
+  have hB'2 : B' ⊆ finset.range(N+1), { exact subset_trans hB' hB2, },
+  have hB'reg : arith_regular N B', { sorry, },
+  have hB'3 : (∀ q ∈ ppowers_in_set B',
+    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local B' q )), {
+      obtain htech2' := htech2.2.2.2.2.2.1,
+      intros q hq, apply le_of_lt, specialize htech2' q hq,
+      exact htech2',
+     },
+  have hB'4 : (ppower_rec_sum B' : ℝ) ≤ (2/3)* log(log N), {
+    apply le_trans _ hppB, norm_cast, apply ppower_rec_sum_mono hB',
+   },
+
+  specialize hforce2 M B' hB'2 hM3 hB'reg hB'3 hB'4,
+  have hzd' : d' ≠ 0, {
+    apply ne_of_gt, refine lt_of_lt_of_le zero_lt_one _,
+    exact_mod_cast le_trans h14d htech2.2.1,
+   },
+  have hd'M : (d':ℝ) ≤ M / 128, {
+    apply le_trans htech2.2.2.1, apply le_trans hzN hlargenew2, },
+  have hB'5 : (∀ (n : ℕ), n ∈ B' → M ≤ n), { intros n hn,
+     specialize hA2 n, apply hA2 (hA' (hB (hB' hn))), },
+  have hB'6 : (∀ (n : ℕ), n ∈ B' → n ≤ N), {
+    intros n hn, rw [← nat.lt_add_one_iff, ← finset.mem_range],
+    exact hB'2 hn,
+   },
+  have hdB' : d' ∣ B'.lcm id, {
+    rcases htech2.2.2.2.2.2.2.1 with ⟨n,hn,hnew⟩,
+    apply dvd_trans hnew, apply dvd_lcm hn,
+   },
+  let U' := min (L * K ^ 2 / (16 * N ^ 2 * log N ^ 2)) (min (c * M / d') (T * K ^ 2 / (N ^ 2 * log N))),
+  have hppB' : (∀ (q : ℕ), q ∈ ppowers_in_set B' → (q:ℝ) ≤ U'), { sorry, },
+  have hgoodB' : good_condition B' K T L, { sorry, },
+  specialize @hcircle K L M T d' B' hzT hzL heK hKM hM2aux hzd'
+    hd'M hB'5 hB'6 htech2.2.2.2.1 htech2.2.2.2.2.1 hdB' hppB' hgoodB',
+  rcases hcircle with ⟨S,hS,hcirc⟩,
+  use S, split,
+  exact subset_trans hS (subset_trans hB' (subset_trans hB hA')),
+  refine ⟨d',_,htech2.2.2.1,hcirc⟩, apply le_trans htech.2.1 _,
+  apply le_trans _ htech2.2.1, apply le_mul_of_one_le_left,
+  apply nat.cast_nonneg, norm_num,
+  -- The second case
+  clear hforce2 htech2,
+  have hrangeA' : A' ⊆ finset.range(N+1), { apply subset_trans hA' hA, },
+  have hregA' : arith_regular N A', { sorry, },
+  have hNA' : (log N)^(-(1/101 : ℝ)) ≤ rec_sum A', { sorry, },
+  have hppA' : (∀ q ∈ ppowers_in_set A',
+    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A' q )), {
+      obtain htech' := htech.2.2.2.2.2.1,
+      intros q hq, apply le_of_lt, specialize htech' q hq,
+      exact htech',
+     },
+  specialize hforce1 M A' hrangeA' hM3 hregA' hNA' hppA',
+  cases hforce1 with htemp1 htemp2,
+  exfalso, apply hgoodsubset htemp1,
+  have hgoodA' : good_condition A' K T L, { sorry, },
+  have hdM : (d:ℝ) ≤ M / 128, { sorry, },
+  have hA'5 : (∀ (n : ℕ), n ∈ A' → M ≤ n), { sorry, },
+  have hA'6 : (∀ (n : ℕ), n ∈ A' → n ≤ N), { sorry, },
+  have hdA' : d ∣ A'.lcm id, {
+    rcases htech.2.2.2.2.2.2.1 with ⟨n,hn,hnew⟩,
+    apply dvd_trans hnew, apply dvd_lcm hn,
+   },
+  let U := min (L * K ^ 2 / (16 * N ^ 2 * log N ^ 2)) (min (c * M / d) (T * K ^ 2 / (N ^ 2 * log N))),
+  have hppA' : (∀ (q : ℕ), q ∈ ppowers_in_set A' → (q:ℝ) ≤ U), { sorry, },
+  have hgoodA' : good_condition A' K T L, { sorry, },
+  specialize @hcircle K L M T d A' hzT hzL heK hKM hM2aux hzd
+    hdM hA'5 hA'6 htech.2.2.2.1 htech.2.2.2.2.1 hdA' hppA' hgoodA',
+  rcases hcircle with ⟨S,hS,hcirc⟩,
+  use S, split, exact subset_trans hS hA',
+  refine ⟨d,htech.2.1,_,hcirc⟩,
+  apply le_trans htech.2.2.1, apply div_le_self,
+  apply @le_trans _ _ 0 1 z zero_le_one, apply le_trans h1y hyzaux,
+  norm_num,
+end
+
+#exit
+
 theorem unit_fractions_upper_density (A : set ℕ) (hA : upper_density A > 0):
    ∃ (S : finset ℕ), (S : set ℕ) ⊆ A ∧ ∑ n in S, (1 / n : ℝ) = 1 :=
 sorry
@@ -238,6 +560,7 @@ begin
   refine ⟨x, _⟩,
   simp [hx₁, hx₂, hx₅, hA' hx₁],
 end
+
 
 lemma explicit_mertens :
   ∀ᶠ (N : ℕ) in at_top,
@@ -800,6 +1123,7 @@ lemma prop_one_specialise :
   → arith_regular N A
   → ∃ S ⊆ A, ∃ d : ℕ, 1 ≤ d ∧ (d : ℝ) ≤ log N ^ (1 / 500 : ℝ) ∧ rec_sum S = 1 / d :=
 begin
+  sorry,
   have hf : tendsto (λ (x : ℕ), log x ^ (1 / 500 : ℝ)) at_top at_top :=
     tendsto_coe_log_pow_at_top _ (by norm_num1),
   have hf' : tendsto (λ (x : ℕ), log x ^ (1 / 200 : ℝ)) at_top at_top :=

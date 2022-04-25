@@ -5,6 +5,7 @@
 \begin{lemma}
   \label{lem:basic}
   \leanok
+  \lean{rec_pp_sum_close}
   If $0<\abs{n_1-n_2}\leq N$ then
   \[\sum_{q\mid (n_1,n_2)}\frac{1}{q}\ll \log\log\log N,\]
   where the summation is restricted to prime powers.
@@ -36,6 +37,8 @@ as required.
 \end{proof}
 
 \begin{lemma}\label{lem:smoothsum}
+\leanok 
+\lean{useful_rec_bound}
 There is a constant $C>0$ such that the following holds. Let $0<y<N$ be some reals, and suppose that $D$ is a finite set of integers such that if $d\in D$ and $p^r\| d$ then $y<p^r\leq N$. Then, for any real $k\geq 1$, 
 \[\sum_{d\in D}\frac{k^{\omega(d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k.\]
 \end{lemma}
