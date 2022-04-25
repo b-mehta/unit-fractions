@@ -2325,7 +2325,9 @@ begin
 end
 
 lemma mertens_third_log_error :
-  ∃ c, is_O (λ x : ℝ, ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, -((p : ℝ)⁻¹ + log (1 - (p : ℝ)⁻¹)) - c) (λ x, x⁻¹) at_top :=
+  ∃ c, is_O
+    (λ x, ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, -((p : ℝ)⁻¹ + log (1 - (p : ℝ)⁻¹)) - c)
+      (λ x : ℝ, x⁻¹) at_top :=
 begin
   simp only [sum_filter],
   refine is_O_partial_of_bound' (λ n, _) (λ n, _); split_ifs,
@@ -2333,6 +2335,23 @@ begin
   { exact my_mul_thing' },
   { rw neg_nonneg, exact my_func_neg h.one_lt },
   { refl },
+end
+
+lemma mertens_third_log :
+  ∃ c, is_O
+    (λ x : ℝ,
+      ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, log (1 - (p : ℝ)⁻¹)⁻¹ - log (log x) - c)
+      (λ x : ℝ, (log x)⁻¹) at_top :=
+begin
+  obtain ⟨c₁, hc₁⟩ := prime_reciprocal,
+  obtain ⟨c₂, hc₂⟩ := mertens_third_log_error,
+  replace hc₂ := hc₂.trans (is_o_log_id_at_top.is_O.inv_rev _),
+  swap,
+  { filter_upwards [eventually_gt_at_top (1 : ℝ)] with x hx using (log_pos hx).ne' },
+  refine ⟨c₂ + c₁, (hc₁.add hc₂).congr_left _⟩,
+  intro x,
+  simp only [log_inv, sum_neg_distrib, sum_add_distrib, neg_add, prime_summatory, sum_sub_distrib],
+  ring,
 end
 
 -- BM: I expect there's a nicer way of stating this but this should be good enough for now
