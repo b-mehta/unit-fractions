@@ -2340,7 +2340,7 @@ end
 lemma mertens_third_log :
   ∃ c, is_O
     (λ x : ℝ,
-      ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, log (1 - (p : ℝ)⁻¹)⁻¹ - log (log x) - c)
+      ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, log (1 - (p : ℝ)⁻¹)⁻¹ - (log (log x) + c))
       (λ x : ℝ, (log x)⁻¹) at_top :=
 begin
   obtain ⟨c₁, hc₁⟩ := prime_reciprocal,
@@ -2354,8 +2354,27 @@ begin
   ring,
 end
 
--- BM: I expect there's a nicer way of stating this but this should be good enough for now
 lemma mertens_third :
-  ∃ c, is_O (λ x, ∏ p in (finset.Icc 1 ⌊x⌋₊), (1 - (p : ℝ)⁻¹)⁻¹ - c * real.log x)
+  ∃ c, is_O (λ x, ∏ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, (1 - (p : ℝ)⁻¹)⁻¹ - c * real.log x)
         (λ _, (1 : ℝ)) at_top :=
-sorry
+begin
+  obtain ⟨c, hc⟩ := mertens_third_log,
+  obtain ⟨k, hk₀, hk⟩ := hc.exists_pos,
+  refine ⟨exp c, is_O.of_bound (2 * (k * exp c)) _⟩,
+  filter_upwards [hk.bound, tendsto_log_at_top.eventually (eventually_ge_at_top k)] with x hx hx',
+  have hk' : k * (log x)⁻¹ ≤ 1,
+  { rwa [mul_inv_le_iff (hk₀.trans_le hx'), mul_one] },
+  rw [norm_eq_abs, norm_inv, norm_of_nonneg (hk₀.le.trans hx')] at hx,
+  have i := (real.abs_exp_sub_one_le (hx.trans hk')).trans
+    (mul_le_mul_of_nonneg_left hx zero_le_two),
+  have hx'' : 0 < log x := hk₀.trans_le hx',
+  have hx''' : 0 < exp c * log x := mul_pos (exp_pos _) hx'',
+  have hp : ∀ p, p ∈ filter nat.prime (Icc 1 ⌊x⌋₊) → 0 < (1 - (p : ℝ)⁻¹)⁻¹,
+  { intros p hp,
+    simp only [mem_filter] at hp,
+    exact inv_pos.2 (sub_pos_of_lt (inv_lt_one (nat.one_lt_cast.2 hp.2.one_lt))) },
+  rw [exp_sub, exp_add, exp_log hx'', ←log_prod _ _ (λ p h, (hp p h).ne'), exp_log (prod_pos hp),
+    mul_comm, div_sub_one hx'''.ne', abs_div, abs_of_nonneg hx'''.le, div_le_iff hx''', mul_assoc,
+    mul_mul_mul_comm, inv_mul_cancel hx''.ne', mul_one] at i,
+  rwa [norm_eq_abs, norm_one, mul_one],
+end
