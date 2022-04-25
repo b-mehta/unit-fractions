@@ -2301,10 +2301,10 @@ begin
     rwa [ne.def, tsub_eq_zero_iff_le, not_le] }
 end
 
-lemma log_one_sub_recip {p : ℕ} (hp : p.prime) :
+lemma log_one_sub_recip {p : ℕ} (hp : 1 < p) :
   |(p : ℝ)⁻¹ + log (1 - (p : ℝ)⁻¹)| ≤ ((p - 1) * p)⁻¹ :=
 begin
-  have hp₁ : (1 : ℝ) < p := nat.one_lt_cast.2 hp.one_lt,
+  have hp₁ : (1 : ℝ) < p := nat.one_lt_cast.2 hp,
   have hp₀ : (0 : ℝ) < p := zero_le_one.trans_lt hp₁,
   have hp_inv : |(p : ℝ)⁻¹| < 1,
   { rwa [abs_inv, nat.abs_cast, inv_lt_one_iff_of_pos hp₀] },
@@ -2314,11 +2314,25 @@ begin
     inv_mul_cancel hp₀.ne'] at this,
 end
 
+lemma my_func_neg {p : ℕ} (hp : 1 < p) : (p : ℝ)⁻¹ + log (1 - (p : ℝ)⁻¹) ≤ 0 :=
+by linarith [log_le_sub_one_of_pos (sub_pos_of_lt (inv_lt_one (nat.one_lt_cast.2 hp)))]
+
 lemma real.abs_exp_sub_one_le {x : ℝ} (hx : |x| ≤ 1) :
   |exp x - 1| ≤ 2 * |x| :=
 begin
   have : complex.abs x ≤ 1 := by exact_mod_cast hx,
   exact_mod_cast complex.abs_exp_sub_one_le this,
+end
+
+lemma mertens_third_log_error :
+  ∃ c, is_O (λ x : ℝ, ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, -((p : ℝ)⁻¹ + log (1 - (p : ℝ)⁻¹)) - c) (λ x, x⁻¹) at_top :=
+begin
+  simp only [sum_filter],
+  refine is_O_partial_of_bound' (λ n, _) (λ n, _); split_ifs,
+  { exact neg_le_of_neg_le (neg_le_of_abs_le (log_one_sub_recip h.one_lt)) },
+  { exact my_mul_thing' },
+  { rw neg_nonneg, exact my_func_neg h.one_lt },
+  { refl },
 end
 
 -- BM: I expect there's a nicer way of stating this but this should be good enough for now
