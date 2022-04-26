@@ -1468,15 +1468,19 @@ end
 
 local attribute [pp_nodot] nat.prime_counting
 
-lemma prime_counting_eq_prime_summatory {x : ℕ} :
-  π x = prime_summatory (λ _, 1) 1 x :=
+lemma prime_counting_eq_card_primes {x : ℕ} :
+  π x = ((finset.Icc 1 x).filter nat.prime).card :=
 begin
-  rw [prime_summatory_eq_summatory, summatory, nat.floor_coe, sum_boole, nat.cast_id,
-    nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range, range_eq_Ico,
+  rw [nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range, range_eq_Ico,
     nat.Ico_succ_right],
   congr' 1,
   simp [finset.ext_iff, nat.one_le_iff_ne_zero, nat.prime.ne_zero] {contextual := tt},
 end
+
+lemma prime_counting_eq_prime_summatory {x : ℕ} :
+  π x = prime_summatory (λ _, 1) 1 x :=
+by rw [prime_summatory_eq_summatory, summatory, nat.floor_coe, sum_boole, nat.cast_id,
+  prime_counting_eq_card_primes]
 
 lemma prime_counting_eq_prime_summatory' {x : ℝ} :
   (π ⌊x⌋₊ : ℝ) = prime_summatory (λ _, (1 : ℝ)) 1 x :=
@@ -2236,10 +2240,7 @@ begin
   intro x,
   rw [norm_eq_abs, norm_eq_abs],
   apply is_O_reciprocal_difference_aux.trans (le_trans (le_of_eq _) (le_abs_self _)),
-  rw [sum_const, nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range,
-    range_eq_Ico, nat.Ico_succ_right, nsmul_eq_mul],
-  congr' 3,
-  simp [finset.ext_iff, nat.one_le_iff_ne_zero, nat.prime.ne_zero] {contextual := tt},
+  rw [sum_const, prime_counting_eq_card_primes, nsmul_eq_mul],
 end
 
 lemma prime_power_reciprocal : ∃ b,
@@ -2337,13 +2338,44 @@ begin
   ring,
 end
 
+def partial_euler_product (n : ℕ) := ∏ p in (finset.Icc 1 n).filter nat.prime, (1 - (p : ℝ)⁻¹)⁻¹
+
+@[simp] lemma partial_euler_product_zero : partial_euler_product 0 = 1 :=
+by simp [partial_euler_product]
+
+/-- A trivial global upper bound on the partial euler product -/
+lemma partial_euler_trivial_upper_bound {n : ℕ} : partial_euler_product n ≤ 2 ^ π n :=
+begin
+  rw [partial_euler_product, prime_counting_eq_card_primes, ←prod_const],
+  have : ∀ i, nat.prime i → 0 < (1 - (i : ℝ)⁻¹) :=
+    λ i hi, (sub_pos_of_lt (inv_lt_one (nat.one_lt_cast.2 hi.one_lt))),
+  refine prod_le_prod (λ i hi, (inv_pos.2 (this i (mem_filter.1 hi).2)).le) (λ i hi, _),
+  simp only [mem_filter] at hi,
+  rw [inv_le (this _ hi.2) (by norm_num : (0 : ℝ) < 2), le_sub, inv_le],
+  { norm_num,
+    exact_mod_cast hi.2.two_le },
+  { exact nat.cast_pos.2 hi.2.pos },
+  { norm_num1 },
+end
+
+lemma one_le_prod {ι R : Type*} [ordered_comm_semiring R] {f : ι → R} {s : finset ι}
+  (h1 : ∀ i ∈ s, 1 ≤ f i) : 1 ≤ ∏ i in s, f i :=
+le_trans (by simp) (prod_le_prod (λ _ _, zero_le_one) h1)
+
+/-- A trivial global lower bound on the partial euler product -/
+lemma partial_euler_trivial_lower_bound {n : ℕ} : 1 ≤ partial_euler_product n :=
+begin
+  refine one_le_prod (λ p hp, _),
+  simp only [mem_filter] at hp,
+  exact one_le_inv (sub_pos_of_lt (inv_lt_one (nat.one_lt_cast.2 hp.2.one_lt))) (by simp),
+end
+
 lemma mertens_third :
-  ∃ c, is_O (λ x, ∏ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, (1 - (p : ℝ)⁻¹)⁻¹ - c * real.log x)
-        (λ _, (1 : ℝ)) at_top :=
+  ∃ c, 0 < c ∧ is_O (λ x, partial_euler_product ⌊x⌋₊ - c * real.log x) (λ _, (1 : ℝ)) at_top :=
 begin
   obtain ⟨c, hc⟩ := mertens_third_log,
   obtain ⟨k, hk₀, hk⟩ := hc.exists_pos,
-  refine ⟨exp c, is_O.of_bound (2 * (k * exp c)) _⟩,
+  refine ⟨exp c, exp_pos _, is_O.of_bound (2 * (k * exp c)) _⟩,
   filter_upwards [hk.bound, tendsto_log_at_top.eventually (eventually_ge_at_top k)] with x hx hx',
   have hk' : k * (log x)⁻¹ ≤ 1,
   { rwa [mul_inv_le_iff (hk₀.trans_le hx'), mul_one] },
@@ -2360,4 +2392,58 @@ begin
     mul_comm, div_sub_one hx'''.ne', abs_div, abs_of_nonneg hx'''.le, div_le_iff hx''', mul_assoc,
     mul_mul_mul_comm, inv_mul_cancel hx''.ne', mul_one] at i,
   rwa [norm_eq_abs, norm_one, mul_one],
+end
+
+lemma weak_mertens_third_upper : is_O (λ x, partial_euler_product ⌊x⌋₊) log at_top :=
+let ⟨c, _, hc⟩ := mertens_third in
+  ((hc.trans (is_o_one_log 1).is_O).add (is_O_const_mul_self c _ _)).congr_left (by simp)
+
+lemma weak_mertens_third_lower : is_O log (λ x, partial_euler_product ⌊x⌋₊) at_top :=
+begin
+  obtain ⟨c, hc₀, hc⟩ := mertens_third,
+  have h := is_O_self_const_mul _ hc₀.ne' log at_top,
+  have := hc.trans_is_o ((is_o_one_log 1).trans_is_O h),
+  exact (h.trans this.right_is_O_add).congr_right (by simp),
+end
+
+lemma weak_mertens_third_upper_all :
+  ∃ c, 0 < c ∧ ∀ x : ℝ, 2 ≤ x → ∥partial_euler_product ⌊x⌋₊∥ ≤ c * ∥log x∥ :=
+begin
+  obtain ⟨c, hc₀, hc⟩ := weak_mertens_third_upper.exists_pos,
+  rw [is_O_with_iff, eventually_at_top] at hc,
+  obtain ⟨c₁, hc₁⟩ := hc,
+  refine ⟨max c (2 ^ c₁ / real.log 2), lt_max_of_lt_left hc₀, λ x hx, _⟩,
+  cases le_total c₁ x,
+  { exact (hc₁ _ h).trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg _)) },
+  rw [norm_of_nonneg (zero_le_one.trans partial_euler_trivial_lower_bound),
+    norm_of_nonneg (log_nonneg (one_le_two.trans hx))],
+  have : (2 : ℝ) ^ π ⌊x⌋₊ ≤ 2 ^ c₁,
+  { rw ←rpow_nat_cast,
+    apply rpow_le_rpow_of_exponent_le one_le_two,
+    refine le_trans _ ((nat.floor_le (zero_le_two.trans hx)).trans h),
+    exact nat.cast_le.2 (prime_counting_le_self ⌊x⌋₊) },
+  apply (partial_euler_trivial_upper_bound.trans this).trans _,
+  refine le_trans _ (mul_le_mul (le_max_right _ _)
+    ((log_le_log zero_lt_two (zero_lt_two.trans_le hx)).2 hx) (log_nonneg one_le_two)
+    (le_max_of_le_left hc₀.le)),
+  rw div_mul_cancel _ (log_pos one_lt_two).ne',
+end
+
+lemma weak_mertens_third_lower_all :
+  ∃ c, 0 < c ∧ ∀ x : ℝ, 2 ≤ x → c * ∥log x∥ ≤ ∥partial_euler_product ⌊x⌋₊∥ :=
+begin
+  obtain ⟨c, hc₀, hc⟩ := weak_mertens_third_lower.exists_pos,
+  rw [is_O_with_iff, eventually_at_top] at hc,
+  obtain ⟨c₁, hc₁⟩ := hc,
+  let c' := max c (log c₁),
+  have hc' : 0 < c' := lt_max_of_lt_left hc₀,
+  refine ⟨c'⁻¹, inv_pos.2 hc', λ x hx, _⟩,
+  cases le_total c₁ x,
+  { rw inv_mul_le_iff hc',
+    exact (hc₁ _ h).trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg _)) },
+  rw [norm_of_nonneg (log_nonneg (one_le_two.trans hx)),
+    norm_of_nonneg (zero_le_one.trans partial_euler_trivial_lower_bound)],
+  refine le_trans _ partial_euler_trivial_lower_bound,
+  rw [inv_mul_le_iff hc', mul_one],
+  exact le_trans ((log_le_log (zero_lt_two.trans_le hx) (by linarith)).2 h) (le_max_right _ _),
 end

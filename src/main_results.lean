@@ -482,12 +482,27 @@ end
 
 
 lemma explicit_mertens :
-  ∀ᶠ (N : ℕ) in at_top,
-  ((∑ q in (finset.range (N + 1)).filter is_prime_pow, 1 / q) : ℝ) ≤ 2 * log (log N) :=
+  ∀ᶠ N : ℕ in at_top,
+    ((∑ q in (finset.range (N + 1)).filter is_prime_pow, 1 / q) : ℝ) ≤ 2 * log (log N) :=
 begin
   obtain ⟨b, hb⟩ := prime_power_reciprocal,
-  -- take log log x ≥ b + 1 and log x ≥ 1, then done
-  sorry
+  obtain ⟨c, hc₀, hc⟩ := hb.exists_pos,
+  filter_upwards [(tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top (c : ℝ)), (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top (b + 1)),
+    tendsto_coe_nat_at_top_at_top.eventually hc.bound]
+    with N hN₁ hN₂ hN₃,
+  dsimp at hN₁ hN₂,
+  have hN₄ : 0 < log N := hc₀.trans_le hN₁,
+  simp_rw [norm_inv, ←div_eq_mul_inv, ←one_div, norm_eq_abs, abs_of_nonneg hN₄.le,
+    nat.floor_coe] at hN₃,
+  have : c / log N ≤ 1 := div_le_one_of_le hN₁ hN₄.le,
+  have := sub_le_iff_le_add.1 (sub_le_of_abs_sub_le_right (hN₃.trans this)),
+  convert this.trans (show log (log N) + b + 1 ≤ 2 * log (log N), by linarith) using 2,
+  rw [range_eq_Ico, nat.Ico_succ_right],
+  ext n,
+  simpa only [mem_filter, and.congr_left_iff, mem_Icc, zero_le', iff_and_self, true_and] using
+    λ h _, (is_prime_pow.one_lt h).le,
 end
 
 -- Lemma 5.5
@@ -548,10 +563,10 @@ begin
     rw [mul_right_comm 2 ε] at ht1,
     linarith only [ht1] },
   cases hBexists with x hx,
-  have hxA1 : x ∈ A_i, {exact hB hx,},
-  have hxA2 : x ∈ A, {exact hA_i hxA1,},
+  have hxA1 : x ∈ A_i := hB hx,
+  have hxA2 : x ∈ A := hA_i hxA1,
   let A_i' := A_i.erase x,
-  have h3 : A_i' ⊆ A_i, { apply finset.erase_subset, },
+  have h3 : A_i' ⊆ A_i := erase_subset _ _,
   refine ⟨A_i', h3.trans hA_i, _, _, _⟩,
   { have hrs2 : (rec_sum A_i : ℝ) - 1 / x = rec_sum A_i',
     { simp only [rec_sum, sub_eq_iff_eq_add, rat.cast_sum, one_div, rat.cast_inv, rat.cast_coe_nat,
@@ -569,73 +584,42 @@ begin
       rw ← hlocal2,
       push_cast,
       have hppB : q ∈ ppowers_in_set B,
-      { rw ppowers_in_set, rw finset.mem_bUnion, use x, split, exact hx,
-        rw finset.mem_filter, split, rw nat.mem_divisors, split, exact hxq.1,
-        intro hxz, rw hxz at hx,
-        have hx1 : 0 ∈ A_i, {exact hB hx,},
-        have hx2 : 0 ∈ A, {exact hA_i hx1,},
-        specialize hMA 0 hx2, norm_cast at hMA, linarith,
-        split, rw ppowers_in_set at hq, rw finset.mem_bUnion at hq,
-        cases hq with a hq,
-        cases hq with ha hq,
-        rw finset.mem_filter at hq, exact hq.2.1,
-        exact hxq.2 },
-      specialize hN2 q hppB,
-      have hlocal3 : (rec_sum_local B q :ℝ)≤ rec_sum_local A_i q,
-      { norm_cast, apply rec_sum_local_mono, exact hB, },
-      have hll : ε+ε < rec_sum_local A_i q,
-      { have hεaux : ε' = ε + ε, { exact two_mul ε, },
-        linarith, },
-      have hll2 : (q:ℝ)/x ≤ ε,
-      {
-        specialize hMA x hxA2,
-        refine (div_le_iff _).mpr _,
-        linarith,
-        have hppA : ppowers_in_set A_i' ⊆ ppowers_in_set A,
-        { apply ppowers_in_set_subset, exact finset.subset.trans h3 hA_i,},
-        have hppAq : q ∈ ppowers_in_set A, { exact hppA hq, },
-        specialize hsmooth q hppAq,
-        obtain hsmooth1 := hsmooth.1,
-        have haux9 : ε * M ≤ ε * x, {
-          apply mul_le_mul_of_nonneg_left, exact hMA, linarith,},
-        linarith,
-        },
-      linarith },
+      { rw [ppowers_in_set, finset.mem_bUnion],
+        refine ⟨x, hx, mem_filter.2 ⟨nat.mem_divisors.2 ⟨hxq.1, _⟩, (mem_ppowers_in_set.1 hq).1,
+          hxq.2⟩⟩,
+        rintro rfl,
+        exact hM.not_le (by simpa only [nat.cast_zero] using hMA _ hxA2) },
+      have hlocal3 : (rec_sum_local B q : ℝ) ≤ rec_sum_local A_i q :=
+        rat.cast_le.2 (rec_sum_local_mono hB),
+      have hll : ε + ε < rec_sum_local A_i q,
+      { rw ←two_mul ε,
+        exact (hN2 q hppB).trans_le hlocal3 },
+      have hll2 : (q : ℝ) / x ≤ ε,
+      { rw (div_le_iff (hM.trans_le (hMA x hxA2))),
+        have hppA : ppowers_in_set A_i' ⊆ ppowers_in_set A := ppowers_in_set_subset (h3.trans hA_i),
+        exact (hsmooth q (hppA hq)).1.trans (mul_le_mul_of_nonneg_left (hMA x hxA2) hε.le) },
+      rw lt_sub,
+      apply hll2.trans_lt,
+      rwa lt_sub_iff_add_lt },
     have hrecl : rec_sum_local A_i q = rec_sum_local A_i' q,
     { have hlocalaux : local_part A_i q = local_part A_i' q,
-    { rw local_part, rw local_part, ext, rw finset.mem_filter, rw finset.mem_filter,
-      split, intro ha, split, rw finset.mem_erase, split, intro hax,
-      apply hxq, rw hax at ha, exact ha.2, exact ha.1,
-      exact ha.2, intro ha, split, exact h3 ha.1, exact ha.2, },
-    rw rec_sum_local, rw rec_sum_local,
-    rw hlocalaux,
-    },
-    have hppA_i : ppowers_in_set A_i' ⊆ ppowers_in_set A_i,
-      { apply ppowers_in_set_subset, exact h3,},
-    have hppA_iq : q ∈ ppowers_in_set A_i, { exact hppA_i hq, },
-    specialize ih2 q hppA_iq,
-    rw ← hrecl, exact ih2 },
+      { rw [local_part, local_part, filter_erase, erase_eq_of_not_mem],
+        rw [mem_filter, not_and_distrib],
+        exact or.inr hxq },
+    rw [rec_sum_local, rec_sum_local, hlocalaux] },
+    rw ←hrecl,
+    exact ih2 q (ppowers_in_set_subset h3 hq) },
   left,
   have hcard : (A \ A_i).card < (A \ A_i').card,
-  {
-    apply finset.card_lt_card,
-    rw finset.ssubset_iff_of_subset,
-    use x, split, rw finset.mem_sdiff, split, exact hxA2,
-    apply finset.not_mem_erase, intro hxaux, rw finset.mem_sdiff at hxaux,
-    apply hxaux.2, exact hxA1,
-    refine finset.subset_iff.mpr _,
-    intros y hy, rw finset.mem_sdiff, rw finset.mem_sdiff at hy,
-    split, exact hy.1, intro hy2, apply hy.2, exact h3 hy2,
-   },
-  have hcard' : (A \ A_i).card + 1 ≤ (A \ A_i').card,
-  { exact nat.succ_le_iff.mpr hcard, },
+  { rw [card_sdiff hA_i, card_sdiff (h3.trans hA_i),
+      tsub_lt_tsub_iff_left_of_le (card_le_of_subset hA_i)],
+    exact card_erase_lt_of_mem hxA1 },
+  have hcard' : (A \ A_i).card + 1 ≤ (A \ A_i').card := nat.succ_le_iff.2 hcard,
   rw nat.succ_eq_add_one,
   cases ih3 with hf1 hf2,
-  linarith,
-  exfalso,
-  linarith,
+  { linarith },
+  { exfalso, linarith },
 end
--- 668
 
 -- Lemma 5.6
 lemma pruning_lemma_two :
@@ -649,47 +633,39 @@ lemma pruning_lemma_two :
     rec_sum_local B q)
   :=
 begin
- filter_upwards [pruning_lemma_one, pruning_lemma_two_ind],
- intros N h h2 M α ε A hA hMz hMN hε hεα hMA hrecA hsmooth,
- specialize h A hA ε hε,
- rcases h with ⟨A',hA', h⟩,
- obtain ⟨hA'1, hA'3⟩ := h,
- have hA'2 : A' ⊆ finset.range(N+1) := finset.subset.trans hA' hA,
- have hMA' : ∀ n ∈ A', M ≤ (n: ℝ), { intros n hn, specialize hMA n, exact hMA (hA' hn), },
- have hrecA' : α ≤ rec_sum A',
- { apply le_trans _ hA'1, apply le_sub_right_of_add_le, rw mul_comm ε 2, exact hrecA, },
- have hsmooth2 : ∀ (q : ℕ), q ∈ ppowers_in_set A' → ↑q ≤ ε * M ∧ ε < ↑(rec_sum_local A' q),
- { intros q hq, specialize hA'3 q, specialize hsmooth q,
-  refine ⟨hsmooth ((ppowers_in_set_subset hA') hq), hA'3 hq⟩,  },
- let i := A'.card + 1,
- specialize h2 M α ε A' hA'2 hMz hMN hε hεα hMA' hrecA' hsmooth2 i,
- rcases h2 with ⟨B, hB, h2⟩,
- refine ⟨B,finset.subset.trans hB hA',_,h2.1,h2.2.1⟩,
- cases h2.2.2 with ha1 ha2,
- exfalso,
- have hi : (A' \ B).card ≤ A'.card := card_le_of_subset (sdiff_subset _ _),
- apply not_le.mpr (nat.lt.base A'.card), apply le_trans ha1 hi, exact ha2,
+  filter_upwards [pruning_lemma_one, pruning_lemma_two_ind],
+  intros N h h2 M α ε A hA hMz hMN hε hεα hMA hrecA hsmooth,
+  rcases h A hA ε hε with ⟨A', hA', hA'1, hA'3⟩,
+  have hA'2 : A' ⊆ finset.range (N + 1) := hA'.trans hA,
+  have hMA' : ∀ n ∈ A', M ≤ (n : ℝ) := λ n hn, hMA n (hA' hn),
+  have hrecA' : α ≤ rec_sum A',
+  { refine (le_sub_right_of_add_le _).trans hA'1, rwa mul_comm ε 2, },
+  have hsmooth2 : ∀ q ∈ ppowers_in_set A', ↑q ≤ ε * M ∧ ε < rec_sum_local A' q :=
+    λ q hq, ⟨hsmooth q ((ppowers_in_set_subset hA') hq), hA'3 q hq⟩,
+  let i := A'.card + 1,
+  rcases h2 M α ε A' hA'2 hMz hMN hε hεα hMA' hrecA' hsmooth2 i with ⟨B, hB, h2, h3, ha⟩,
+  refine ⟨B, hB.trans hA', ha.resolve_left (λ ha1, _), h2, h3⟩,
+  exact not_le.2 (nat.lt_succ_self A'.card) (ha1.trans (card_le_of_subset (sdiff_subset _ _))),
 end
 
 lemma main_tech_lemma_ind :
-  ∀ᶠ (N : ℕ) in at_top, ∀ M ε y w : ℝ, ∀ A ⊆ finset.range(N+1),
-  (0 < M) → (M < N) → (0 < ε) → (2*M > w) → (1/M < ε*log(log N)) →
-  (1 ≤ y) → (2 ≤ w ) → (⌈y⌉₊ ≤ ⌊w⌋₊) →
-  (3*ε*log(log N) ≤ 2/(w^2)) → (∀ n ∈ A, M ≤ (n: ℝ)) →
-  (2/y + 2*ε*log(log N) ≤ rec_sum A ) →
-  (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε*M) →
-  (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ w) ∧ d ∣ n) →
-  (∀ i : ℕ, ∃ A_i ⊆ A, ∃ d_i : ℕ, (y ≤ d_i) ∧ d_i ≤ (⌈y⌉₊+i) ∧ d_i ≤ ⌊w⌋₊ ∧
-   rec_sum A_i < 2/d_i ∧ (2:ℝ)/d_i-1/M ≤ rec_sum A_i ∧
-   (∀ q ∈ ppowers_in_set A_i, ε < rec_sum_local A_i q) ∧
-   (∀ n ∈ A_i, ∀ k : ℕ, k ∣ n → k < d_i → (k:ℝ) < y) ∧
-   ((∃ n ∈ A_i, d_i ∣ n) ∨
-   (∀ n ∈ A_i, ∀ k : ℕ, k ∣ n → k ≤ (⌈y⌉₊+i) → k ≤ ⌊w⌋₊ → (k:ℝ) < y)))
-  :=
+  ∀ᶠ (N : ℕ) in at_top, ∀ M ε y w : ℝ, ∀ A ⊆ finset.range (N + 1),
+    0 < M → M < N → 0 < ε → w < 2 * M → 1 / M < ε * log (log N) →
+    1 ≤ y → 2 ≤ w → ⌈y⌉₊ ≤ ⌊w⌋₊ →
+    (3 * ε * log (log N) ≤ 2 / w ^ 2) → (∀ n ∈ A, M ≤ (n : ℝ)) →
+    (2 / y + 2 * ε * log (log N) ≤ rec_sum A) →
+    (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε * M) →
+    (∀ n ∈ A, ∃ d : ℕ, y ≤ d ∧ (d : ℝ) ≤ w ∧ d ∣ n) →
+    (∀ i : ℕ, ∃ A_i ⊆ A, ∃ d_i : ℕ,
+      y ≤ d_i ∧ d_i ≤ ⌈y⌉₊ + i ∧ d_i ≤ ⌊w⌋₊ ∧
+      rec_sum A_i < 2 / d_i ∧ (2 : ℝ) / d_i - 1 / M ≤ rec_sum A_i ∧
+      (∀ q ∈ ppowers_in_set A_i, ε < rec_sum_local A_i q) ∧
+      (∀ n ∈ A_i, ∀ k, k ∣ n → k < d_i → (k : ℝ) < y) ∧
+      ((∃ n ∈ A_i, d_i ∣ n) ∨ (∀ n ∈ A_i, ∀ k, k ∣ n → k ≤ ⌈y⌉₊ + i → k ≤ ⌊w⌋₊ → (k : ℝ) < y))) :=
 begin
   have : tendsto (λ N : ℕ, log (log N)) at_top at_top :=
     tendsto_log_at_top.comp (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top),
-  filter_upwards [pruning_lemma_two, this (eventually_gt_at_top 0)],
+  filter_upwards [pruning_lemma_two, this.eventually (eventually_gt_at_top 0)],
   intros N hN h_largeN M ε y w A hA hM hMN hε hMw hMN2 hy h2w hyw2 hNw hMA hrec hsmooth hdiv i,
   -- Preliminary estimates that will be convenient later
   have hy01 : 0 < y := by apply lt_of_lt_of_le zero_lt_one hy,
@@ -711,83 +687,58 @@ begin
     { rw [rat.cast_div, rat.cast_bit0, rat.cast_one, rat.cast_coe_nat] },
     have hα : 4 * ε * log (log N) < α,
     { have hα1 : 2 * ((2 : ℝ) / w ^ 2) ≤ 2 / ⌈y⌉₊,
-      { rw [←mul_div_assoc, div_le_div_iff, mul_assoc, mul_le_mul_left],
+      { rw [←mul_div_assoc, div_le_div_iff (pow_pos hwzero _), mul_assoc, mul_le_mul_left],
         { refine le_trans (mul_le_mul_of_nonneg_left (le_trans _ hqaux) zero_le_two) hwaux,
           rwa nat.cast_le },
         { exact zero_lt_two },
-        { exact pow_pos hwzero _ },
         { rwa [nat.cast_pos, nat.lt_ceil, nat.cast_zero] } },
       rw [rat.cast_div, rat.cast_bit0, rat.cast_one, rat.cast_coe_nat],
       exact hεNaux.trans_le (hεNaux2.trans hα1) },
-    have hrec2 : (α:ℝ) + 2*ε*log(log N) ≤ rec_sum A, {
-      rw hαaux, apply @add_le_of_add_le_right _ (2/y) (2*ε*log(log N))
-          (rec_sum A) ((2:ℝ)/⌈y⌉₊), exact hrec,
-          refine div_le_div_of_le_left zero_le_two _ _, exact hy01, apply nat.le_ceil,
-      },
-    specialize hN M α ε A hA hM hMN hε hα hMA hrec2 hsmooth,
-    rcases hN with ⟨B,hB,hN⟩,
-    refine ⟨B, hB, ⌈y⌉₊, nat.le_ceil y, _⟩,
-    split, refl, split,
-    apply nat.le_floor, apply @le_trans _ _ (⌈y⌉₊:ℝ) (⌊w⌋₊:ℝ) w, norm_cast,
-    exact hyw2, exact hqaux,
-    split, exact_mod_cast hN.1, split, rw ← hαaux, exact hN.2.1,
-    refine ⟨hN.2.2, λ n hn k hk1 hk2, _, _⟩,
-    rw ← nat.lt_ceil, exact hk2,
-    by_cases hp : (∃ (n : ℕ) (H : n ∈ B), ⌈y⌉₊ ∣ n),
-    left, exact hp, right, intros n hn k hk1 hk2 hk3,
-    simp only [add_zero, nat.nat_zero_eq_zero] at hk2,
+    have hrec2 : (α : ℝ) + 2 * ε * log (log N) ≤ rec_sum A,
+    { rw hαaux,
+      exact add_le_of_add_le_right hrec (div_le_div_of_le_left zero_le_two hy01 (nat.le_ceil _)) },
+    rcases hN M α ε A hA hM hMN hε hα hMA hrec2 hsmooth with ⟨B, hB, hB', hB'', hN⟩,
+    refine ⟨B, hB, _, nat.le_ceil y, le_rfl, hyw2, rat.cast_lt.1 hB', by rwa ←hαaux, hN,
+      λ n hn k hk1 hk2, by rwa ←nat.lt_ceil, _⟩,
+    rw or_iff_not_imp_left,
+    intros hp n hn k hk1 hk2 hk3,
     rw ← nat.lt_ceil,
-    have hkaux : k ≠ ⌈y⌉₊, {
-      intro hky,
-      apply hp, use n, rw ← hky, refine ⟨hn,hk1⟩,
-      },
-    exact (ne.le_iff_lt hkaux).mp hk2 },
+    refine lt_of_le_of_ne hk2 _,
+    rintro rfl,
+    exact hp ⟨n, hn, hk1⟩ },
   -- The inductive case
   rcases i_ih with ⟨A_i, hA_i, d_i, hstock⟩,
   obtain hstock1 := hstock.2.2.2.2.2.2.1,
-  by_cases hdiv2 : (∃ n ∈ A_i, d_i ∣ n),
-  use A_i, split, exact hA_i, use d_i, split, exact hstock.1,
-  split, apply le_trans hstock.2.1 _, apply add_le_add_left (nat.le_succ i_n),
-  refine ⟨hstock.2.2.1, hstock.2.2.2.1, hstock.2.2.2.2.1, hstock.2.2.2.2.2.1,
-    hstock.2.2.2.2.2.2.1, _⟩,
-  left, exact hdiv2,
-  let d_i' := min (⌈y⌉₊+i_n+1) ⌊w⌋₊,
-  have hd_i' : d_i + 1 ≤ d_i', {
-    rw le_min_iff, split, apply add_le_add_right hstock.2.1, rw nat.succ_le_iff,
-    rw ← ne.le_iff_lt, exact hstock.2.2.1, intro htaux,
-    have hA_in : A_i.nonempty, {
-      cases finset.eq_empty_or_nonempty A_i with hy1 hy2, exfalso,
-      obtain hstock2 := hstock.2.2.2.2.1, rw hy1 at hstock2, rw rec_sum_empty at hstock2,
-      norm_cast at hstock2, rw sub_nonpos at hstock2, rw div_le_div_iff at hstock2,
-      have hA_in' : (d_i:ℝ) ≤ w, { rw htaux, exact hqaux, },
-      rw one_mul at hstock2, apply @not_lt_of_le _ _ (2*M) w (hstock2.trans hA_in') hMw,
-      apply lt_of_lt_of_le hy01 hstock.1, exact hM, exact hy2,
-        },
-    obtain ⟨x,hx⟩ := hA_in,
-    have hx' : x ∈ A, { exact hA_i hx, },
-    specialize hdiv x hx',
-    cases hdiv with d hdiv,
-    have hd_i'1 : d < d_i, {
-      rw ← ne.le_iff_lt, rw htaux, rw nat.le_floor_iff, exact hdiv.2.1, exact hwzero.le,
-      intro hdaux1, apply hdiv2, use x, split, exact hx, rw ← hdaux1, exact hdiv.2.2,
-    },
-    specialize hstock1 x hx d hdiv.2.2 hd_i'1,
-    apply @not_le_of_lt _ _ (d:ℝ) y hstock1 hdiv.1,
-      },
-  let α' := (2:ℚ)/d_i',
-  have hα'aux : (α' : ℝ) = 2/d_i', { push_cast, },
-  have hqaux' : (d_i':ℝ) ≤ ⌊w⌋₊, {
-        norm_cast, apply min_le_right, },
-  have hqaux'' : (d_i':ℝ) ≤ w, { exact hqaux'.trans hqaux, },
-    have hrec5'''aux : (0:ℝ) < d_i, { apply lt_of_lt_of_le hy01 hstock.1, },
-    have hrec5''': 0 < d_i, { exact_mod_cast hrec5'''aux, },
-    have hrec6''': 1 ≤ d_i, { rw nat.succ_le_iff, exact hrec5''', },
-    have hqauxx : (1:ℝ) < d_i', { norm_cast,
-    apply @lt_of_lt_of_le _ _ 1 (d_i+1) d_i', apply nat.succ_lt_succ hrec5''', exact hd_i',
-    },
+  by_cases hdiv2 : ∃ n ∈ A_i, d_i ∣ n,
+  { exact ⟨A_i, hA_i, d_i, hstock.1, hstock.2.1.trans (add_le_add_left i_n.le_succ _),
+      hstock.2.2.1, hstock.2.2.2.1, hstock.2.2.2.2.1, hstock.2.2.2.2.2.1, hstock.2.2.2.2.2.2.1,
+      or.inl hdiv2⟩ },
+  let d_i' := min (⌈y⌉₊ + i_n + 1) ⌊w⌋₊,
+  have hd_i' : d_i + 1 ≤ d_i',
+  { rw le_min_iff,
+    refine ⟨add_le_add_right hstock.2.1 _, lt_of_le_of_ne hstock.2.2.1 _⟩,
+    rintro rfl,
+    have hA_in : A_i.nonempty,
+    { rw nonempty_iff_ne_empty,
+      rintro rfl,
+      obtain hstock2 := hstock.2.2.2.2.1,
+      rw [rec_sum_empty, rat.cast_zero, sub_nonpos, div_le_div_iff (hy01.trans_le hstock.1) hM,
+        one_mul] at hstock2,
+      exact (hstock2.trans hqaux).not_lt hMw },
+    obtain ⟨x, hx⟩ := hA_in,
+    cases hdiv x (hA_i hx) with d hdiv,
+    refine (hstock1 x hx d hdiv.2.2 (lt_of_le_of_ne (nat.le_floor hdiv.2.1) _)).not_le hdiv.1,
+    rintro rfl,
+    exact hdiv2 ⟨x, hx, hdiv.2.2⟩ },
+  let α' := (2 : ℚ) / d_i',
+  have hα'aux : (α' : ℝ) = 2 / d_i', by push_cast,
+  have hqaux' : (d_i' : ℝ) ≤ ⌊w⌋₊ := nat.cast_le.2 (min_le_right _ _),
+  have hqaux'' : (d_i' : ℝ) ≤ w := hqaux'.trans hqaux,
+  have hrec5'''aux : (0 : ℝ) < d_i := hy01.trans_le hstock.1,
+  have hrec5''' : 0 < d_i := nat.cast_pos.1 hrec5'''aux,
+  have hqauxx : (1 : ℝ) < d_i' := nat.one_lt_cast.2 ((nat.succ_lt_succ hrec5''').trans_le hd_i'),
   have hα' : 4 * ε * log (log N) < α',
-  {
-    have hα'1 : 2 * ((2 : ℝ) / w ^ 2) ≤ 2 / d_i',
+  { have hα'1 : 2 * ((2 : ℝ) / w ^ 2) ≤ 2 / d_i',
     { rw [←mul_div_assoc, div_le_div_iff, mul_assoc, mul_le_mul_left],
       { exact le_trans (mul_le_mul_of_nonneg_left (le_trans hqaux' hqaux) zero_le_two) hwaux },
       { exact zero_lt_two },
@@ -1378,4 +1329,3 @@ begin
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
   simpa using this,
 end
-
