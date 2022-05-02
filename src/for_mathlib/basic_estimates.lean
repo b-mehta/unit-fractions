@@ -12,7 +12,7 @@ import measure_theory.function.floor
 import measure_theory.integral.integral_eq_improper
 import data.complex.exponential_bounds
 import analysis.p_series
-import topology.algebra.floor_ring
+import topology.algebra.order.floor
 import number_theory.prime_counting
 import analysis.special_functions.logb
 import for_mathlib.misc
@@ -735,9 +735,6 @@ begin
     { exact div_nonneg (nat.cast_nonneg _) h2.le } }
 end
 
-lemma rpow_two (x : ℝ) : x^(2 : ℝ) = x^2 :=
-by rw [←rpow_nat_cast, nat.cast_two]
-
 lemma bernoulli_aux (x : ℝ) (hx : 0 ≤ x) : x + 1/2 ≤ 2^x :=
 begin
   have h : (0 : ℝ) < log (2 : ℝ) := log_pos one_lt_two,
@@ -761,7 +758,7 @@ begin
   rw [div_le_iff' (@zero_lt_two ℝ _ _), ←log_rpow h, le_log_iff_exp_le (rpow_pos_of_pos h _)],
   apply exp_neg_one_lt_d9.le.trans _,
   apply le_trans _ (rpow_le_rpow _ log_two_gt_d9.le zero_le_two),
-  { rw [rpow_two],
+  { rw [real.rpow_two],
     norm_num },
   { norm_num }
 end
@@ -1323,7 +1320,8 @@ begin
   { have hp₃ := (nat.le_floor_iff' h.ne_zero).1 hp₂,
     have : insert 1 (filter (λ k, (p ^ k : ℝ) ≤ x) (Icc 2 ⌊x⌋₊)) =
             filter (λ k, (p ^ k : ℝ) ≤ x) (Icc 1 ⌊x⌋₊),
-    { rwa [nat.Icc_succ_left 1, ←Ioc_insert_left (hp₁.trans hp₂), filter_insert, pow_one, if_pos] },
+    { rwa [nat.Icc_succ_left 1, ←finset.Ioc_insert_left (hp₁.trans hp₂), filter_insert,
+        pow_one, if_pos] },
     have h1 : 1 ∉ filter (λ (k : ℕ), (p ^ k : ℝ) ≤ x) (Icc 2 ⌊x⌋₊),
     { simp [not_and_distrib] },
     rw [←this, sum_insert h1, add_comm, pow_one, pow_one, add_sub_cancel],
@@ -1344,10 +1342,6 @@ begin
   rw abs_zero,
   exact rpow_nonneg_of_nonneg (nat.cast_nonneg _) _,
 end
-
-lemma tendsto_nat_floor_at_top {α : Type*} [linear_ordered_semiring α] [floor_semiring α] :
-  tendsto (@nat.floor α _ _) at_top at_top :=
-nat.floor_mono.tendsto_at_top_at_top (λ x, ⟨max 0 (x + 1), by simp [nat.le_floor_iff]⟩)
 
 lemma is_O_von_mangoldt_div_self_sub_log_div_self :
   is_O
@@ -1636,7 +1630,7 @@ end
 lemma finset.Icc_eq_insert_Icc_succ {a b : ℕ} (h : a ≤ b) : finset.Icc a b = insert a (Icc (a+1) b) :=
 begin
   rw finset.Icc_succ_left,
-  rw Ioc_insert_left h,
+  rw finset.Ioc_insert_left h,
 end
 
 -- Note this inequality can be improved, eg to
