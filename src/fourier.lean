@@ -1407,7 +1407,7 @@ begin
   rw [lcm_desc hA, finset.finsupp_sup_apply, hn'] at hAp ⊢,
   have hp : p.prime,
   { by_contra pp,
-    exact hAp (nat.factorization_eq_zero_of_non_prime _ _ pp) },
+    exact hAp (nat.factorization_eq_zero_of_non_prime _ pp) },
   have : p ^ n.factorization p ∈ ppowers_in_set A,
   { rw mem_ppowers_in_set' hp hAp,
     exact ⟨_, hn, rfl⟩ },
