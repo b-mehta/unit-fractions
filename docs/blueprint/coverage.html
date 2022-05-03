@@ -42,7 +42,7 @@ Click chapter titles to see missing items.
 </section>
 
 <section>
-  <h3>2 Basic Estimates <span class="partial">22%</span></h3>
+  <h3>2 Basic Estimates <span class="partial">55%</span></h3>
   
   <ul class="coverage">
     
@@ -82,39 +82,11 @@ Click chapter titles to see missing items.
     
     
     
-    <li>
-      <div class="thm_thmheading">Lemma 2.5 (lem:divisor_bound)</div>
-      <div class="thm_thm_content"><p>  For any \(\epsilon \) such that \(0{\lt}\epsilon \leq 1\), if \(n\) is sufficiently large depending on \(\epsilon \), then </p>
-<div class="displaymath" id="a0000000031">
-  \[ \tau (n) \leq n^{(1+\epsilon )\frac{\log 2}{\log \log n}}. \]
-</div>
-</div>
-    </li>
-    
-    
-    
-    <li>
-      <div class="thm_thmheading">Lemma 2.6 (lem:mertens1)</div>
-      <div class="thm_thm_content"><p> There exists a constant \(c\) such that </p>
-<div class="displaymath" id="a0000000044">
-  \[ \sum _{q\leq X}\frac{1}{q} = \log \log X+c+O(1/\log X), \]
-</div>
-<p> where the sum is restricted to prime powers. </p>
-</div>
-    </li>
     
     
     
     
     
-    <li>
-      <div class="thm_thmheading">Lemma 2.8 (lem:mertens2)</div>
-      <div class="thm_thm_content"><p> For any \(X\geq 2\), </p>
-<div class="displaymath" id="a0000000048">
-  \[ \prod _{p\leq X}\left( 1-\frac{1}{p}\right)^{-1}\asymp \log X. \]
-</div>
-</div>
-    </li>
     
     
     
@@ -536,25 +508,6 @@ Click chapter titles to see missing items.
 </div>
     </li>
     
-    <li>
-      <div class="thm_thmheading">Lemma 2.6 (lem:mertens1)</div>
-      <div class="thm_thm_content"><p> There exists a constant \(c\) such that </p>
-<div class="displaymath" id="a0000000044">
-  \[ \sum _{q\leq X}\frac{1}{q} = \log \log X+c+O(1/\log X), \]
-</div>
-<p> where the sum is restricted to prime powers. </p>
-</div>
-    </li>
-    
-    <li>
-      <div class="thm_thmheading">Lemma 2.8 (lem:mertens2)</div>
-      <div class="thm_thm_content"><p> For any \(X\geq 2\), </p>
-<div class="displaymath" id="a0000000048">
-  \[ \prod _{p\leq X}\left( 1-\frac{1}{p}\right)^{-1}\asymp \log X. \]
-</div>
-</div>
-    </li>
-    
   </ul>
   
 </section>
@@ -623,15 +576,6 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
-      <div class="thm_thmheading">Lemma 2.5 (lem:divisor_bound)</div>
-      <div class="thm_thm_content"><p>  For any \(\epsilon \) such that \(0{\lt}\epsilon \leq 1\), if \(n\) is sufficiently large depending on \(\epsilon \), then </p>
-<div class="displaymath" id="a0000000031">
-  \[ \tau (n) \leq n^{(1+\epsilon )\frac{\log 2}{\log \log n}}. \]
-</div>
-</div>
-    </li>
-    
-    <li>
       <div class="thm_thmheading">Lemma 2.9 (lem:sieve_eratosthenes)</div>
       <div class="thm_thm_content"><p>  For any \(x,y\geq 0\) and \(u\geq v\geq 1\) </p>
 <div class="displaymath" id="a0000000050">
@@ -666,6 +610,15 @@ Click chapter titles to see missing items.
     </li>
     
     <li>
+      <div class="thm_thmheading">Lemma 3.4 (lem:sieve1)</div>
+      <div class="thm_thm_content"><p>  Let \(N\) be sufficiently large and \(z,y\) be two parameters such that \(\log N \geq z{\gt}y\geq 3\). If \(X\) is the set of all those integers not divisible by any prime in \(p\in [y,z]\) then </p>
+<div class="displaymath" id="a0000000076">
+  \[ \left\lvert  X\cap [N,2N)\right\rvert \ll \frac{\log y}{\log z}N. \]
+</div>
+</div>
+    </li>
+    
+    <li>
       <div class="thm_thmheading">Lemma 3.5 (lem:sieve2)</div>
       <div class="thm_thm_content"><p>  Let \(N\) be sufficiently large and \(z,y\) be two parameters such that \((\log N)^{1/2}\geq z{\gt}4y\geq 8\). If \(Y\subset [1,N]\) is the set of all those integers divisible by at least two distinct primes \(p_1,p_2\in [y,z]\) where \(4p_1{\lt}p_2\) then </p>
 <div class="displaymath" id="a0000000084">
@@ -688,12 +641,31 @@ Click chapter titles to see missing items.
   <ul class="coverage">
     
     <li>
+      <div class="thm_thmheading">Lemma 5.1 (lem:basic)</div>
+      <div class="thm_thm_content"><p>  If \(0{\lt}\left\lvert n_1-n_2\right\rvert \leq N\) then </p>
+<div class="displaymath" id="a0000000162">
+  \[ \sum _{q\mid (n_1,n_2)}\frac{1}{q}\ll \log \log \log N, \]
+</div>
+<p> where the summation is restricted to prime powers. </p>
+</div>
+    </li>
+    
+    <li>
       <div class="thm_thmheading">Lemma 5.2 (lem:rtop)</div>
       <div class="thm_thm_content"><p>  Let \(1/2{\gt}\epsilon {\gt}0\) and \(N\) be sufficiently large, depending on \(\epsilon \). If \(A\) is a finite set of integers such that \(R(A)\geq (\log N)^{-\epsilon /2}\) and \((1-\epsilon )\log \log N\leq \omega (n)\leq 2\log \log N\) for all \(n\in A\) then </p>
 <div class="displaymath" id="a0000000165">
   \[ \sum _{q\in \mathcal{Q}_A}\frac{1}{q} \geq (1-2\epsilon )e^{-1}\log \log N. \]
 </div>
 
+</div>
+    </li>
+    
+    <li>
+      <div class="thm_thmheading">Lemma 5.3 (lem:smoothsum)</div>
+      <div class="thm_thm_content"><p>  There is a constant \(C{\gt}0\) such that the following holds. Let \(0{\lt}y{\lt}N\) be some reals, and suppose that \(D\) is a finite set of integers such that if \(d\in D\) and \(p^r\|  d\) then \(y{\lt}p^r\leq N\). Then, for any real \(k\geq 1\), </p>
+<div class="displaymath" id="a0000000170">
+  \[ \sum _{d\in D}\frac{k^{\omega (d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k. \]
+</div>
 </div>
     </li>
     

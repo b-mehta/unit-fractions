@@ -685,20 +685,6 @@ end nat.arithmetic_function
 localized "notation `τ` := nat.arithmetic_function.sigma 0" in arithmetic_function
 open nat.arithmetic_function
 
--- BM: Bounds like these make me tempted to define a relation
--- `equal_up_to p f g` to express that `f - g ≪ p` (probably stated `f - g = O(p)`) and show that
--- (for fixed p) this is an equivalence relation, and that it is increasing in `p`
--- Perhaps this would make it easier to express the sorts of calculations that are common in ANT,
--- especially ones like
--- f₁ = f₂ + O(p)
---    = f₃ + O(p)
---    = f₄ + O(p)
--- since this is essentially using transitivity of `equal_up_to p` three times
-lemma hyperbola :
-  is_O (λ x : ℝ, summatory (λ i, (τ i : ℝ)) 1 x - x * log x - (2 * euler_mascheroni - 1) * x)
-    sqrt at_top :=
-sorry
-
 -- This lemma and proof is from Bhavik
 lemma exp_sub_mul {x c : ℝ} {hc : 0 ≤ c} : c - c * log c ≤ exp x - c * x :=
 begin
@@ -993,12 +979,6 @@ begin
   simp only [mem_preimage, mem_closed_ball_zero_iff, norm_eq_abs] at hx',
   exact le_of_abs_le hx'
 end
-
-#exit
-
-lemma big_O_divisor_bound (ε : ℝ) (hε : 0 < ε) :
-  is_O (λ n, (σ 0 n : ℝ)) (λ n, (n : ℝ)^ε) filter.at_top :=
-sorry
 
 lemma von_mangoldt_upper {n : ℕ} : Λ n ≤ log (n : ℝ) :=
 begin

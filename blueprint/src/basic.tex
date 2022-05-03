@@ -68,6 +68,7 @@ For any $\epsilon$ such that $0<\epsilon\leq 1$, if $n$ is sufficiently large de
 \[\tau(n) \leq n^{(1+\epsilon)\frac{\log 2}{\log\log n}}.\]
 \end{lemma}
 \begin{proof}
+\leanok
 We first show that, for any real $K\geq 2$,
 \[\tau(n) \leq n^{1/K}K^{2^K}.\]
 Write $n$ as the product of unique prime powers $n=p_1^{k_1}\cdots p_r^{k_r}$, so that
@@ -98,11 +99,14 @@ as required.
 \end{proof}
 
 \begin{lemma}[Mertens' estimate]\label{lem:mertens1}
+  \leanok
+  \lean{prime_power_reciprocal}
 There exists a constant $c$ such that
 \[\sum_{q\leq X}\frac{1}{q} = \log\log X+c+O(1/\log X),\]
 where the sum is restricted to prime powers.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:mertensprimes}
 
 \end{proof}
@@ -120,10 +124,13 @@ where the sum is restricted to primes.
 \end{proof}
 
 \begin{lemma}[Mertens' product estimate]\label{lem:mertens2}
+  \leanok
+  \lean{mertens_third}
 For any $X\geq 2$,
 \[\prod_{p\leq X}\brac{1-\frac{1}{p}}^{-1}\asymp \log X.\]
 \end{lemma}
 \begin{proof}\uses{lem:mertens1}
+  \leanok
 
 \end{proof}
 
