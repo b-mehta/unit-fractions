@@ -724,18 +724,18 @@ begin
     apply hy.2.le },
 end
 
-lemma div_bound_aux1 (n : ℝ) (r : ℕ) (K : ℝ) (h1 : 2^K < n) (h2 : 0 < K) (hr : 1 ≤ r) :
-  (r:ℝ) + 1 ≤ n ^ ((r:ℝ)/K) :=
+lemma div_bound_aux1 (n : ℝ) (r : ℕ) (K : ℝ) (h1 : 2 ^ K ≤ n) (h2 : 0 < K) :
+  (r : ℝ) + 1 ≤ n ^ ((r : ℝ) / K) :=
 begin
   transitivity (2 : ℝ) ^ (r : ℝ),
   { rw add_comm, simpa using one_add_mul_le_pow (show (-2 : ℝ) ≤ 1, by norm_num) r },
-  { refine le_trans _ (rpow_le_rpow _ h1.le _),
+  { refine le_trans _ (rpow_le_rpow _ h1 _),
     { rw [←rpow_mul (zero_le_two : (0 : ℝ) ≤ 2), mul_div_cancel' _ h2.ne'] },
     { refine rpow_nonneg_of_nonneg zero_le_two _ },
     { exact div_nonneg (nat.cast_nonneg _) h2.le } }
 end
 
-lemma bernoulli_aux (x : ℝ) (hx : 0 ≤ x) : x + 1/2 ≤ 2^x :=
+lemma bernoulli_aux (x : ℝ) : x + 1 / 2 ≤ 2 ^ x :=
 begin
   have h : (0 : ℝ) < log (2 : ℝ) := log_pos one_lt_two,
   have h₁ :
@@ -763,31 +763,26 @@ begin
   { norm_num }
 end
 
-lemma div_bound_aux2 (n : ℝ) (r : ℕ) (K : ℝ) (h1 : 2 ≤ n) (h2 : 2 ≤ K) (h3 : 1 ≤ r) :
-  (r:ℝ) + 1 ≤ n ^ ((r:ℝ)/K) * K :=
+lemma div_bound_aux2 (n : ℝ) (r : ℕ) (K : ℝ) (h1 : 2 ≤ n) (h2 : 2 ≤ K) :
+  (r : ℝ) + 1 ≤ n ^ ((r : ℝ) / K) * K :=
 begin
-  have h4 : ((r:ℝ)+1)/K ≤ 2^((r:ℝ)/K),
-  { transitivity (r:ℝ)/K + (1/2),
-  rw add_div,
-  simp only [one_div, add_le_add_iff_left],
-  apply inv_le_inv_of_le, norm_num, exact h2,
-  apply bernoulli_aux,
-  apply div_nonneg,
-  norm_cast,
-  linarith, linarith,
-  },
-  transitivity (2:ℝ)^((r:ℝ)/K)*K,
-  {rwa ← div_le_iff, linarith,},
-  apply mul_le_mul_of_nonneg_right,
-  rwa rpow_le_rpow_iff,
-  norm_num, linarith, apply div_pos,
-  norm_cast, linarith, linarith, linarith,
+  have h4 : ((r : ℝ) + 1) / K ≤ 2 ^ ((r : ℝ) / K),
+  { transitivity (r : ℝ) / K + 1 / 2,
+    { rw add_div,
+      simp only [one_div, add_le_add_iff_left],
+      exact inv_le_inv_of_le zero_lt_two h2 },
+    exact bernoulli_aux _ },
+  have : 0 < K := by linarith,
+  transitivity (2 : ℝ) ^ ((r : ℝ) / K) * K,
+  { rwa ← div_le_iff this },
+  apply mul_le_mul_of_nonneg_right _ this.le,
+  exact rpow_le_rpow zero_le_two h1 (div_nonneg (nat.cast_nonneg _) this.le),
 end
 
-lemma divisor_function_exact_prime_power (r : ℕ) {p : ℕ} (h : p.prime) : σ 0 (p^r) = r + 1 :=
+lemma divisor_function_exact_prime_power (r : ℕ) {p : ℕ} (h : p.prime) : σ 0 (p ^ r) = r + 1 :=
 begin
-  rw [nat.arithmetic_function.sigma_zero_apply_eq_card_divisors, nat.divisors_prime_pow h],
-  rw [finset.card_map, finset.card_range],
+  rw [nat.arithmetic_function.sigma_zero_apply_eq_card_divisors, nat.divisors_prime_pow h,
+    finset.card_map, finset.card_range],
 end
 
 variables {R : Type*}
@@ -802,38 +797,204 @@ begin
   rw divisor_function_exact_prime_power _ (nat.prime_of_mem_factorization hp),
 end
 
--- INCOMPLETE PROOF
-lemma anyk_divisor_bound (n : ℕ) (K : ℝ) (hK : 2 < K) :
-  (σ 0 n : ℝ) ≤ ((n : ℝ) ^ (1/K)) * K ^ ((2 : ℝ) ^ K) :=
+lemma finset.prod_div_distrib {α : Type*} {s : finset α} {f g : α → R} [comm_group_with_zero R] :
+  ∏ i in s, (f i / g i) = (∏ i in s, f i) / (∏ i in s, g i) :=
 begin
-  rcases eq_or_ne n 0 with rfl | hn,
+  simp only [div_eq_mul_inv],
+  rw [finset.prod_mul_distrib, finset.prod_inv_distrib'],
+end
+
+lemma finset.prod_rpow {α : Type*} {s : finset α} {f : α → ℝ} (r : ℝ) :
+  (∀ x ∈ s, 0 ≤ f x) → ∏ i in s, f i ^ r = (∏ i in s, f i) ^ r :=
+begin
+  refine finset.cons_induction_on s (by simp) _,
+  intros a s h ih hf,
+  simp only [finset.mem_cons, forall_eq_or_imp] at hf,
+  rw [finset.prod_cons, ih hf.2, finset.prod_cons, mul_rpow hf.1],
+  exact finset.prod_nonneg hf.2
+end
+
+lemma divisor_function_div_pow_eq {n : ℕ} (K : ℝ) (hn : n ≠ 0) :
+  (σ 0 n : ℝ) / n ^ K⁻¹ = n.factorization.prod (λ p k, (k + 1) / (p ^ (↑k / K))) :=
+begin
+  simp only [finsupp.prod, finset.prod_div_distrib, rpow_nat_cast, ←nat.cast_pow, finset.prod_rpow,
+    div_eq_mul_inv (coe _) K, rpow_mul, nat.cast_nonneg, implies_true_iff, ←nat.cast_prod],
+  rw [←finsupp.prod, nat.factorization_prod_pow_eq_self hn, divisor_function_exact hn, finsupp.prod,
+    nat.cast_prod],
+  simp only [nat.cast_add_one],
+end
+
+@[to_additive sum_le_sum_of_subset_of_nonpos]
+lemma prod_le_prod_of_subset_of_le_one' {ι N : Type*} [ordered_comm_monoid N]
+  {s t : finset ι} {f : ι → N} (h : s ⊆ t) (hf : ∀ i ∈ t, i ∉ s → f i ≤ 1) :
+  ∏ i in t, f i ≤ ∏ i in s, f i :=
+by classical;
+calc ∏ i in t, f i = ∏ i in t \ s ∪ s, f i : by rw [finset.sdiff_union_of_subset h]
+    ... = (∏ i in t \ s, f i) * ∏ i in s, f i : finset.prod_union finset.sdiff_disjoint
+    ... ≤ ∏ i in s, f i : mul_le_of_le_one_left' $ finset.prod_le_one' $ by simpa
+
+lemma prod_le_prod_of_subset_of_le_one {ι N : Type*} [ordered_comm_semiring N]
+  {s t : finset ι} {f : ι → N} (h : s ⊆ t) (hs : ∀ i ∈ t, 0 ≤ f i) (hf : ∀ i ∈ t, i ∉ s → f i ≤ 1) :
+  ∏ i in t, f i ≤ ∏ i in s, f i :=
+by classical;
+calc ∏ i in t, f i = (∏ i in t \ s, f i) * ∏ i in s, f i : (finset.prod_sdiff h).symm
+    ... ≤ ∏ i in s, f i :
+      mul_le_of_le_one_left (finset.prod_nonneg (λ i hi, hs _ (h hi))) $
+        finset.prod_le_one (λ i hi, hs _ (finset.sdiff_subset _ _ hi)) (by simpa)
+
+-- INCOMPLETE PROOF
+lemma anyk_divisor_bound (n : ℕ) {K : ℝ} (hK : 2 ≤ K) :
+  (σ 0 n : ℝ) ≤ (n : ℝ) ^ (1 / K) * K ^ ((2 : ℝ) ^ K) :=
+begin
+  rcases n.eq_zero_or_pos with rfl | hn,
   { simp only [one_div, finset.card_empty, algebra.id.smul_eq_mul, nat.divisors_zero,
       nat.cast_zero, zero_mul, finset.sum_const, pow_zero, nat.arithmetic_function.sigma_apply],
     rw zero_rpow, { simp },
     simp only [inv_eq_zero, ne.def],
     linarith },
-  rw divisor_function_exact hn,
-  sorry
-  -- by_cases n = 0,
-  -- rw h, simp,
-  -- have h1 : (0 : ℝ) ^ K⁻¹ = 0,
-  -- { apply zero_rpow, simp, linarith,},
-  -- rw h1, linarith,
-  -- have : (σ 0 n) = ∏ p in n.factors.to_finset, (n.factors.count p + 1),
-  -- { apply divisor_function_exact, exact h,},
-  -- rw this, clear this,
-  -- sorry
+  rw [←div_le_iff' (rpow_pos_of_pos (nat.cast_pos.2 hn) _), one_div,
+    divisor_function_div_pow_eq _ hn.ne', finsupp.prod, nat.support_factorization],
+  have : n.factors.to_finset.filter (λ p, ↑p < (2 : ℝ) ^ K) ⊆ _ := finset.filter_subset _ _,
+  refine (prod_le_prod_of_subset_of_le_one this _ _).trans _,
+  { intros i hi,
+    exact div_nonneg (nat.cast_add_one_pos _).le (rpow_nonneg_of_nonneg (nat.cast_nonneg _) _) },
+  { simp only [list.mem_to_finset, finset.mem_filter, true_and, not_lt] {contextual := tt},
+    intros p hp hp',
+    refine div_le_one_of_le _ (rpow_nonneg_of_nonneg (nat.cast_nonneg _) _),
+    apply div_bound_aux1 _ _ _ hp',
+    linarith
+    },
+  refine (finset.prod_le_prod _ _).trans ((finset.prod_const K).trans_le _),
+  { intros i _,
+    exact div_nonneg (nat.cast_add_one_pos _).le (rpow_nonneg_of_nonneg (nat.cast_nonneg _) _) },
+  swap,
+  { rw ←rpow_nat_cast,
+    refine rpow_le_rpow_of_exponent_le (by linarith) _,
+    simp only [←nat.le_floor_iff (rpow_nonneg_of_nonneg zero_le_two _)],
+    rw [←nat.sub_zero ⌊(_ : ℝ)⌋₊, ←nat.card_Ioc 0 ⌊(2 : ℝ) ^ K⌋₊],
+    refine finset.card_le_of_subset _,
+    intros p,
+    simp only [finset.mem_filter, list.mem_to_finset, finset.mem_Ioc, and_imp],
+    intros hp₁ hp₂,
+    refine ⟨nat.pos_of_mem_factors hp₁, _⟩,
+    rw [nat.le_floor_iff (rpow_nonneg_of_nonneg zero_le_two _)],
+    exact hp₂.le },
+  intros p hp,
+  simp only [finset.mem_filter, list.mem_to_finset] at hp,
+  have hp' := nat.prime_of_mem_factors hp.1,
+  rw div_le_iff',
+  apply div_bound_aux2 _ _ _ _ hK,
+  { exact_mod_cast hp'.two_le },
+  exact rpow_pos_of_pos (nat.cast_pos.2 hp'.pos) _,
+end.
+
+lemma log_le_log_of_le {x y : ℝ} (hx : 0 < x) (hxy : x ≤ y) : log x ≤ log y :=
+(log_le_log hx (hx.trans_le hxy)).2 hxy
+
+example : ∀ᶠ x in 𝓝 (0 : ℝ), ∥x∥ < 1 :=
+begin
+  convert metric.ball_mem_nhds (0 : ℝ) zero_lt_one,
+  simp only [dist_zero_right],
 end
 
-lemma divisor_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε ≤ 1) :
-  ∀ᶠ (n : ℕ) in filter.at_top, (σ 0 n : ℝ) ≤ n ^ (real.log 2 * (1 / log (log (n : ℝ))) * (1 + ε)) :=
+lemma log_log_mul_log_div_rpow {ε : ℝ} (hε : 0 < ε) :
+  tendsto (λ x : ℝ, log (log x) * log x / x ^ ε) at_top (𝓝 0) :=
 begin
-  sorry
+  refine is_o.tendsto_div_nhds_zero _,
+  refine ((is_o_log_id_at_top.comp_tendsto tendsto_log_at_top).mul_is_O (is_O_refl _ _)).trans _,
+  refine ((is_o_log_rpow_at_top (half_pos hε)).pow zero_lt_two).congr' _ _,
+  { filter_upwards with x using by simp [sq] },
+  filter_upwards [eventually_ge_at_top (0 : ℝ)] with x hx,
+  rw [←rpow_two, ←rpow_mul hx, div_mul_cancel ε two_ne_zero],
 end
+
+lemma divisor_bound {ε : ℝ} (hε1 : 0 < ε) (hε2 : ε ≤ 1) :
+  ∀ᶠ (n : ℕ) in filter.at_top, (σ 0 n : ℝ) ≤ n ^ (real.log 2 / log (log (n : ℝ)) * (1 + ε)) :=
+begin
+  have h : tendsto (coe : ℕ → ℝ) at_top at_top := tendsto_coe_nat_at_top_at_top,
+  have hl := tendsto_log_at_top.comp h,
+  have hll := tendsto_log_at_top.comp hl,
+  have hx : tendsto
+    (λ n : ℕ, 2 * (log (log (log (n : ℝ))) * log (log (n : ℝ)) / log (n : ℝ) ^ (ε / 3)))
+    at_top (𝓝 0),
+  { simpa using ((log_log_mul_log_div_rpow (div_pos hε1 zero_lt_three)).comp hl).const_mul 2 },
+  have hε : 0 < real.log 2 * ε / 2 := half_pos (mul_pos (log_pos one_lt_two) hε1),
+  filter_upwards [hll (eventually_ge_at_top (real.log 2 * (1 + ε / 2))⁻¹),
+    hll (eventually_gt_at_top 0), hl (eventually_gt_at_top 0),
+    hll (eventually_ge_at_top (2 * real.log 2 * (1 + ε / 2))),
+    h (eventually_gt_at_top 0),
+    hx (metric.closed_ball_mem_nhds 0 hε)] with n hlln' hlln hln hlln'' hn hx',
+  dsimp at hlln hlln' hln hlln'' hn,
+  simp only [mem_preimage, mem_closed_ball_zero_iff, norm_eq_abs] at hx',
+  set K := log (log (n : ℝ)) / ((real.log 2) * (1 + ε / 2)) with hK,
+  have hpowK_pos : 0 < (2 : ℝ) ^ K := rpow_pos_of_pos zero_lt_two _,
+  have hε : 0 < real.log 2 * (1 + ε / 2),
+  { exact mul_pos (log_pos one_lt_two) (by linarith) },
+  have hpowK : 2 ^ K ≤ real.log n ^ (1 - ε / 3),
+  { rw [←log_le_log hpowK_pos (rpow_pos_of_pos hln _), log_rpow zero_lt_two, log_rpow hln, hK,
+      mul_comm (real.log 2), ←div_div_eq_div_mul, div_mul_cancel _ (log_pos one_lt_two).ne',
+      div_le_iff', ←mul_assoc],
+    { exact le_mul_of_one_le_left hlln.le (by nlinarith) },
+    { linarith } },
+  have hlogK : log K ≤ 2 * log (log (real.log n)),
+  { rwa [hK, div_eq_mul_inv, log_mul hlln.ne' (ne_of_gt _), two_mul, add_le_add_iff_left,
+      log_le_log _ hlln];
+    exact inv_pos.2 hε },
+  have hK₂ : 2 ≤ K,
+  { rwa [le_div_iff hε, ←mul_assoc] },
+  have hK₀ : 0 < K := zero_lt_two.trans_le hK₂,
+  have hK' : 0 < K ^ ((2 : ℝ) ^ K) := rpow_pos_of_pos hK₀ _,
+  refine (anyk_divisor_bound n hK₂).trans _,
+  rw [←log_le_log (mul_pos (rpow_pos_of_pos hn _) hK') (rpow_pos_of_pos hn _),
+    log_mul (rpow_pos_of_pos hn _).ne' hK'.ne', log_rpow hn, log_rpow hK₀, log_rpow hn],
+  refine (add_le_add_left (mul_le_mul hpowK hlogK (log_nonneg (one_le_two.trans hK₂))
+    (rpow_nonneg_of_nonneg hln.le _)) _).trans _,
+  rw [hK, one_div_div, ←div_mul_eq_mul_div],
+  suffices : log (n : ℝ) ^ (1 - ε / 3) * (2 * log (log (log (n : ℝ)))) ≤
+    log (2 : ℝ) / log (log (n : ℝ)) * (ε / 2) * log (n : ℝ),
+  { linarith },
+  suffices : 2 * (log (log (log (n : ℝ))) * log (log (n : ℝ)) / (log (n : ℝ) ^ (ε / 3))) ≤
+    log (2 : ℝ) * ε / 2,
+  { rw [rpow_sub hln, div_eq_mul_one_div, rpow_one, div_mul_eq_mul_div,
+      mul_comm _ (log (n : ℝ)), mul_assoc],
+    refine mul_le_mul_of_nonneg_left _ hln.le,
+    rw le_div_iff hlln,
+    field_simp at this ⊢,
+    rwa [mul_assoc] },
+  exact le_of_abs_le hx',
+end
+
+lemma trivial_divisor_bound {n : ℕ} :
+  σ 0 n ≤ n :=
+begin
+  rw [sigma_zero_apply_eq_card_divisors],
+  exact (finset.card_le_of_subset (finset.filter_subset _ _)).trans_eq (by simp),
+end
+
+lemma real.le_rpow_self_of_one_le {x r : ℝ} (hx : 1 ≤ x) (hr : 1 ≤ r) :
+  x ≤ x ^ r :=
+by simpa using rpow_le_rpow_of_exponent_le hx hr
 
 lemma weak_divisor_bound (ε : ℝ) (hε : 0 < ε) :
   ∀ᶠ (n : ℕ) in filter.at_top, (σ 0 n : ℝ) ≤ (n : ℝ)^ε :=
-sorry
+begin
+  cases le_total (1 : ℝ) ε,
+  { filter_upwards [eventually_ge_at_top 1] with n hn,
+    refine (nat.cast_le.2 _).trans (real.le_rpow_self_of_one_le (nat.one_le_cast.2 hn) h),
+    exact trivial_divisor_bound },
+  let t := tendsto_log_at_top,
+  have hx : tendsto (λ n : ℕ, log (2 : ℝ) * 2 * (log (log (n : ℝ)))⁻¹) at_top (𝓝 0),
+  { simpa using ((t.comp t).comp tendsto_coe_nat_at_top_at_top).inv_tendsto_at_top.const_mul
+      (log (2 : ℝ) * 2) },
+  filter_upwards [divisor_bound zero_lt_one le_rfl, eventually_ge_at_top 1,
+    hx (metric.closed_ball_mem_nhds 0 hε)] with n hn hn' hx',
+  refine hn.trans (rpow_le_rpow_of_exponent_le (nat.one_le_cast.2 hn') _),
+  rw [div_mul_eq_mul_div, div_eq_mul_inv],
+  simp only [mem_preimage, mem_closed_ball_zero_iff, norm_eq_abs] at hx',
+  exact le_of_abs_le hx'
+end
+
+#exit
 
 lemma big_O_divisor_bound (ε : ℝ) (hε : 0 < ε) :
   is_O (λ n, (σ 0 n : ℝ)) (λ n, (n : ℝ)^ε) filter.at_top :=
