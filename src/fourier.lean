@@ -1050,16 +1050,6 @@ begin
   simp only [←prod_filter, filter_mem_eq_inter, (inter_eq_right_iff_subset _ _).2 local_part_subset]
 end
 
-lemma real.le_rpow_self_of {x : ℝ} {z : ℝ} (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1)
-  (h_one_le : z ≤ 1) : x ≤ x ^ z :=
-begin
-  rcases eq_or_ne z 0 with rfl | hz,
-  { simp [hx₁] },
-  rcases eq_or_lt_of_le hx₀ with rfl | hx₀,
-  { rw zero_rpow hz },
-  simpa using rpow_le_rpow_of_exponent_ge hx₀ hx₁ h_one_le
-end
-
 lemma minor2_ind_bound_part_one {N : ℕ} {A : finset ℕ} {t : ℤ}
   (hA : 0 ∉ A) (hA' : ∀ n ∈ A, n ≤ N) (hN : 2 ≤ N) :
   cos_prod A t ≤ ∏ q in ppowers_in_set A, (cos_prod (local_part A q) t) ^ (2 * log N)⁻¹ :=
@@ -1083,7 +1073,7 @@ begin
     (∏ (n : ℕ) in local_part A x, |cos (π * ↑t / ↑n)|) ^ (2 * log ↑N)⁻¹ =
     ∏ (n : ℕ) in local_part A x, |cos (π * ↑t / ↑n)| ^ (2 * log ↑N)⁻¹,
   { intros x hx,
-    exact prod_rpow _ (λ n hn, abs_nonneg _) },
+    exact finset.prod_rpow _ (λ n hn, abs_nonneg _) },
   simp_rw [finset.prod_congr rfl this, ←prod_swapping, prod_const],
   refine prod_le_prod (λ _ _, abs_nonneg _) _,
   intros n hn,

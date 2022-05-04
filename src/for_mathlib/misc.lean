@@ -79,6 +79,19 @@ begin
   rw [finset.range_eq_Ico, nat.Ico_succ_right, finset.Icc_sdiff_Icc_right (nat.zero_le _) h],
 end
 
+lemma Ici_diff_Icc {a b : ℝ} (hab : a ≤ b) : set.Ici a \ set.Icc a b = set.Ioi b :=
+begin
+  rw [←set.Icc_union_Ioi_eq_Ici hab, set.union_diff_left, set.diff_eq_self],
+  rintro x ⟨⟨_, hx⟩, hx'⟩,
+  exact not_le_of_lt hx' hx,
+end
+
+lemma Ioi_diff_Icc {a b : ℝ} (hab : a ≤ b) : set.Ioi a \ set.Ioc a b = set.Ioi b :=
+begin
+  rw [←set.Ioc_union_Ioi_eq_Ioi hab, set.union_diff_left, set.diff_eq_self, set.subset_def],
+  simp,
+end
+
 open_locale big_operators
 
 @[simp, norm_cast] lemma rat.cast_sum {α β : Type*} [division_ring β] [char_zero β] (s : finset α)
@@ -90,29 +103,25 @@ lemma complex.re_sum {α : Type*} (s : finset α) (f : α → ℂ) :
   (∑ i in s, f i).re = ∑ i in s, (f i).re :=
 complex.re_add_group_hom.map_sum f s
 
-lemma prod_of_re {α : Type*} (s : finset α) (f : α → ℝ) :
-  ∏ i in s, (f i : ℂ) = (∏ i in s, f i : ℝ) :=
-begin
-  simp only [complex.of_real_prod],
-end
-
-lemma prod_rpow {ι : Type*} [decidable_eq ι] {s : finset ι} {f : ι → ℝ}
+lemma finset.prod_rpow {ι : Type*} {s : finset ι} {f : ι → ℝ}
   (c : ℝ) (hf : ∀ x ∈ s, 0 ≤ f x) :
   (∏ i in s, f i) ^ c = ∏ i in s, f i ^ c :=
 begin
-  revert hf,
-  apply finset.induction_on s,
+  induction s using finset.cons_induction_on with a s has ih generalizing hf,
   { simp },
-  intros a s has ih hf,
-  simp only [finset.mem_insert, forall_eq_or_imp] at hf,
-  rw [finset.prod_insert has, real.mul_rpow hf.1 (finset.prod_nonneg hf.2),
-    finset.prod_insert has, ih hf.2],
+  simp only [finset.mem_cons, forall_eq_or_imp] at hf,
+  rw [finset.prod_cons has, real.mul_rpow hf.1 (finset.prod_nonneg hf.2),
+    finset.prod_cons has, ih hf.2],
 end
 
 lemma finset.sum_erase_eq_sub {α β : Type*} [decidable_eq α] [add_comm_group β]
   {f : α → β} {s : finset α} {a : α} (ha : a ∈ s) :
   ∑ x in s.erase a, f x = (∑ x in s, f x) - f a :=
 by rw [←finset.sum_erase_add _ _ ha, add_sub_cancel]
+
+lemma one_le_prod {ι R : Type*} [ordered_comm_semiring R] {f : ι → R} {s : finset ι}
+  (h1 : ∀ i ∈ s, 1 ≤ f i) : 1 ≤ ∏ i in s, f i :=
+(finset.prod_le_prod (λ _ _, zero_le_one) h1).trans' (by simp)
 
 lemma finset.filter_comm {α : Type*} (p q : α → Prop) [decidable_eq α]
   [decidable_pred p] [decidable_pred q] (s : finset α) :
@@ -133,7 +142,21 @@ theorem int.cast_dvd_char_zero {k : Type*} [field k] [char_zero k] {m n : ℤ}
   (n_dvd : n ∣ m) : ((m / n : ℤ) : k) = m / n :=
 begin
   rcases eq_or_ne n 0 with rfl | hn,
-  { simp },
+  { simp [int.div_zero] },
   rw int.cast_dvd n_dvd,
   exact int.cast_ne_zero.2 hn,
+end
+
+lemma real.le_rpow_self_of_one_le {x r : ℝ} (hx : 1 ≤ x) (hr : 1 ≤ r) :
+  x ≤ x ^ r :=
+by simpa using real.rpow_le_rpow_of_exponent_le hx hr
+
+lemma real.le_rpow_self_of {x : ℝ} {r : ℝ} (hx₀ : 0 ≤ x) (hx₁ : x ≤ 1) (h_one_le : r ≤ 1) :
+  x ≤ x ^ r :=
+begin
+  rcases eq_or_ne r 0 with rfl | hr,
+  { simp [hx₁] },
+  rcases eq_or_lt_of_le hx₀ with rfl | hx₀,
+  { rw real.zero_rpow hr },
+  simpa using real.rpow_le_rpow_of_exponent_ge hx₀ hx₁ h_one_le
 end
