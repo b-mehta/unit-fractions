@@ -1333,8 +1333,8 @@ begin
   { have hp₃ := (nat.le_floor_iff' h.ne_zero).1 hp₂,
     have : insert 1 (filter (λ k, (p ^ k : ℝ) ≤ x) (Icc 2 ⌊x⌋₊)) =
             filter (λ k, (p ^ k : ℝ) ≤ x) (Icc 1 ⌊x⌋₊),
-    { rwa [nat.Icc_succ_left 1, ←finset.Ioc_insert_left (hp₁.trans hp₂), filter_insert,
-        pow_one, if_pos] },
+    { rwa [nat.Icc_succ_left 1, ←finset.Ioc_insert_left (hp₁.trans hp₂), filter_insert, pow_one,
+        if_pos] },
     have h1 : 1 ∉ filter (λ (k : ℕ), (p ^ k : ℝ) ≤ x) (Icc 2 ⌊x⌋₊),
     { simp [not_and_distrib] },
     rw [←this, sum_insert h1, add_comm, pow_one, pow_one, add_sub_cancel],
@@ -1658,10 +1658,7 @@ begin
 end
 
 lemma finset.Icc_eq_insert_Icc_succ {a b : ℕ} (h : a ≤ b) : finset.Icc a b = insert a (Icc (a+1) b) :=
-begin
-  rw finset.Icc_succ_left,
-  rw finset.Ioc_insert_left h,
-end
+by rw [finset.Icc_succ_left, finset.Ioc_insert_left h]
 
 -- Note this inequality can be improved, eg to
 -- ψ - ϑ << x ^ (1/2) * (log x)

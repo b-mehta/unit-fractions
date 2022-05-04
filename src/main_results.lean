@@ -332,16 +332,11 @@ def X (y z : ℝ) : set ℕ := sorry
 
 -- Sieve of Eratosthenes-Legendre, again belongs in basic_estimates
 -- Bhavik, this is clumsily expressed, condensed form?
-lemma sieve_eratosthenes (x y u v : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (hu: 2 ≤ u)
-  -- BM: hu isn't in the paper? also the ordering looks weird to me
-(huv : u ≤ v) :
-|(((finset.Icc ⌈x⌉₊ ⌊x+y⌋₊).filter (λ n : ℕ, (∀ p : ℕ, (p ∣ n)
-   → (prime p) → ( (p:ℝ) < u ∨ v < p ) ))).card : ℝ)-
-   (∏ p in (finset.range(⌊v⌋₊+1)).filter (λ n, (prime n) ∧ (u ≤ n)), (1-(1/p:ℝ)))
-   * y|
-   ≤ (2:ℝ)^(v+1)
-:=
+lemma sieve_eratosthenes (x y u v : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (hu : 1 ≤ u) (huv : u ≤ v) :
+  |((((Ioc ⌊x⌋₊ ⌊x+y⌋₊).filter (λ n : ℕ, ∀ p : ℕ, p.prime → p ∣ n → p ∉ Icc ⌈u⌉₊ ⌊v⌋₊))).card : ℝ) -
+   y * ∏ p in (finset.Icc ⌈u⌉₊ ⌊v⌋₊).filter prime, (1 - p⁻¹)| ≤ 2 ^ (v + 1) :=
 sorry
+
 -- (Proof: write the filtered cardinality as a sum, using the Mobius function
 -- to detect the divisibility constraint, then rearrange. Uses the trivial bound
 -- of v for number of primes in [u,v])
