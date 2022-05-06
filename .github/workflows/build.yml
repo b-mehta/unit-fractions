@@ -30,11 +30,11 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt install graphviz libgraphviz-dev
-        pip3 install invoke pandoc
+        pip install invoke pandoc
         git clone https://github.com/plastex/plastex.git
-        pip3 install ./plastex
+        pip install ./plastex
         git clone https://github.com/PatrickMassot/leanblueprint.git
-        pip3 install ./leanblueprint
+        pip install ./leanblueprint
 
     - name: build blueprint
       run: |
