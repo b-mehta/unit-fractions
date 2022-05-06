@@ -20,3 +20,22 @@ jobs:
 
     - name: build project
       uses: leanprover-contrib/lean-build-action@master
+
+    - name: blueprint deps
+      run: |
+        sudo apt-get update
+        sudo apt install graphviz libgraphviz-dev
+        pip3 install invoke pandoc
+        git clone https://github.com/plastex/plastex.git
+        pip3 install ./plastex
+        git clone https://github.com/PatrickMassot/leanblueprint.git
+        pip3 install ./leanblueprint
+
+    - name: build blueprint
+      run: |
+        inv all html
+
+    - name: test blueprint
+      run: |
+        tree
+        
