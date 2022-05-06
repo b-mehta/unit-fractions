@@ -29,8 +29,8 @@ jobs:
     - name: blueprint deps
       run: |
         sudo apt-get update
-        sudo apt install graphviz libgraphviz-dev
-        pip install invoke pandoc
+        sudo apt install graphviz libgraphviz-dev pandoc
+        pip install invoke
         git clone https://github.com/plastex/plastex.git
         pip install ./plastex
         git clone https://github.com/PatrickMassot/leanblueprint.git
