@@ -21,7 +21,7 @@ jobs:
     - name: install elan
       run: |
         set -o pipefail
-        curl https://raw.githubusercontent.com/leanprover-community/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
+        curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- --default-toolchain none -y
         ~/.elan/bin/lean --version
         echo "$HOME/.elan/bin" >> $GITHUB_PATH
 
