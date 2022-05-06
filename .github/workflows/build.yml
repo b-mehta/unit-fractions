@@ -21,6 +21,11 @@ jobs:
     - name: build project
       uses: leanprover-contrib/lean-build-action@master
 
+    - name: install python
+      uses: actions/setup-python@v3
+      with:
+        python-version: 3.9
+
     - name: blueprint deps
       run: |
         sudo apt-get update
@@ -35,7 +40,10 @@ jobs:
       run: |
         inv all html
 
-    - name: test blueprint
-      run: |
-        tree
+    - name: deploy
+      uses: JamesIves/github-pages-deploy-action@3.7.1
+      with:
+        SINGLE_COMMIT: true
+        BRANCH: gh-pages # The branch the action should deploy to.
+        FOLDER: docs/
         
