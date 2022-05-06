@@ -33,7 +33,7 @@ jobs:
     - name: blueprint deps
       run: |
         sudo apt-get update
-        sudo apt install graphviz libgraphviz-dev pandoc texlive-xetex
+        sudo apt install graphviz libgraphviz-dev pandoc texlive-full texlive-xetex
         pip install invoke
         git clone https://github.com/plastex/plastex.git
         pip install ./plastex
