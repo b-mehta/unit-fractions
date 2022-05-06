@@ -264,7 +264,7 @@ begin
   have hm' : (m : ℝ) ≠ 0, exact_mod_cast hm,
   have hm'' : (m : ℂ) ≠ 0, exact_mod_cast hm',
   split_ifs,
-  { simp_rw [mul_div_assoc, ←nat.cast_dvd h hm', ←int.cast_coe_nat, ←int.cast_mul, e_int],
+  { simp_rw [mul_div_assoc, ←nat.cast_div h hm', ←int.cast_coe_nat, ←int.cast_mul, e_int],
     rw [sum_const, nat.smul_one_eq_coe, int.cast_coe_nat, one_div, hrs₂, mul_inv_cancel hm''] },
   rw [mul_eq_zero, one_div, inv_eq_zero, nat.cast_eq_zero],
   simp only [hm, or_false],
@@ -555,7 +555,7 @@ begin
       nat.cast_sum, ←mul_left_inj' hA', eq.congr_left],
     rw [mul_assoc, mul_left_comm, mul_right_inj' hk', rec_sum, finset.sum_mul, sum_congr rfl],
     intros x hx,
-    rw [mul_comm, mul_one_div, nat.cast_dvd_char_zero],
+    rw [mul_comm, mul_one_div, nat.cast_div_char_zero],
     exact finset.dvd_lcm (hS hx) },
   have : ∀ S : finset ℕ, S ∈ A.powerset →
     (if (∃ (z : ℤ), rec_sum S * (k : ℚ) = z) then (1 : ℕ) else 0 : ℂ) =
@@ -578,7 +578,7 @@ begin
     rw [rec_sum, nat.cast_sum, finset.sum_div, rat.cast_sum],
     apply finset.sum_congr rfl,
     intros n hn,
-    rw [nat.cast_dvd_char_zero, rat.cast_div, rat.cast_coe_nat, rat.cast_one, div_div_eq_div_mul,
+    rw [nat.cast_div_char_zero, rat.cast_div, rat.cast_coe_nat, rat.cast_one, div_div_eq_div_mul,
       mul_comm, div_mul_right],
     { exact nat.cast_ne_zero.2 (lcm_ne_zero_of_zero_not_mem hA) },
     exact finset.dvd_lcm (hS hn) },

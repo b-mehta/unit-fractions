@@ -5,7 +5,7 @@ Authors: Bhavik Mehta, Thomas Bloom
 -/
 
 import data.real.basic
-import analysis.special_functions.log
+import analysis.special_functions.log.basic
 import analysis.special_functions.pow
 import order.filter.at_top_bot
 import number_theory.arithmetic_function

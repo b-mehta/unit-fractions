@@ -15,7 +15,7 @@ import data.complex.exponential_bounds
 import analysis.p_series
 import topology.algebra.order.floor
 import number_theory.prime_counting
-import analysis.special_functions.logb
+import analysis.special_functions.log.base
 import for_mathlib.misc
 import for_mathlib.integral_rpow
 import tactic.equiv_rw
