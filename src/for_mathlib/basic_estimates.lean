@@ -1475,7 +1475,7 @@ end
 
 local attribute [pp_nodot] nat.prime_counting
 
-lemma chebyshev_first_trivial_bound {x : ℝ} :
+lemma chebyshev_first_trivial_bound (x : ℝ) :
   ϑ x ≤ π ⌊x⌋₊ * log x :=
 begin
   rcases le_or_lt x 0 with hx | hx,
@@ -1724,6 +1724,9 @@ begin
   exact log_two_gt_d9.le.trans' (by norm_num),
 end
 
+lemma chebyshev_first_pos : ∀ x, 2 ≤ x → 0 < ϑ x :=
+λ x hx, lt_of_lt_of_le (by norm_num) (chebyshev_first_trivial_lower x hx)
+
 lemma chebyshev_first_lower : is_O id ϑ at_top :=
 begin
   have : is_O (ψ - ϑ) (λ x, x ^ (1 / 2 : ℝ) * (log x)^2) at_top,
@@ -1748,13 +1751,13 @@ begin
   simp
 end
 
-lemma chebyshev_first_all : ∃ c, ∀ x, 2 ≤ x → c * ∥x∥ ≤ ∥ϑ x∥ :=
+lemma chebyshev_first_all : ∃ c, 0 < c ∧ ∀ x, 2 ≤ x → c * ∥x∥ ≤ ∥ϑ x∥ :=
 begin
   obtain ⟨c₀, hc₀, h⟩ := chebyshev_first_lower.exists_pos,
   obtain ⟨X, hX⟩ := eventually_at_top.1 h.bound,
   let c := max c₀ (2 * X),
   have hc : 0 < c := lt_max_of_lt_left hc₀,
-  refine ⟨c⁻¹, λ x hx, _⟩,
+  refine ⟨c⁻¹, inv_pos.2 hc, λ x hx, _⟩,
   rw [inv_mul_le_iff hc],
   cases le_total X x with hx' hx',
   { exact (hX _ hx').trans (mul_le_mul_of_nonneg_right (le_max_left _ _) (norm_nonneg _)) },
@@ -1771,7 +1774,7 @@ begin
   { apply is_O_of_le _ _,
     intro x,
     rw [norm_of_nonneg (chebyshev_first_nonneg x), norm_eq_abs],
-    exact chebyshev_first_trivial_bound.trans (le_abs_self _) },
+    exact (chebyshev_first_trivial_bound _).trans (le_abs_self _) },
   apply ((chebyshev_first_lower.trans this).mul (is_O_refl (λ x, (log x)⁻¹) _)).congr' _ _,
   { apply eventually_of_forall,
     intro x,
@@ -2134,6 +2137,7 @@ lemma indicator_mono {α β : Type*} [ordered_add_comm_monoid β] {s t : set α}
   (hf : ∀ x, x ∉ s → x ∈ t → 0 ≤ f x) :
   indicator s f ≤ indicator t f :=
 begin
+  classical,
   intros x,
   simp only [set.indicator_apply],
   split_ifs,
@@ -2482,30 +2486,298 @@ begin
   exact le_trans ((log_le_log (zero_lt_one.trans_le hx) (by linarith)).2 h) (le_max_right _ _),
 end
 
--- in a mathlib PR already
-lemma squarefree_pow_iff {n k : ℕ} (hn : n ≠ 1) (hk : k ≠ 0) :
-  squarefree (n ^ k) ↔ squarefree n ∧ k = 1 := sorry
+lemma two_pow_card_distinct_divisors_le_divisor_count {n : ℕ} (hn : n ≠ 0) :
+  2 ^ ω n ≤ σ 0 n :=
+begin
+  rw [card_distinct_factors_apply, ←list.card_to_finset, divisor_function_exact hn, finsupp.prod,
+    ←nat.support_factorization],
+  apply finset.pow_card_le_prod,
+  intros p hp,
+  rwa [nat.succ_le_iff, lt_add_iff_pos_left, pos_iff_ne_zero, ←finsupp.mem_support_iff],
+end
 
--- lemma two_pow_card_distinct_divisors_le_divisor_count {n : ℕ} :
---   2 ^ ω n ≤ σ 0 n :=
--- begin
---   rw card_distinct_factors,
--- end
+lemma mul_eq_mul_iff {a b c d : ℕ}
+  (ha : 0 < a) (hb : 0 < b) (hac : a ≤ c) (hbd : b ≤ d) :
+  a * b = c * d ↔ a = c ∧ b = d :=
+begin
+  refine ⟨λ h, _, λ h, by rw [h.1, h.2]⟩,
+  rcases hac.eq_or_lt with rfl | hac,
+  { exact ⟨rfl, mul_left_cancel₀ ha.ne' h⟩ },
+  rcases eq_or_lt_of_le hbd with rfl | hbd,
+  { exact ⟨mul_right_cancel₀ hb.ne' h, rfl⟩ },
+  exact ((mul_lt_mul'' hac hbd ha.le hb.le).ne h).elim,
+end
 
--- lemma divisor_count_of_squarefree {n : ℕ} :
---   squarefree n → σ 0 n = 2 ^ ω n :=
--- begin
---   refine nat.rec_on_pos_prime_pos_coprime _ _ _ _ n,
---   { intros p n hp hn hpn,
---     rw squarefree_pow_iff at hpn,
+lemma finset.prod_eq_prod_iff_of_le' {ι : Type*}
+  {s : finset ι} {f g : ι → ℕ} (hf : ∀ i ∈ s, 0 < f i) (h : ∀ i ∈ s, f i ≤ g i) :
+  ∏ i in s, f i = ∏ i in s, g i ↔ ∀ i ∈ s, f i = g i :=
+begin
+  induction s using finset.cons_induction_on with a s has ih generalizing hf h,
+  { simp },
+  simp only [prod_cons, mem_cons, forall_eq_or_imp] at ⊢ hf h,
+  rw [mul_eq_mul_iff hf.1 (prod_pos hf.2) h.1 (prod_le_prod (λ i hi, (hf.2 i hi).le) h.2),
+    ih hf.2 h.2],
+end
 
---   },
--- end
+lemma divisor_count_eq_pow_iff_squarefree {n : ℕ} :
+  σ 0 n = 2 ^ ω n ↔ squarefree n :=
+begin
+  rcases eq_or_ne n 0 with rfl | hn,
+  { simp },
+  rw [card_distinct_factors_apply, ←list.card_to_finset, divisor_function_exact hn, finsupp.prod,
+    ←nat.support_factorization, ←prod_const, nat.squarefree_iff_factorization_le_one hn, eq_comm],
+  rw finset.prod_eq_prod_iff_of_le',
+  { split,
+    { intros h p,
+      by_cases hp : p ∈ n.factorization.support,
+      { rw ←nat.succ.inj (h _ hp) },
+      rw finsupp.not_mem_support_iff.1 hp,
+      exact zero_le_one },
+    intros h p hp,
+    rw nat.succ_inj',
+    exact le_antisymm (finsupp.mem_support_iff.1 hp).bot_lt (h _) },
+  { intros,
+    exact zero_lt_two },
+  intros p hp,
+  rw nat.succ_le_succ_iff,
+  exact (finsupp.mem_support_iff.1 hp).bot_lt,
+end
+
+local notation n`#` := primorial n
+
+lemma primorial_pos (n : ℕ) : 0 < n# :=
+prod_pos (by simp [nat.prime.pos] {contextual := tt})
+
+lemma primorial_dvd_primorial_of_le {n m : ℕ} (h : n ≤ m) :
+  n# ∣ m# :=
+begin
+  apply finset.prod_dvd_prod_of_subset,
+  apply filter_subset_filter,
+  rw finset.range_subset,
+  exact add_le_add h (le_refl 1),
+end
+
+lemma primorial_monotone : monotone primorial :=
+λ m n h, nat.le_of_dvd (primorial_pos _) (primorial_dvd_primorial_of_le h)
+
+lemma dvd_primorial_of_prime {n p : ℕ} (hp : p.prime) (hn : p ≤ n) : p ∣ n# :=
+dvd_prod_of_mem _ (by simp [hp, hn, nat.lt_add_one_iff])
+
+lemma dvd_primorial_self {p : ℕ} (hp : p.prime) : p ∣ p# :=
+dvd_primorial_of_prime hp le_rfl
+
+lemma tendsto_primorial_at_top :
+  tendsto primorial at_top at_top :=
+begin
+  apply primorial_monotone.tendsto_at_top_at_top,
+  intro a,
+  obtain ⟨p, hp₁, hp₂⟩ := nat.exists_infinite_primes a,
+  exact ⟨p, hp₁.trans (nat.le_of_dvd (primorial_pos _) (dvd_primorial_self hp₂))⟩,
+end
+
+lemma primorial_zero : primorial 0 = 1 := rfl
+lemma primorial_one : primorial 1 = 1 := rfl
+lemma primorial_two : primorial 2 = 2 := rfl
+lemma primorial_three : primorial 3 = 6 :=
+by norm_num [primorial, filter_insert, range_succ, range_one, filter_singleton]
+
+lemma two_le_primorial {n : ℕ} (hn : 2 ≤ n) : 2 ≤ primorial n :=
+begin
+  rw ←primorial_two,
+  exact primorial_monotone hn,
+end
+
+lemma squarefree_prime_prod {ι : Type*} {s : finset ι} (f : ι → ℕ) (hs : ∀ i ∈ s, (f i).prime)
+  (hf : (s : set ι).inj_on f):
+  squarefree (s.prod f) :=
+begin
+  unfreezingI { induction s using finset.cons_induction_on with a s has ih generalizing hs },
+  { simp },
+  simp only [prod_cons, mem_cons, forall_eq_or_imp] at hs ⊢,
+  simp only [coe_cons, set.inj_on_insert (mem_coe.not.2 has), set.mem_image, not_exists,
+    mem_coe, not_and] at hf,
+  rw nat.squarefree_mul,
+  { exact ⟨hs.1.squarefree, ih hf.1 hs.2⟩ },
+  { apply nat.coprime_prod_right,
+    intros i hi,
+    rw nat.coprime_primes hs.1 (hs.2 _ hi),
+    exact ne.symm (hf.2 _ hi) },
+end
+
+lemma squarefree_primorial (n : ℕ) : squarefree (primorial n) :=
+squarefree_prime_prod _ (by simp) (function.injective_id.inj_on _)
+
+lemma divisor_lower_bound_aux (c : ℝ) {ε : ℝ} (hε : 0 < ε) :
+  ∀ᶠ n : ℕ in at_top, 1 / log (log (n : ℝ)) * (1 - ε) ≤ 1 / (log (log (n : ℝ)) - c) :=
+begin
+  suffices : ∀ᶠ x : ℝ in at_top, 1 / x * (1 - ε) ≤ 1 / (x - c),
+  { exact (tendsto_log_at_top.comp tendsto_log_at_top).comp tendsto_coe_nat_at_top_at_top this },
+  filter_upwards [eventually_ge_at_top (c + -c / ε), eventually_gt_at_top (0 : ℝ),
+    eventually_gt_at_top c] with x hx hx' hx'',
+  rwa [mul_comm, ←div_eq_mul_one_div, div_le_div_iff hx' (sub_pos_of_lt hx''), one_sub_mul, sub_sub,
+    one_mul, sub_le_self_iff, ←neg_le_iff_add_nonneg', ←div_le_iff' hε, le_sub_iff_add_le'],
+end
+
+lemma log_primorial_eq {n : ℕ} : real.log (primorial n) = ϑ n :=
+begin
+  rw [primorial, chebyshev_first, nat.cast_prod, log_prod, nat.floor_coe],
+  simp [nat.prime.ne_zero] {contextual := tt},
+end
+
+lemma factors_primorial {n : ℕ} :
+  (primorial n).factors = (list.range (n + 1)).filter nat.prime :=
+begin
+  rw [primorial],
+  refine (list.eq_of_perm_of_sorted (nat.factors_unique _ _) _ (nat.factors_sorted _)).symm,
+  { rw [prod_eq_multiset_prod, filter_val, range_coe, multiset.map_id', ←multiset.coe_prod,
+      ←multiset.coe_filter],
+    refl },
+  { simp },
+  refine list.pairwise.sublist (list.filter_sublist _) _,
+  exact (list.pairwise_lt_range _).imp (λ _ _, le_of_lt),
+end
+
+@[simp] lemma to_finset_filter
+  {α : Type*} {l : list α} (p : α → Prop) [decidable_eq α] [decidable_pred p] :
+  (l.filter p).to_finset = l.to_finset.filter p :=
+by { ext x, simp }
+
+@[simp] lemma to_finset_range {n : ℕ} : (list.range n).to_finset = finset.range n :=
+by { ext x, simp }
+
+lemma factors_to_finset_primorial {n : ℕ} :
+  (primorial n).factors.to_finset = (finset.range (n + 1)).filter nat.prime :=
+by { rw factors_primorial, simp }
+
+lemma card_distinct_factors_primorial {n : ℕ} : ω (primorial n) = π n :=
+by rw [card_distinct_factors_apply, ←list.card_to_finset, factors_to_finset_primorial,
+    nat.prime_counting, nat.prime_counting', nat.count_eq_card_filter_range]
+
+lemma card_factors_primorial {n : ℕ} : Ω (primorial n) = π n :=
+begin
+  rw [←card_distinct_factors_primorial, eq_comm,
+    card_distinct_factors_eq_card_factors_iff_squarefree (primorial_pos _).ne'],
+  exact squarefree_primorial _
+end
+
+lemma le_log_sigma_zero_primorial :
+  ∃ c : ℝ, ∀ p, 2 ≤ p →
+    (log (primorial p : ℝ) * real.log 2) / (log (log (primorial p : ℝ)) - c) ≤
+      real.log (σ 0 (primorial p)) :=
+begin
+  obtain ⟨c, hc₀, hc⟩ := chebyshev_first_all,
+  refine ⟨log c, λ p hp, _⟩,
+  set n := primorial p with hn,
+  have hp₁ : 2 ≤ (p : ℝ) := by exact_mod_cast hp,
+  have hp₂ : 0 < (p : ℝ) := zero_lt_two.trans_le hp₁,
+  have hp₃ : 0 < ϑ p := chebyshev_first_pos _ hp₁,
+  rw [divisor_count_eq_pow_iff_squarefree.2 (squarefree_primorial _), nat.cast_pow, log_pow,
+    card_distinct_factors_primorial, nat.cast_two, log_primorial_eq],
+  have h₁ : ϑ p ≤ π p * log (p : ℝ),
+  { simpa using chebyshev_first_trivial_bound p },
+  have h₂ : log (p : ℝ) ≤ log (ϑ p) - log c,
+  { simpa [log_mul, hc₀.ne', hp₂.ne', norm_of_nonneg hp₃.le, le_sub_iff_add_le'] using
+      log_le_log_of_le (mul_pos hc₀ (by rwa norm_coe_nat)) (hc _ hp₁) },
+  have h₃ : 0 < log (p : ℝ) := log_pos (by simpa),
+  have h₄ : 0 ≤ log (2 : ℝ) := log_nonneg one_le_two,
+  have h₅ : (0 : ℝ) ≤ π p := nat.cast_nonneg (π p),
+  rw div_le_iff (h₃.trans_le h₂),
+  nlinarith [mul_nonneg h₅ h₄],
+end
+
+lemma nat.divisors_nonempty_iff {n : ℕ} : n.divisors.nonempty ↔ n ≠ 0 :=
+⟨λ h₁ h₂, h₁.ne_empty (by simp [h₂]), λ _, ⟨1, by simpa⟩⟩
+
+lemma one_le_sigma {k n : ℕ} (hn : n ≠ 0) : 1 ≤ σ k n :=
+by simpa using @finset.single_le_sum _ _ _ (λ d, d ^ k) n.divisors (by simp) 1 (by simp [hn])
+
+lemma sigma_pos {k n : ℕ} (hn : n ≠ 0) : 0 < σ k n :=
+one_le_sigma hn
+
+lemma divisor_lower_bound_log {ε : ℝ} (hε : 0 < ε) :
+  ∃ᶠ n : ℕ in at_top, (real.log 2 / log (log (n : ℝ)) * (1 - ε)) * log (n : ℝ) ≤ log (σ 0 n : ℝ) :=
+begin
+  obtain ⟨c, hc⟩ := le_log_sigma_zero_primorial,
+  have : ∃ᶠ n : ℕ in at_top, log (n : ℝ) * real.log 2 / (log (log (n : ℝ)) - c) ≤ log (σ 0 n : ℝ) :=
+    tendsto_primorial_at_top.frequently (eventually_at_top.2 ⟨2, hc⟩).frequently,
+  apply (this.and_eventually (divisor_lower_bound_aux c hε)).mp,
+  simp only [and_imp],
+  filter_upwards [eventually_ge_at_top 1] with n hn₀ hn₁ hn₂,
+  apply hn₁.trans',
+  rw [mul_div_assoc, mul_comm (log (n : ℝ))],
+  apply mul_le_mul_of_nonneg_right _ (log_nonneg (nat.one_le_cast.2 hn₀)),
+  rw [div_eq_mul_one_div, mul_assoc, div_eq_mul_one_div (real.log 2)],
+  apply mul_le_mul_of_nonneg_left hn₂ (log_nonneg one_le_two),
+end
 
 lemma divisor_lower_bound {ε : ℝ} (hε : 0 < ε) :
-  ∃ᶠ (n : ℕ) in at_top, (n : ℝ) ^ (real.log 2 / log (log (n : ℝ)) * (1 - ε)) ≤ σ 0 n :=
+  ∃ᶠ n : ℕ in at_top, (n : ℝ) ^ (real.log 2 / log (log (n : ℝ)) * (1 - ε)) ≤ σ 0 n :=
 begin
-  sorry
-  -- rw frequently_at_top,
-  -- intro x,
+  apply (divisor_lower_bound_log hε).mp,
+  filter_upwards [eventually_ge_at_top 1] with n hn₀ hn₁,
+  have hn₀' : 0 < n := hn₀,
+  have hn₀'' : (0 : ℝ) < n := by simpa,
+  rwa [←log_le_log (rpow_pos_of_pos hn₀'' _) (nat.cast_pos.2 (sigma_pos hn₀'.ne')), log_rpow hn₀'']
+end
+
+-- useful to have c explicit here so hc is a created goal
+lemma cobounded_of_frequently {α : Type*} [conditionally_complete_lattice α]
+  {f : filter α} (c : α) (hc : ∃ᶠ x in f, c ≤ x) :
+  is_cobounded (≤) f :=
+⟨c, λ d hd, let ⟨x, hxc, hxd⟩ := (hc.and_eventually hd).exists in hxc.trans hxd⟩
+
+lemma Limsup_eq_of_eventually_of_frequently {f : filter ℝ} (c : ℝ)
+  (upper : ∀ ε, 0 < ε → ∀ᶠ x : ℝ in f, x ≤ c + ε)
+  (lower : ∀ ε, 0 < ε → ∃ᶠ x : ℝ in f, c - ε ≤ x) :
+  Limsup f = c :=
+begin
+  have hb : is_bounded (≤) f := ⟨c + 1, upper 1 zero_lt_one⟩,
+  have hc : is_cobounded (≤) f :=
+    cobounded_of_frequently (c - 1) (by simpa using lower 1 zero_lt_one),
+  apply le_antisymm,
+  { rw le_iff_forall_pos_le_add,
+    exact λ ε hε, Limsup_le_of_le hc (upper _ hε) },
+  rw le_iff_forall_pos_le_add,
+  intros ε hε,
+  rw ←sub_le_iff_le_add,
+  apply le_limsup_of_frequently_le (lower _ hε) hb,
+end
+
+lemma Limsup_eq_of_eventually_of_frequently_mul {f : filter ℝ} {c : ℝ} (hc : 0 ≤ c)
+  (upper : ∀ ε, 0 < ε → ∀ᶠ x : ℝ in f, x ≤ c * (1 + ε))
+  (lower : ∀ ε, 0 < ε → ∃ᶠ x : ℝ in f, c * (1 - ε) ≤ x) :
+  Limsup f = c :=
+begin
+  rcases hc.eq_or_lt with rfl | hc,
+  { refine Limsup_eq_of_eventually_of_frequently _ (λ ε hε, _) (λ ε hε, _),
+    { apply eventually_le.trans (upper 1 zero_lt_one) (eventually_of_forall (λ x, _)),
+      simpa using hε.le },
+    apply (lower 1 zero_lt_one).mono,
+    intros,
+    linarith [hε.le] },
+  apply Limsup_eq_of_eventually_of_frequently,
+  { intros ε hε,
+    simpa only [mul_one_add, mul_div_cancel' _ hc.ne'] using upper _ (div_pos hε hc) },
+  { intros ε hε,
+    simpa only [mul_one_sub, mul_div_cancel' _ hc.ne'] using lower _ (div_pos hε hc) }
+end
+
+lemma divisor_limsup :
+  at_top.limsup (λ n : ℕ, log (σ 0 n : ℝ) * log (log (n : ℝ)) / log (n : ℝ)) = log (2 : ℝ) :=
+begin
+  have h : tendsto (λ n : ℕ, (n : ℝ)) at_top at_top := tendsto_coe_nat_at_top_at_top,
+  have l := tendsto_log_at_top,
+  refine Limsup_eq_of_eventually_of_frequently_mul (log_nonneg one_le_two) (λ ε hε, _) (λ ε hε, _),
+  { change ∀ᶠ x : ℕ in at_top, _,
+    filter_upwards [divisor_bound hε, eventually_gt_at_top 0, h (eventually_gt_at_top 0),
+      h $ l $ eventually_gt_at_top 0, h $ l $ l $ eventually_gt_at_top 0] with n hn hn₀ hn₁ hn₂ hn₃,
+    dsimp at hn₁ hn₂ hn₃,
+    have := log_le_log_of_le (nat.cast_pos.2 (sigma_pos hn₀.ne')) hn,
+    simpa [log_rpow hn₁, ←div_le_iff hn₂, le_div_iff hn₃, div_mul_eq_mul_div] },
+  change ∃ᶠ x : ℕ in at_top, _,
+  refine (divisor_lower_bound_log hε).mp _,
+  filter_upwards [eventually_gt_at_top 0, h (eventually_gt_at_top 0),
+    h $ l $ eventually_gt_at_top 0, h $ l $ l $ eventually_gt_at_top 0] with n hn hn₀ hn₁ hn₂ hn₃,
+  dsimp at hn₀ hn₁ hn₂,
+  simpa only [le_div_iff hn₁, ←div_le_iff hn₂, ←div_mul_eq_mul_div],
 end
