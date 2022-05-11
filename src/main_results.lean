@@ -39,27 +39,27 @@ theorem circle_method_prop2 :
 sorry
 
 lemma useful_rec_bound : ∃ C : ℝ, ∀ y N k: ℝ, ∀ D : finset ℕ, (C > 0) ∧
-  (0 < y) → (y < N) → (1 ≤ k) → (∀ q : ℕ, q ∈ ppowers_in_set D → (y < q) ∧ ((q:ℝ) ≤ N) ) →
+  (0 < y) → (y < N) → (1 ≤ k) → (∀ q : ℕ, q ∈ ppowers_in_set D → (y < q) ∧ ((q : ℝ) ≤ N) ) →
   ∑ d in D, k^(ω d) / d ≤ (C*(log N)/log y)^k :=
   sorry
 
 -- Lemma 5.1
 lemma rec_pp_sum_close :
-  ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x:ℝ)-y| ≤ N) →
-  ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1:ℝ)/q <
-  ((1:ℝ)/100)*log(log N) :=
+  ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x : ℝ)-y| ≤ N) →
+  ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
+  ((1 : ℝ)/100)*log(log N) :=
   sorry
 
 
 -- Lemma 5.4
 lemma find_good_d : ∃ c C : ℝ, (0 < c) ∧ (0 < C) ∧ ∀ᶠ (N : ℕ) in at_top, ∀ M k : ℝ,
   ∀ A ⊆ finset.range(N+1), (0 ≤ M) →
-  (M ≤ N) → ((N:ℝ) ≤ M^(2:ℝ)) → ((1:ℝ) ≤ k) → (k ≤ c* log(log N))
-  → (∀ n ∈ A, M ≤ (n:ℝ) ∧ ((ω n) : ℝ) ≤ (log N)^(1/k)) →
+  (M ≤ N) → ((N : ℝ) ≤ M^(2 : ℝ)) → ((1 : ℝ) ≤ k) → (k ≤ c* log(log N))
+  → (∀ n ∈ A, M ≤ (n : ℝ) ∧ ((ω n) : ℝ) ≤ (log N)^(1/k)) →
     (∀ q ∈ ppowers_in_set A,
     (1/(log N) ≤ rec_sum_local A q) →
     (∃ d : ℕ,
-    ( M*real.exp(-(log N)^(1-1/k)) < q*d ) ∧
+    ( M*real.exp(-(log N)^(1 - 1/k)) < q*d ) ∧
     ( (ω d : ℝ) ≤ (5/log k) * log(log N) ) ∧
     ( C*(rec_sum_local A q) / (log N)^(2/k) ≤
       ∑ n in (local_part A q).filter(λ n, (q*d ∣ n) ∧
@@ -68,8 +68,8 @@ lemma find_good_d : ∃ c C : ℝ, (0 < c) ∧ (0 < C) ∧ ∀ᶠ (N : ℕ) in a
 begin
   sorry, /-
   -- Fix up these choices later
-  let c := (1:ℝ),
-  let C := (2:ℝ),
+  let c := (1 : ℝ),
+  let C := (2 : ℝ),
   have hC : 0 < C, { sorry, },
   use c, use C,
   -- Work out the right filter later
@@ -77,8 +77,8 @@ begin
   intros N hN M k A hAN hzM hMN hNM h1k hkN hAreg q hq hsumq,
 
   have hlarge1 : 0 < log N, { sorry, },
-  let y := real.exp(-(log N)^(1-2/k)),
-  let u := real.exp(-(log N)^(1-1/k)),
+  let y := real.exp(-(log N)^(1 - 2/k)),
+  let u := real.exp(-(log N)^(1 - 1/k)),
   let D := (finset.range(N)).filter( λ d, (∀ r : ℕ, is_prime_pow r → r ∣ d → coprime r (d/r) →
      y < r ∧ r ≤ N) ∧ M*u < q*d ∧ q*d ≤ N),
   have hlocal : ∀ n ∈ local_part A q, ∃ d ∈ D, (q*d ∣ n) ∧ coprime (q*d) (n/q*d),
@@ -93,7 +93,7 @@ begin
   { sorry, },
   -- For the below, could use the aysmptotic for the sum, but that's overkill, is just
   -- the integral test upper bound in mathlib?
-  have hharmonic : ∑ n in finset.range(N+1), (1:ℝ)/n ≤ 2*log N,
+  have hharmonic : ∑ n in finset.range(N+1), (1 : ℝ)/n ≤ 2*log N,
   { sorry, },
   have hDnotzero : ∀ d ∈ D, d ≠ 0, {
    intros i hi hzi, rw finset.mem_filter at hi,
@@ -106,28 +106,28 @@ begin
     have hrectrivial' : ((∑ n in new_local d, (q:ℚ)/n) : ℝ) ≤
     ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), (q/n), { sorry, },
     apply le_trans hrectrivial',
-    have hrectrivial'' : ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), ((q:ℝ)/n)
+    have hrectrivial'' : ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), ((q : ℝ)/n)
       = (1/d)*∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), (1/m), {
         sorry,
        },
     rw hrectrivial'', rw le_div_iff, rw mul_comm, rw ← mul_assoc, rw mul_one_div_cancel,
     rw one_mul,
-    have hrectrivial''' : ∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), ((1:ℝ)/m)
-      ≤  ∑ n in finset.range(N+1), (1:ℝ)/n, { sorry, },
+    have hrectrivial''' : ∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), ((1 : ℝ)/m)
+      ≤  ∑ n in finset.range(N+1), (1 : ℝ)/n, { sorry, },
     apply le_trans hrectrivial''' hharmonic, norm_cast, refine hDnotzero d hd, norm_cast,
     rw pos_iff_ne_zero, refine hDnotzero d hd,
       },
   let ω0 := (5/log k) * log(log N),
   let D1 := D.filter(λ d, ω0 < (ω d : ℝ)),
-  have hbound1 : ∑ d in D1, ∑ n in new_local d, (q:ℝ)/n ≤ (rec_sum_local A q)/2, { sorry, },
+  have hbound1 : ∑ d in D1, ∑ n in new_local d, (q : ℝ)/n ≤ (rec_sum_local A q)/2, { sorry, },
   let D2 := D.filter(λ d, (ω d : ℝ) ≤ ω0),
   have hbound2 : (rec_sum_local A q)/2 ≤ ∑ d in D2, ∑ n in new_local d, q/n, { sorry, },
   have hbound3 : (rec_sum_local A q)/2 ≤ ∑ d in D2, (1/d)*(∑ n in new_local d, (q*d)/n),
   { sorry, },
-  have hfound : ∃ d ∈ D2, ((rec_sum_local A q):ℝ)/(2*∑ d in D2, (1/d)) ≤
+  have hfound : ∃ d ∈ D2, ((rec_sum_local A q) : ℝ)/(2*∑ d in D2, (1/d)) ≤
      ∑ n in new_local d, (q*d)/n,
      { sorry, },
-  have hbound4 : ∑ d in D2, ((1:ℝ)/d) ≤ (log N)^(2/k) / (C*2), { sorry, },
+  have hbound4 : ∑ d in D2, ((1 : ℝ)/d) ≤ (log N)^(2/k) / (C*2), { sorry, },
   rcases hfound with ⟨d,hd,hfound⟩,
   use d, rw finset.mem_filter at hd, rw finset.mem_filter at hd,
   refine ⟨hd.1.2.2.1,hd.2,_⟩, apply le_trans _ hfound, rw div_le_div_iff,
@@ -143,7 +143,7 @@ begin
    rw hempty, apply finset.sum_empty,  },
  rw hempty2 at hbound3, apply (lt_iff_not_ge 0 ((rec_sum_local A q)/2)).mp,
  apply div_pos,
- have : (0:ℝ) < rec_sum_local A q, {
+ have : (0 : ℝ) < rec_sum_local A q, {
    refine lt_of_lt_of_le _ hsumq, apply div_pos, exact zero_lt_one, exact hlarge1,
  }, exact_mod_cast this, exact zero_lt_two, exact hbound3,
  -/
@@ -151,14 +151,14 @@ end
 
 -- Lemma 6.1
 lemma find_good_x :  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
-  (0 ≤ M) → (M ≤ N) → ((N:ℝ) ≤ M^(2:ℝ)) →
-  (∀ n ∈ A, M ≤ (n:ℝ)) → arith_regular N A →
+  (0 ≤ M) → (M ≤ N) → ((N : ℝ) ≤ M^(2 : ℝ)) →
+  (∀ n ∈ A, M ≤ (n : ℝ)) → arith_regular N A →
   (∀ (t : ℝ) (I : finset ℤ) (q ∈ ppowers_in_set A),
-  I = finset.Icc ⌈t - (M*(N:ℝ)^(-(2:ℝ)/log(log N))) / 2⌉ ⌊t + (M*(N:ℝ)^(-(2:ℝ)/log(log N))) / 2⌋ →
-  (((1:ℝ)/(2*(log N)^((1:ℝ)/100))) < rec_sum_local (A.filter (λ n, ∀ x ∈ I, ¬ (n:ℤ) ∣ x)) q)
-  → (∃ xq ∈ I, ((q:ℤ) ∣ xq) ∧ (((35:ℝ)/100)*log(log N)) ≤
+  I = finset.Icc ⌈t - (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌉ ⌊t + (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌋ →
+  (((1 : ℝ)/(2*(log N)^((1 : ℝ)/100))) < rec_sum_local (A.filter (λ n, ∀ x ∈ I, ¬ (n:ℤ) ∣ x)) q)
+  → (∃ xq ∈ I, ((q:ℤ) ∣ xq) ∧ (((35 : ℝ)/100)*log(log N)) ≤
      ∑ r in (ppowers_in_set A).filter(λ n, (n:ℤ) ∣ xq), 1/r ))
-  --(∃ xq ∈ I, q ∣ xq ∧ (((35:ℝ)/100)*log(log N)) ≤ 1))
+  --(∃ xq ∈ I, q ∣ xq ∧ (((35 : ℝ)/100)*log(log N)) ≤ 1))
   :=
 begin
   obtain hgoodd := find_good_d,
@@ -172,7 +172,7 @@ begin
   have h1k : 1 ≤ k, { sorry, },
   have hkc : k ≤ c* log(log N), { sorry, },
   have hA_I : A_I ⊆ finset.range(N+1), { apply subset_trans _ hA, apply finset.filter_subset,},
-  have hA_I' : (∀ n ∈ A_I, M ≤ (n:ℝ) ∧ ((ω n) : ℝ) ≤ (log N)^(1/k)), { sorry, },
+  have hA_I' : (∀ n ∈ A_I, M ≤ (n : ℝ) ∧ ((ω n) : ℝ) ≤ (log N)^(1/k)), { sorry, },
   have hqA_I : q ∈ ppowers_in_set A_I, { sorry, },
   have hqlocal2 :  (1/(log N) ≤ rec_sum_local A_I q), { sorry, },
   specialize hgooddN M k A_I hA_I h0M hMN hNM h1k hkc hA_I' q hqA_I hqlocal2,
@@ -181,45 +181,45 @@ sorry,
 end
 
 
-lemma two_in_Icc (a b x y: ℤ) (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : |(x:ℝ)-y| ≤ b-a :=
+lemma two_in_Icc (a b x y: ℤ) (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : |(x : ℝ)-y| ≤ b-a :=
 sorry
 
 -- Proposition 6.3
 theorem force_good_properties :
   ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
-  ((N:ℝ) ≤ M^(2:ℝ)) → arith_regular N A →
+  ((N : ℝ) ≤ M^(2 : ℝ)) → arith_regular N A →
   ( (log N)^(-(1/101 : ℝ)) ≤ rec_sum A ) →
   (∀ q ∈ ppowers_in_set A,
     ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) → (
   (∃ B ⊆ A, ((rec_sum A) ≤ 3*rec_sum B) ∧
   ((ppower_rec_sum B : ℝ) ≤ (2/3)* log(log N)))
-  ∨ good_condition A (M*(N:ℝ)^(-(2:ℝ)/log(log N))) ((M:ℝ)/log N)
+  ∨ good_condition A (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) ((M : ℝ)/log N)
   (M / (2*(log N)^(1/100 : ℝ))) ) :=
 sorry
 
 -- Proposition 6.4
 theorem force_good_properties2 :
   ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
-  ((N:ℝ) ≤ M^(2:ℝ)) → arith_regular N A →
+  ((N : ℝ) ≤ M^(2 : ℝ)) → arith_regular N A →
   (∀ q ∈ ppowers_in_set A,
     ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) →
   ((ppower_rec_sum A : ℝ) ≤ (2/3)* log(log N)) →
-  good_condition A (M*(N:ℝ)^(-(2:ℝ)/log(log N))) ((M:ℝ)/log N)
+  good_condition A (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) ((M : ℝ)/log N)
   (M / (2*(log N)^(1/100 : ℝ)))
  :=
 begin
-  let c := (35:ℝ)/100,
+  let c := (35 : ℝ)/100,
   -- Work out the right filter later
   filter_upwards [rec_pp_sum_close],
   intros N hrecN M A hA hNM hreg hreclocal hpprecA,
   -- Some routine N bounds
-  have hlarge1 : 1 ≤ M*(N)^(-(2:ℝ)/log(log N)), { sorry, },
+  have hlarge1 : 1 ≤ M*(N)^(-(2 : ℝ)/log(log N)), { sorry, },
   have hlarge2 : M * N ^ ((-2) / log (log N)) ≤ N, { sorry, },
   rw good_condition,
   intros t I hI,
   refine or_iff_not_imp_left.2 (λ hP, _),
   let A_I := A.filter((λ (n : ℕ), ∀ (x : ℤ), x ∈ I → ¬(n:ℤ) ∣ x)),
-  let D := interval_rare_ppowers I A (M / (2 * log N ^ ((1:ℝ) / 100))),
+  let D := interval_rare_ppowers I A (M / (2 * log N ^ ((1 : ℝ) / 100))),
   by_cases hDne : D.nonempty,
   rcases hDne with ⟨x1,hx1⟩,
   -- The following is involved, uses a couple of other lemmas
@@ -241,28 +241,28 @@ begin
      },
   -- The following uses an inclusion/exclusion principle
   have hsum2 :
-       ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1:ℝ)/r
-    +  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1:ℝ)/r
-    -  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1:ℝ)/r
+       ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1 : ℝ)/r
+    +  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1 : ℝ)/r
+    -  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r
     ≤ ppower_rec_sum A, { sorry },
   have hsum3 :
-    ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1:ℝ)/r
-    + ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1:ℝ)/r  - ppower_rec_sum A ≤
-    ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1:ℝ)/r,
+    ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1 : ℝ)/r
+    + ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1 : ℝ)/r  - ppower_rec_sum A ≤
+    ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r,
     { apply  sub_left_le_of_le_add, nth_rewrite 1 add_comm,
       apply le_add_of_sub_left_le hsum2, },
   -- The following is a trivial rearranging of inequalities we already have
   have hsum4 :
-    ((1:ℝ)/100)*log(log N) ≤
-      ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1:ℝ)/r,
+    ((1 : ℝ)/100)*log(log N) ≤
+      ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r,
     { sorry, },
-  have hqx1close : |(f q:ℝ)-(f x1)| ≤ N, {
-    apply @le_trans _ _ _ ((⌊t + M * N ^ ((-2) / log (log N)) / 2⌋:ℝ)-⌈t - M * N ^ ((-2) / log (log N)) / 2⌉) N,
+  have hqx1close : |(f q : ℝ)-(f x1)| ≤ N, {
+    apply @le_trans _ _ _ ((⌊t + M * N ^ ((-2) / log (log N)) / 2⌋ : ℝ)-⌈t - M * N ^ ((-2) / log (log N)) / 2⌉) N,
     apply two_in_Icc, rw ← hI, exact hfcopy.1, rw ← hI, exact hf.1,
     rw sub_le,
     apply @le_trans _ _ _ (t - M * N ^ ((-2) / log (log N)) / 2) _,
     apply sub_left_le_of_le_add, apply @le_trans _ _ _ (t + M * N ^ ((-2) / log (log N)) / 2) _,
-    apply int.floor_le, rw add_sub, rw add_comm (N:ℝ) t, rw ← add_sub, apply add_le_add_left,
+    apply int.floor_le, rw add_sub, rw add_comm (N : ℝ) t, rw ← add_sub, apply add_le_add_left,
     apply le_sub_left_of_add_le, rw add_halves', exact hlarge2, apply int.le_ceil,
    },
   specialize hrecN (f q) (f x1) htwoxs hqx1close, rw lt_iff_not_ge at hrecN,
@@ -284,7 +284,7 @@ begin
 end
 
 
-lemma one_lt_four : (1:ℝ) < 4 :=
+lemma one_lt_four : (1 : ℝ) < 4 :=
 begin
   norm_num,
 end
@@ -327,7 +327,7 @@ sorry
 lemma sieve_lemma_one  : ∃ C : ℝ,
   ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (3 ≤ y) → (y < z) → (z ≤ log N) →
    let X : set ℕ := { n : ℕ | ∀ p:ℕ, (prime p) → (p ∣ n) →
-   ( ((p:ℝ) < y) ∨ (z < p)) } in
+   ( ((p : ℝ) < y) ∨ (z < p)) } in
    (((finset.range(2*N)).filter (λ n, n ∈ X ∧ N ≤ n)).card : ℝ) ≤
    C * (log y / log z) * N
     :=
@@ -351,7 +351,7 @@ lemma sieve_lemma_two : ∃ C : ℝ,
   ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (2 ≤ y) → (4*y < z) → (z^2 ≤ log N) →
    let Y : set ℕ := { n : ℕ | ∃ p₁ p₂ : ℕ, (p₁ ≠ p₂) ∧ (prime p₁)
    ∧ (prime p₂) ∧ (p₁ ∣ n) ∧ (p₂ ∣ n) ∧ (y ≤ p₁) ∧ (4*p₁ ≤ p₂)
-   ∧ ((p₂:ℝ) ≤ z) } in
+   ∧ ((p₂ : ℝ) ≤ z) } in
    (((finset.range(N+1)).filter (λ n, ¬(n ∈ Y))).card : ℝ) ≤
    C * (log y / log z)^(1/2) * N
     :=
@@ -370,8 +370,8 @@ sorry
 lemma rec_qsum_lower_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) :
   ∀ᶠ (N : ℕ) in at_top, ∀ A : finset ℕ,
   ((log N)^(-ε/2) ≤ rec_sum A )
-  → (∀ n ∈ A, ((1-ε)*log(log N) ≤ ω n ) ∧ ( (ω n : ℝ) ≤ 2*(log (log N))))
-  → (1-2*ε)*log(log N) *real.exp(-1) ≤ ∑ q in ppowers_in_set A, (1/q : ℝ)
+  → (∀ n ∈ A, ((1 - ε)*log(log N) ≤ ω n ) ∧ ( (ω n : ℝ) ≤ 2*(log (log N))))
+  → (1 - 2*ε)*log(log N) *real.exp(-1) ≤ ∑ q in ppowers_in_set A, (1/q : ℝ)
 :=
 sorry
 
@@ -395,7 +395,7 @@ begin
       exact div_le_div_of_le_left (nat.cast_nonneg _) hM (hAM _ hi.1) },
     rw nsmul_eq_mul,
     refine (mul_le_mul_of_nonneg_right hq.2.le (div_nonneg (nat.cast_nonneg _) hM.le)).trans _,
-    rw [mul_comm M, mul_div_assoc, mul_assoc, div_mul_div_comm₀, mul_comm M, div_self, mul_one],
+    rw [mul_comm M, mul_div_assoc, mul_assoc, div_mul_div_comm, mul_comm M, div_self, mul_one],
     simp only [mul_eq_zero, nat.cast_eq_zero, hM.ne', ne.def, or_false],
     rw [mem_ppowers_in_set, and_assoc] at hq,
     exact hq.1.ne_zero },
@@ -731,7 +731,7 @@ begin
     { have hrec3' : (2 : ℝ) / (d_i' - 1) ≤ 2 / d_i,
       { exact div_le_div_of_le_left zero_le_two hrec5'''aux hrec3p },
       exact le_trans (sub_le_sub_right hrec3' _) hstock.2.2.2.2.1 },
-    have hrec5 : (2:ℝ)/d_i'^2 ≤ 2/(d_i'-1) - 2/d_i',
+    have hrec5 : (2 : ℝ)/d_i'^2 ≤ 2/(d_i'-1) - 2/d_i',
     { rw div_sub_div,
       have hrec5'' : ((d_i' : ℝ) - 1) * d_i' = d_i' ^ 2 - d_i',
       { rw [sub_mul, sq, one_mul] },
@@ -739,7 +739,7 @@ begin
       { rw [sub_mul, mul_comm, sub_sub_cancel, one_mul] },
       rw hrec5',
       refine div_le_div_of_le_left zero_le_two _ _,
-      rw hrec5'', rw sub_pos, nth_rewrite 0 ← pow_one (d_i':ℝ),
+      rw hrec5'', rw sub_pos, nth_rewrite 0 ← pow_one (d_i' : ℝ),
       { exact pow_lt_pow hqauxx one_lt_two },
       { rw hrec5'',
         apply sub_le_self,
@@ -747,7 +747,7 @@ begin
       { rw sub_ne_zero,
         exact hqauxx.ne' },
       { exact (zero_le_one.trans_lt hqauxx).ne' } },
-    have hrec6 :(2:ℝ)/w^2 ≤ 2/d_i'^2, {
+    have hrec6 :(2 : ℝ)/w^2 ≤ 2/d_i'^2, {
       refine div_le_div_of_le_left _ _ _, norm_num,
       apply sq_pos_of_ne_zero, norm_cast, intro hrecaux,
       rw min_eq_iff at hrecaux,
@@ -815,10 +815,10 @@ lemma main_tech_lemma :
   (3*ε*log(log N) ≤ 2/(w^2)) → (∀ n ∈ A, M ≤ (n: ℝ)) →
   (2/y + 2*ε*log(log N) ≤ rec_sum A ) →
   (∀ q ∈ ppowers_in_set A, (q : ℝ) ≤ ε*M) →
-  (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ w) ∧ d ∣ n) →
-  (∃ A' ⊆ A, ∃ d : ℕ, A' ≠ ∅ ∧ (y ≤ d) ∧ ((d:ℝ) ≤ w) ∧ rec_sum A' < 2/d ∧
-  (2:ℝ)/d-1/M ≤ rec_sum A' ∧ (∀ q ∈ ppowers_in_set A', ε < rec_sum_local A' q)
-  ∧ (∃ n ∈ A', d ∣ n) ∧ (∀ n ∈ A', ∀ k : ℕ, k ∣ n → k < d → (k:ℝ) < y))
+  (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d : ℝ) ≤ w) ∧ d ∣ n) →
+  (∃ A' ⊆ A, ∃ d : ℕ, A' ≠ ∅ ∧ (y ≤ d) ∧ ((d : ℝ) ≤ w) ∧ rec_sum A' < 2/d ∧
+  (2 : ℝ)/d-1/M ≤ rec_sum A' ∧ (∀ q ∈ ppowers_in_set A', ε < rec_sum_local A' q)
+  ∧ (∃ n ∈ A', d ∣ n) ∧ (∀ n ∈ A', ∀ k : ℕ, k ∣ n → k < d → (k : ℝ) < y))
   :=
 begin
   have : tendsto (λ N : ℕ, log (log N)) at_top at_top :=
@@ -833,9 +833,9 @@ begin
  specialize hN M ε y w A hA hM hMN hε hMw hMN2 hy h2w hyw hNw hAM hrec hsmooth hdiv i,
  rcases hN with ⟨A', hA', d, hN⟩,
  use A', split, exact hA', use d,
- have hdw : (d:ℝ) ≤ w, {
-   have hauxw : (⌊w⌋₊:ℝ) ≤ w, { apply nat.floor_le (le_of_lt hwzero), },
-  have hauxw2 : (d:ℝ) ≤ (⌊w⌋₊:ℝ), {exact nat.cast_le.mpr hN.2.2.1, },
+ have hdw : (d : ℝ) ≤ w, {
+   have hauxw : (⌊w⌋₊ : ℝ) ≤ w, { apply nat.floor_le (le_of_lt hwzero), },
+  have hauxw2 : (d : ℝ) ≤ (⌊w⌋₊ : ℝ), {exact nat.cast_le.mpr hN.2.2.1, },
   exact hauxw2.trans hauxw,
   },
  have hA'ne : A' ≠ ∅, {
@@ -843,12 +843,12 @@ begin
  have hreczero : rec_sum A' = 0, {  rw hA'em, apply rec_sum_empty, },
  rw hreczero at hN,
  norm_cast at hN,
- have haux1 : (2:ℝ)/d ≤ 1/M, { apply sub_nonpos.mp hN.2.2.2.2.1, },
- have haux2 : (2:ℝ)/w ≤ 2/d,
+ have haux1 : (2 : ℝ)/d ≤ 1/M, { apply sub_nonpos.mp hN.2.2.2.2.1, },
+ have haux2 : (2 : ℝ)/w ≤ 2/d,
  { refine div_le_div_of_le_left zero_le_two _ _,
-   apply @lt_of_lt_of_le _ _ 0 y (d:ℝ), exact hy01, exact hN.1, exact hdw,
+   apply @lt_of_lt_of_le _ _ 0 y (d : ℝ), exact hy01, exact hN.1, exact hdw,
    },
- have haux3 : (2:ℝ)/w^2 ≤ 2/w,
+ have haux3 : (2 : ℝ)/w^2 ≤ 2/w,
  { refine div_le_div_of_le_left zero_le_two hwzero _, refine le_self_pow _ one_le_two,
    apply le_trans one_le_two h2w, },
  have haux4: 3*ε*log(log N) < ε*log(log N), {
@@ -883,222 +883,238 @@ begin
  exact hN.2.2.2.2.2.2.1,
 end
 
+-- lemma large_enough_Naux1 : (∀ᶠ (N : ℕ) in at_top,
+--   (N : ℝ) ^ (1 - (8 : ℝ) / log (log N)) ≤
+--    ((N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) / (2 * log N ^ ((1 : ℝ) / 100))) *
+--      (((N : ℝ) ^ (1 - (3 : ℝ)/ log (log N)))) ^ 2 / (16 * N ^ 2 * log N ^ 2)) :=
+-- begin
+--   have haux4: asymptotics.is_O_with ((1 : ℝ) / (2 * log (2 * 16))) log id at_top,
+--   { refine is_o_log_id_at_top.def' _,
+--     rw one_div_pos,
+--     exact mul_pos zero_lt_two (log_pos (by norm_num1)) },
+--   have haux5: asymptotics.is_O_with ((1 : ℝ) / ((2 * (2 + 1 / 100)) ^ ((1 : ℝ) / 2))) log
+--      (λ x, x^((1 : ℝ) / 2)) at_top,
+--   { refine (is_o_log_rpow_at_top (half_pos zero_lt_one)).def' _,
+--     rw one_div_pos,
+--     refine rpow_pos_of_pos _ _,
+--     norm_num1, },
+--   filter_upwards [tendsto_log_log_coe_at_top.eventually (eventually_ge_at_top 6),
+--     tendsto_log_coe_at_top.eventually (eventually_ge_at_top (128^(500 : ℝ))),
+--     eventually_ge_at_top 64,
+--     tendsto_log_coe_at_top.eventually haux4.bound,
+--     tendsto_log_coe_at_top.eventually haux5.bound]
+--     with N hN1 hN2 hN3 hN3new4 hN3new5,
+--   clear haux4 haux5,
+--   have hN4 : 1 < log (log N), { exact hN1.trans_lt' (by norm_num1) },
+--   have hN5 : (1 : ℝ) < N, { rw nat.one_lt_cast, refine le_trans _ hN3, norm_num1, },
+--   have hN6 : (0 : ℝ) < N := zero_le_one.trans_lt hN5,
+--   have hN7 : 0 < log (log N) := zero_le_one.trans_lt hN4,
+--   have hN8 : 0 < log N, { exact hN2.trans_lt' (by norm_num1) },
+--   have hN12 : 2 * log (2 * 16) * log (log N) ≤ log N,
+--   { rwa [norm_of_nonneg hN7.le, id.def, norm_of_nonneg hN8.le, mul_comm,
+--       ←div_eq_mul_one_div, le_div_iff'] at hN3new4,
+--     refine mul_pos zero_lt_two (log_pos _),
+--     norm_num1 },
+--   have hN13 : (2 * (2 + 1 / 100)) ^ ((1 : ℝ) / 2) * log (log N) ≤ log N ^ ((1 : ℝ) / 2),
+--   { simp_rw [norm_eq_abs] at hN3new5,
+--     rw [abs_of_nonneg hN7.le, abs_of_nonneg (rpow_nonneg_of_nonneg hN8.le _), mul_comm, mul_div,
+--       mul_one] at hN3new5,
+--     rw [mul_comm, ← le_div_iff (rpow_pos_of_pos _ _)],
+--     exact hN3new5,
+--     norm_num1 },
+--   rw le_div_iff,
+--   convert_to 16 * ((N : ℝ)^(1 - (8 : ℝ)/(log(log N))) * (N ^ 2)) * (log N) ^ 2 ≤
+--     ((↑N ^ (1 - 3 / log (log ↑N))) ^ 2 * (N : ℝ)^(1 - (1 : ℝ)/(log(log N)))) /
+--     (2 * (log N)^((1/100 : ℝ)))
+--     using 0,
+--     { sorry -- ring_nf,
+--     },
+--   rw [le_div_iff, ← rpow_two, ← rpow_two, ← rpow_two, ← rpow_add, ← rpow_mul, ← rpow_add],
+--   convert_to (2 * 16) * (log N ^ (2 : ℝ) * log N ^ (1 / 100 : ℝ)) * (N : ℝ) ^ (1 - 8 / log (log N) + 2)
+--     ≤ (N : ℝ) ^ ((1 - 3 / log (log N)) * 2 + (1 - 1 / log (log N))) using 0,
+--     { ring_nf,},
+--   rw [← le_div_iff, ← rpow_sub, ← rpow_add],
+--   have : (1 - 3 / log (log N)) * 2 + (1 - 1 / log (log N)) - (1 - 8 / log (log N) + 2)
+--    = 1 / log (log N),
+--    { sorry
+--     --  ring,
+--    },
+--   rw [this, ← log_le_log, log_rpow, log_mul, log_rpow],
+--   nth_rewrite 2 mul_comm,
+--   rw [← div_eq_mul_one_div, le_div_iff, add_mul, mul_assoc, ← sq],
+--   apply @le_trans _ _ _ ((1/2)*(log N)+(1/2)*(log N)) _,
+--   apply add_le_add,
+--   rwa [← mul_le_mul_left (zero_lt_two : (0 : ℝ) < 2), ← mul_assoc, ← mul_assoc, mul_one_div_cancel,
+--     one_mul],
+--   exact two_ne_zero,
+--   rw [← mul_le_mul_left (@zero_lt_two ℝ _ _), ← mul_assoc, ← mul_assoc, mul_one_div_cancel,
+--    one_mul, ← rpow_two, ← real.sqrt_le_sqrt_iff, real.sqrt_eq_rpow, real.sqrt_eq_rpow,
+--    real.mul_rpow, ← rpow_mul, mul_one_div_cancel, rpow_one],
+--   exact hN13,
+--   refine ne_of_gt zero_lt_two,
+--   exact le_of_lt hN7,
+--   apply mul_nonneg zero_le_two,
+--   norm_num1,
+--   exact rpow_nonneg_of_nonneg hN7.le _,
+--   exact le_of_lt hN8,
+--   refine ne_of_gt zero_lt_two,
+--   rw [mul_comm, mul_div, mul_one, add_halves],
+--   exact hN7,
+--   exact hN8,
+--   norm_num1,
+--   apply ne_of_gt,
+--   apply rpow_pos_of_pos hN8,
+--   exact hN6,
+--   apply mul_pos,
+--   norm_num1,
+--   apply rpow_pos_of_pos hN8,
+--   apply rpow_pos_of_pos hN6,
+--   exact hN8,
+--   exact hN6,
+--   apply rpow_pos_of_pos hN6,
+--   exact hN6,
+--   exact le_of_lt hN6,
+--   exact hN6,
+--   refine mul_pos zero_lt_two _,
+--   apply rpow_pos_of_pos hN8,
+--   exact mul_pos (mul_pos (by norm_num1) (sq_pos_of_pos hN6)) (sq_pos_of_pos hN8),
+-- end
 
-lemma large_enough_Naux1 : ∀ᶠ (N : ℕ) in at_top,
-(N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤
-   ((N:ℝ)^(1-(1:ℝ)/(log(log N))) / (2 * log N ^ ((1:ℝ)/100))) *
-     (((N:ℝ)^(1-(3:ℝ)/(log(log N))))) ^ 2 / (16 * N ^ 2 * log N ^ 2)
-     :=
-begin
-  have haux4: asymptotics.is_O_with ((1:ℝ)/(2 * log (2 * 16))) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1:ℝ))) at_top, {
-       refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
-       exact zero_lt_one, rw one_div_pos, refine mul_pos zero_lt_two _,
-       apply log_pos, norm_num1, },
-  have haux5: asymptotics.is_O_with ((1:ℝ)/((2 * (2 + 1 / 100)) ^ ((1:ℝ)/ 2))) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1:ℝ)/2)) at_top, {
-    refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
-    norm_num1, rw one_div_pos, apply rpow_pos_of_pos, norm_num1, },
-  filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
-    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top 6),
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
-    (eventually_ge_at_top (128^(500:ℝ))), eventually_ge_at_top 64,
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux4.bound,
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux5.bound
-    ] with N hN1 hN2 hN3 hN3new4 hN3new5,
-  dsimp at hN1 hN2,
-  clear haux4 haux5,
-  have hN4 : 1 < (log(log N)), { refine lt_of_lt_of_le _ hN1, norm_num1, },
-  have hN5 : (1:ℝ) < N, { norm_cast, refine le_trans _ hN3, norm_num1, },
-  have hN6 : (0:ℝ) < N, { refine lt_trans zero_lt_one hN5, },
-  have hN7 : 0 < (log(log N)), { refine lt_trans zero_lt_one hN4, },
-  have hN8 : 0 < log N, { apply lt_of_lt_of_le _ hN2, norm_num1,},
-  have hN12 : 2 * log (2 * 16)*log(log N) ≤ (log N), {
-      simp_rw [norm_eq_abs] at hN3new4, rw abs_of_nonneg at hN3new4,
-      rw abs_of_nonneg at hN3new4, dsimp at hN3new4, rw [mul_comm, ← le_div_iff],
-      rw [mul_comm, mul_div, mul_one] at hN3new4, rw rpow_one at hN3new4,
-      exact hN3new4, norm_num1, refine mul_pos zero_lt_two _,
-      apply log_pos, norm_num1,
-      apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
-      exact le_of_lt hN7,
-   },
-  have hN13 : (2 * (2 + 1 / 100)) ^ ((1:ℝ) / 2) * log (log N) ≤ log ↑N ^ ((1:ℝ)/ 2), {
-      simp_rw [norm_eq_abs] at hN3new5, rw abs_of_nonneg at hN3new5,
-      rw abs_of_nonneg at hN3new5, dsimp at hN3new5, rw [mul_comm, ← le_div_iff],
-      rw [mul_comm, mul_div, mul_one] at hN3new5,
-      exact hN3new5, norm_num1, apply rpow_pos_of_pos, norm_num1,
-      apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
-      exact le_of_lt hN7,
-   },
-   rw le_div_iff,
-   convert_to 16 * ((N:ℝ)^(1-(8:ℝ)/(log(log N))) * (N ^ 2)) * (log N) ^ 2 ≤
-     ((↑N ^ (1 - 3 / log (log ↑N))) ^ 2 * (N:ℝ)^(1-(1:ℝ)/(log(log N)))) /
-     (2 * (log N)^((1/100 : ℝ)))
-     using 0,
-     { ring_nf, }, rw le_div_iff, rw ← rpow_two, rw ← rpow_two, rw ← rpow_two,
-     rw [← rpow_add, ← rpow_mul, ← rpow_add],
-  convert_to (2*16) * ((log N)^(2:ℝ) *  (log N)^((1/100 : ℝ))) * (N:ℝ) ^ (1 - 8 / log (log N) + 2)
-    ≤ (N:ℝ) ^ ((1 - 3 / log (log N)) * 2 + (1 - 1 / log (log N))) using 0,
-    { ring_nf,},
-  rw [← le_div_iff, ← rpow_sub, ← rpow_add],
-  have : (1 - 3 / log (log N)) * 2 + (1 - 1 / log (log N)) - (1 - 8 / log (log N) + 2)
-   = 1 / log (log N),
-   { ring,},
-   rw [this, ← log_le_log, log_rpow, log_mul, log_rpow],
-   nth_rewrite 2 mul_comm, rw [← div_eq_mul_one_div, le_div_iff, add_mul, mul_assoc, ← sq],
-   apply @le_trans _ _ _ ((1/2)*(log N)+(1/2)*(log N)) _, apply add_le_add,
-   rw [← mul_le_mul_left zero_lt_two, ← mul_assoc, ← mul_assoc, mul_one_div_cancel,
-    one_mul], exact hN12, refine ne_of_gt zero_lt_two, exact real.nontrivial,
-   rw [← mul_le_mul_left zero_lt_two, ← mul_assoc, ← mul_assoc, mul_one_div_cancel,
-    one_mul, ← rpow_two, ← real.sqrt_le_sqrt_iff, real.sqrt_eq_rpow, real.sqrt_eq_rpow,
-    real.mul_rpow, ← rpow_mul, mul_one_div_cancel, rpow_one],
-   exact hN13, refine ne_of_gt zero_lt_two, exact le_of_lt hN7,
-   apply mul_nonneg zero_le_two, norm_num1, apply rpow_nonneg_of_nonneg, exact le_of_lt hN7,
-   exact le_of_lt hN8, refine ne_of_gt zero_lt_two, exact real.nontrivial,
-   rw [mul_comm, mul_div, mul_one, add_halves], exact hN7, exact hN8,
-   norm_num1, apply ne_of_gt, apply rpow_pos_of_pos hN8, exact hN6, apply mul_pos,
-   norm_num1, apply rpow_pos_of_pos hN8, apply rpow_pos_of_pos hN6,
-   exact hN8, exact hN6, apply rpow_pos_of_pos hN6, exact hN6, exact le_of_lt hN6,
-   exact hN6, refine mul_pos zero_lt_two _, apply rpow_pos_of_pos hN8,
-   refine mul_pos _ _, refine mul_pos _ _, norm_num1, apply sq_pos_of_pos hN6,
-   apply sq_pos_of_pos hN8,
-end
-
-lemma large_enough_Naux2 : ∀ (c: ℝ), (c > 0) → ∀ᶠ (N : ℕ) in at_top,
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ c*(N:ℝ)^(1-(1:ℝ)/(log(log N)))/(log N)^((1/500 : ℝ)) ∧
-  (log N)^(-(1/101 : ℝ)) ≤ (2:ℝ)/((log N)^(1/500 : ℝ)/4) - 1/ (N:ℝ)^(1-(1:ℝ)/(log(log N)))
-  :=
-begin
-  intros c hc,
-  have haux: asymptotics.is_O_with ((1:ℝ)) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1:ℝ)/2)) at_top, {
-    refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
-    norm_num1, exact zero_lt_one,
-    },
-  have haux2: asymptotics.is_O_with ((1:ℝ)) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1:ℝ))) at_top, {
-    refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
-     norm_num1, norm_num1, },
-  filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
-    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top 6),
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
-    (eventually_ge_at_top (1:ℝ)), eventually_ge_at_top 64,
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux.bound,
-    tendsto_coe_nat_at_top_at_top.eventually haux2.bound,
-    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
-    tendsto_coe_nat_at_top_at_top)).eventually
-       (eventually_ge_at_top (-log c / (7 - 1 / 500)))
-    ] with N hN1 hN2 hN3 hNnew hNnew2 hNnew3,
-  dsimp at hN1 hN2 hNnew3,
-  have hN5 : (1:ℝ) < N, { norm_cast, refine le_trans _ hN3, norm_num1, },
-  have hN6 : (0:ℝ) < N, { refine lt_trans zero_lt_one hN5, },
-  have hN7 : 0 < (log(log N)), {refine lt_of_lt_of_le _ hN1, norm_num1, },
-  have hN8 : 0 < log N, { apply lt_of_lt_of_le _ hN2, norm_num1,},
-  have hN9 : log(log N) ≤ (log N)^((1:ℝ)/2), {
-      simp_rw [norm_eq_abs] at hNnew, rw abs_of_nonneg at hNnew,
-      rw abs_of_nonneg at hNnew, dsimp at hNnew,
-      rw one_mul at hNnew, exact hNnew,
-      apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
-      exact le_of_lt hN7,
-   },
-  have hN10 : log N ≤ N, {
-      simp_rw [norm_eq_abs] at hNnew2, rw abs_of_nonneg at hNnew2,
-      rw abs_of_nonneg at hNnew2,
-      rw [one_mul, rpow_one] at hNnew2, exact hNnew2,
-      apply rpow_nonneg_of_nonneg, exact le_of_lt hN6,
-      exact le_of_lt hN8,
-   },
-  split,
-  rw [le_div_iff, mul_comm, ← le_div_iff, ← mul_div, ← rpow_sub],
-  have : 1 - 1 / log (log N) - (1 - 8 / log (log N)) = 7/log(log N) := by ring,
-  rw [this, ← log_le_log, log_rpow, log_mul, log_rpow],
-  nth_rewrite 1 mul_comm, rw mul_div,
-  have hcN : -(7-1/500)*log(log N) ≤ log c, {
-    rw [neg_mul, ← neg_le, ← div_le_iff'], exact hNnew3, norm_num1,},
-  apply @le_trans _ _ _ (-(7-1/500)*log(log N)+(log N)*7/log(log N)) _,
-  rw [neg_mul, neg_add_eq_sub, le_sub_iff_add_le, ← add_mul, add_sub, add_comm,
-    ← add_sub, sub_self, add_zero], nth_rewrite 1 mul_comm,
-  rw [← mul_div, mul_le_mul_left, le_div_iff, ← real.sqrt_le_sqrt_iff, sqrt_mul_self,
-       sqrt_eq_rpow],
-  exact hN9, exact le_of_lt hN7, exact le_of_lt hN8, exact hN7, norm_num1,
-  apply add_le_add_right hcN, exact hN6, apply ne_of_gt hc,
-  apply ne_of_gt, apply rpow_pos_of_pos hN6, exact hN8,
-  apply rpow_pos_of_pos hN8, apply mul_pos hc, apply rpow_pos_of_pos hN6, exact hN6,
-  apply rpow_pos_of_pos hN6, apply rpow_pos_of_pos hN8,
-  apply @le_trans _ _ _ ((7:ℝ)/((log N)^(1/500 : ℝ))) _,
-  rw [le_div_iff, ← rpow_add], apply @le_trans _ _ _ (1:ℝ) _,
-  apply rpow_le_one_of_one_le_of_nonpos hN2, norm_num1, norm_num1,
-  exact hN8, apply rpow_pos_of_pos hN8,
-  rw [le_sub, div_div_eq_mul_div, div_sub_div_same], norm_num1,
-  rw one_div_le_one_div,
-  apply @le_trans _ _ _ ((N:ℝ)^(((1:ℝ)/500))) _,
-  rw rpow_le_rpow_iff, exact hN10, exact le_of_lt hN8, exact le_of_lt hN6,
-  norm_num1, apply rpow_le_rpow_of_exponent_le, exact le_of_lt hN5,
-  rw le_sub, rw one_div_le, apply le_trans _ hN1, norm_num1, exact hN7,
-  norm_num1, apply rpow_pos_of_pos hN6, apply rpow_pos_of_pos hN8,
-end
+-- lemma large_enough_Naux2 : ∀ (c: ℝ), (c > 0) → ∀ᶠ (N : ℕ) in at_top,
+--   (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ c*(N : ℝ)^(1 - (1 : ℝ)/(log(log N)))/(log N)^((1/500 : ℝ)) ∧
+--   (log N)^(-(1/101 : ℝ)) ≤ (2 : ℝ)/((log N)^(1/500 : ℝ)/4) - 1/ (N : ℝ)^(1 - (1 : ℝ)/(log(log N)))
+--   :=
+-- begin
+--   intros c hc,
+--   have haux: asymptotics.is_O_with ((1 : ℝ)) (λ (x : ℝ), (log x))
+--      (λ (x : ℝ), x^((1 : ℝ)/2)) at_top, {
+--     refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
+--     norm_num1, exact zero_lt_one,
+--     },
+--   have haux2: asymptotics.is_O_with ((1 : ℝ)) (λ (x : ℝ), (log x))
+--      (λ (x : ℝ), x^((1 : ℝ))) at_top, {
+--     refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
+--      norm_num1, norm_num1, },
+--   filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
+--     tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top 6),
+--     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+--     (eventually_ge_at_top (1 : ℝ)), eventually_ge_at_top 64,
+--     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux.bound,
+--     tendsto_coe_nat_at_top_at_top.eventually haux2.bound,
+--     (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+--     tendsto_coe_nat_at_top_at_top)).eventually
+--        (eventually_ge_at_top (-log c / (7 - 1 / 500)))
+--     ] with N hN1 hN2 hN3 hNnew hNnew2 hNnew3,
+--   dsimp at hN1 hN2 hNnew3,
+--   have hN5 : (1 : ℝ) < N, { norm_cast, refine le_trans _ hN3, norm_num1, },
+--   have hN6 : (0 : ℝ) < N, { refine lt_trans zero_lt_one hN5, },
+--   have hN7 : 0 < (log(log N)), {refine lt_of_lt_of_le _ hN1, norm_num1, },
+--   have hN8 : 0 < log N, { apply lt_of_lt_of_le _ hN2, norm_num1,},
+--   have hN9 : log(log N) ≤ (log N)^((1 : ℝ)/2), {
+--       simp_rw [norm_eq_abs] at hNnew, rw abs_of_nonneg at hNnew,
+--       rw abs_of_nonneg at hNnew, dsimp at hNnew,
+--       rw one_mul at hNnew, exact hNnew,
+--       apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
+--       exact le_of_lt hN7,
+--    },
+--   have hN10 : log N ≤ N, {
+--       simp_rw [norm_eq_abs] at hNnew2, rw abs_of_nonneg at hNnew2,
+--       rw abs_of_nonneg at hNnew2,
+--       rw [one_mul, rpow_one] at hNnew2, exact hNnew2,
+--       apply rpow_nonneg_of_nonneg, exact le_of_lt hN6,
+--       exact le_of_lt hN8,
+--    },
+--   split,
+--   rw [le_div_iff, mul_comm, ← le_div_iff, ← mul_div, ← rpow_sub],
+--   have : 1 - 1 / log (log N) - (1 - 8 / log (log N)) = 7/log(log N) := by ring,
+--   rw [this, ← log_le_log, log_rpow, log_mul, log_rpow],
+--   nth_rewrite 1 mul_comm, rw mul_div,
+--   have hcN : -(7-1/500)*log(log N) ≤ log c, {
+--     rw [neg_mul, ← neg_le, ← div_le_iff'], exact hNnew3, norm_num1,},
+--   apply @le_trans _ _ _ (-(7-1/500)*log(log N)+(log N)*7/log(log N)) _,
+--   rw [neg_mul, neg_add_eq_sub, le_sub_iff_add_le, ← add_mul, add_sub, add_comm,
+--     ← add_sub, sub_self, add_zero], nth_rewrite 1 mul_comm,
+--   rw [← mul_div, mul_le_mul_left, le_div_iff, ← real.sqrt_le_sqrt_iff, sqrt_mul_self,
+--        sqrt_eq_rpow],
+--   exact hN9, exact le_of_lt hN7, exact le_of_lt hN8, exact hN7, norm_num1,
+--   apply add_le_add_right hcN, exact hN6, apply ne_of_gt hc,
+--   apply ne_of_gt, apply rpow_pos_of_pos hN6, exact hN8,
+--   apply rpow_pos_of_pos hN8, apply mul_pos hc, apply rpow_pos_of_pos hN6, exact hN6,
+--   apply rpow_pos_of_pos hN6, apply rpow_pos_of_pos hN8,
+--   apply @le_trans _ _ _ ((7 : ℝ)/((log N)^(1/500 : ℝ))) _,
+--   rw [le_div_iff, ← rpow_add], apply @le_trans _ _ _ (1 : ℝ) _,
+--   apply rpow_le_one_of_one_le_of_nonpos hN2, norm_num1, norm_num1,
+--   exact hN8, apply rpow_pos_of_pos hN8,
+--   rw [le_sub, div_div_eq_mul_div, div_sub_div_same], norm_num1,
+--   rw one_div_le_one_div,
+--   apply @le_trans _ _ _ ((N : ℝ)^(((1 : ℝ)/500))) _,
+--   rw rpow_le_rpow_iff, exact hN10, exact le_of_lt hN8, exact le_of_lt hN6,
+--   norm_num1, apply rpow_le_rpow_of_exponent_le, exact le_of_lt hN5,
+--   rw le_sub, rw one_div_le, apply le_trans _ hN1, norm_num1, exact hN7,
+--   norm_num1, apply rpow_pos_of_pos hN6, apply rpow_pos_of_pos hN8,
+-- end
 
 
 
-lemma large_enough_Naux  :  ∀ (c: ℝ), (c > 0) → ∀ᶠ (N : ℕ) in at_top,
-let M := (N:ℝ)^(1-(1:ℝ)/(log(log N))), L := M / (2 * log N ^ ((1:ℝ)/100)),
-    T := M / log N, ε := (N:ℝ)^(-(5:ℝ)/(log(log N))),
-    ε' := (log N)^(-(1/100 : ℝ)), K := (N:ℝ)^(1-(3:ℝ)/(log(log N)))  in
-  (ε ≤ ε') →
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤  ε'*M ∧
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ (L * K ^ 2 / (16 * N ^ 2 * log N ^ 2)) ∧
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ (T * K ^ 2 / (N ^ 2 * log N)) ∧
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ c*M/(log N)^((1/500 : ℝ)) ∧
-  (log N)^(-(1/101 : ℝ)) ≤ (2:ℝ)/((log N)^(1/500 : ℝ)/4) - 1/M
-  :=
-begin
-  intros c hc,
-  obtain hlargeaux1 := large_enough_Naux1,
-  obtain hlargeaux2 := large_enough_Naux2,
-  specialize hlargeaux2 c hc,
-  filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
-    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top 6),
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
-    (eventually_ge_at_top (128^(500:ℝ))), eventually_ge_at_top 64,
-    hlargeaux2, hlargeaux1
-    ] with N hN1 hN2 hN3 hotheraux hnec,
-  dsimp at hN1 hN2,
-  clear hlargeaux2 hlargeaux1,
-  have hN4 : 1 < (log(log N)), { refine lt_of_lt_of_le _ hN1, norm_num1, },
-  have hN5 : (1:ℝ) < N, { norm_cast, refine le_trans _ hN3, norm_num1, },
-  have hN6 : (0:ℝ) < N, { refine lt_trans zero_lt_one hN5, },
-  have hN7 : 0 < (log(log N)), { refine lt_trans zero_lt_one hN4, },
-  have hN8 : 0 < log N, { apply lt_of_lt_of_le _ hN2, norm_num1,},
-  intro hT3, split,
-  rw [← div_le_iff, ← rpow_sub], apply le_trans _ hT3,
-  apply rpow_le_rpow_of_exponent_le, exact le_of_lt hN5,
-  convert_to (-7)/log(log N) ≤ (-5)/log(log N) using 0, { ring_nf, },
-  rw div_le_div_right, apply neg_le_neg, norm_num1, exact hN7, exact hN6,
-  apply rpow_pos_of_pos hN6, split,
-  exact hnec, split, apply le_trans hnec,
-  rw [div_le_div_iff, div_eq_mul_inv _ (2 * log ↑N ^ ((1:ℝ)/100)),div_eq_mul_inv _ (log N)],
-  convert_to (((N:ℝ)^(1-(1:ℝ)/log(log N)))*((N:ℝ)^(1-(3:ℝ)/log(log N)))^2*(N:ℝ)^2)*((2*(log N)^((1:ℝ)/100))⁻¹*(log N))
-       ≤  (((N:ℝ)^(1-(1:ℝ)/log(log N)))*((N:ℝ)^(1-(3:ℝ)/log(log N)))^2*(N:ℝ)^2)*((log N)⁻¹*16*(log N)^2) using 0,
-       { ring_nf, },
-  rw [mul_le_mul_left, ← rpow_neg_one, ← rpow_neg_one,
-      mul_comm ((log N)^(-(1:ℝ))) 16, mul_assoc, ← rpow_two, ← rpow_add], norm_num1,
-  rw [rpow_one, mul_le_mul_right, rpow_neg_one, inv_le],
-  apply @le_trans _ _ _ (2:ℝ) _, norm_num1,
-  rw [← mul_one (2:ℝ), mul_assoc, mul_le_mul_left, one_mul], apply one_le_rpow,
-  apply le_trans _ hN2, norm_num1, norm_num1, exact zero_lt_two, apply mul_pos zero_lt_two,
-  apply rpow_pos_of_pos hN8, exact real.nontrivial, norm_num1, exact hN8, exact hN8,
-  apply mul_pos, apply mul_pos, apply rpow_pos_of_pos hN6,
-  apply sq_pos_of_pos, apply rpow_pos_of_pos hN6, apply sq_pos_of_pos hN6,
-  apply mul_pos, apply mul_pos, norm_num1, apply sq_pos_of_pos hN6,
-  apply sq_pos_of_pos hN8, apply mul_pos, apply sq_pos_of_pos hN6, exact hN8,
-  exact hotheraux,
-end
+-- lemma large_enough_Naux  :  ∀ (c: ℝ), (c > 0) → ∀ᶠ (N : ℕ) in at_top,
+-- let M := (N : ℝ)^(1 - (1 : ℝ)/(log(log N))), L := M / (2 * log N ^ ((1 : ℝ)/100)),
+--     T := M / log N, ε := (N : ℝ)^(-(5 : ℝ)/(log(log N))),
+--     ε' := (log N)^(-(1/100 : ℝ)), K := (N : ℝ)^(1 - (3 : ℝ)/(log(log N)))  in
+--   (ε ≤ ε') →
+--   (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤  ε'*M ∧
+--   (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ (L * K ^ 2 / (16 * N ^ 2 * log N ^ 2)) ∧
+--   (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ (T * K ^ 2 / (N ^ 2 * log N)) ∧
+--   (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ c*M/(log N)^((1/500 : ℝ)) ∧
+--   (log N)^(-(1/101 : ℝ)) ≤ (2 : ℝ)/((log N)^(1/500 : ℝ)/4) - 1/M
+--   :=
+-- begin
+--   intros c hc,
+--   obtain hlargeaux1 := large_enough_Naux1,
+--   obtain hlargeaux2 := large_enough_Naux2,
+--   specialize hlargeaux2 c hc,
+--   filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
+--     tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top 6),
+--     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+--     (eventually_ge_at_top (128^(500 : ℝ))), eventually_ge_at_top 64,
+--     hlargeaux2, hlargeaux1
+--     ] with N hN1 hN2 hN3 hotheraux hnec,
+--   dsimp at hN1 hN2,
+--   clear hlargeaux2 hlargeaux1,
+--   have hN4 : 1 < (log(log N)), { refine lt_of_lt_of_le _ hN1, norm_num1, },
+--   have hN5 : (1 : ℝ) < N, { norm_cast, refine le_trans _ hN3, norm_num1, },
+--   have hN6 : (0 : ℝ) < N, { refine lt_trans zero_lt_one hN5, },
+--   have hN7 : 0 < (log(log N)), { refine lt_trans zero_lt_one hN4, },
+--   have hN8 : 0 < log N, { apply lt_of_lt_of_le _ hN2, norm_num1,},
+--   intro hT3, split,
+--   rw [← div_le_iff, ← rpow_sub], apply le_trans _ hT3,
+--   apply rpow_le_rpow_of_exponent_le, exact le_of_lt hN5,
+--   convert_to (-7)/log(log N) ≤ (-5)/log(log N) using 0, { ring_nf, },
+--   rw div_le_div_right, apply neg_le_neg, norm_num1, exact hN7, exact hN6,
+--   apply rpow_pos_of_pos hN6, split,
+--   exact hnec, split, apply le_trans hnec,
+--   rw [div_le_div_iff, div_eq_mul_inv _ (2 * log ↑N ^ ((1 : ℝ)/100)),div_eq_mul_inv _ (log N)],
+--   convert_to (((N : ℝ)^(1 - (1 : ℝ)/log(log N)))*((N : ℝ)^(1 - (3 : ℝ)/log(log N)))^2*(N : ℝ)^2)*((2*(log N)^((1 : ℝ)/100))⁻¹*(log N))
+--        ≤  (((N : ℝ)^(1 - (1 : ℝ)/log(log N)))*((N : ℝ)^(1 - (3 : ℝ)/log(log N)))^2*(N : ℝ)^2)*((log N)⁻¹*16*(log N)^2) using 0,
+--        { ring_nf, },
+--   rw [mul_le_mul_left, ← rpow_neg_one, ← rpow_neg_one,
+--       mul_comm ((log N)^(-(1 : ℝ))) 16, mul_assoc, ← rpow_two, ← rpow_add], norm_num1,
+--   rw [rpow_one, mul_le_mul_right, rpow_neg_one, inv_le],
+--   apply @le_trans _ _ _ (2 : ℝ) _, norm_num1,
+--   rw [← mul_one (2 : ℝ), mul_assoc, mul_le_mul_left, one_mul], apply one_le_rpow,
+--   apply le_trans _ hN2, norm_num1, norm_num1, exact zero_lt_two, apply mul_pos zero_lt_two,
+--   apply rpow_pos_of_pos hN8, exact real.nontrivial, norm_num1, exact hN8, exact hN8,
+--   apply mul_pos, apply mul_pos, apply rpow_pos_of_pos hN6,
+--   apply sq_pos_of_pos, apply rpow_pos_of_pos hN6, apply sq_pos_of_pos hN6,
+--   apply mul_pos, apply mul_pos, norm_num1, apply sq_pos_of_pos hN6,
+--   apply sq_pos_of_pos hN8, apply mul_pos, apply sq_pos_of_pos hN6, exact hN8,
+--   exact hotheraux,
+-- end
 
 lemma large_enough_N  :  ∀ (c: ℝ), (c > 0) → ∀ᶠ (N : ℕ) in at_top,
-let M := (N:ℝ)^(1-(1:ℝ)/(log(log N))), L := M / (2 * log N ^ ((1:ℝ)/100)),
-    T := M / log N, ε := (N:ℝ)^(-(5:ℝ)/(log(log N))),
-    ε' := (log N)^(-(1/100 : ℝ)), K := (N:ℝ)^(1-(3:ℝ)/(log(log N)))  in
- 1/M < ε*log(log N) ∧ 0 < ε ∧ (N:ℝ) ≤ M^(2:ℝ) ∧ M < N ∧ 0 < M ∧ (0:ℝ) < log N ∧
+let M := (N : ℝ)^(1 - (1 : ℝ)/(log(log N))), L := M / (2 * log N ^ ((1 : ℝ)/100)),
+    T := M / log N, ε := (N : ℝ)^(-(5 : ℝ)/(log(log N))),
+    ε' := (log N)^(-(1/100 : ℝ)), K := (N : ℝ)^(1 - (3 : ℝ)/(log(log N)))  in
+ 1/M < ε*log(log N) ∧ 0 < ε ∧ (N : ℝ) ≤ M^(2 : ℝ) ∧ M < N ∧ 0 < M ∧ (0 : ℝ) < log N ∧
  8 ≤ K ∧ K < M ∧ (log N)^((1/500 : ℝ)) < 2*M ∧
   2*ε*log(log N) ≤ (log N)^(-(1/200 : ℝ)) ∧
   3*ε*log(log N) ≤ 2 / ((log N)^((1/500 : ℝ)))^2 ∧
@@ -1106,203 +1122,204 @@ let M := (N:ℝ)^(1-(1:ℝ)/(log(log N))), L := M / (2 * log N ^ ((1:ℝ)/100)),
   (log N)^((1/500 : ℝ)) ≤ M/128  ∧ 1/M < ε'*log(log N) ∧
   3*ε'*log(log N) ≤ 2/((log N)^((1/500 : ℝ)))^2 ∧
    2*ε'*log(log N) ≤ (log N)^(-(1/200 : ℝ)) ∧
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤  ε'*M ∧
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ (L * K ^ 2 / (16 * N ^ 2 * log N ^ 2)) ∧
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ (T * K ^ 2 / (N ^ 2 * log N)) ∧
-  (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ c*M/(log N)^((1/500 : ℝ)) ∧
-  (log N)^(-(1/101 : ℝ)) ≤ (2:ℝ)/((log N)^(1/500 : ℝ)/4) - 1/M
+  (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤  ε'*M ∧
+  (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ (L * K ^ 2 / (16 * N ^ 2 * log N ^ 2)) ∧
+  (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ (T * K ^ 2 / (N ^ 2 * log N)) ∧
+  (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ c*M/(log N)^((1/500 : ℝ)) ∧
+  (log N)^(-(1/101 : ℝ)) ≤ (2 : ℝ)/((log N)^(1/500 : ℝ)/4) - 1/M
   :=
-begin
-  intros c hc,
-  obtain hlargeaux := large_enough_Naux,
-  specialize hlargeaux c hc,
-  have haux: asymptotics.is_O_with ((1:ℝ)/24) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1:ℝ)/125)) at_top,
-  { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
-     norm_num1, norm_num1, },
- have haux2: asymptotics.is_O_with ((2:ℝ)/3) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((3:ℝ)/500)) at_top,
-  { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
-     norm_num1, norm_num1, },
-      have haux3: asymptotics.is_O_with ((1:ℝ)/2) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1:ℝ)/200)) at_top,
-  { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
-     norm_num1, norm_num1, },
-  filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
-    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top 6),
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
-    (eventually_ge_at_top (128^(500:ℝ))), eventually_ge_at_top 64,
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux.bound,
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux2.bound,
-    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux3.bound,
-    hlargeaux
-    ]
-    with N hN1 hN2 hN3 hN3new hN3new2 hN3new3 hotheraux,
-  dsimp at hN1 hN2,
-  clear haux haux2 haux3 hlargeaux,
-  have hN4 : 1 < (log(log N)), { refine lt_of_lt_of_le _ hN1, norm_num1, },
-  have hN5 : (1:ℝ) < N, { norm_cast, refine le_trans _ hN3, norm_num1, },
-  have hN6 : (0:ℝ) < N, { refine lt_trans zero_lt_one hN5, },
-  have hN7 : 0 < (log(log N)), { refine lt_trans zero_lt_one hN4, },
-  have hN8 : 0 < log N, { apply lt_of_lt_of_le _ hN2, norm_num1,},
-  have hN9 : 24*log(log N) ≤ (log N)^((1/125 : ℝ)), {
-      simp_rw [norm_eq_abs] at hN3new, rw abs_of_nonneg at hN3new,
-      rw abs_of_nonneg at hN3new, dsimp at hN3new, rw [mul_comm, ← le_div_iff],
-      rw [mul_comm, mul_div, mul_one] at hN3new, exact hN3new, norm_num1,
-      apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
-      exact le_of_lt hN7,
-   },
-     have hN10 : log(log N) ≤ (2/3)*(log N)^((3/500 : ℝ)), {
-      simp_rw [norm_eq_abs] at hN3new2, rw abs_of_nonneg at hN3new2,
-      rw abs_of_nonneg at hN3new2, dsimp at hN3new2, exact hN3new2,
-      apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
-      exact le_of_lt hN7,
-   },
-        have hN11 : 2*log(log N) ≤ (log N)^((1/200 : ℝ)), {
-      simp_rw [norm_eq_abs] at hN3new3, rw abs_of_nonneg at hN3new3,
-      rw abs_of_nonneg at hN3new3, dsimp at hN3new3, rw [mul_comm, ← le_div_iff],
-      rw [mul_comm, mul_div, mul_one] at hN3new3, exact hN3new3, norm_num1,
-      apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
-      exact le_of_lt hN7,
-   },
-  clear hN3new hN3new2 hN3new3,
-  have h500 : (0:ℝ) < 500 := by norm_num1,
-  have h5002 : (0:ℝ) < 500/2 := by norm_num1,
-    have hTp : 128*(log N)^((1/500 : ℝ)) < (N:ℝ)^(1-(1:ℝ)/(log(log N))),
-  { have : 128*(log N)^((1/500 : ℝ)) ≤ (log N)^((1/500 : ℝ))*(log N)^((1/500 : ℝ)),
-    { apply mul_le_mul, rw ← (real.rpow_le_rpow_iff _ _ h500), rw ← rpow_mul,
-    apply le_trans hN2, norm_num1, rw rpow_one, exact le_of_lt hN8, norm_num1,
-    apply rpow_nonneg_of_nonneg (le_of_lt hN8), refl,
-    apply rpow_nonneg_of_nonneg (le_of_lt hN8), apply rpow_nonneg_of_nonneg (le_of_lt hN8),},
-   apply lt_of_le_of_lt this, rw ← rpow_add, rw ← (real.rpow_lt_rpow_iff _ _ h5002),
-   rw ← rpow_mul, norm_num1, rw rpow_one,
-   apply lt_of_le_of_lt (real.log_le_sub_one_of_pos hN6),
-   apply lt_of_lt_of_le (sub_one_lt (N:ℝ)), rw ← rpow_mul, nth_rewrite 0 ← (real.rpow_one N),
-   apply rpow_le_rpow_of_exponent_le (le_of_lt hN5),
-   rw [sub_mul, le_sub, mul_comm, mul_one_div, div_le_iff, mul_comm,← div_le_iff],
-   apply le_trans _ hN1, norm_num1, norm_num1, exact hN7, exact le_of_lt hN6,
-   exact le_of_lt hN8, apply real.rpow_nonneg_of_nonneg (le_of_lt hN8),
-   apply real.rpow_nonneg_of_nonneg (le_of_lt hN6), exact hN8,
-   },
-  have hT : 4*(log N)^((1/500 : ℝ)) < (N:ℝ)^(1-(1:ℝ)/(log(log N))),
-  { apply lt_of_le_of_lt _ hTp, refine (mul_le_mul_right _).mpr _,
-    apply real.rpow_pos_of_pos hN8, norm_num1,},
-  have hT' : (log N)^((1/500 : ℝ)) < (N:ℝ)^(1-(1:ℝ)/(log(log N))),
-  { apply lt_of_le_of_lt _ hT, refine (le_mul_iff_one_le_left _).mpr _,
-    apply real.rpow_pos_of_pos hN8, norm_num1,},
-  split, rw [one_div, inv_pos_lt_iff_one_lt_mul, mul_comm, ← mul_assoc],
-  apply one_lt_mul, rw ← real.rpow_add, apply real.one_le_rpow (le_of_lt hN5),
-  rw [sub_add, ← sub_div, sub_nonneg, div_le_one], norm_num1,
-  exact hN1, refine lt_trans zero_lt_one hN4, exact hN6,
-  exact hN4, apply real.rpow_pos_of_pos hN6, split,
-  apply real.rpow_pos_of_pos hN6, split,
-  rw ← rpow_mul, nth_rewrite 0 ← (real.rpow_one N),
-  apply real.rpow_le_rpow_of_exponent_le (le_of_lt hN5),
-  rw [sub_mul, le_sub, mul_comm, mul_one_div], norm_num1, rw div_le_one,
-  refine le_trans _ hN1, norm_num1, exact hN7, apply le_of_lt hN6, split,
-  nth_rewrite 2 ← (real.rpow_one N), apply real.rpow_lt_rpow_of_exponent_lt hN5,
-  apply sub_lt_self, refine div_pos zero_lt_one hN7, split,
-  apply real.rpow_pos_of_pos hN6, split,
-  refine lt_of_lt_of_le _ hN2, norm_num1, split,
-  apply @le_trans _ _ 8 ((N:ℝ)^((1:ℝ)/2)) _,
-  rw ← (real.rpow_le_rpow_iff _ _ zero_lt_two), rw ← rpow_mul, norm_num1,
-  rw rpow_one, norm_cast, exact hN3, apply le_of_lt hN6, norm_num1,
-  apply real.rpow_nonneg_of_nonneg (le_of_lt hN6), apply rpow_le_rpow_of_exponent_le,
-  apply le_of_lt hN5, rw le_sub, norm_num1, rw div_le_div_iff, norm_num1, rw one_mul,
-  exact hN1, exact hN7, exact zero_lt_two, split,
-  apply real.rpow_lt_rpow_of_exponent_lt hN5, apply sub_lt_sub_left,
-  apply div_lt_div_of_lt hN7, norm_num1, split,
-  apply lt_of_lt_of_le hT', refine (le_mul_iff_one_le_left _).mpr one_le_two,
-  apply real.rpow_pos_of_pos hN6,
-  let ε := (N:ℝ)^(-(5:ℝ)/(log(log N))),
-  let ε' := (log N)^(-(1/100 : ℝ)),
- have hT1 :   3*ε'*log(log N) ≤ 2/((log N)^((1/500 : ℝ)))^2, {
-  rw [le_div_iff, ← real.rpow_two, ← rpow_mul, mul_comm, ← mul_assoc,
-    ← mul_assoc, mul_comm ((log N)^((1/500 : ℝ)*2)),
-    mul_assoc 3 ((log N)^((1/500 : ℝ)*2)), ← rpow_add], norm_num1,
-    rw [mul_comm, ← mul_assoc, ← le_div_iff, mul_comm, div_eq_mul_one_div, one_div,
-      ← real.rpow_neg, neg_neg, ← le_div_iff', div_eq_mul_one_div, mul_comm, ← mul_assoc],
-    norm_num1, exact hN10, exact zero_lt_three, exact le_of_lt hN8,
-    apply rpow_pos_of_pos hN8, exact hN8, exact le_of_lt hN8, apply sq_pos_of_pos,
-    apply rpow_pos_of_pos hN8,
-  },
- have hT2 :  2*ε'*log(log N) ≤ (log N)^(-(1/200 : ℝ)), {
-   rw [real.rpow_neg, ← one_div, le_div_iff, mul_comm, ← mul_assoc,
-   ← mul_assoc, mul_comm ((log N)^((1/200 : ℝ))),
-   mul_assoc 2 ((log N)^((1/200 : ℝ))), ← rpow_add], norm_num1,
-   rw [mul_comm, ← mul_assoc, ← le_div_iff, one_div,
-      ← real.rpow_neg, neg_neg, mul_comm], exact hN11, exact le_of_lt hN8,
-    apply rpow_pos_of_pos hN8, exact hN8, apply rpow_pos_of_pos hN8, exact le_of_lt hN8,
-  },
- have hT3 : ε ≤ ε', {
-   rw [← one_div_le_one_div, one_div, one_div, ← rpow_neg, neg_neg, ← rpow_neg,
-     ← neg_div, neg_neg, ← log_le_log, log_rpow, log_rpow],
-     nth_rewrite 1 mul_comm, rw [mul_div, mul_comm, ← div_eq_mul_one_div,
-    div_le_div_iff],
-    apply @le_trans _ _ _ ((2/3)*(log N)^((3/500 : ℝ))*(2/3)*(log N)^((3/500 : ℝ))) _,
-    rw mul_assoc, apply mul_le_mul, exact hN10, exact hN10, exact le_of_lt hN7,
-    apply mul_nonneg, norm_num1, apply rpow_nonneg_of_nonneg (le_of_lt hN8),
-    convert_to (((log N)^((3/500 : ℝ)))*((log N)^((3/500 : ℝ))))*((2/3)*(2/3)) ≤
-     (log N)*(5*100) using 0,
-     { ring_nf, },
-    apply mul_le_mul, rw ← rpow_add, nth_rewrite 1 ← real.rpow_one (log N),
-    apply real.rpow_le_rpow_of_exponent_le, apply le_trans _ hN2,
-    norm_num1, norm_num1, exact hN8, norm_num1, norm_num1, exact le_of_lt hN8,
-    norm_num1, exact hN7, exact hN6, exact hN8, apply rpow_pos_of_pos hN8,
-    apply rpow_pos_of_pos hN6, exact le_of_lt hN6, exact le_of_lt hN8,
-    apply rpow_pos_of_pos hN8, apply rpow_pos_of_pos hN6,
-  },
- split, refine le_trans _ hT2, rw mul_le_mul_right hN7,
- refine (mul_le_mul_left zero_lt_two).mpr hT3, split,
- refine le_trans _ hT1, rw mul_le_mul_right hN7,
- refine (mul_le_mul_left zero_lt_three).mpr hT3, split,
- apply @le_trans _ _ _ ((1/(4*(log N)^((1/500 : ℝ)))+(1/(4*(log N)^((1/500 : ℝ)))))) _,
- apply add_le_add, rw [le_div_iff],
- convert_to (3 * 2 * 4) * (ε' * (log N)^((1/500 : ℝ))) *  log (log N) ≤ 1 using 0,
-   { ring_nf, }, norm_num1, rw ← rpow_add, norm_num1, rw [mul_comm, ← mul_assoc],
-   rw ←  le_div_iff, nth_rewrite 0 one_div,
-   rw [← real.rpow_neg, neg_neg, mul_comm],
-   exact hN9, exact le_of_lt hN8, apply rpow_pos_of_pos hN8, exact hN8,
-   refine mul_pos zero_lt_four _, apply rpow_pos_of_pos hN8,
-   rw [div_le_div_iff, one_mul, one_mul],
-   exact le_of_lt hT,  apply rpow_pos_of_pos hN6,
-   refine mul_pos zero_lt_four _, apply rpow_pos_of_pos hN8,
-   rw [← two_mul, mul_div, div_le_div_iff, mul_one, one_mul, ← mul_assoc],
-   norm_num1, refl, refine mul_pos zero_lt_four _, apply rpow_pos_of_pos hN8,
-  refine mul_pos zero_lt_two _, apply rpow_pos_of_pos hN8,
-  split,
-  apply le_of_lt, rw lt_div_iff, rw mul_comm, exact hTp, norm_num1,
-  split,
-  rw div_lt_iff,
-  have hTq : (log N)^((1/100 : ℝ)) < (N:ℝ)^(1-(1:ℝ)/(log(log N))),
-  { have : (0:ℝ) < 100 := by norm_num1,
-   rw ← (real.rpow_lt_rpow_iff _ _ this),
-   rw ← rpow_mul, norm_num1, rw rpow_one,
-   apply lt_of_le_of_lt (real.log_le_sub_one_of_pos hN6),
-   apply lt_of_lt_of_le (sub_one_lt (N:ℝ)), rw ← rpow_mul, nth_rewrite 0 ← (real.rpow_one N),
-   apply rpow_le_rpow_of_exponent_le (le_of_lt hN5),
-   rw [sub_mul, le_sub, mul_comm, mul_one_div, div_le_iff, mul_comm,← div_le_iff],
-   apply le_trans _ hN1, norm_num1, norm_num1, exact hN7, exact le_of_lt hN6,
-   exact le_of_lt hN8, apply real.rpow_nonneg_of_nonneg (le_of_lt hN8),
-   apply real.rpow_nonneg_of_nonneg (le_of_lt hN6), },
-   rw [mul_assoc, ← div_lt_iff'], nth_rewrite 0 one_div,
-   rw [← real.rpow_neg_one, ← rpow_mul], norm_num1, apply lt_trans hTq,
-   nth_rewrite 0 ← one_mul ((N:ℝ)^(1-(1:ℝ)/(log(log N)))),
-   refine (mul_lt_mul_right _).mpr _, apply rpow_pos_of_pos hN6, exact hN4,
-   exact le_of_lt hN8, apply rpow_pos_of_pos hN8, apply rpow_pos_of_pos hN6,
-   refine ⟨hT1, hT2, hotheraux hT3⟩,
-end
+sorry
+-- begin
+--   intros c hc,
+--   obtain hlargeaux := large_enough_Naux,
+--   specialize hlargeaux c hc,
+--   have haux: asymptotics.is_O_with ((1 : ℝ)/24) (λ (x : ℝ), (log x))
+--      (λ (x : ℝ), x^((1 : ℝ)/125)) at_top,
+--   { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
+--      norm_num1, norm_num1, },
+--  have haux2: asymptotics.is_O_with ((2 : ℝ)/3) (λ (x : ℝ), (log x))
+--      (λ (x : ℝ), x^((3 : ℝ)/500)) at_top,
+--   { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
+--      norm_num1, norm_num1, },
+--       have haux3: asymptotics.is_O_with ((1 : ℝ)/2) (λ (x : ℝ), (log x))
+--      (λ (x : ℝ), x^((1 : ℝ)/200)) at_top,
+--   { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
+--      norm_num1, norm_num1, },
+--   filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
+--     tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top 6),
+--     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+--     (eventually_ge_at_top (128^(500 : ℝ))), eventually_ge_at_top 64,
+--     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux.bound,
+--     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux2.bound,
+--     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux3.bound,
+--     hlargeaux
+--     ]
+--     with N hN1 hN2 hN3 hN3new hN3new2 hN3new3 hotheraux,
+--   dsimp at hN1 hN2,
+--   clear haux haux2 haux3 hlargeaux,
+--   have hN4 : 1 < (log(log N)), { refine lt_of_lt_of_le _ hN1, norm_num1, },
+--   have hN5 : (1 : ℝ) < N, { norm_cast, refine le_trans _ hN3, norm_num1, },
+--   have hN6 : (0 : ℝ) < N, { refine lt_trans zero_lt_one hN5, },
+--   have hN7 : 0 < (log(log N)), { refine lt_trans zero_lt_one hN4, },
+--   have hN8 : 0 < log N, { apply lt_of_lt_of_le _ hN2, norm_num1,},
+--   have hN9 : 24*log(log N) ≤ (log N)^((1/125 : ℝ)), {
+--       simp_rw [norm_eq_abs] at hN3new, rw abs_of_nonneg at hN3new,
+--       rw abs_of_nonneg at hN3new, dsimp at hN3new, rw [mul_comm, ← le_div_iff],
+--       rw [mul_comm, mul_div, mul_one] at hN3new, exact hN3new, norm_num1,
+--       apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
+--       exact le_of_lt hN7,
+--    },
+--      have hN10 : log(log N) ≤ (2/3)*(log N)^((3/500 : ℝ)), {
+--       simp_rw [norm_eq_abs] at hN3new2, rw abs_of_nonneg at hN3new2,
+--       rw abs_of_nonneg at hN3new2, dsimp at hN3new2, exact hN3new2,
+--       apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
+--       exact le_of_lt hN7,
+--    },
+--         have hN11 : 2*log(log N) ≤ (log N)^((1/200 : ℝ)), {
+--       simp_rw [norm_eq_abs] at hN3new3, rw abs_of_nonneg at hN3new3,
+--       rw abs_of_nonneg at hN3new3, dsimp at hN3new3, rw [mul_comm, ← le_div_iff],
+--       rw [mul_comm, mul_div, mul_one] at hN3new3, exact hN3new3, norm_num1,
+--       apply rpow_nonneg_of_nonneg, dsimp, exact le_of_lt hN8, dsimp,
+--       exact le_of_lt hN7,
+--    },
+--   clear hN3new hN3new2 hN3new3,
+--   have h500 : (0 : ℝ) < 500 := by norm_num1,
+--   have h5002 : (0 : ℝ) < 500/2 := by norm_num1,
+--     have hTp : 128*(log N)^((1/500 : ℝ)) < (N : ℝ)^(1 - (1 : ℝ)/(log(log N))),
+--   { have : 128*(log N)^((1/500 : ℝ)) ≤ (log N)^((1/500 : ℝ))*(log N)^((1/500 : ℝ)),
+--     { apply mul_le_mul, rw ← (real.rpow_le_rpow_iff _ _ h500), rw ← rpow_mul,
+--     apply le_trans hN2, norm_num1, rw rpow_one, exact le_of_lt hN8, norm_num1,
+--     apply rpow_nonneg_of_nonneg (le_of_lt hN8), refl,
+--     apply rpow_nonneg_of_nonneg (le_of_lt hN8), apply rpow_nonneg_of_nonneg (le_of_lt hN8),},
+--    apply lt_of_le_of_lt this, rw ← rpow_add, rw ← (real.rpow_lt_rpow_iff _ _ h5002),
+--    rw ← rpow_mul, norm_num1, rw rpow_one,
+--    apply lt_of_le_of_lt (real.log_le_sub_one_of_pos hN6),
+--    apply lt_of_lt_of_le (sub_one_lt (N : ℝ)), rw ← rpow_mul, nth_rewrite 0 ← (real.rpow_one N),
+--    apply rpow_le_rpow_of_exponent_le (le_of_lt hN5),
+--    rw [sub_mul, le_sub, mul_comm, mul_one_div, div_le_iff, mul_comm,← div_le_iff],
+--    apply le_trans _ hN1, norm_num1, norm_num1, exact hN7, exact le_of_lt hN6,
+--    exact le_of_lt hN8, apply real.rpow_nonneg_of_nonneg (le_of_lt hN8),
+--    apply real.rpow_nonneg_of_nonneg (le_of_lt hN6), exact hN8,
+--    },
+--   have hT : 4*(log N)^((1/500 : ℝ)) < (N : ℝ)^(1 - (1 : ℝ)/(log(log N))),
+--   { apply lt_of_le_of_lt _ hTp, refine (mul_le_mul_right _).mpr _,
+--     apply real.rpow_pos_of_pos hN8, norm_num1,},
+--   have hT' : (log N)^((1/500 : ℝ)) < (N : ℝ)^(1 - (1 : ℝ)/(log(log N))),
+--   { apply lt_of_le_of_lt _ hT, refine (le_mul_iff_one_le_left _).mpr _,
+--     apply real.rpow_pos_of_pos hN8, norm_num1,},
+--   split, rw [one_div, inv_pos_lt_iff_one_lt_mul, mul_comm, ← mul_assoc],
+--   apply one_lt_mul, rw ← real.rpow_add, apply real.one_le_rpow (le_of_lt hN5),
+--   rw [sub_add, ← sub_div, sub_nonneg, div_le_one], norm_num1,
+--   exact hN1, refine lt_trans zero_lt_one hN4, exact hN6,
+--   exact hN4, apply real.rpow_pos_of_pos hN6, split,
+--   apply real.rpow_pos_of_pos hN6, split,
+--   rw ← rpow_mul, nth_rewrite 0 ← (real.rpow_one N),
+--   apply real.rpow_le_rpow_of_exponent_le (le_of_lt hN5),
+--   rw [sub_mul, le_sub, mul_comm, mul_one_div], norm_num1, rw div_le_one,
+--   refine le_trans _ hN1, norm_num1, exact hN7, apply le_of_lt hN6, split,
+--   nth_rewrite 2 ← (real.rpow_one N), apply real.rpow_lt_rpow_of_exponent_lt hN5,
+--   apply sub_lt_self, refine div_pos zero_lt_one hN7, split,
+--   apply real.rpow_pos_of_pos hN6, split,
+--   refine lt_of_lt_of_le _ hN2, norm_num1, split,
+--   apply @le_trans _ _ 8 ((N : ℝ)^((1 : ℝ)/2)) _,
+--   rw ← (real.rpow_le_rpow_iff _ _ zero_lt_two), rw ← rpow_mul, norm_num1,
+--   rw rpow_one, norm_cast, exact hN3, apply le_of_lt hN6, norm_num1,
+--   apply real.rpow_nonneg_of_nonneg (le_of_lt hN6), apply rpow_le_rpow_of_exponent_le,
+--   apply le_of_lt hN5, rw le_sub, norm_num1, rw div_le_div_iff, norm_num1, rw one_mul,
+--   exact hN1, exact hN7, exact zero_lt_two, split,
+--   apply real.rpow_lt_rpow_of_exponent_lt hN5, apply sub_lt_sub_left,
+--   apply div_lt_div_of_lt hN7, norm_num1, split,
+--   apply lt_of_lt_of_le hT', refine (le_mul_iff_one_le_left _).mpr one_le_two,
+--   apply real.rpow_pos_of_pos hN6,
+--   let ε := (N : ℝ)^(-(5 : ℝ)/(log(log N))),
+--   let ε' := (log N)^(-(1/100 : ℝ)),
+--  have hT1 :   3*ε'*log(log N) ≤ 2/((log N)^((1/500 : ℝ)))^2, {
+--   rw [le_div_iff, ← real.rpow_two, ← rpow_mul, mul_comm, ← mul_assoc,
+--     ← mul_assoc, mul_comm ((log N)^((1/500 : ℝ)*2)),
+--     mul_assoc 3 ((log N)^((1/500 : ℝ)*2)), ← rpow_add], norm_num1,
+--     rw [mul_comm, ← mul_assoc, ← le_div_iff, mul_comm, div_eq_mul_one_div, one_div,
+--       ← real.rpow_neg, neg_neg, ← le_div_iff', div_eq_mul_one_div, mul_comm, ← mul_assoc],
+--     norm_num1, exact hN10, exact zero_lt_three, exact le_of_lt hN8,
+--     apply rpow_pos_of_pos hN8, exact hN8, exact le_of_lt hN8, apply sq_pos_of_pos,
+--     apply rpow_pos_of_pos hN8,
+--   },
+--  have hT2 :  2*ε'*log(log N) ≤ (log N)^(-(1/200 : ℝ)), {
+--    rw [real.rpow_neg, ← one_div, le_div_iff, mul_comm, ← mul_assoc,
+--    ← mul_assoc, mul_comm ((log N)^((1/200 : ℝ))),
+--    mul_assoc 2 ((log N)^((1/200 : ℝ))), ← rpow_add], norm_num1,
+--    rw [mul_comm, ← mul_assoc, ← le_div_iff, one_div,
+--       ← real.rpow_neg, neg_neg, mul_comm], exact hN11, exact le_of_lt hN8,
+--     apply rpow_pos_of_pos hN8, exact hN8, apply rpow_pos_of_pos hN8, exact le_of_lt hN8,
+--   },
+--  have hT3 : ε ≤ ε', {
+--    rw [← one_div_le_one_div, one_div, one_div, ← rpow_neg, neg_neg, ← rpow_neg,
+--      ← neg_div, neg_neg, ← log_le_log, log_rpow, log_rpow],
+--      nth_rewrite 1 mul_comm, rw [mul_div, mul_comm, ← div_eq_mul_one_div,
+--     div_le_div_iff],
+--     apply @le_trans _ _ _ ((2/3)*(log N)^((3/500 : ℝ))*(2/3)*(log N)^((3/500 : ℝ))) _,
+--     rw mul_assoc, apply mul_le_mul, exact hN10, exact hN10, exact le_of_lt hN7,
+--     apply mul_nonneg, norm_num1, apply rpow_nonneg_of_nonneg (le_of_lt hN8),
+--     convert_to (((log N)^((3/500 : ℝ)))*((log N)^((3/500 : ℝ))))*((2/3)*(2/3)) ≤
+--      (log N)*(5*100) using 0,
+--      { ring_nf, },
+--     apply mul_le_mul, rw ← rpow_add, nth_rewrite 1 ← real.rpow_one (log N),
+--     apply real.rpow_le_rpow_of_exponent_le, apply le_trans _ hN2,
+--     norm_num1, norm_num1, exact hN8, norm_num1, norm_num1, exact le_of_lt hN8,
+--     norm_num1, exact hN7, exact hN6, exact hN8, apply rpow_pos_of_pos hN8,
+--     apply rpow_pos_of_pos hN6, exact le_of_lt hN6, exact le_of_lt hN8,
+--     apply rpow_pos_of_pos hN8, apply rpow_pos_of_pos hN6,
+--   },
+--  split, refine le_trans _ hT2, rw mul_le_mul_right hN7,
+--  refine (mul_le_mul_left zero_lt_two).mpr hT3, split,
+--  refine le_trans _ hT1, rw mul_le_mul_right hN7,
+--  refine (mul_le_mul_left zero_lt_three).mpr hT3, split,
+--  apply @le_trans _ _ _ ((1/(4*(log N)^((1/500 : ℝ)))+(1/(4*(log N)^((1/500 : ℝ)))))) _,
+--  apply add_le_add, rw [le_div_iff],
+--  convert_to (3 * 2 * 4) * (ε' * (log N)^((1/500 : ℝ))) *  log (log N) ≤ 1 using 0,
+--    { ring_nf, }, norm_num1, rw ← rpow_add, norm_num1, rw [mul_comm, ← mul_assoc],
+--    rw ←  le_div_iff, nth_rewrite 0 one_div,
+--    rw [← real.rpow_neg, neg_neg, mul_comm],
+--    exact hN9, exact le_of_lt hN8, apply rpow_pos_of_pos hN8, exact hN8,
+--    refine mul_pos zero_lt_four _, apply rpow_pos_of_pos hN8,
+--    rw [div_le_div_iff, one_mul, one_mul],
+--    exact le_of_lt hT,  apply rpow_pos_of_pos hN6,
+--    refine mul_pos zero_lt_four _, apply rpow_pos_of_pos hN8,
+--    rw [← two_mul, mul_div, div_le_div_iff, mul_one, one_mul, ← mul_assoc],
+--    norm_num1, refl, refine mul_pos zero_lt_four _, apply rpow_pos_of_pos hN8,
+--   refine mul_pos zero_lt_two _, apply rpow_pos_of_pos hN8,
+--   split,
+--   apply le_of_lt, rw lt_div_iff, rw mul_comm, exact hTp, norm_num1,
+--   split,
+--   rw div_lt_iff,
+--   have hTq : (log N)^((1/100 : ℝ)) < (N : ℝ)^(1 - (1 : ℝ)/(log(log N))),
+--   { have : (0 : ℝ) < 100 := by norm_num1,
+--    rw ← (real.rpow_lt_rpow_iff _ _ this),
+--    rw ← rpow_mul, norm_num1, rw rpow_one,
+--    apply lt_of_le_of_lt (real.log_le_sub_one_of_pos hN6),
+--    apply lt_of_lt_of_le (sub_one_lt (N : ℝ)), rw ← rpow_mul, nth_rewrite 0 ← (real.rpow_one N),
+--    apply rpow_le_rpow_of_exponent_le (le_of_lt hN5),
+--    rw [sub_mul, le_sub, mul_comm, mul_one_div, div_le_iff, mul_comm,← div_le_iff],
+--    apply le_trans _ hN1, norm_num1, norm_num1, exact hN7, exact le_of_lt hN6,
+--    exact le_of_lt hN8, apply real.rpow_nonneg_of_nonneg (le_of_lt hN8),
+--    apply real.rpow_nonneg_of_nonneg (le_of_lt hN6), },
+--    rw [mul_assoc, ← div_lt_iff'], nth_rewrite 0 one_div,
+--    rw [← real.rpow_neg_one, ← rpow_mul], norm_num1, apply lt_trans hTq,
+--    nth_rewrite 0 ← one_mul ((N : ℝ)^(1 - (1 : ℝ)/(log(log N)))),
+--    refine (mul_lt_mul_right _).mpr _, apply rpow_pos_of_pos hN6, exact hN4,
+--    exact le_of_lt hN8, apply rpow_pos_of_pos hN8, apply rpow_pos_of_pos hN6,
+--    refine ⟨hT1, hT2, hotheraux hT3⟩,
+-- end
 
 -- Proposition 6.6
 theorem technical_prop :
   ∀ᶠ (N : ℕ) in at_top, ∀ (A ⊆ finset.range (N+1)) (y z : ℝ),
   (1 ≤ y) → (4*y + 4 ≤ z) → (z ≤ (log N)^((1/500 : ℝ)))
-  → (∀ n ∈ A, ( (N:ℝ)^(1-(1:ℝ)/(log(log N))) ≤ n ))
+  → (∀ n ∈ A, ( (N : ℝ)^(1 - (1 : ℝ)/(log(log N))) ≤ n ))
   → 2 / y + (log N)^(-(1/200 : ℝ)) ≤ rec_sum A
   → (∀ n ∈ A, ∃ d₁ d₂ : ℕ, (d₁ ∣ n) ∧ (d₂ ∣ n) ∧ (y ≤ d₁) ∧ (4*d₁ ≤ d₂) ∧ ((d₂ : ℝ) ≤ z) )
-  → (∀ n ∈ A, is_smooth ((N:ℝ)^(1-(8:ℝ)/(log(log N)))) n)
+  → (∀ n ∈ A, is_smooth ((N : ℝ)^(1 - (8 : ℝ)/(log(log N)))) n)
   → arith_regular N A
-  → ∃ S ⊆ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ z) ∧
+  → ∃ S ⊆ A, ∃ d : ℕ, (y ≤ d) ∧ ((d : ℝ) ≤ z) ∧
     rec_sum S = 1/d
   :=
 begin
@@ -1313,20 +1330,20 @@ begin
      force_good_properties2, circle_method,hlargeN],
   clear circle_method,
   intros N htechlemma hforce1 hforce2 hcircle hlargeN,
-  let M := (N:ℝ)^(1-(1:ℝ)/(log(log N))),
-  let ε := (N:ℝ)^(-(5:ℝ)/(log(log N))),
-  let K := (N:ℝ)^(1-(3:ℝ)/(log(log N))),
-  let η := (1:ℝ)/(2*(log N)^((1:ℝ)/100)),
-  let L := M / (2 * log N ^ ((1:ℝ)/100)),
+  let M := (N : ℝ)^(1 - (1 : ℝ)/(log(log N))),
+  let ε := (N : ℝ)^(-(5 : ℝ)/(log(log N))),
+  let K := (N : ℝ)^(1 - (3 : ℝ)/(log(log N))),
+  let η := (1 : ℝ)/(2*(log N)^((1 : ℝ)/100)),
+  let L := M / (2 * log N ^ ((1 : ℝ)/100)),
   let T := M / log N,
   rcases hlargeN with ⟨hMε, hε, hM3, hM2, hM1, hlogN3, heK, hKM, hlogN4,
      hlogN5, hlogN6, hlargeNnew, hlargenew2, hε'M, hlarge3, hlarge4, hεε'M,
      hUhelper, hUhelper2, hUhelper3, hlarge7⟩,
 have hM2aux : M ≤ N, { apply le_of_lt hM2, },
   intros A hA y z h1y hyz hzN hA2 hrec hdiv hsmooth hreg,
-  have htemp6 : (N:ℝ)^(1-(1:ℝ)/(log(log N)))*(N:ℝ)^(-(2:ℝ)/(log(log N))) = K, {
+  have htemp6 : (N : ℝ)^(1 - (1 : ℝ)/(log(log N)))*(N : ℝ)^(-(2 : ℝ)/(log(log N))) = K, {
     rw ← rpow_add,
-    have : 1-(1:ℝ)/(log(log N))+(-(2:ℝ)/(log(log N))) = 1-(3:ℝ)/(log(log N)),
+    have : 1 - (1 : ℝ)/(log(log N))+(-(2 : ℝ)/(log(log N))) = 1 - (3 : ℝ)/(log(log N)),
      { rw [sub_add_eq_add_sub, ← add_sub, div_sub_div_same, sub_eq_add_neg,
            sub_eq_add_neg, ← neg_div], norm_num1, refl,
      },
@@ -1390,7 +1407,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
     specialize hsmooth a ha q hq.2.1, apply le_trans _ hεε'M,
     apply hsmooth (nat.dvd_of_mem_divisors hq.1),
       },
-  have hdiv' : (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d:ℝ) ≤ (z/4)) ∧ d ∣ n),
+  have hdiv' : (∀ n ∈ A, ∃ d : ℕ, (y ≤ d) ∧ ((d : ℝ) ≤ (z/4)) ∧ d ∣ n),
    { intros n hn, specialize hdiv n hn, rcases hdiv with ⟨d_1,d_2,hdiv⟩,
      refine ⟨d_1,hdiv.2.2.1,_,hdiv.1⟩, rw le_div_iff',
      apply le_trans _ hdiv.2.2.2.2, exact_mod_cast hdiv.2.2.2.1, exact zero_lt_four, },
@@ -1410,32 +1427,32 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
   have hB2 : B ⊆ finset.range(N+1), { apply subset_trans (subset_trans hB hA') hA, },
   have hzM : z < 2*M, {
      apply lt_of_le_of_lt hzN hlogN4, },
-  have h14d : 1 ≤ ((4:ℝ)*d), {
+  have h14d : 1 ≤ ((4 : ℝ)*d), {
     norm_cast, rw nat.one_le_iff_ne_zero, apply mul_ne_zero,
     refine ne_of_gt zero_lt_four, exact hzd, },
   have h2z' : 2 ≤ z, { apply le_trans _ h8z, norm_num1, },
-  have hdz : ⌈(4:ℝ)*d⌉₊ ≤ ⌊z⌋₊, {
+  have hdz : ⌈(4 : ℝ)*d⌉₊ ≤ ⌊z⌋₊, {
     rw nat.ceil_le, norm_cast, rw nat.le_floor_iff',
-    have : (4:ℝ)*d ≤ z, {
+    have : (4 : ℝ)*d ≤ z, {
       rw ← le_div_iff', exact htech.2.2.1, exact zero_lt_four,},
     exact_mod_cast this, refine ne_of_gt _,
-    have : (0:ℝ) < 4*d , { apply lt_of_lt_of_le zero_lt_one h14d, },
+    have : (0 : ℝ) < 4*d , { apply lt_of_lt_of_le zero_lt_one h14d, },
     exact_mod_cast this,
    },
   have hB3 : ∀ (n:ℕ), n ∈ B → M ≤ n, { intros n hn,
   specialize hA2 n, apply hA2 (hA' (hB hn)), },
-  have hrecB : 2/((4:ℝ)*d) + 2*ε'*log(log N) ≤ rec_sum B, {
-    have : (3:ℝ)*(2/(4*d)) = (3/2)/d, {
+  have hrecB : 2/((4 : ℝ)*d) + 2*ε'*log(log N) ≤ rec_sum B, {
+    have : (3 : ℝ)*(2/(4*d)) = (3/2)/d, {
         rw [div_mul_eq_div_mul_one_div, ← mul_assoc],
-        rw div_eq_mul_one_div ((3:ℝ)/2) d, norm_num1, refl,
+        rw div_eq_mul_one_div ((3 : ℝ)/2) d, norm_num1, refl,
      },
     refine (mul_le_mul_left zero_lt_three).mp _,
     apply @le_trans _ _ _ (rec_sum A' : ℝ) (3*rec_sum B),
     apply le_trans _ htech.2.2.2.2.1, apply le_sub_right_of_add_le,
     rw mul_add, rw add_assoc, apply add_le_of_le_sub_left,
     rw this, rw div_sub_div_same,
-    apply @le_trans _ _ _ ((1:ℝ)/(2*z)) ((2-3/2)/d),
-    apply @le_trans _ _ _ (1/(2*(log N)^((1/500 : ℝ)))) ((1:ℝ)/(2*z)),
+    apply @le_trans _ _ _ ((1 : ℝ)/(2*z)) ((2-3/2)/d),
+    apply @le_trans _ _ _ (1/(2*(log N)^((1/500 : ℝ)))) ((1 : ℝ)/(2*z)),
     exact hlargeNnew, rw one_div_le_one_div, apply mul_le_mul_of_nonneg_left hzN,
     exact zero_le_two, refine mul_pos zero_lt_two _,
     refine lt_of_lt_of_le hz_pos hzN, refine mul_pos zero_lt_two hz_pos,
@@ -1448,7 +1465,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
     intros q hq, specialize hsmooth' q,
     apply hsmooth' ((ppowers_in_set_subset (subset_trans hB hA')) hq),
   },
-  have hdivB : (∀ (n : ℕ), n ∈ B → (∃ (d_1 : ℕ), (4:ℝ)*d ≤ d_1 ∧ (d_1:ℝ) ≤ z ∧ d_1 ∣ n)),
+  have hdivB : (∀ (n : ℕ), n ∈ B → (∃ (d_1 : ℕ), (4 : ℝ)*d ≤ d_1 ∧ (d_1 : ℝ) ≤ z ∧ d_1 ∣ n)),
     {intros n hn, specialize hdiv n (hA' (hB hn)),
      rcases hdiv with ⟨d_1,d_2,hdiv⟩,
      have : d ≤ d_1, {
@@ -1461,7 +1478,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
      norm_cast, apply le_trans _ hdiv.2.2.2.1,
      exact (mul_le_mul_left zero_lt_four).mpr this,
      },
-  specialize htech2 M ε' ((4:ℝ)*d) z B hB2 hM1 hM2 h0ε' hzM hε'M
+  specialize htech2 M ε' ((4 : ℝ)*d) z B hB2 hM1 hM2 h0ε' hzM hε'M
       h14d h2z' hdz hε'w2 hB3 hrecB hsmoothB hdivB,
   rcases htech2 with ⟨B',hB',d',htech2⟩,
   have hB'2 : B' ⊆ finset.range(N+1), { exact subset_trans hB' hB2, },
@@ -1481,7 +1498,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
     apply ne_of_gt, refine lt_of_lt_of_le zero_lt_one _,
     exact_mod_cast le_trans h14d htech2.2.1,
    },
-  have hd'M : (d':ℝ) ≤ M / 128, {
+  have hd'M : (d' : ℝ) ≤ M / 128, {
     apply le_trans htech2.2.2.1, apply le_trans hzN hlargenew2, },
   have hB'5 : (∀ (n : ℕ), n ∈ B' → M ≤ n), { intros n hn,
      specialize hA2 n, apply hA2 (hA' (hB (hB' hn))), },
@@ -1494,7 +1511,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
     apply dvd_trans hnew, apply dvd_lcm hn,
    },
   let U' := min (L * K ^ 2 / (16 * N ^ 2 * log N ^ 2)) (min (c * M / d') (T * K ^ 2 / (N ^ 2 * log N))),
-  have hU'M : (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ U', {
+  have hU'M : (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ U', {
     rw le_min_iff, split, exact hUhelper, rw le_min_iff, split,
     apply @le_trans _ _ _ (c*M/z) _,
     apply @le_trans _ _ _ (c*M/(log N)^((1/500 : ℝ))) _,
@@ -1503,7 +1520,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
     exact htech2.2.2.1, apply mul_pos hc hM1, exact hz_pos, norm_num,
     rw pos_iff_ne_zero, exact hzd', exact hUhelper2,
      },
-  have hppB' : (∀ (q : ℕ), q ∈ ppowers_in_set B' → (q:ℝ) ≤ U'), {
+  have hppB' : (∀ (q : ℕ), q ∈ ppowers_in_set B' → (q : ℝ) ≤ U'), {
     intros q hq, rw [ppowers_in_set,finset.mem_bUnion] at hq,
     rcases hq with ⟨a,ha,hq⟩, rw finset.mem_filter at hq, simp_rw is_smooth at hsmooth,
     specialize hsmooth a (hA' (hB (hB' ha))) q hq.2.1, apply le_trans _ hU'M,
@@ -1524,7 +1541,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
   have hregA' : arith_regular N A' := hreg.subset hA',
   have hNA' : (log N)^(-(1/101 : ℝ)) ≤ rec_sum A', {
     apply le_trans _ htech.2.2.2.2.1,
-    apply @le_trans _ _ _ ((2:ℝ)/((log N)^(1/500 : ℝ)/4) - 1/M) _,
+    apply @le_trans _ _ _ ((2 : ℝ)/((log N)^(1/500 : ℝ)/4) - 1/M) _,
     exact hlarge7, apply sub_le_sub_right, rw div_le_div_left,
     apply le_trans htech.2.2.1, rw div_le_div_right, exact hzN,
     exact zero_lt_four, exact zero_lt_two,
@@ -1541,7 +1558,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
   cases hforce1 with htemp1 htemp2,
   exfalso, apply hgoodsubset htemp1,
   have hgoodA' : good_condition A' K T L, { rw htemp6 at htemp2, exact htemp2, },
-  have hdM : (d:ℝ) ≤ M / 128, {
+  have hdM : (d : ℝ) ≤ M / 128, {
     apply le_trans htech.2.2.1, apply le_trans _ (le_trans hzN hlargenew2),
     apply div_le_self, apply le_of_lt hz_pos, apply le_of_lt one_lt_four,
    },
@@ -1554,7 +1571,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
     apply dvd_trans hnew, apply dvd_lcm hn,
    },
   let U := min (L * K ^ 2 / (16 * N ^ 2 * log N ^ 2)) (min (c * M / d) (T * K ^ 2 / (N ^ 2 * log N))),
-  have hUM : (N:ℝ)^(1-(8:ℝ)/(log(log N))) ≤ U, {
+  have hUM : (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤ U, {
     rw le_min_iff, split, exact hUhelper, rw le_min_iff, split,
     apply @le_trans _ _ _ (c*M/z) _,
     apply @le_trans _ _ _ (c*M/(log N)^((1/500 : ℝ))) _,
@@ -1566,7 +1583,7 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
     apply mul_pos hc hM1, exact hz_pos, norm_num,
     rw pos_iff_ne_zero, exact hzd, exact hUhelper2,
    },
-  have hppA' : (∀ (q : ℕ), q ∈ ppowers_in_set A' → (q:ℝ) ≤ U), {
+  have hppA' : (∀ (q : ℕ), q ∈ ppowers_in_set A' → (q : ℝ) ≤ U), {
     intros q hq, rw [ppowers_in_set,finset.mem_bUnion] at hq,
     rcases hq with ⟨a,ha,hq⟩, rw finset.mem_filter at hq, simp_rw is_smooth at hsmooth,
     specialize hsmooth a (hA' ha) q hq.2.1, apply le_trans _ hUM,
@@ -1603,7 +1620,7 @@ begin
   { exact le_trans (by norm_num1) hN' },
   { apply (le_trans _ hN').trans hA₁,
     rw [←le_sub_iff_add_le', rpow_neg],
-    { norm_num1, apply @le_trans _ _ _ (1:ℝ) 6,
+    { norm_num1, apply @le_trans _ _ _ (1 : ℝ) 6,
       exact inv_le_one hN'', norm_num, },
     { exact hN''' } },
   intros n hn,
@@ -1715,4 +1732,3 @@ begin
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
   simpa using this,
 end
-

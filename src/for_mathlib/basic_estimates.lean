@@ -40,6 +40,13 @@ end
 
 end to_mathlib
 
+lemma tendsto_log_coe_at_top : tendsto (λ x : ℕ, log (x : ℝ)) at_top at_top :=
+tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top
+lemma tendsto_log_log_coe_at_top : tendsto (λ x : ℕ, log (log (x : ℝ))) at_top at_top :=
+tendsto_log_at_top.comp tendsto_log_coe_at_top
+lemma tendsto_log_log_log_coe_at_top : tendsto (λ x : ℕ, log (log (log (x : ℝ)))) at_top at_top :=
+tendsto_log_at_top.comp tendsto_log_log_coe_at_top
+
 variables {M : Type*} [add_comm_monoid M] (a : ℕ → M)
 
 /--
@@ -347,10 +354,10 @@ begin
     (by exact_mod_cast diff) (by exact_mod_cast cont.neg) x,
   simp only [one_mul] at ps,
   simp only [ps, integral_Icc_eq_integral_Ioc],
-  rw [summatory_const_one, nat.cast_floor_eq_cast_int_floor (zero_le_one.trans hx), ←int.self_sub_floor,
-    sub_mul, mul_inv_cancel (zero_lt_one.trans_le hx).ne', sub_sub (1 : ℝ), sub_sub_sub_cancel_left,
-    sub_sub, sub_sub, sub_right_inj, ←add_assoc, add_left_inj, ←eq_sub_iff_add_eq', nat.cast_one,
-    ←integral_sub],
+  rw [summatory_const_one, nat.cast_floor_eq_cast_int_floor (zero_le_one.trans hx),
+    ←int.self_sub_floor, sub_mul, mul_inv_cancel (zero_lt_one.trans_le hx).ne', sub_sub (1 : ℝ),
+    sub_sub_sub_cancel_left, sub_sub, sub_sub, sub_right_inj, ←add_assoc, add_left_inj,
+    ←eq_sub_iff_add_eq', nat.cast_one, ←integral_sub],
   rotate,
   { apply fract_mul_integrable,
     exact (cont.mono Icc_subset_Ici_self).integrable_on_Icc.mono_set Ioc_subset_Icc_self },
@@ -361,8 +368,8 @@ begin
   { intros y hy,
     dsimp,
     have : 0 < y := zero_lt_one.trans hy.1,
-    rw [summatory_const_one, nat.cast_floor_eq_cast_int_floor this.le, mul_neg, sub_neg_eq_add, ←add_mul,
-      int.fract_add_floor, sq, mul_inv₀, mul_inv_cancel_left₀ this.ne'] },
+    rw [summatory_const_one, nat.cast_floor_eq_cast_int_floor this.le, mul_neg, sub_neg_eq_add,
+      ←add_mul, int.fract_add_floor, sq, mul_inv, mul_inv_cancel_left₀ this.ne'] },
   rw [set_integral_congr measurable_set_Ioc this, ←interval_integral.integral_of_le hx,
     integral_inv_of_pos zero_lt_one (zero_lt_one.trans_le hx), div_one],
 end
@@ -760,15 +767,14 @@ lemma divisor_bound₁ {ε : ℝ} (hε1 : 0 < ε) (hε2 : ε ≤ 1) :
 begin
   have h : tendsto (coe : ℕ → ℝ) at_top at_top := tendsto_coe_nat_at_top_at_top,
   have hl := tendsto_log_at_top.comp h,
-  have hll := tendsto_log_at_top.comp hl,
   have hx : tendsto
     (λ n : ℕ, 2 * (log (log (log (n : ℝ))) * log (log (n : ℝ)) / log (n : ℝ) ^ (ε / 3)))
     at_top (𝓝 0),
   { simpa using ((log_log_mul_log_div_rpow (div_pos hε1 zero_lt_three)).comp hl).const_mul 2 },
   have hε : 0 < real.log 2 * ε / 2 := half_pos (mul_pos (log_pos one_lt_two) hε1),
-  filter_upwards [hll (eventually_ge_at_top (real.log 2 * (1 + ε / 2))⁻¹),
-    hll (eventually_gt_at_top 0), hl (eventually_gt_at_top 0),
-    hll (eventually_ge_at_top (2 * real.log 2 * (1 + ε / 2))),
+  filter_upwards [tendsto_log_log_coe_at_top (eventually_ge_at_top (real.log 2 * (1 + ε / 2))⁻¹),
+    tendsto_log_log_coe_at_top (eventually_gt_at_top 0), hl (eventually_gt_at_top 0),
+    tendsto_log_log_coe_at_top (eventually_ge_at_top (2 * real.log 2 * (1 + ε / 2))),
     h (eventually_gt_at_top 0),
     hx (metric.closed_ball_mem_nhds 0 hε)] with n hlln' hlln hln hlln'' hn hx',
   dsimp at hlln hlln' hln hlln'' hn,
@@ -779,7 +785,7 @@ begin
   { exact mul_pos (log_pos one_lt_two) (by linarith) },
   have hpowK : 2 ^ K ≤ real.log n ^ (1 - ε / 3),
   { rw [←log_le_log hpowK_pos (rpow_pos_of_pos hln _), log_rpow zero_lt_two, log_rpow hln, hK,
-      mul_comm (real.log 2), ←div_div_eq_div_mul, div_mul_cancel _ (log_pos one_lt_two).ne',
+      mul_comm (real.log 2), ←div_div, div_mul_cancel _ (log_pos one_lt_two).ne',
       div_le_iff', ←mul_assoc],
     { exact le_mul_of_one_le_left hlln.le (by nlinarith) },
     { linarith } },
@@ -1222,7 +1228,7 @@ lemma log_div_sq_sub_le {x : ℝ} (hx : 1 < x) :
 begin
   have hx' : x ≠ 0 := by linarith,
   rw [inv_eq_one_div, one_sub_div hx', div_div_eq_mul_div, one_div, sq, inv_mul_cancel_right₀ hx',
-    ←one_div, div_div_eq_div_mul, ←div_eq_mul_one_div, div_le_iff, ←mul_assoc, ←rpow_add_one hx',
+    ←one_div, div_div, ←div_eq_mul_one_div, div_le_iff, ←mul_assoc, ←rpow_add_one hx',
     mul_sub, ←rpow_add_one hx', mul_one],
   { convert log_le_thing hx.le;
     norm_num1 },
@@ -1386,8 +1392,8 @@ begin
   { intros x hx,
     rw [←summatory, ←von_mangoldt_summatory hx le_rfl, mul_sum, summatory, ←sum_sub_distrib],
     refine (abs_sum_le_sum_abs _ _).trans _,
-    simp only [mul_div_comm x, abs_sub_comm, ←mul_sub, abs_mul, von_mangoldt_nonneg, abs_of_nonneg,
-      int.self_sub_floor, int.fract_nonneg],
+    simp only [mul_div_left_comm x, abs_sub_comm, ←mul_sub, abs_mul, von_mangoldt_nonneg,
+      abs_of_nonneg, int.self_sub_floor, int.fract_nonneg],
     refine finset.sum_le_sum (λ n hn, _),
     exact mul_le_of_le_one_right von_mangoldt_nonneg (int.fract_lt_one _).le },
   apply is_O.trans _ chebyshev_upper,
@@ -1826,7 +1832,7 @@ begin
   have : (∀ y ∈ interval a b, has_deriv_at (λ x, - (log x)⁻¹) (y * log y ^ 2)⁻¹ y),
   { intros y hy,
     have : (y * log y ^ 2)⁻¹ = - ((- y⁻¹) / (log y) ^ 2),
-    { rw [neg_div, neg_neg, div_eq_mul_inv, mul_inv₀] },
+    { rw [neg_div, neg_neg, div_eq_mul_inv, mul_inv] },
     rw this,
     have : 1 < y := (lt_min_iff.2 ⟨ha, hb⟩).trans_le hy.1,
     exact ((has_deriv_at_log (by linarith)).inv (log_pos this).ne').neg },
@@ -1892,7 +1898,7 @@ lemma integral_inv_self_mul_log {a b : ℝ} (ha : 1 < a) (hb : 1 < b) :
 begin
   have : (∀ y ∈ interval a b, has_deriv_at (λ x, log (log x)) (y * log y)⁻¹ y),
   { intros y hy,
-    rw [mul_inv₀, ←div_eq_mul_inv],
+    rw [mul_inv, ←div_eq_mul_inv],
     have : 1 < y := (lt_min_iff.2 ⟨ha, hb⟩).trans_le hy.1,
     exact (has_deriv_at_log (by linarith)).log (log_pos this).ne' },
   rw [interval_integral.integral_eq_sub_of_has_deriv_at this],
@@ -1980,7 +1986,7 @@ begin
     apply hy.1 },
   rw [←prime_summatory_eq_summatory, prime_summatory_log_mul_inv_eq, nat.cast_two],
   simp only [div_eq_mul_inv, pi.add_apply, add_mul, f', f, neg_mul, mul_neg,
-    integral_neg, sub_neg_eq_add, ←mul_inv₀],
+    integral_neg, sub_neg_eq_add, ←mul_inv],
   have h₁ : integrable (λ a, (a * log a)⁻¹) (volume.restrict (Icc 2 x)),
   { apply continuous_on.integrable_on_Icc,
     apply my_func2_continuous_on.mono,
@@ -1992,7 +1998,7 @@ begin
     ∫ a in Icc 2 x, (a * real.log a)⁻¹ + prime_log_div_sum_error a * (a * log a ^ 2)⁻¹,
   { refine set_integral_congr measurable_set_Icc (λ y hy, _),
     dsimp,
-    rw [mul_inv₀, mul_inv₀, mul_left_comm, ←div_eq_mul_inv, sq, div_self_mul_self'] },
+    rw [mul_inv, mul_inv, mul_left_comm, ←div_eq_mul_inv, sq, div_self_mul_self'] },
   rw [mul_inv_cancel (log_pos (one_lt_two.trans_le hx)).ne', this,
     integral_add h₁ (integrable_on_prime_log_div_sum_error.mono_set Icc_subset_Ici_self),
     sub_add_eq_add_sub, add_comm (1 : ℝ), add_sub_assoc, add_assoc, add_right_inj,
@@ -2245,11 +2251,11 @@ begin
     exact_mod_cast hp.2.one_lt },
   simp only [←nat.Ico_succ_right, nat.cast_pow, ←inv_pow₀],
   rw [geom_sum_Ico', inv_pow₀, inv_pow₀, ←one_div (p : ℝ), one_sub_div hp₀.ne', div_div_eq_mul_div,
-    sq, pow_succ', mul_inv₀, mul_inv₀, ←sub_mul, inv_mul_cancel_right₀ hp₀.ne', sub_div,
-    div_eq_mul_inv, mul_inv₀, mul_comm, sub_sub_cancel_left, abs_neg, abs_div, abs_inv, abs_pow,
+    sq, pow_succ', mul_inv, mul_inv, ←sub_mul, inv_mul_cancel_right₀ hp₀.ne', sub_div,
+    div_eq_mul_inv, mul_inv, mul_comm, sub_sub_cancel_left, abs_neg, abs_div, abs_inv, abs_pow,
     abs_of_nonneg (sub_nonneg_of_le hp₁.le), nat.abs_cast, div_le_iff (sub_pos_of_lt hp₁)],
   rotate 1,
-  { simpa only [ne.def, inv_eq_one₀] using hp₁.ne' },
+  { simpa only [ne.def, inv_eq_one] using hp₁.ne' },
   { rwa nat.succ_le_succ_iff },
   transitivity x⁻¹ * p,
   { rw [mul_comm, ←div_eq_mul_inv, le_div_iff' hx, ←div_eq_mul_inv, div_le_iff, ←pow_succ,

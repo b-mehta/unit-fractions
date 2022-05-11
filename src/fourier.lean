@@ -99,7 +99,7 @@ begin
   have hk' : (0 : ℝ) < k,
   { rwa [nat.cast_pos, pos_iff_ne_zero] },
   rw [mem_major_arc_at, and_congr_right'],
-  rw [←div_div_eq_div_mul, le_div_iff hk'],
+  rw [←div_div, le_div_iff hk'],
   congr' 2,
   rw [←abs_of_pos hk', ←abs_mul, abs_of_pos hk', sub_mul, div_mul_cancel],
   rwa nat.cast_ne_zero,
@@ -578,7 +578,7 @@ begin
     rw [rec_sum, nat.cast_sum, finset.sum_div, rat.cast_sum],
     apply finset.sum_congr rfl,
     intros n hn,
-    rw [nat.cast_div_char_zero, rat.cast_div, rat.cast_coe_nat, rat.cast_one, div_div_eq_div_mul,
+    rw [nat.cast_div_char_zero, rat.cast_div, rat.cast_coe_nat, rat.cast_one, div_div,
       mul_comm, div_mul_right],
     { exact nat.cast_ne_zero.2 (lcm_ne_zero_of_zero_not_mem hA) },
     exact finset.dvd_lcm (hS hn) },
@@ -785,7 +785,7 @@ begin
     refine (mul_le_mul_of_nonneg_left hr (mul_nonneg pi_pos.le
       (div_nonneg (nat.cast_nonneg _) hM'.le))).trans _,
     have : 0 < (k : ℝ) := by simpa using hk.bot_lt,
-    simp only [div_div_eq_div_mul, div_mul_eq_mul_div, mul_div_assoc', this, div_le_div_iff,
+    simp only [div_div, div_mul_eq_mul_div, mul_div_assoc', this, div_le_div_iff,
       hM', mul_pos, zero_lt_two],
     convert mul_le_mul_of_nonneg_left hKM.le
       (mul_nonneg zero_le_two (mul_nonneg pi_pos.le (nat.cast_nonneg k))) using 1;
@@ -869,7 +869,7 @@ begin
   refine prod_le_prod (λ i hi, (abs_nonneg _)) _,
   intros n hn,
   have hn' : n ≠ 0 := ne_of_mem_of_not_mem hn hA',
-  rw [neg_mul, div_mul_comm', ←div_pow, ←mul_comm (2 : ℝ), mul_div_assoc,
+  rw [neg_mul, div_mul_comm, ←div_pow, ←mul_comm (2 : ℝ), mul_div_assoc,
     ←int.cast_coe_nat n, abs_cos_period (hh'₁ _ hn).symm, int.cast_coe_nat],
   apply (cos_bound_abs _).trans,
   { rw [exp_le_exp, neg_le_neg_iff, ←sq_abs, ←sq_abs (_ / _)],
@@ -983,8 +983,8 @@ begin
   apply le_trans (exp_le_exp.2 (mul_le_mul_of_nonpos_left this _)) _,
   { exact neg_nonpos.2 (div_nonneg zero_le_two (sq_nonneg _)) },
   apply le_of_eq,
-  rw [neg_mul, mul_div_assoc', div_mul_div_comm₀, mul_comm _ (4 : ℝ), ←div_mul_div_comm₀,
-    mul_comm (2 : ℝ), ←div_div_eq_div_mul, div_eq_mul_inv _ (2 : ℝ), mul_comm _ (2⁻¹ : ℝ)],
+  rw [neg_mul, mul_div_assoc', div_mul_div_comm, mul_comm _ (4 : ℝ), ←div_mul_div_comm,
+    mul_comm (2 : ℝ), ←div_div, div_eq_mul_inv _ (2 : ℝ), mul_comm _ (2⁻¹ : ℝ)],
   norm_num,
 end
 
@@ -1036,8 +1036,7 @@ begin
   rw [exp_neg, inv_le_inv (exp_pos _) (pow_pos z _)],
   refine (pow_le_pow_of_le_left z.le (hN hM hA hT hA₄) _).trans _,
   rw [←rpow_nat_cast, ←exp_mul, exp_le_exp, nat.cast_two, mul_comm, mul_div_assoc',
-    ←div_mul_div_comm₀, mul_comm (2 : ℝ), ←div_div_eq_div_mul, div_eq_mul_inv _ (2 : ℝ),
-    ←mul_comm (2 : ℝ)⁻¹],
+    ←div_mul_div_comm, mul_comm (2 : ℝ), ←div_div, div_eq_mul_inv _ (2 : ℝ), ←mul_comm (2 : ℝ)⁻¹],
   norm_num,
 end
 
@@ -1103,7 +1102,7 @@ begin
       refine (rpow_le_rpow cos_prod_nonneg (this q hq) (inv_nonneg.2 _)).trans _,
       { exact mul_nonneg zero_le_two (log_nonneg (nat.one_le_cast.2 (one_le_two.trans hN))) },
       rw [←rpow_mul (nat.cast_nonneg _), ←div_eq_mul_inv, mul_comm (2 : ℝ),
-        ←div_div_eq_div_mul, mul_div_cancel _ (log_pos _).ne'],
+        ←div_div, mul_div_cancel _ (log_pos _).ne'],
       { norm_num },
       rwa nat.one_lt_cast },
     have hq' : ∀ q ∈ interval_rare_ppowers I A L,
@@ -1127,8 +1126,8 @@ begin
     (λ _ n, hA' _ (filter_subset _ _ n)) hK hI hq'.2).trans _,
   have : 0 < (N : ℝ) := nat.cast_pos.2 (zero_lt_two.trans_le hN),
   rw [←le_log_iff_exp_le (rpow_pos_of_pos this _), log_rpow this, neg_mul, neg_mul, neg_le_neg_iff,
-    div_mul_eq_mul_div, div_div_eq_div_mul, mul_comm (q : ℝ), ←div_div_eq_div_mul, le_div_iff,
-    mul_comm, mul_assoc, ←sq, ←le_div_iff, div_div_eq_div_mul, mul_mul_mul_comm, ←mul_assoc],
+    div_mul_eq_mul_div, div_div, mul_comm (q : ℝ), ←div_div, le_div_iff,
+    mul_comm, mul_assoc, ←sq, ←le_div_iff, div_div, mul_mul_mul_comm, ←mul_assoc],
   { norm_num,
     exact hq q hq'.1 },
   { refine mul_pos (by norm_num1) (pow_pos (log_pos _) _),
