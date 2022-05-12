@@ -28,16 +28,6 @@ open filter asymptotics real set
 
 section to_mathlib
 
-lemma is_o_log_id_at_top : is_o log id at_top :=
-is_o_pow_log_id_at_top.congr_left (λ x, pow_one _)
-
-lemma is_o_log_rpow_at_top {r : ℝ} (hr : 0 < r) : is_o log (λ x, x ^ r) at_top :=
-begin
-  rw ←is_o_const_mul_left_iff hr.ne',
-  refine (is_o_log_id_at_top.comp_tendsto (tendsto_rpow_at_top hr)).congr' _ eventually_eq.rfl,
-  filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx using log_rpow hx _,
-end
-
 end to_mathlib
 
 lemma tendsto_log_coe_at_top : tendsto (λ x : ℕ, log (x : ℝ)) at_top at_top :=
@@ -2349,13 +2339,6 @@ end
 
 lemma my_func_neg {p : ℕ} (hp : 1 < p) : (p : ℝ)⁻¹ + log (1 - (p : ℝ)⁻¹) ≤ 0 :=
 by linarith [log_le_sub_one_of_pos (sub_pos_of_lt (inv_lt_one (nat.one_lt_cast.2 hp)))]
-
-lemma real.abs_exp_sub_one_le {x : ℝ} (hx : |x| ≤ 1) :
-  |exp x - 1| ≤ 2 * |x| :=
-begin
-  have : complex.abs x ≤ 1 := by exact_mod_cast hx,
-  exact_mod_cast complex.abs_exp_sub_one_le this,
-end
 
 lemma mertens_third_log_error :
   ∃ c, is_O
