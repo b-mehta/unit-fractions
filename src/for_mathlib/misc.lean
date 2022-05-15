@@ -160,3 +160,12 @@ begin
   { rw real.zero_rpow hr },
   simpa using real.rpow_le_rpow_of_exponent_ge hx₀ hx₁ h_one_le
 end
+
+@[to_additive]
+lemma prod_powerset_compl {α β : Type*} [decidable_eq α] [comm_monoid β]
+  (s : finset α) (f : finset α → β) :
+  ∏ x in s.powerset, f (s \ x) = ∏ x in s.powerset, f x :=
+begin
+  refine finset.prod_bij' (λ x _, s \ x) (by simp) (λ _ _, rfl) (λ x _, s \ x) (by simp) _ _;
+  simp [finset.inter_eq_right_iff_subset],
+end

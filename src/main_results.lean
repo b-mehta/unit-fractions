@@ -1608,6 +1608,80 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
   norm_num,
 end
 
+lemma nat.coprime_symmetric : symmetric coprime := λ n m h, h.symm
+
+lemma multiplicative_prod {ι : Type*} (g : ι → ℕ) {f : nat.arithmetic_function ℝ}
+  (hf : f.is_multiplicative) (s : finset ι) (hs : (s : set ι).pairwise (coprime on g)):
+  ∏ i in s, f (g i) = f (∏ i in s, g i) :=
+begin
+  revert hs,
+  refine finset.cons_induction_on s (by simp [hf]) _,
+  intros a s has ih hs,
+  simp only [cons_eq_insert, coe_insert] at hs,
+  rw set.pairwise_insert_of_symmetric at hs,
+  { rw [prod_cons, prod_cons, ih hs.1, hf.map_mul_of_coprime],
+    exact nat.coprime_prod_right (λ i hi, hs.2 _ hi (hi.ne_of_not_mem has).symm) },
+  { intros x y,
+    apply nat.coprime_symmetric },
+end
+
+
+-- lemma prod_sum' {α β δ : Type*} [decidable_eq α] [comm_semiring β] [decidable_eq δ]
+--   {s : finset α} {t : α → finset δ} {f : δ → β} :
+--   ∏ a in s, ∑ b in t a, f b =
+--     ∑ p in s.pi t, ∏ x in s.attach, f (p x.1 x.2) :=
+-- begin
+
+--   -- rw prod_sum,
+-- end
+
+lemma prod_one_add {D : finset ℕ} {k : ℝ}
+  (f : nat.arithmetic_function ℝ) (hf' : f.is_multiplicative) :
+  ∑ d in D, f d ≤
+    ∏ p in D.bUnion (λ n, (nat.divisors n).filter nat.prime),
+      (1 + ∑ q in (ppowers_in_set D).filter (λ q, p ∣ q), f q) :=
+begin
+  simp only [add_comm (1 : ℝ)],
+  simp_rw [prod_add, prod_const_one, mul_one],
+  change ∑ d in D, f d ≤
+    ∑ x in finset.powerset _,
+      ∏ t in _,
+        ∑ i in _, f i,
+  sorry
+  -- simp_rw [prod_sum],
+
+  -- simp only [subtype.val_eq_coe],
+
+  -- simp only [prod_attach],
+
+  -- have : ∀ x ∈ (D.bUnion (λ (n : ℕ), filter nat.prime n.divisors)).powerset,
+  --   ∏ (a : ℕ) in D.bUnion (λ (n : ℕ), filter nat.prime n.divisors) \ x,
+  --     (filter (λ q, a ∣ q) (ppowers_in_set D)).sum ⇑f = f sorry,
+  -- { intros x hx,
+  --   simp only [mem_powerset] at hx,
+
+  -- },
+  -- rw sum_powerset,
+  -- rw finset.prod_power
+  -- refine finset.induction_on D _ _,
+  -- { simp },
+  -- intros a s has ih,
+
+end
+
+lemma useful_rec_aux4 (y : ℝ) (k N : ℕ) (D : finset ℕ) (hD : ∀ q : ℕ, q ∈ ppowers_in_set D → y < q)
+  (hD' : ∀ q : ℕ, q ∈ ppowers_in_set D → q ≤ N) :
+  ∑ d in D, (k : ℝ) ^ ω d / d ≤
+    (∏ p in (finset.range (N+1)).filter nat.prime, (1 + k / (p * (p - 1)))) *
+    (∏ p in (finset.range (N+1)).filter (λ n, nat.prime n ∧ y < n), (1 + k * (p - 1)⁻¹)) :=
+begin
+  sorry
+  -- have : ∑ d in D, (k : ℝ) ^ ω d / d ≤ ∏ q in ppowers_in_set D, (1 + k / q),
+  -- {
+
+  -- },
+end
+
 lemma prop_one_specialise :
   ∀ᶠ N : ℕ in at_top, ∀ A ⊆ finset.range (N + 1),
     (∀ n ∈ A, (N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) ≤ n)

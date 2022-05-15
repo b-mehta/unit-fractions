@@ -693,7 +693,14 @@ calc ∏ i in t, f i = (∏ i in t \ s, f i) * ∏ i in s, f i : (finset.prod_sd
       mul_le_of_le_one_left (finset.prod_nonneg (λ i hi, hs _ (h hi))) $
         finset.prod_le_one (λ i hi, hs _ (finset.sdiff_subset _ _ hi)) (by simpa)
 
--- INCOMPLETE PROOF
+lemma prod_of_subset_le_prod_of_one_le {ι N : Type*} [ordered_comm_semiring N]
+  {s t : finset ι} {f : ι → N} (h : t ⊆ s) (hs : ∀ i ∈ t, 0 ≤ f i) (hf : ∀ i ∈ s, i ∉ t → 1 ≤ f i) :
+  ∏ i in t, f i ≤ ∏ i in s, f i :=
+by classical;
+calc ∏ i in t, f i ≤ (∏ i in s \ t, f i) * ∏ i in t, f i :
+      le_mul_of_one_le_left (finset.prod_nonneg hs) (one_le_prod (by simpa using hf))
+    ... = ∏ i in s, f i : finset.prod_sdiff h
+
 lemma anyk_divisor_bound (n : ℕ) {K : ℝ} (hK : 2 ≤ K) :
   (σ 0 n : ℝ) ≤ (n : ℝ) ^ (1 / K) * K ^ ((2 : ℝ) ^ K) :=
 begin
@@ -1289,16 +1296,6 @@ begin
     exact_mod_cast (k.lt_pow_self hp.one_lt).le },
   exact_mod_cast hp.one_lt,
 end
-
-lemma von_mangoldt_ne_zero_iff {n : ℕ} :
-  Λ n ≠ 0 ↔ is_prime_pow n :=
-begin
-  rcases eq_or_ne n 1 with rfl | hn, { simp [not_is_prime_pow_one] },
-  exact (log_pos (nat.one_lt_cast.2 (nat.min_fac_prime hn).one_lt)).ne'.ite_ne_right_iff
-end
-
-lemma von_mangoldt_eq_zero_iff {n : ℕ} : Λ n = 0 ↔ ¬is_prime_pow n :=
-not_not.symm.trans (not_congr von_mangoldt_ne_zero_iff)
 
 theorem geom_sum_Ico'_le {α : Type*} [linear_ordered_field α]
   {x : α} (hx₀ : 0 ≤ x) (hx₁ : x < 1) {m n : ℕ} (hmn : m ≤ n) :
