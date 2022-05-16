@@ -114,11 +114,6 @@ begin
     finset.prod_cons has, ih hf.2],
 end
 
-lemma finset.sum_erase_eq_sub {α β : Type*} [decidable_eq α] [add_comm_group β]
-  {f : α → β} {s : finset α} {a : α} (ha : a ∈ s) :
-  ∑ x in s.erase a, f x = (∑ x in s, f x) - f a :=
-by rw [←finset.sum_erase_add _ _ ha, add_sub_cancel]
-
 lemma one_le_prod {ι R : Type*} [ordered_comm_semiring R] {f : ι → R} {s : finset ι}
   (h1 : ∀ i ∈ s, 1 ≤ f i) : 1 ≤ ∏ i in s, f i :=
 (finset.prod_le_prod (λ _ _, zero_le_one) h1).trans' (by simp)
@@ -127,25 +122,6 @@ lemma finset.filter_comm {α : Type*} (p q : α → Prop) [decidable_eq α]
   [decidable_pred p] [decidable_pred q] (s : finset α) :
   (s.filter p).filter q = (s.filter q).filter p :=
 by simp only [finset.filter_filter, and_comm]
-
-@[simp] theorem int.cast_dvd {α : Type*} [field α] {m n : ℤ}
-  (n_dvd : n ∣ m) (n_nonzero : (n:α) ≠ 0) :
-  ((m / n : ℤ) : α) = m / n :=
-begin
-  rcases n_dvd with ⟨k, rfl⟩,
-  have : n ≠ 0, {rintro rfl, simpa using n_nonzero},
-  rw [int.mul_div_cancel_left _ this, int.cast_mul, mul_div_cancel_left _ n_nonzero],
-end
-
-@[simp, norm_cast]
-theorem int.cast_dvd_char_zero {k : Type*} [field k] [char_zero k] {m n : ℤ}
-  (n_dvd : n ∣ m) : ((m / n : ℤ) : k) = m / n :=
-begin
-  rcases eq_or_ne n 0 with rfl | hn,
-  { simp [int.div_zero] },
-  rw int.cast_dvd n_dvd,
-  exact int.cast_ne_zero.2 hn,
-end
 
 lemma real.le_rpow_self_of_one_le {x r : ℝ} (hx : 1 ≤ x) (hr : 1 ≤ r) :
   x ≤ x ^ r :=
