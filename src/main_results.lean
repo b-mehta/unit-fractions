@@ -1610,21 +1610,24 @@ end
 
 lemma nat.coprime_symmetric : symmetric coprime := λ n m h, h.symm
 
-lemma multiplicative_prod {ι : Type*} (g : ι → ℕ) {f : nat.arithmetic_function ℝ}
+-- lemma symmetric.on {α β : Type*} {f : α → β} {r : β → β → Prop} (hr : symmetric r) :
+--   symmetric (r on f) :=
+-- begin
+--   exact symmetric.comap hr f,
+-- end
+
+lemma is_multiplicative.prod {ι : Type*} (g : ι → ℕ) {f : nat.arithmetic_function ℝ}
   (hf : f.is_multiplicative) (s : finset ι) (hs : (s : set ι).pairwise (coprime on g)):
   ∏ i in s, f (g i) = f (∏ i in s, g i) :=
 begin
-  revert hs,
-  refine finset.cons_induction_on s (by simp [hf]) _,
-  intros a s has ih hs,
-  simp only [cons_eq_insert, coe_insert] at hs,
-  rw set.pairwise_insert_of_symmetric at hs,
-  { rw [prod_cons, prod_cons, ih hs.1, hf.map_mul_of_coprime],
-    exact nat.coprime_prod_right (λ i hi, hs.2 _ hi (hi.ne_of_not_mem has).symm) },
-  { intros x y,
-    apply nat.coprime_symmetric },
+  induction s using finset.cons_induction with a s has ih hs,
+  { simp [hf] },
+  rw [cons_eq_insert, coe_insert, set.pairwise_insert_of_symmetric (nat.coprime_symmetric.comap g)] at hs,
+  rw [prod_cons, prod_cons, ih hs.1, hf.map_mul_of_coprime],
+  exact nat.coprime_prod_right (λ i hi, hs.2 _ hi (hi.ne_of_not_mem has).symm),
 end
 
+#exit
 
 -- lemma prod_sum' {α β δ : Type*} [decidable_eq α] [comm_semiring β] [decidable_eq δ]
 --   {s : finset α} {t : α → finset δ} {f : δ → β} :
