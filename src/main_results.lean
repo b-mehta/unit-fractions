@@ -6,6 +6,7 @@ Authors: Bhavik Mehta, Thomas Bloom
 
 import for_mathlib.basic_estimates
 import defs
+import aux_lemmas
 
 /-!
 # Title
@@ -38,151 +39,12 @@ theorem circle_method_prop2 :
     ∃ S ⊆ A, rec_sum S = 1 / k :=
 sorry
 
-lemma useful_rec_bound : ∃ C : ℝ, ∀ y N k: ℝ, ∀ D : finset ℕ, (C > 0) ∧
-  (0 < y) → (y < N) → (1 ≤ k) → (∀ q : ℕ, q ∈ ppowers_in_set D → (y < q) ∧ ((q : ℝ) ≤ N) ) →
-  ∑ d in D, k^(ω d) / d ≤ (C*(log N)/log y)^k :=
-  sorry
-
 -- Lemma 5.1
 lemma rec_pp_sum_close :
   ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x : ℝ)-y| ≤ N) →
   ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
   ((1 : ℝ)/100)*log(log N) :=
   sorry
-
-
--- Lemma 5.4
-lemma find_good_d : ∃ c C : ℝ, (0 < c) ∧ (0 < C) ∧ ∀ᶠ (N : ℕ) in at_top, ∀ M k : ℝ,
-  ∀ A ⊆ finset.range(N+1), (0 ≤ M) →
-  (M ≤ N) → ((N : ℝ) ≤ M^(2 : ℝ)) → ((1 : ℝ) ≤ k) → (k ≤ c* log(log N))
-  → (∀ n ∈ A, M ≤ (n : ℝ) ∧ ((ω n) : ℝ) ≤ (log N)^(1/k)) →
-    (∀ q ∈ ppowers_in_set A,
-    (1/(log N) ≤ rec_sum_local A q) →
-    (∃ d : ℕ,
-    ( M*real.exp(-(log N)^(1 - 1/k)) < q*d ) ∧
-    ( (ω d : ℝ) ≤ (5/log k) * log(log N) ) ∧
-    ( C*(rec_sum_local A q) / (log N)^(2/k) ≤
-      ∑ n in (local_part A q).filter(λ n, (q*d ∣ n) ∧
-        (coprime (q*d) (n/q*d))), (q*d/n : ℝ)  ) ) )
-  :=
-begin
-  sorry, /-
-  -- Fix up these choices later
-  let c := (1 : ℝ),
-  let C := (2 : ℝ),
-  have hC : 0 < C, { sorry, },
-  use c, use C,
-  -- Work out the right filter later
-  filter_upwards [eventually_ge_at_top 0],
-  intros N hN M k A hAN hzM hMN hNM h1k hkN hAreg q hq hsumq,
-
-  have hlarge1 : 0 < log N, { sorry, },
-  let y := real.exp(-(log N)^(1 - 2/k)),
-  let u := real.exp(-(log N)^(1 - 1/k)),
-  let D := (finset.range(N)).filter( λ d, (∀ r : ℕ, is_prime_pow r → r ∣ d → coprime r (d/r) →
-     y < r ∧ r ≤ N) ∧ M*u < q*d ∧ q*d ≤ N),
-  have hlocal : ∀ n ∈ local_part A q, ∃ d ∈ D, (q*d ∣ n) ∧ coprime (q*d) (n/q*d),
-  { sorry, },
-  let new_local := (λ d : ℕ, (local_part A q).filter(λ n, (q*d)∣n
-     ∧ coprime (q*d) (n/q*d) )),
-  have hlocal2 : local_part A q ⊆ D.bUnion (λ d, new_local d),
-  { intros n hn, rw finset.mem_bUnion, specialize hlocal n hn,
-    rcases hlocal with ⟨d,hd,hlocal⟩, refine ⟨d,hd,_⟩, rw finset.mem_filter,
-    refine ⟨hn,hlocal⟩, },
-  have hrecbound : rec_sum_local A q ≤ ∑ d in D, ∑ n in new_local d, (q:ℚ)/n,
-  { sorry, },
-  -- For the below, could use the aysmptotic for the sum, but that's overkill, is just
-  -- the integral test upper bound in mathlib?
-  have hharmonic : ∑ n in finset.range(N+1), (1 : ℝ)/n ≤ 2*log N,
-  { sorry, },
-  have hDnotzero : ∀ d ∈ D, d ≠ 0, {
-   intros i hi hzi, rw finset.mem_filter at hi,
-   obtain hi' := hi.2.2.1,rw hzi at hi', push_cast at hi', rw mul_zero at hi',
-   apply (lt_iff_not_ge (M*u) 0).mp hi', apply mul_nonneg, exact hzM, apply le_of_lt,
-   apply real.exp_pos,
-  },
-  have hrectrivial : ∀ d ∈ D, ((∑ n in new_local d, (q:ℚ)/n) : ℝ) ≤ 2*(log N)/d,
-  { intros d hd,
-    have hrectrivial' : ((∑ n in new_local d, (q:ℚ)/n) : ℝ) ≤
-    ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), (q/n), { sorry, },
-    apply le_trans hrectrivial',
-    have hrectrivial'' : ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), ((q : ℝ)/n)
-      = (1/d)*∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), (1/m), {
-        sorry,
-       },
-    rw hrectrivial'', rw le_div_iff, rw mul_comm, rw ← mul_assoc, rw mul_one_div_cancel,
-    rw one_mul,
-    have hrectrivial''' : ∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), ((1 : ℝ)/m)
-      ≤  ∑ n in finset.range(N+1), (1 : ℝ)/n, { sorry, },
-    apply le_trans hrectrivial''' hharmonic, norm_cast, refine hDnotzero d hd, norm_cast,
-    rw pos_iff_ne_zero, refine hDnotzero d hd,
-      },
-  let ω0 := (5/log k) * log(log N),
-  let D1 := D.filter(λ d, ω0 < (ω d : ℝ)),
-  have hbound1 : ∑ d in D1, ∑ n in new_local d, (q : ℝ)/n ≤ (rec_sum_local A q)/2, { sorry, },
-  let D2 := D.filter(λ d, (ω d : ℝ) ≤ ω0),
-  have hbound2 : (rec_sum_local A q)/2 ≤ ∑ d in D2, ∑ n in new_local d, q/n, { sorry, },
-  have hbound3 : (rec_sum_local A q)/2 ≤ ∑ d in D2, (1/d)*(∑ n in new_local d, (q*d)/n),
-  { sorry, },
-  have hfound : ∃ d ∈ D2, ((rec_sum_local A q) : ℝ)/(2*∑ d in D2, (1/d)) ≤
-     ∑ n in new_local d, (q*d)/n,
-     { sorry, },
-  have hbound4 : ∑ d in D2, ((1 : ℝ)/d) ≤ (log N)^(2/k) / (C*2), { sorry, },
-  rcases hfound with ⟨d,hd,hfound⟩,
-  use d, rw finset.mem_filter at hd, rw finset.mem_filter at hd,
-  refine ⟨hd.1.2.2.1,hd.2,_⟩, apply le_trans _ hfound, rw div_le_div_iff,
-  rw mul_comm C, rw mul_assoc, rw mul_le_mul_left, rw ← mul_assoc, rw mul_comm,
-  rw ← le_div_iff, exact hbound4, apply mul_pos hC zero_lt_two,
-  apply lt_of_lt_of_le _ hsumq, apply div_pos, exact zero_lt_one, exact hlarge1,
-  apply rpow_pos_of_pos hlarge1, refine mul_pos zero_lt_two _,
-  apply sum_pos, intros i hi, apply div_pos, exact zero_lt_one, norm_cast,
-  rw pos_iff_ne_zero, apply hDnotzero,
-  have : D2 ⊆ D, { refine finset.filter_subset _ _, },
-  exact this hi,  rw finset.nonempty_iff_ne_empty, intro hempty,
- have hempty2 : ∑ d in D2, ((1:ℚ)/d)*(∑ n in new_local d, (q*d)/n) = 0, {
-   rw hempty, apply finset.sum_empty,  },
- rw hempty2 at hbound3, apply (lt_iff_not_ge 0 ((rec_sum_local A q)/2)).mp,
- apply div_pos,
- have : (0 : ℝ) < rec_sum_local A q, {
-   refine lt_of_lt_of_le _ hsumq, apply div_pos, exact zero_lt_one, exact hlarge1,
- }, exact_mod_cast this, exact zero_lt_two, exact hbound3,
- -/
-end
-
--- Lemma 6.1
-lemma find_good_x :  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
-  (0 ≤ M) → (M ≤ N) → ((N : ℝ) ≤ M^(2 : ℝ)) →
-  (∀ n ∈ A, M ≤ (n : ℝ)) → arith_regular N A →
-  (∀ (t : ℝ) (I : finset ℤ) (q ∈ ppowers_in_set A),
-  I = finset.Icc ⌈t - (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌉ ⌊t + (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌋ →
-  (((1 : ℝ)/(2*(log N)^((1 : ℝ)/100))) < rec_sum_local (A.filter (λ n, ∀ x ∈ I, ¬ (n:ℤ) ∣ x)) q)
-  → (∃ xq ∈ I, ((q:ℤ) ∣ xq) ∧ (((35 : ℝ)/100)*log(log N)) ≤
-     ∑ r in (ppowers_in_set A).filter(λ n, (n:ℤ) ∣ xq), 1/r ))
-  --(∃ xq ∈ I, q ∣ xq ∧ (((35 : ℝ)/100)*log(log N)) ≤ 1))
-  :=
-begin
-  obtain hgoodd := find_good_d,
-  rcases hgoodd with ⟨c,C,hc,hC,hgoodd⟩,
-  -- Work out the right filter later
-  filter_upwards [hgoodd],
-  clear hgoodd,
-  intros N hgooddN M A hA h0M hMN hNM hMA hreg t I q hq hI hqlocal,
-  let A_I := A.filter (λ n : ℕ, ∀ x ∈ I, ¬ (n:ℤ) ∣ x),
-  let k := (log (log N))/((log 2) + log(log(log N))),
-  have h1k : 1 ≤ k, { sorry, },
-  have hkc : k ≤ c* log(log N), { sorry, },
-  have hA_I : A_I ⊆ finset.range(N+1), { apply subset_trans _ hA, apply finset.filter_subset,},
-  have hA_I' : (∀ n ∈ A_I, M ≤ (n : ℝ) ∧ ((ω n) : ℝ) ≤ (log N)^(1/k)), { sorry, },
-  have hqA_I : q ∈ ppowers_in_set A_I, { sorry, },
-  have hqlocal2 :  (1/(log N) ≤ rec_sum_local A_I q), { sorry, },
-  specialize hgooddN M k A_I hA_I h0M hMN hNM h1k hkc hA_I' q hqA_I hqlocal2,
-  rcases hgooddN with ⟨d,hgood1,hgood2,hgood3⟩,
-sorry,
-end
-
-
-lemma two_in_Icc (a b x y: ℤ) (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : |(x : ℝ)-y| ≤ b-a :=
-sorry
 
 -- Proposition 6.3
 theorem force_good_properties :
@@ -365,16 +227,6 @@ lemma rest_recip_ppowers : ∃ C : ℝ,
   C * log(log(log N))
  :=
 sorry
-
--- Lemma 4
-lemma rec_qsum_lower_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) :
-  ∀ᶠ (N : ℕ) in at_top, ∀ A : finset ℕ,
-  ((log N)^(-ε/2) ≤ rec_sum A )
-  → (∀ n ∈ A, ((1 - ε)*log(log N) ≤ ω n ) ∧ ( (ω n : ℝ) ≤ 2*(log (log N))))
-  → (1 - 2*ε)*log(log N) *real.exp(-1) ≤ ∑ q in ppowers_in_set A, (1/q : ℝ)
-:=
-sorry
-
 
 lemma good_d (N : ℕ) (M δ : ℝ) (A : finset ℕ) (hA₁ : A ⊆ finset.range (N + 1)) (hM : 0 < M)
   (hAM : ∀ n ∈ A, M ≤ (n : ℝ)) (hAq : ∀ q ∈ ppowers_in_set A, (2 : ℝ) * δ ≤ rec_sum_local A q)
@@ -1348,7 +1200,7 @@ begin
   rcases hlargeN with ⟨hMε, hε, hM3, hM2, hM1, hlogN3, heK, hKM, hlogN4,
      hlogN5, hlogN6, hlargeNnew, hlargenew2, hε'M, hlarge3, hlarge4, hεε'M,
      hUhelper, hUhelper2, hUhelper3, hlarge7⟩,
-have hM2aux : M ≤ N, { apply le_of_lt hM2, },
+  have hM2aux : M ≤ N, { apply le_of_lt hM2, },
   intros A hA y z h1y hyz hzN hA2 hrec hdiv hsmooth hreg,
   have htemp6 : (N : ℝ)^(1 - (1 : ℝ)/(log(log N)))*(N : ℝ)^(-(2 : ℝ)/(log(log N))) = K, {
     rw ← rpow_add,
@@ -1608,83 +1460,6 @@ have hM2aux : M ≤ N, { apply le_of_lt hM2, },
   norm_num,
 end
 
-lemma nat.coprime_symmetric : symmetric coprime := λ n m h, h.symm
-
--- lemma symmetric.on {α β : Type*} {f : α → β} {r : β → β → Prop} (hr : symmetric r) :
---   symmetric (r on f) :=
--- begin
---   exact symmetric.comap hr f,
--- end
-
-lemma is_multiplicative.prod {ι : Type*} (g : ι → ℕ) {f : nat.arithmetic_function ℝ}
-  (hf : f.is_multiplicative) (s : finset ι) (hs : (s : set ι).pairwise (coprime on g)):
-  ∏ i in s, f (g i) = f (∏ i in s, g i) :=
-begin
-  induction s using finset.cons_induction with a s has ih hs,
-  { simp [hf] },
-  rw [cons_eq_insert, coe_insert, set.pairwise_insert_of_symmetric (nat.coprime_symmetric.comap g)] at hs,
-  rw [prod_cons, prod_cons, ih hs.1, hf.map_mul_of_coprime],
-  exact nat.coprime_prod_right (λ i hi, hs.2 _ hi (hi.ne_of_not_mem has).symm),
-end
-
-#exit
-
--- lemma prod_sum' {α β δ : Type*} [decidable_eq α] [comm_semiring β] [decidable_eq δ]
---   {s : finset α} {t : α → finset δ} {f : δ → β} :
---   ∏ a in s, ∑ b in t a, f b =
---     ∑ p in s.pi t, ∏ x in s.attach, f (p x.1 x.2) :=
--- begin
-
---   -- rw prod_sum,
--- end
-
-lemma prod_one_add {D : finset ℕ} {k : ℝ}
-  (f : nat.arithmetic_function ℝ) (hf' : f.is_multiplicative) :
-  ∑ d in D, f d ≤
-    ∏ p in D.bUnion (λ n, (nat.divisors n).filter nat.prime),
-      (1 + ∑ q in (ppowers_in_set D).filter (λ q, p ∣ q), f q) :=
-begin
-  simp only [add_comm (1 : ℝ)],
-  simp_rw [prod_add, prod_const_one, mul_one],
-  change ∑ d in D, f d ≤
-    ∑ x in finset.powerset _,
-      ∏ t in _,
-        ∑ i in _, f i,
-  sorry
-  -- simp_rw [prod_sum],
-
-  -- simp only [subtype.val_eq_coe],
-
-  -- simp only [prod_attach],
-
-  -- have : ∀ x ∈ (D.bUnion (λ (n : ℕ), filter nat.prime n.divisors)).powerset,
-  --   ∏ (a : ℕ) in D.bUnion (λ (n : ℕ), filter nat.prime n.divisors) \ x,
-  --     (filter (λ q, a ∣ q) (ppowers_in_set D)).sum ⇑f = f sorry,
-  -- { intros x hx,
-  --   simp only [mem_powerset] at hx,
-
-  -- },
-  -- rw sum_powerset,
-  -- rw finset.prod_power
-  -- refine finset.induction_on D _ _,
-  -- { simp },
-  -- intros a s has ih,
-
-end
-
-lemma useful_rec_aux4 (y : ℝ) (k N : ℕ) (D : finset ℕ) (hD : ∀ q : ℕ, q ∈ ppowers_in_set D → y < q)
-  (hD' : ∀ q : ℕ, q ∈ ppowers_in_set D → q ≤ N) :
-  ∑ d in D, (k : ℝ) ^ ω d / d ≤
-    (∏ p in (finset.range (N+1)).filter nat.prime, (1 + k / (p * (p - 1)))) *
-    (∏ p in (finset.range (N+1)).filter (λ n, nat.prime n ∧ y < n), (1 + k * (p - 1)⁻¹)) :=
-begin
-  sorry
-  -- have : ∑ d in D, (k : ℝ) ^ ω d / d ≤ ∏ q in ppowers_in_set D, (1 + k / q),
-  -- {
-
-  -- },
-end
-
 lemma prop_one_specialise :
   ∀ᶠ N : ℕ in at_top, ∀ A ⊆ finset.range (N + 1),
     (∀ n ∈ A, (N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) ≤ n)
@@ -1818,3 +1593,4 @@ begin
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
   simpa using this,
 end
+
