@@ -444,7 +444,7 @@ begin
       refine sdiff_subset _ _,
      },
     rw hnz at hn, exact hbah hn,
-    intro hmz, rw nat_gcd_eq_zero_iff at hmz,
+    intro hmz, rw nat.gcd_eq_zero_iff at hmz,
     have hmz' := int.eq_zero_of_nat_abs_eq_zero hmz.1,
     rw hmz' at hx1, exact hzI hx1,
    },
@@ -1991,9 +1991,6 @@ begin
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
   simpa using this,
 end
-
-
-#exit
 
 theorem unit_fractions_upper_density (A : set ℕ) (hA : upper_density A > 0):
    ∃ (S : finset ℕ), (S : set ℕ) ⊆ A ∧ ∑ n in S, (1 / n : ℝ) = 1 :=

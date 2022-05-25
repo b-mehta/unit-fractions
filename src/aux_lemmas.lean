@@ -25,7 +25,10 @@ noncomputable theory
 -- 'mathlib only'. Possibly some of them should go into mathlib proper.
 
 lemma sum_le_card_mul_real {A : finset ℕ} {M : ℝ} {f : ℕ → ℝ} (h : ∀ n ∈ A, f n ≤ M) :
-A.sum f ≤ (A.card) * M := sorry
+A.sum f ≤ (A.card) * M :=
+begin
+  rw ← nsmul_eq_mul, refine finset.sum_le_card_nsmul _ _ _ h,
+end
 
 -- I realise this actually needs the hypothesis s.nonempty as well
 theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (m : ℝ)
@@ -35,8 +38,6 @@ theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (
 lemma sum_bUnion_le {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
 (hf : ∀ (i : ℕ), 0 ≤ f i) :
 (s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) := sorry
-
-lemma nat_gcd_eq_zero_iff {n m : ℕ} : nat.gcd n m = 0 ↔ (n=0 ∧ m=0) := sorry
 
 lemma nat_cast_diff_issue {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) := sorry
 
