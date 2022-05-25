@@ -39,195 +39,6 @@ theorem circle_method_prop2 :
     ∃ S ⊆ A, rec_sum S = 1 / k :=
 sorry
 
--- Lemma 5.1
-lemma rec_pp_sum_close :
-  ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x : ℝ)-y| ≤ N) →
-  ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
-  ((1 : ℝ)/100)*log(log N) :=
-  sorry
-
--- Proposition 6.3
-theorem force_good_properties :
-  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
-  ((N : ℝ) ≤ M^(2 : ℝ)) → arith_regular N A →
-  ( (log N)^(-(1/101 : ℝ)) ≤ rec_sum A ) →
-  (∀ q ∈ ppowers_in_set A,
-    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) → (
-  (∃ B ⊆ A, ((rec_sum A) ≤ 3*rec_sum B) ∧
-  ((ppower_rec_sum B : ℝ) ≤ (2/3)* log(log N)))
-  ∨ good_condition A (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) ((M : ℝ)/log N)
-  (M / (2*(log N)^(1/100 : ℝ))) ) :=
-sorry
-
--- Proposition 6.4
-theorem force_good_properties2 :
-  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
-  ((N : ℝ) ≤ M^(2 : ℝ)) → arith_regular N A →
-  (∀ q ∈ ppowers_in_set A,
-    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) →
-  ((ppower_rec_sum A : ℝ) ≤ (2/3)* log(log N)) →
-  good_condition A (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) ((M : ℝ)/log N)
-  (M / (2*(log N)^(1/100 : ℝ)))
- :=
-begin
-  let c := (35 : ℝ)/100,
-  -- Work out the right filter later
-  filter_upwards [rec_pp_sum_close],
-  intros N hrecN M A hA hNM hreg hreclocal hpprecA,
-  -- Some routine N bounds
-  have hlarge1 : 1 ≤ M*(N)^(-(2 : ℝ)/log(log N)), { sorry, },
-  have hlarge2 : M * N ^ ((-2) / log (log N)) ≤ N, { sorry, },
-  rw good_condition,
-  intros t I hI,
-  refine or_iff_not_imp_left.2 (λ hP, _),
-  let A_I := A.filter((λ (n : ℕ), ∀ (x : ℤ), x ∈ I → ¬(n:ℤ) ∣ x)),
-  let D := interval_rare_ppowers I A (M / (2 * log N ^ ((1 : ℝ) / 100))),
-  by_cases hDne : D.nonempty,
-  rcases hDne with ⟨x1,hx1⟩,
-  -- The following is involved, uses a couple of other lemmas
-  have hlocal : ∀ q ∈ D, ∃ x ∈ I, ((q:ℤ) ∣x) ∧
-   c*log(log N) ≤ ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣x)), 1/r, {
-     intros q hq, sorry,
-    },
-  choose! f hf using hlocal,
-  use f x1,
-  have hfcopy := hf,
-  specialize hf x1 hx1, refine ⟨hf.1,_⟩, intros q hq,
-  specialize hfcopy q hq,
-  by_cases htwoxs : f q = f x1,
-  obtain hf' := hfcopy.2.1, rw htwoxs at hf', exact hf',
-  exfalso,
-  have hsum1 :  2*c*log(log N) ≤ ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), 1/r
-    +  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), 1/r, {
-      rw [two_mul, add_mul], apply add_le_add hf.2.2 hfcopy.2.2,
-     },
-  -- The following uses an inclusion/exclusion principle
-  have hsum2 :
-       ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1 : ℝ)/r
-    +  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1 : ℝ)/r
-    -  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r
-    ≤ ppower_rec_sum A, { sorry },
-  have hsum3 :
-    ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1 : ℝ)/r
-    + ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1 : ℝ)/r  - ppower_rec_sum A ≤
-    ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r,
-    { apply  sub_left_le_of_le_add, nth_rewrite 1 add_comm,
-      apply le_add_of_sub_left_le hsum2, },
-  -- The following is a trivial rearranging of inequalities we already have
-  have hsum4 :
-    ((1 : ℝ)/100)*log(log N) ≤
-      ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r,
-    { sorry, },
-  have hqx1close : |(f q : ℝ)-(f x1)| ≤ N, {
-    apply @le_trans _ _ _ ((⌊t + M * N ^ ((-2) / log (log N)) / 2⌋ : ℝ)-⌈t - M * N ^ ((-2) / log (log N)) / 2⌉) N,
-    apply two_in_Icc, rw ← hI, exact hfcopy.1, rw ← hI, exact hf.1,
-    rw sub_le,
-    apply @le_trans _ _ _ (t - M * N ^ ((-2) / log (log N)) / 2) _,
-    apply sub_left_le_of_le_add, apply @le_trans _ _ _ (t + M * N ^ ((-2) / log (log N)) / 2) _,
-    apply int.floor_le, rw add_sub, rw add_comm (N : ℝ) t, rw ← add_sub, apply add_le_add_left,
-    apply le_sub_left_of_add_le, rw add_halves', exact hlarge2, apply int.le_ceil,
-   },
-  specialize hrecN (f q) (f x1) htwoxs hqx1close, rw lt_iff_not_ge at hrecN,
-  apply hrecN, apply le_trans hsum4, apply finset.sum_le_sum_of_subset_of_nonneg,
-  intros r hr, rw finset.mem_filter, rw finset.mem_filter at hr,
-  rw [ppowers_in_set,finset.mem_bUnion] at hr, rcases hr.1 with ⟨m,hm1,hm2⟩,
-  rw finset.mem_filter at hm2,  refine ⟨_,hm2.2.1,hr.2⟩, rw finset.mem_range,
-  apply @lt_of_le_of_lt _ _ r m _, apply nat.divisor_le hm2.1, rw ← finset.mem_range,
-  exact hA hm1, intros i hi1 hi2, apply div_nonneg, exact zero_le_one, apply nat.cast_nonneg,
-  clear hrecN,
-  have hIne : I.nonempty, {
-    rw [hI, finset.nonempty_Icc], rw int.ceil_le,
-    apply @le_trans _ _ _ (t + M * N ^ ((-2) / log (log N)) / 2 - 1) _,
-    rw [le_sub,← sub_add, ← sub_add_eq_add_sub], simp only [zero_add, add_halves', sub_self],
-    exact hlarge1, apply le_of_lt, apply int.sub_one_lt_floor,
-   },
-  rcases hIne with ⟨x,hx⟩, refine ⟨x,hx,_⟩,
-  intros q hq, exfalso, apply hDne, use q, exact hq,
-end
-
-
-lemma one_lt_four : (1 : ℝ) < 4 :=
-begin
-  norm_num,
-end
-
-
-
-theorem unit_fractions_upper_density (A : set ℕ) (hA : upper_density A > 0):
-   ∃ (S : finset ℕ), (S : set ℕ) ⊆ A ∧ ∑ n in S, (1 / n : ℝ) = 1 :=
-sorry
-
-theorem unit_fractions_upper_log_density :
-  ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range (N+1),
-    25 * log (log (log N)) * log N / log (log N) ≤ ∑ n in A, (1 / n : ℝ) →
-      ∃ S ⊆ A, ∑ n in S, (1 / n : ℝ) = 1 :=
-sorry
-
-
--- This shows up often enough here that it's worth having separately
-lemma tendsto_coe_log_pow_at_top (c : ℝ) (hc : 0 < c) :
-  tendsto (λ (x : ℕ), (log x)^c) at_top at_top :=
-(tendsto_rpow_at_top hc).comp (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top)
-
-
-
--- define the X in Lemma 1 as a separate definition?
-def X (y z : ℝ) : set ℕ := sorry
-
--- Sieve of Eratosthenes-Legendre, again belongs in basic_estimates
--- Bhavik, this is clumsily expressed, condensed form?
-lemma sieve_eratosthenes (x y u v : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (hu : 1 ≤ u) (huv : u ≤ v) :
-  |((((Ioc ⌊x⌋₊ ⌊x+y⌋₊).filter (λ n : ℕ, ∀ p : ℕ, p.prime → p ∣ n → p ∉ Icc ⌈u⌉₊ ⌊v⌋₊))).card : ℝ) -
-   y * ∏ p in (finset.Icc ⌈u⌉₊ ⌊v⌋₊).filter prime, (1 - p⁻¹)| ≤ 2 ^ (v + 1) :=
-sorry
-
--- (Proof: write the filtered cardinality as a sum, using the Mobius function
--- to detect the divisibility constraint, then rearrange. Uses the trivial bound
--- of v for number of primes in [u,v])
-
--- Lemma 1
-lemma sieve_lemma_one  : ∃ C : ℝ,
-  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (3 ≤ y) → (y < z) → (z ≤ log N) →
-   let X : set ℕ := { n : ℕ | ∀ p:ℕ, (prime p) → (p ∣ n) →
-   ( ((p : ℝ) < y) ∨ (z < p)) } in
-   (((finset.range(2*N)).filter (λ n, n ∈ X ∧ N ≤ n)).card : ℝ) ≤
-   C * (log y / log z) * N
-    :=
-sorry
-
--- This is Turan's estimate, belongs in basic_estimates probably
-lemma turan_primes_estimate : ∃ (C : ℝ), ∀ x : ℝ, (x ≥ 25) →
-  (∑ n in finset.Icc 1 ⌊x⌋₊, ((ω n : ℝ) - log(log n))^2
-  ≤  C * x * log(log x)  ) :=
- --
---  ≤  ):=
-sorry
--- Textbook proof is to expand square, rearrnage sum, write ω n as
--- ∑ p ≤ x, 1_(p∣n)
-
--- Sieve of Eratosthenes-Legendre, again belongs in basic_estimates
---lemma sieve_eratosthenes :
-
--- Lemma 2
-lemma sieve_lemma_two : ∃ C : ℝ,
-  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (2 ≤ y) → (4*y < z) → (z^2 ≤ log N) →
-   let Y : set ℕ := { n : ℕ | ∃ p₁ p₂ : ℕ, (p₁ ≠ p₂) ∧ (prime p₁)
-   ∧ (prime p₂) ∧ (p₁ ∣ n) ∧ (p₂ ∣ n) ∧ (y ≤ p₁) ∧ (4*p₁ ≤ p₂)
-   ∧ ((p₂ : ℝ) ≤ z) } in
-   (((finset.range(N+1)).filter (λ n, ¬(n ∈ Y))).card : ℝ) ≤
-   C * (log y / log z)^(1/2) * N
-    :=
-sorry
-
--- Lemma 3
--- TODO: Replace nat.divisors with just the prime power divisors
-lemma rest_recip_ppowers : ∃ C : ℝ,
-  ∀ᶠ (N : ℕ) in at_top, ∀ n₁ n₂ : ℕ, (n₁ < n₂) → (n₂ ≤ N+n₁) →
-  ∑ q in (nat.divisors (int.gcd n₁ n₂)), (1/q : ℝ) ≤
-  C * log(log(log N))
- :=
-sorry
-
 lemma good_d (N : ℕ) (M δ : ℝ) (A : finset ℕ) (hA₁ : A ⊆ finset.range (N + 1)) (hM : 0 < M)
   (hAM : ∀ n ∈ A, M ≤ (n : ℝ)) (hAq : ∀ q ∈ ppowers_in_set A, (2 : ℝ) * δ ≤ rec_sum_local A q)
   (I : finset ℤ) (q : ℕ) (hq : q ∈ interval_rare_ppowers I A (M * δ)) :
@@ -258,6 +69,567 @@ begin
   have h4 : 2 * δ ≤ (rec_sum_local (A.filter (λ n, ∃ x ∈ I, ↑n ∣ x)) q) + (rec_sum_local nA q),
   { rw_mod_cast ← h2, exact hAq _ hq.1, },
   linarith,
+end
+
+lemma explicit_mertens2 :
+  ∀ᶠ N : ℕ in at_top,
+    ((∑ q in (finset.range (N + 1)).filter is_prime_pow, 1 / q) : ℝ) ≤ (501/500) * log (log N) :=
+begin
+  obtain ⟨b, hb⟩ := prime_power_reciprocal,
+  obtain ⟨c, hc₀, hc⟩ := hb.exists_pos,
+  filter_upwards [(tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top (c : ℝ)), (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top (500*(b + 1))),
+    tendsto_coe_nat_at_top_at_top.eventually hc.bound]
+    with N hN₁ hN₂ hN₃,
+  dsimp at hN₁ hN₂,
+  have hN₄ : 0 < log N := hc₀.trans_le hN₁,
+  simp_rw [norm_inv, ←div_eq_mul_inv, ←one_div, norm_eq_abs, abs_of_nonneg hN₄.le,
+    nat.floor_coe] at hN₃,
+  have : c / log N ≤ 1 := div_le_one_of_le hN₁ hN₄.le,
+  have := sub_le_iff_le_add.1 (sub_le_of_abs_sub_le_right (hN₃.trans this)),
+  convert this.trans (show log (log N) + b + 1 ≤ (501/500)  * log (log N), by linarith) using 2,
+  rw [range_eq_Ico, nat.Ico_succ_right],
+  ext n,
+  simpa only [mem_filter, and.congr_left_iff, mem_Icc, zero_le', iff_and_self, true_and] using
+    λ h _, (is_prime_pow.one_lt h).le,
+end
+
+lemma rec_sum_split (A B C E : finset ℕ) (h : 0 ∉ B) (hC : C = A.filter(λ n : ℕ, n ∈ B ∧
+   (∀ q ∈ ppowers_in_set A, n ∈ local_part B q → q ∈ E))):
+rec_sum ((A\C)∩B) ≤ ∑ q in (ppowers_in_set A)\E, (rec_sum_local B q)/q
+:=
+begin
+ simp_rw [rec_sum, rec_sum_local, sum_div],
+ calc _ ≤ ∑ (x : ℕ) in ppowers_in_set A \ E, ∑ (x_1 : ℕ) in local_part B x, (1:ℚ) / x_1 :_
+    ... ≤ _ :_,
+ refine le_trans _ (sum_bUnion_le _), refine sum_le_sum_of_subset_of_nonneg _ _,
+ intros n hn, rw hC at hn, rw [mem_inter,mem_sdiff, mem_filter, not_and, not_and] at hn,
+ have hn' := hn.1.2 hn.1.1 hn.2, rw [not_forall] at hn', rcases hn' with ⟨q,hq⟩,
+ rw [not_imp, not_imp] at hq, rw [mem_bUnion], refine ⟨q,_,hq.2.1⟩,
+ rw mem_sdiff, refine ⟨hq.1,hq.2.2⟩,
+ intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+ intro i, rw one_div_nonneg, exact nat.cast_nonneg i,
+ rw sum_congr, refl, intros x hx, rw sum_congr, refl, intros x1 hx1,
+ rw [local_part, mem_filter] at hx1,
+ rw [div_div, div_eq_div_iff, one_mul, mul_comm], norm_cast, intro hz, rw hz at hx1,
+ exact h hx1.1, intro hz, rw [mul_eq_zero] at hz, apply h, norm_cast at hz,
+ cases hz with hz1 hz2, rw hz1 at hx1, exact hx1.1, rw [hz2,zero_dvd_iff] at hx1,
+ have := hx1.2.1, rw this at hx1, exact hx1.1,
+end
+
+-- Proposition 6.3
+theorem force_good_properties :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
+  (0 < M) → (M ≤ N) → ((N : ℝ) ≤ M^2) → (0 ∉ A) →
+  (∀ n ∈ A, M ≤ (n:ℝ)) → arith_regular N A →
+  ( (log N)^(-(1/101 : ℝ)) ≤ rec_sum A ) →
+  (∀ q ∈ ppowers_in_set A,
+    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) → (
+  (∃ B ⊆ A, ((rec_sum A) ≤ 3*rec_sum B) ∧
+  ((ppower_rec_sum B : ℝ) ≤ (2/3)* log(log N)))
+  ∨ good_condition A (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) ((M : ℝ)/log N)
+  (M / (2*(log N)^(1/100 : ℝ))) ) :=
+begin
+  let c := (35 : ℝ)/100,
+  have hthirdpos : (0 : ℝ) < 1/3, { norm_num1, },
+  filter_upwards [
+    eventually_gt_at_top 1,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+        (eventually_gt_at_top (0 : ℝ)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top ((2:ℝ)/(1/2))),
+    yet_another_large_N, yet_another_large_N',
+    rec_pp_sum_close, find_good_x, explicit_mertens2, div_bound_useful_version hthirdpos],
+  intros N hlarge hlarge0 hlarge4 hlargeNs hlarge5 hrecN hgoodx hmertens hdiv M A hA h0M hMN hNM h0A hMA hreg hrecA  hreclocal,
+  dsimp at hlarge0,
+  have hlarge3 : 0 < log(log N), { refine lt_of_lt_of_le _ hlarge4, norm_num1, },
+  have hlarge1 : 1 ≤ M*(N)^(-(2 : ℝ)/log(log N)), {
+    rw [neg_eq_neg_one_mul, ← mul_div, ← neg_eq_neg_one_mul, rpow_neg, ← one_div,
+         ← div_eq_mul_one_div, one_le_div],
+    calc _ ≤ (N:ℝ)^((1:ℝ)/2) : _
+       ... ≤ M :_,
+    apply rpow_le_rpow_of_exponent_le, exact_mod_cast le_of_lt hlarge,
+    rw [div_le_iff, ← div_le_iff'], exact hlarge4, exact one_half_pos,
+    exact hlarge3, rw [← sqrt_eq_rpow, sqrt_le_iff],
+    refine ⟨le_of_lt h0M, hNM⟩, apply rpow_pos_of_pos,
+    exact_mod_cast (lt_trans zero_lt_one hlarge),
+    exact nat.cast_nonneg N,
+  },
+  have hlarge2 : M * N ^ ((-2) / log (log N)) ≤ N, {
+    calc _ ≤ M : _
+       ... ≤ N : hMN,
+    nth_rewrite 1 ← mul_one M, rw mul_le_mul_left, apply rpow_le_one_of_one_le_of_nonpos,
+    exact_mod_cast (le_of_lt hlarge), apply div_nonpos_of_nonpos_of_nonneg,
+    rw neg_nonpos, exact zero_le_two, exact le_of_lt hlarge3, exact h0M,
+   },
+  rw or_iff_not_imp_left, intro hnoB, rw good_condition,
+  intros t I hI, refine or_iff_not_imp_left.2 (λ hP, _),
+  by_cases hzI : (0:ℤ) ∈ I,
+  use (0:ℤ), refine ⟨hzI,_⟩, intros q hq, refine dvd_zero _,
+  have hIcard0 : (I.card : ℤ) = ⌊t + (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌋ + 1 - ⌈t - (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌉, {
+    rw [hI, int.card_Icc_of_le], refine le_trans (int.ceil_le_floor_add_one _) _,
+    rw add_le_add_iff_right,  rw int.le_floor, refine le_trans (int.floor_le _) _,
+    rw [sub_le_iff_le_add, add_assoc, add_halves, le_add_iff_nonneg_right],
+    refine mul_nonneg (le_of_lt h0M) _, apply rpow_nonneg_of_nonneg, exact nat.cast_nonneg N,
+  },
+  have hIcardn0 : I.card ≠ 0, {
+    rw [← pos_iff_ne_zero, card_pos, hI, nonempty_Icc, int.ceil_le],
+    refine le_trans _ (le_of_lt (int.sub_one_lt_floor _)),
+    rw [← add_sub, sub_le_iff_le_add, add_assoc, le_add_iff_nonneg_right, sub_add_eq_add_sub,
+      add_halves, sub_nonneg], exact hlarge1,
+   },
+  have hIcard : ((I.card:ℤ):ℝ) ≤ M*(N : ℝ)^(-(2 : ℝ)/log(log N))+1, {
+    rw hIcard0, push_cast,
+    calc _ ≤  t + (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2 + 1 - ⌈t - (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌉ : _
+       ... ≤  t + (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2 + 1 - (t - (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2) :_
+       ... = _ :_,
+    rw [sub_le_sub_iff_right, add_le_add_iff_right], refine int.floor_le _,
+    rw [sub_le_sub_iff_left], refine int.le_ceil _, ring_nf,
+  },
+  have hIcard' : (I.card:ℝ) ≤ M*(N : ℝ)^(-(2 : ℝ)/log(log N))+1, { exact_mod_cast hIcard, },
+  have hIcard'' : (I.card:ℝ) ≤ 2*M*(N : ℝ)^(-(2 : ℝ)/log(log N)), {
+    refine le_trans hIcard' _, rw [mul_assoc, two_mul, add_le_add_iff_left], exact hlarge1,
+   },
+  have hlarge9 : (N:ℝ)^(2 * log 2 / log (log N) * (1 + 1/3)) <  M*((log N)^(-(1/101 : ℝ))/6)/(I.card : ℝ), {
+    rw [lt_div_iff, mul_comm, ← lt_div_iff], refine lt_of_le_of_lt hIcard'' _,
+    rw [lt_div_iff, mul_comm (2:ℝ), mul_assoc, mul_assoc, mul_lt_mul_left, ← rpow_add],
+    exact hlargeNs, norm_cast, refine lt_trans zero_lt_one hlarge, exact h0M,
+    apply rpow_pos_of_pos, norm_cast, refine lt_trans zero_lt_one hlarge,
+    apply rpow_pos_of_pos, norm_cast, refine lt_trans zero_lt_one hlarge, norm_cast,
+    rw pos_iff_ne_zero, exact hIcardn0,
+  },
+  have hIclose' :  ∀ x y ∈ I, (|x-y|:ℝ) ≤ N, {
+    intros x hx y hy, refine le_trans (two_in_Icc' I hI hx hy) _,
+    calc _ ≤  t + (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2 - ⌈t - (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌉ : _
+       ... ≤  t + (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2 - (t - (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2) :_
+       ... = (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) :_
+       ... ≤ _ : hlarge2,
+    rw [sub_le_sub_iff_right], refine int.floor_le _,
+    rw [sub_le_sub_iff_left], refine int.le_ceil _, ring_nf,
+   },
+
+  have hIclose : ∀ x y ∈ I, (int.nat_abs (x-y)) ≤ N, {
+    intros x hx y hy, specialize hIclose' x hx y hy, rw nat_cast_diff_issue at hIclose',
+    exact_mod_cast hIclose',
+   },
+  clear hIcard0 hIcard,
+  let A_I := A.filter((λ (n : ℕ), ∃ (x ∈ I), (n:ℤ) ∣ x)),
+  let D := interval_rare_ppowers I A (M / (2 * log N ^ ((1 : ℝ) / 100))),
+  let E := (ppowers_in_set A).filter(λ q : ℕ,
+    1 / (2 * log N ^ ((1:ℝ) / 100)) ≤ rec_sum_local A_I q),
+  let K := (M / (2 * log N ^ ((1 : ℝ) / 100))),
+  by_cases hDne : D.nonempty,
+  rcases hDne with ⟨x1,hx1⟩,
+  have hDE : D ⊆ E, {
+    intros q hq, rw mem_filter, refine ⟨interval_rare_ppowers_subset I K hq,_⟩,
+    refine good_d N M (1 / (2 * log N ^ ((1:ℝ) / 100))) A hA h0M hMA _ I q _,
+    intros q hq, rw [two_mul, one_div, ← inv_div_left, add_halves, ← rpow_neg],
+    exact hreclocal q hq, exact le_of_lt hlarge0, rw ← div_eq_mul_one_div, exact hq,
+  },
+  have hlocal : ∀ q ∈ E, ∃ x ∈ I, ((q:ℤ) ∣x) ∧
+   c*log(log N) ≤ ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣x)), 1/r, {
+    intros q hq, specialize hgoodx M A hA h0M hMN h0A hMA hreg t I q
+       (mem_of_mem_filter q hq) hI,
+    apply hgoodx, rw mem_filter at hq, exact hq.2,
+  },
+  clear hgoodx, choose! f hf using hlocal, use f x1,
+  have hfcopy := hf, have hfcopy2 := hf, have hfcopy3 := hf,
+  specialize hf x1 (hDE hx1), refine ⟨hf.1,_⟩, intros x2 hx2, specialize hfcopy2 x2 (hDE hx2),
+  have hclose : ∀ x y ∈ E, |(f x : ℝ)-(f y)| ≤ N, {
+    intros q hq r hr, have hfcopy' := hfcopy,
+    specialize hfcopy q hq, specialize hfcopy' r hr,
+    apply @le_trans _ _ _ ((⌊t + M * N ^ ((-2) / log (log N)) / 2⌋ : ℝ)-⌈t - M * N ^ ((-2) / log (log N)) / 2⌉) N,
+    apply two_in_Icc, rw ← hI, exact hfcopy.1, rw ← hI, exact hfcopy'.1,
+    rw sub_le,
+    apply @le_trans _ _ _ (t - M * N ^ ((-2) / log (log N)) / 2) _,
+    apply sub_left_le_of_le_add, apply @le_trans _ _ _ (t + M * N ^ ((-2) / log (log N)) / 2) _,
+    apply int.floor_le, rw add_sub, rw add_comm (N : ℝ) t, rw ← add_sub, apply add_le_add_left,
+    apply le_sub_left_of_add_le, rw add_halves', exact hlarge2, apply int.le_ceil,
+   },
+  have hsum4 : (ppower_rec_sum A:ℝ) ≤ (501/500)*log(log N), {
+    refine le_trans _ hmertens, rw ppower_rec_sum, push_cast,
+    refine sum_le_sum_of_subset_of_nonneg _ _,  intros r hr,
+    rw [ppowers_in_set,mem_bUnion] at hr,
+    rw [mem_filter, mem_range], rcases hr with ⟨a,ha,hr⟩, rw mem_filter at hr,
+    refine ⟨_,hr.2.1⟩,
+    calc _ ≤ a : _
+       ... < N+1 :_,
+    exact nat.divisor_le hr.1, rw ← mem_range, exact hA ha,
+    intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+  },
+  by_cases htwoxs : f x2 = f x1,
+  obtain hf' := hfcopy2.2.1, rw htwoxs at hf', exact hf',
+  by_cases hthreexs : ∀ x ∈ E, f x = f x1 ∨ f x = f x2,
+  clear hfcopy3, exfalso,
+  let A1 := A.filter( λ n : ℕ, (n:ℤ) ∣ (f x1) ),
+  let A2 := A.filter( λ n : ℕ, (n:ℤ) ∣ (f x2) ),
+  let A0 := A\(A1∪A2),
+  have h3rec : rec_sum A ≤ rec_sum A1 + rec_sum A2 + rec_sum A0, {
+    refine le_trans _ rec_sum_le_three, refine rec_sum_mono _,
+    intros n hn, rw mem_union, by_cases htemp : n ∈ A1 ∪ A2, left, exact htemp,
+    right, rw mem_sdiff, refine ⟨hn,htemp⟩,
+  },
+  by_cases hAlarge : (rec_sum A ≤ 3*rec_sum A1) ∨ (rec_sum A ≤ 3*rec_sum A2),
+  apply hnoB,
+  have hnum : (502:ℝ) / 500 - 35 / 100 ≤ 2 / 3, by norm_num1,
+  have hrecAs : ∑ q in (ppowers_in_set A).filter(λ n : ℕ, (n:ℤ) ∣ (f x1)), (1:ℝ)/q
+    + ∑ q in (ppowers_in_set A).filter(λ n : ℕ, (n:ℤ) ∣ (f x2)), (1:ℝ)/q ≤
+    (502/500)*log(log N), {
+      calc _ ≤ (ppower_rec_sum A:ℝ) + ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x2 ∧ (n:ℤ)∣f x1)), (1:ℝ)/r :_
+         ... ≤ (ppower_rec_sum A:ℝ) + (1/500)*log(log N) :_
+         ... ≤ (501/500)*log(log N) + (1/500)*log(log N) :_
+         ... = _ :_,
+      rw [sum_add_sum, filter_inter, inter_filter, inter_self, filter_filter,
+         add_le_add_iff_right, ppower_rec_sum], push_cast,
+      refine sum_le_sum_of_subset_of_nonneg _ _,
+      rw [filter_union_right], refine filter_subset _ _, intros i hi1 hi2,
+      rw one_div_nonneg, exact nat.cast_nonneg i, rw add_le_add_iff_left,
+      refine le_trans _ (le_of_lt( hrecN (f x2) (f x1) htwoxs (hclose x2 (hDE hx2) x1 (hDE hx1)))),
+      refine sum_le_sum_of_subset_of_nonneg _ _, intros r hr, rw finset.mem_filter, rw finset.mem_filter at hr,
+      rw [ppowers_in_set,finset.mem_bUnion] at hr, rcases hr.1 with ⟨m,hm1,hm2⟩,
+      rw finset.mem_filter at hm2, refine ⟨_,hm2.2.1,hr.2⟩, rw finset.mem_range,
+      apply @lt_of_le_of_lt _ _ r m _, apply nat.divisor_le hm2.1, rw ← finset.mem_range,
+      exact hA hm1, intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+      rw add_le_add_iff_right, exact hsum4, rw ← add_mul, norm_num1, refl,
+     },
+  cases hAlarge with hA1large hA2large,
+  refine ⟨A1,filter_subset _ _,hA1large,_⟩,
+  rw ppower_rec_sum, push_cast,
+  calc _ ≤ ∑ q in (ppowers_in_set A).filter(λ n : ℕ, (n:ℤ) ∣ (f x1)), (1:ℝ)/q :_
+     ... ≤ (502/500)*log(log N) - ∑ q in (ppowers_in_set A).filter(λ n : ℕ, (n:ℤ) ∣f x2 ), (1:ℝ)/q :_
+     ... ≤ (502/500)*log(log N) - (35/100)*log(log N) :_
+     ... ≤ (2/3)*log(log N) :_,
+  refine sum_le_sum_of_subset_of_nonneg _ _, intros q hq,
+  rw [ppowers_in_set, mem_bUnion] at hq, rw [mem_filter, ppowers_in_set, mem_bUnion],
+  rcases hq with ⟨a,ha,hq⟩, use a, refine ⟨mem_of_mem_filter a ha,hq,⟩, rw mem_filter at ha,
+  refine dvd_trans _ ha.2, norm_cast, exact nat.dvd_of_mem_divisors (mem_of_mem_filter q hq),
+  intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+  rw le_sub_iff_add_le, exact hrecAs, rw sub_le_sub_iff_left, exact hfcopy2.2.2,
+  rw [← sub_mul, mul_le_mul_right], exact hnum, exact hlarge3,
+  refine ⟨A2,filter_subset _ _,hA2large,_⟩,
+  rw ppower_rec_sum, push_cast,
+  calc _ ≤ ∑ q in (ppowers_in_set A).filter(λ n : ℕ, (n:ℤ) ∣ (f x2)), (1:ℝ)/q :_
+     ... ≤ (502/500)*log(log N) - ∑ q in (ppowers_in_set A).filter(λ n : ℕ, (n:ℤ) ∣f x1 ), (1:ℝ)/q :_
+     ... ≤ (502/500)*log(log N) - (35/100)*log(log N) :_
+     ... ≤ (2/3)*log(log N) :_,
+  refine sum_le_sum_of_subset_of_nonneg _ _, intros q hq,
+  rw [ppowers_in_set, mem_bUnion] at hq, rw [mem_filter, ppowers_in_set, mem_bUnion],
+  rcases hq with ⟨a,ha,hq⟩, use a, refine ⟨mem_of_mem_filter a ha,hq,⟩, rw mem_filter at ha,
+  refine dvd_trans _ ha.2, norm_cast, exact nat.dvd_of_mem_divisors (mem_of_mem_filter q hq),
+  intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+  rw le_sub_iff_add_le, rw add_comm, exact hrecAs, rw sub_le_sub_iff_left, exact hf.2.2,
+  rw [← sub_mul, mul_le_mul_right], exact hnum, exact hlarge3,
+  let A' := A0.filter(λ n : ℕ, n ∈ A_I ∧
+   (∀ q ∈ ppowers_in_set A0, n ∈ local_part A_I q → q ∈ E)),
+  have hrecaux' : 1/log N + rec_sum ((A0\A')∩A_I) ≤ (log N)^(-(1/101 : ℝ))/6, {
+    calc _ ≤ 1/log N + ∑ q in (ppowers_in_set A0)\E, (rec_sum_local (A_I) q)/q :_
+       ... ≤ 1/log N + (1 / (2 * log N ^ ((1:ℝ) / 100)))*∑ q in (ppowers_in_set A0)\E, 1/q :_
+       ... ≤ 1/log N + (1 / (2 * log N ^ ((1:ℝ) / 100)))*((501/500)*log(log N)) :_
+       ... ≤ _ : hlarge5,
+    rw add_le_add_iff_left, norm_cast,
+    refine rec_sum_split A0 A_I A' E _ _,
+    intro hzA, apply h0A, exact mem_of_mem_filter 0 hzA, refl,
+    rw [add_le_add_iff_left, mul_sum], refine sum_le_sum _, intros q hq,
+    rw [← div_eq_mul_one_div], refine div_le_div_of_le_of_nonneg _ _, rw ← not_lt,
+    intro nlt, rw mem_sdiff at hq, apply hq.2, rw mem_filter,
+    refine ⟨(ppowers_in_set_subset (sdiff_subset _ _)) hq.1,le_of_lt nlt⟩,
+    exact nat.cast_nonneg q, rw [add_le_add_iff_left, mul_le_mul_left],
+    refine le_trans _ hsum4, rw ppower_rec_sum, push_cast,
+    refine sum_le_sum_of_subset_of_nonneg _ _,
+    refine subset_trans (sdiff_subset _ _) (ppowers_in_set_subset (sdiff_subset _ _)),
+    intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i, rw one_div_pos,
+    refine mul_pos zero_lt_two _, apply rpow_pos_of_pos, exact hlarge0,
+  },
+
+    have hrecA0 : (log N)^(-(1/101 : ℝ))/3 ≤ rec_sum A0, {
+    calc _ ≤ (rec_sum A :ℝ)/3 :_
+       ... ≤ _ :_,
+    rw [div_le_div_right], exact hrecA, exact zero_lt_three,
+    rw [div_le_iff', ← add_le_add_iff_left ((3:ℝ)*(rec_sum A2)),
+      ← add_le_add_iff_left ((3:ℝ)*(rec_sum A1))], norm_cast,
+    rw [decidable.not_or_iff_and_not, not_le, not_le] at hAlarge, linarith,
+    exact zero_lt_three,
+  },
+
+  have hrecaux :  (rec_sum (A0\A') :ℝ) ≤ (log N)^(-(1/101 : ℝ))/6, {
+    calc _ = (rec_sum ((A0\A')\A_I) :ℝ) + rec_sum ((A0\A')∩A_I) :_
+       ... ≤ (rec_sum (A\A_I) :ℝ) + rec_sum ((A0\A')∩A_I) :_
+       ... ≤ ((A\A_I).card:ℝ)/M + rec_sum ((A0\A')∩A_I) :_
+       ... ≤ 1/log N + rec_sum ((A0\A')∩A_I) :_
+       ... ≤ _ : hrecaux',
+    norm_cast, rw [← rec_sum_disjoint, sdiff_union_inter], refine disjoint_sdiff_inter _ _,
+    rw add_le_add_iff_right, norm_cast, refine rec_sum_mono _, refine sdiff_subset_sdiff _ _,
+    refine subset_trans (sdiff_subset _ _) _, refine sdiff_subset _ _, refl,
+    rw add_le_add_iff_right, refine rec_sum_le_card_div _,
+    intros n hn, refine hMA n _, refine (sdiff_subset _ _) hn, rw add_le_add_iff_right,
+    rw not_le at hP, rw [div_le_iff', ← div_eq_mul_one_div], refine le_of_lt _,
+    refine lt_of_le_of_lt _ hP, norm_cast, refine card_le_of_subset _,
+    intros n hn, rw mem_sdiff at hn, rw mem_filter, refine ⟨hn.1,_⟩,
+    intros x hx hnx, apply hn.2, rw mem_filter, refine ⟨hn.1,x,hx,hnx⟩, exact h0M,
+  },
+
+  have hrecA' : (log N)^(-(1/101 : ℝ))/6 ≤ rec_sum A', {
+    calc _ ≤ (log N)^(-(1/101 : ℝ))/3 - (log N)^(-(1/101 : ℝ))/6 :_
+       ... ≤ (rec_sum A0:ℝ) - (log N)^(-(1/101 : ℝ))/6 :_
+       ... ≤ (rec_sum A0:ℝ) - rec_sum (A0\A') :_
+       ... = _ :_,
+    rw [le_sub_iff_add_le, div_add_div_same, ← mul_two, ← div_div_eq_mul_div],
+    norm_num1, refl, rw [sub_le_sub_iff_right], exact hrecA0,
+    rw sub_le_sub_iff_left, exact hrecaux, rw [sub_eq_iff_eq_add], norm_cast,
+    rw [← rec_sum_disjoint, union_sdiff_of_subset], refine filter_subset _ _,
+    exact disjoint_sdiff,
+   },
+  have hA'size : M*((log N)^(-(1/101 : ℝ))/6) ≤ (A').card, {
+    rw ← le_div_iff', refine le_trans hrecA' (rec_sum_le_card_div _),
+    intros n hn, refine hMA n _, refine (sdiff_subset _ _) (mem_of_mem_filter n hn),
+    exact h0M,
+   },
+  have hbadx : ∃ x ∈ I,  M*((log N)^(-(1/101 : ℝ))/6)/(I.card : ℝ) ≤
+     (A'.filter(λ n : ℕ, (n:ℤ) ∣ x )).card, {
+       by_contra, rw ← not_lt at hA'size, apply hA'size,
+       have hA'union : A' = I.bUnion( λ x : ℤ, A'.filter( λ n : ℕ, (n:ℤ) ∣ x)), {
+         ext, refine ⟨_,_⟩, intro hn, have hn' := hn, rw mem_bUnion,
+         rw [mem_filter, mem_filter] at hn, rcases hn.2.1.2 with ⟨x,hx1,hx2⟩,
+         refine ⟨x,hx1,_⟩, rw mem_filter, refine ⟨hn',hx2⟩,
+         intro hn, rw mem_bUnion at hn, rcases hn with ⟨x,hx1,hx2⟩, exact mem_of_mem_filter a hx2,
+        },
+       rw hA'union,
+       refine lt_of_lt_of_le (card_bUnion_lt_card_mul_real (M*((log N)^(-(1/101 : ℝ))/6)/(I.card : ℝ)) _) _,
+       intros x hx, rw ← not_le, intro hnle, apply h, use x, refine ⟨hx,hnle⟩,
+       rw mul_div_cancel_of_imp', intro hz, exfalso, norm_cast at hz,
+  },
+  rcases hbadx with ⟨x, hx1, hx2⟩,
+  let m := nat.gcd (int.nat_abs x) (int.nat_abs ((f x1)*(f x2))),
+  have hmsmall : m ≤ N^2, {
+    refine le_trans nat_gcd_prod_le_diff _, rw sq, refine nat.mul_le_mul _ _,
+    refine hIclose _ hx1 _ hf.1, refine hIclose _ hx1 _ hfcopy2.1,
+   },
+  have hdivm : (A'.filter(λ n : ℕ, (n:ℤ) ∣ x )).card ≤ (σ 0 m), {
+    rw divisor_function_eq_card_divisors, refine card_le_of_subset _,
+    intros n hn, rw nat.mem_divisors, refine ⟨_,_⟩,
+    rw dvd_iff_ppowers_dvd', intros q hq1 hq2, rw nat.dvd_gcd_iff,
+    rw mem_filter at hn, refine ⟨_,_⟩,
+    refine dvd_trans hq1 _, rw ← int.coe_nat_dvd_left, exact hn.2,
+    specialize hfcopy q, rw ← int.coe_nat_dvd_left, rw mem_filter at hn,
+    have : q ∈ E, {
+      refine hn.1.2.2 q _ _, rw [ppowers_in_set, mem_bUnion],
+      use n, rw mem_filter,  refine ⟨hn.1.1,_,hq2.1,hq2.2⟩, rw nat.mem_divisors,
+      refine ⟨hq1,_⟩, intro hnz, apply h0A, rw hnz at hn, exact mem_of_mem_filter 0 hn.1.2.1,
+      rw [local_part, mem_filter], refine ⟨hn.1.2.1,hq1,hq2.2⟩,
+     },
+    specialize hfcopy this,  refine dvd_trans hfcopy.2.1 _,
+    specialize hthreexs q this, cases hthreexs with ht1 ht2,
+    rw ht1, refine dvd_mul_right _ _, rw ht2, refine dvd_mul_left _ _,
+    intro hmz, rw nat_gcd_eq_zero_iff at hmz,
+    have hmz' := int.eq_zero_of_nat_abs_eq_zero hmz.1,
+    rw hmz' at hx1, exact hzI hx1,
+   },
+  specialize hdiv m hmsmall, rw ← not_lt at hdiv, apply hdiv,
+  calc _ < M*((log N)^(-(1/101 : ℝ))/6)/(I.card : ℝ) : hlarge9
+    ... ≤ ((A'.filter(λ n : ℕ, (n:ℤ) ∣ x )).card : ℝ) : hx2
+    ... ≤ _ :_,
+  exact_mod_cast hdivm,
+  rw not_forall at hthreexs, rcases hthreexs with ⟨x3,hx3⟩,
+  rw [not_imp, not_or_distrib] at hx3, specialize hfcopy3 x3 hx3.1, exfalso,
+  let S1 := ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1:ℝ)/r,
+  let S2 := ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x2)), (1:ℝ)/r,
+  let S3 := ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x3)), (1:ℝ)/r,
+  have hsum1 :  3*c*log(log N) ≤ S1 + S2 + S3, {
+      calc _ = c*log(log N) + c*log(log N) + c*log(log N) :_
+         ... ≤ _ :_,
+      rw [← add_mul, ← add_mul, mul_eq_mul_right_iff], left,
+      rw [← two_mul, ← sub_eq_iff_eq_add', ← sub_mul], norm_num1, rw one_mul,
+      refine add_le_add _ hfcopy3.2.2, exact add_le_add hf.2.2 hfcopy2.2.2,
+  },
+  let S12 := ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x2 ∧ (n:ℤ)∣f x1)), (1:ℝ)/r,
+  let S23 := ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x3 ∧ (n:ℤ)∣f x2)), (1:ℝ)/r,
+  let S13 := ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x3 ∧ (n:ℤ)∣f x1)), (1:ℝ)/r,
+
+  have hsum2 : (S1+S2+S3) - (S12 + S23 + S13) ≤ ppower_rec_sum A, {
+    rw [sum_add_sum_add_sum, filter_inter, inter_filter, inter_self, filter_filter,
+       filter_inter, inter_filter, inter_self, filter_filter,
+       filter_inter, inter_filter, inter_self, filter_filter,
+       add_sub_right_comm, add_sub_right_comm, add_sub_right_comm, add_sub_right_comm,
+       add_sub_right_comm,  ← sub_sub, ← sub_sub, add_tsub_cancel_right, sub_add_cancel,
+       sub_add_cancel, sub_le_iff_le_add],
+    calc _ ≤ (ppower_rec_sum A : ℝ) :_
+       ... ≤ _ :_,
+    rw ppower_rec_sum, push_cast, refine sum_le_sum_of_subset_of_nonneg _ _,
+    intros q hq, rw [mem_union, mem_union] at hq, cases hq with hq1 hq2,
+    cases hq1 with hq11 hq12, exact mem_of_mem_filter q hq11,
+    exact mem_of_mem_filter q hq12, exact mem_of_mem_filter q hq2,
+    intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+    refine le_add_of_nonneg_right _, refine sum_nonneg _, intros i hi,
+    rw one_div_nonneg, exact nat.cast_nonneg i,
+  },
+  have hsum3 : S12 + S23 + S13 ≤ ((1:ℝ)/500+(1:ℝ)/500+(1:ℝ)/500)*log(log N), {
+    rw add_mul, refine add_le_add _ _, rw add_mul, refine add_le_add _ _,
+    refine le_trans _ (le_of_lt (hrecN (f x2) (f x1) htwoxs (hclose x2 (hDE hx2) x1 (hDE hx1)))),
+    refine sum_le_sum_of_subset_of_nonneg _ _,  intros r hr, rw finset.mem_filter, rw finset.mem_filter at hr,
+    rw [ppowers_in_set,finset.mem_bUnion] at hr, rcases hr.1 with ⟨m,hm1,hm2⟩,
+    rw finset.mem_filter at hm2,  refine ⟨_,hm2.2.1,hr.2⟩, rw finset.mem_range,
+    apply @lt_of_le_of_lt _ _ r m _, apply nat.divisor_le hm2.1, rw ← finset.mem_range,
+    exact hA hm1, intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+    refine le_trans _ (le_of_lt (hrecN (f x3) (f x2) hx3.2.2 (hclose x3 hx3.1 x2 (hDE hx2)))),
+    refine sum_le_sum_of_subset_of_nonneg _ _,  intros r hr, rw finset.mem_filter, rw finset.mem_filter at hr,
+    rw [ppowers_in_set,finset.mem_bUnion] at hr, rcases hr.1 with ⟨m,hm1,hm2⟩,
+    rw finset.mem_filter at hm2, refine ⟨_,hm2.2.1,hr.2⟩, rw finset.mem_range,
+    apply @lt_of_le_of_lt _ _ r m _, apply nat.divisor_le hm2.1, rw ← finset.mem_range,
+    exact hA hm1, intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+    refine le_trans _ (le_of_lt (hrecN (f x3) (f x1) hx3.2.1 (hclose x3 hx3.1 x1 (hDE hx1)))),
+    refine sum_le_sum_of_subset_of_nonneg _ _,  intros r hr, rw finset.mem_filter, rw finset.mem_filter at hr,
+    rw [ppowers_in_set,finset.mem_bUnion] at hr, rcases hr.1 with ⟨m,hm1,hm2⟩,
+    rw finset.mem_filter at hm2, refine ⟨_,hm2.2.1,hr.2⟩, rw finset.mem_range,
+    apply @lt_of_le_of_lt _ _ r m _, apply nat.divisor_le hm2.1, rw ← finset.mem_range,
+    exact hA hm1, intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
+  },
+  have hsum5 : ¬  (501/500)*log(log N) < ((102:ℝ)/100)*log(log N) , {
+    rw not_lt,
+    calc _ ≤ 3*c*log(log N) - ((1:ℝ)/500+(1:ℝ)/500+(1:ℝ)/500)*log(log N) :_
+       ... ≤ (S1+S2+S3) - (S12 + S23 + S13) :_
+       ... ≤ (ppower_rec_sum A:ℝ) : hsum2
+       ... ≤ _ : hsum4,
+    rw [← sub_mul, mul_le_mul_right],
+    have hsilly : c = 35/100, { refl, },
+    rw hsilly, norm_num1, exact hlarge3, refine sub_le_sub hsum1 hsum3,
+  },
+  apply hsum5, rw mul_lt_mul_right, norm_num1, exact hlarge3,
+  have hIne : I.nonempty, {
+    rw [hI, finset.nonempty_Icc], rw int.ceil_le,
+    apply @le_trans _ _ _ (t + M * N ^ ((-2) / log (log N)) / 2 - 1) _,
+    rw [le_sub,← sub_add, ← sub_add_eq_add_sub], simp only [zero_add, add_halves', sub_self],
+    exact hlarge1, apply le_of_lt, apply int.sub_one_lt_floor,
+   },
+  rcases hIne with ⟨x,hx⟩, refine ⟨x,hx,_⟩,
+  intros q hq, exfalso, apply hDne, use q, exact hq,
+end
+
+-- Proposition 6.4
+theorem force_good_properties2 :
+  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
+  (0 < M) →  (M ≤ N) → ((N : ℝ) ≤ M^2) → (0 ∉ A) →
+  (∀ n ∈ A, M ≤ (n:ℝ)) → arith_regular N A →
+  (∀ q ∈ ppowers_in_set A,
+    ((log N)^(-(1/100 : ℝ)) ≤ rec_sum_local A q )) →
+  ((ppower_rec_sum A : ℝ) ≤ (2/3)* log(log N)) →
+  good_condition A (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) ((M : ℝ)/log N)
+  (M / (2*(log N)^(1/100 : ℝ)))
+ :=
+begin
+  let c := (35 : ℝ)/100,
+  filter_upwards [
+    eventually_gt_at_top 1,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+        (eventually_gt_at_top (0 : ℝ)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top ((2:ℝ)/(1/2))),
+    rec_pp_sum_close, find_good_x],
+  intros N hlarge hlarge0 hlarge4 hrecN hgoodx M A hA h0M hMN hNM h0A hMA hreg hreclocal hpprecA,
+  have hlarge3 : 0 < log(log N), { refine lt_of_lt_of_le _ hlarge4, norm_num1, },
+  have hlarge1 : 1 ≤ M*(N)^(-(2 : ℝ)/log(log N)), {
+    rw [neg_eq_neg_one_mul, ← mul_div, ← neg_eq_neg_one_mul, rpow_neg, ← one_div,
+         ← div_eq_mul_one_div, one_le_div],
+    calc _ ≤ (N:ℝ)^((1:ℝ)/2) : _
+       ... ≤ M :_,
+    apply rpow_le_rpow_of_exponent_le, exact_mod_cast le_of_lt hlarge,
+    rw [div_le_iff, ← div_le_iff'], exact hlarge4, exact one_half_pos,
+    exact hlarge3, rw [← sqrt_eq_rpow, sqrt_le_iff],
+    refine ⟨le_of_lt h0M, hNM⟩, apply rpow_pos_of_pos,
+    exact_mod_cast (lt_trans zero_lt_one hlarge),
+    exact nat.cast_nonneg N,
+  },
+  have hlarge2 : M * N ^ ((-2) / log (log N)) ≤ N, {
+    calc _ ≤ M : _
+       ... ≤ N : hMN,
+    nth_rewrite 1 ← mul_one M, rw mul_le_mul_left, apply rpow_le_one_of_one_le_of_nonpos,
+    exact_mod_cast (le_of_lt hlarge), apply div_nonpos_of_nonpos_of_nonneg,
+    rw neg_nonpos, exact zero_le_two, exact le_of_lt hlarge3, exact h0M,
+   },
+  rw good_condition,
+  intros t I hI,
+  refine or_iff_not_imp_left.2 (λ hP, _),
+  let A_I := A.filter((λ (n : ℕ), ∃ (x : ℤ), (n:ℤ) ∣ x)),
+  let D := interval_rare_ppowers I A (M / (2 * log N ^ ((1 : ℝ) / 100))),
+  let K := (M / (2 * log N ^ ((1 : ℝ) / 100))),
+  by_cases hDne : D.nonempty,
+  rcases hDne with ⟨x1,hx1⟩,
+  have hlocal : ∀ q ∈ D, ∃ x ∈ I, ((q:ℤ) ∣x) ∧
+   c*log(log N) ≤ ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣x)), 1/r, {
+    intros q hq, specialize hgoodx M A hA h0M hMN h0A hMA hreg t I q
+       (interval_rare_ppowers_subset I K hq) hI,
+    apply hgoodx,
+    refine good_d N M (1 / (2 * log N ^ ((1:ℝ) / 100))) A hA h0M hMA _ I q _,
+    intros q hq, rw [two_mul, one_div, ← inv_div_left, add_halves, ← rpow_neg],
+    exact hreclocal q hq, exact le_of_lt hlarge0, rw ← div_eq_mul_one_div,
+    exact hq,
+  },
+  clear hgoodx,
+  choose! f hf using hlocal, use f x1,  have hfcopy := hf,
+  specialize hf x1 hx1, refine ⟨hf.1,_⟩, intros q hq, specialize hfcopy q hq,
+  by_cases htwoxs : f q = f x1,
+  obtain hf' := hfcopy.2.1, rw htwoxs at hf', exact hf',  exfalso,
+  have hsum1 :  2*c*log(log N) ≤ ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), 1/r
+    +  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), 1/r, {
+      rw [two_mul, add_mul], apply add_le_add hf.2.2 hfcopy.2.2,
+     },
+  have hsum2 :
+       ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1 : ℝ)/r
+    +  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1 : ℝ)/r
+    -  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r
+    ≤ ppower_rec_sum A, {
+      rw ppower_rec_sum, push_cast, rw sum_add_sum,
+      rw [filter_inter,inter_filter, inter_self, filter_filter, ← add_sub, sub_self,
+        add_zero], refine sum_le_sum_of_subset_of_nonneg _ _, intros r hr,
+        rw mem_union at hr, cases hr with hr1 hr2, rw mem_filter at hr1,
+        exact hr1.1, rw mem_filter at hr2, exact hr2.1, intros i hi1 hi2,
+        rw one_div_nonneg, exact nat.cast_nonneg i,
+     },
+  have hsum3 :
+    ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1 : ℝ)/r
+    + ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1 : ℝ)/r  - ppower_rec_sum A ≤
+    ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r,
+    { apply  sub_left_le_of_le_add, nth_rewrite 1 add_comm,
+      apply le_add_of_sub_left_le hsum2, },
+  have hsum4 :
+    ((1 : ℝ)/500)*log(log N) ≤
+      ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q ∧ (n:ℤ)∣f x1)), (1 : ℝ)/r,
+    { refine le_trans _ hsum3, clear hsum3,
+      calc _ ≤ 2*c*log(log N) - ((2 : ℝ)/3)*log(log N) :_
+           ... ≤ ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f x1)), (1 : ℝ)/r
+    +  ∑ r in ((ppowers_in_set A).filter(λ n, (n:ℤ)∣f q)), (1 : ℝ)/r  - ((2 : ℝ)/3)*log(log N) :_
+         ... ≤ _ :_,
+      have hsilly : c = 35/100, { refl, },
+      rw [le_sub_iff_add_le, ← add_mul, mul_le_mul_right, hsilly], norm_num1,
+      exact hlarge3, refine sub_le_sub _ _, exact hsum1, rw mul_le_mul_right,
+      exact hlarge3, rw sub_le_sub_iff_left, exact hpprecA,
+     },
+  have hqx1close : |(f q : ℝ)-(f x1)| ≤ N, {
+    apply @le_trans _ _ _ ((⌊t + M * N ^ ((-2) / log (log N)) / 2⌋ : ℝ)-⌈t - M * N ^ ((-2) / log (log N)) / 2⌉) N,
+    apply two_in_Icc, rw ← hI, exact hfcopy.1, rw ← hI, exact hf.1,
+    rw sub_le,
+    apply @le_trans _ _ _ (t - M * N ^ ((-2) / log (log N)) / 2) _,
+    apply sub_left_le_of_le_add, apply @le_trans _ _ _ (t + M * N ^ ((-2) / log (log N)) / 2) _,
+    apply int.floor_le, rw add_sub, rw add_comm (N : ℝ) t, rw ← add_sub, apply add_le_add_left,
+    apply le_sub_left_of_add_le, rw add_halves', exact hlarge2, apply int.le_ceil,
+   },
+  specialize hrecN (f q) (f x1) htwoxs hqx1close, rw lt_iff_not_ge at hrecN,
+  apply hrecN, apply le_trans hsum4, apply finset.sum_le_sum_of_subset_of_nonneg,
+  intros r hr, rw finset.mem_filter, rw finset.mem_filter at hr,
+  rw [ppowers_in_set,finset.mem_bUnion] at hr, rcases hr.1 with ⟨m,hm1,hm2⟩,
+  rw finset.mem_filter at hm2,  refine ⟨_,hm2.2.1,hr.2⟩, rw finset.mem_range,
+  apply @lt_of_le_of_lt _ _ r m _, apply nat.divisor_le hm2.1, rw ← finset.mem_range,
+  exact hA hm1, intros i hi1 hi2, apply div_nonneg, exact zero_le_one,
+  apply nat.cast_nonneg,
+  clear hrecN,
+  have hIne : I.nonempty, {
+    rw [hI, finset.nonempty_Icc], rw int.ceil_le,
+    apply @le_trans _ _ _ (t + M * N ^ ((-2) / log (log N)) / 2 - 1) _,
+    rw [le_sub,← sub_add, ← sub_add_eq_add_sub], simp only [zero_add, add_halves', sub_self],
+    exact hlarge1, apply le_of_lt, apply int.sub_one_lt_floor,
+   },
+  rcases hIne with ⟨x,hx⟩, refine ⟨x,hx,_⟩,
+  intros q hq, exfalso, apply hDne, use q, exact hq,
 end
 
 -- The inductive heart of Lemma 5.5
@@ -358,7 +730,7 @@ begin
     nlinarith },
   refine h_local.resolve_left _,
   rw [not_le, nat.lt_succ_iff],
-  exact card_le_of_subset (sdiff_subset _ _)
+  exact card_le_of_subset (sdiff_subset _ _),
 end
 
 -- Inductive heart of Lemma 5.6
@@ -384,8 +756,7 @@ begin
   obtain ⟨B, hB, hN1, hN2⟩ := hN A_i hA_ir ε' (mul_pos zero_lt_two hε),
   have ht0 : α ≤ rec_sum A_i := not_lt.1 hr,
   have hBexists : B.nonempty,
-  { rw finset.nonempty_iff_ne_empty,
-    rintro rfl,
+  { rw finset.nonempty_iff_ne_empty, rintro rfl,
     simp only [rec_sum_empty, rat.cast_zero, sub_nonpos] at hN1,
     have ht1 : 4 * ε * log (log N) < ε' * 2 * log (log N),
     { exact hεα.trans_le (ht0.trans hN1), },
@@ -496,7 +867,6 @@ begin
     tendsto_log_at_top.comp (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top),
   filter_upwards [pruning_lemma_two, this.eventually (eventually_gt_at_top 0)],
   intros N hN h_largeN M ε y w A hA hM hMN hε hMw hMN2 hy h2w hyw2 hNw hMA hrec hsmooth hdiv i,
-  -- Preliminary estimates that will be convenient later
   have hy01 : 0 < y := by apply lt_of_lt_of_le zero_lt_one hy,
   have hy12 : 2 ≤ y + 1 := add_le_add_right hy 1,
   have hobvaux : (⌈y⌉₊ : ℝ) < y + 1 := nat.ceil_lt_add_one hy01.le,
@@ -609,7 +979,6 @@ begin
       linarith, apply sq_le_sq',
       linarith, linarith, },
     linarith,
-    -- sorry
     },
   have hA_i' : A_i ⊆ finset.range(N+1),
   { exact finset.subset.trans hA_i hA, },
@@ -693,8 +1062,7 @@ begin
  have hA'ne : A' ≠ ∅, {
  intro hA'em,
  have hreczero : rec_sum A' = 0, {  rw hA'em, apply rec_sum_empty, },
- rw hreczero at hN,
- norm_cast at hN,
+ rw hreczero at hN, norm_cast at hN,
  have haux1 : (2 : ℝ)/d ≤ 1/M, { apply sub_nonpos.mp hN.2.2.2.2.1, },
  have haux2 : (2 : ℝ)/w ≤ 2/d,
  { refine div_le_div_of_le_left zero_le_two _ _,
@@ -720,8 +1088,7 @@ begin
     },
  cases hAexists with x hx,
  have hx2 : x ∈ A, {exact hA' hx,},
- specialize hdiv x hx2,
- cases hdiv with m hdiv,
+ specialize hdiv x hx2, cases hdiv with m hdiv,
  have htempw : m ≤ ⌊w⌋₊, {
    apply nat.le_floor, exact hdiv.2.1,
   },
@@ -731,9 +1098,9 @@ begin
      exact hyw, },
    rw hobvious, exact htempw,
   },
- specialize hv2 x hx m hdiv.2.2 htemp htempw, linarith,
- exact hN.2.2.2.2.2.2.1,
+ specialize hv2 x hx m hdiv.2.2 htemp htempw, linarith, exact hN.2.2.2.2.2.2.1,
 end
+
 
 lemma large_enough_Naux1 : (∀ᶠ (N : ℕ) in at_top,
   (N : ℝ) ^ (1 - (8 : ℝ) / log (log N)) ≤
@@ -765,7 +1132,6 @@ begin
   { apply hN2.trans_lt',
     apply rpow_pos_of_pos,
     norm_num1 },
-  -- { exact hN2.trans_lt' (by norm_num1) },
   have hN12 : 2 * log (2 * 16) * log (log N) ≤ log N,
   { rwa [norm_of_nonneg hN7.le, id.def, norm_of_nonneg hN8.le, mul_comm,
       ←div_eq_mul_one_div, le_div_iff'] at hN3new4,
@@ -907,8 +1273,6 @@ begin
   norm_num1, apply rpow_pos_of_pos hN6, apply rpow_pos_of_pos hN8,
 end
 
-
-
 lemma large_enough_Naux  :  ∀ (c: ℝ), (c > 0) → ∀ᶠ (N : ℕ) in at_top,
 let M := (N : ℝ)^(1 - (1 : ℝ)/(log(log N))), L := M / (2 * log N ^ ((1 : ℝ)/100)),
     T := M / log N, ε := (N : ℝ)^(-(5 : ℝ)/(log(log N))),
@@ -967,6 +1331,8 @@ begin
   apply sq_pos_of_pos hN8, apply mul_pos, apply sq_pos_of_pos hN6, exact hN8,
   exact hotheraux,
 end
+
+
 
 lemma large_enough_N  :  ∀ (c: ℝ), (c > 0) → ∀ᶠ (N : ℕ) in at_top,
 let M := (N : ℝ)^(1 - (1 : ℝ)/(log(log N))), L := M / (2 * log N ^ ((1 : ℝ)/100)),
@@ -1174,7 +1540,7 @@ end
 -- Proposition 6.6
 theorem technical_prop :
   ∀ᶠ (N : ℕ) in at_top, ∀ (A ⊆ finset.range (N+1)) (y z : ℝ),
-  (1 ≤ y) → (4*y + 4 ≤ z) → (z ≤ (log N)^((1/500 : ℝ)))
+  (1 ≤ y) → (4*y + 4 ≤ z) → (z ≤ (log N)^((1/500 : ℝ))) → (0 ∉ A)
   → (∀ n ∈ A, ( (N : ℝ)^(1 - (1 : ℝ)/(log(log N))) ≤ n ))
   → 2 / y + (log N)^(-(1/200 : ℝ)) ≤ rec_sum A
   → (∀ n ∈ A, ∃ d₁ d₂ : ℕ, (d₁ ∣ n) ∧ (d₂ ∣ n) ∧ (y ≤ d₁) ∧ (4*d₁ ≤ d₂) ∧ ((d₂ : ℝ) ≤ z) )
@@ -1200,8 +1566,9 @@ begin
   rcases hlargeN with ⟨hMε, hε, hM3, hM2, hM1, hlogN3, heK, hKM, hlogN4,
      hlogN5, hlogN6, hlargeNnew, hlargenew2, hε'M, hlarge3, hlarge4, hεε'M,
      hUhelper, hUhelper2, hUhelper3, hlarge7⟩,
+  have hNMcast : (N:ℝ) ≤ M^2, { rw ← rpow_nat_cast, exact_mod_cast hM3, },
   have hM2aux : M ≤ N, { apply le_of_lt hM2, },
-  intros A hA y z h1y hyz hzN hA2 hrec hdiv hsmooth hreg,
+  intros A hA y z h1y hyz hzN h0A hA2 hrec hdiv hsmooth hreg,
   have htemp6 : (N : ℝ)^(1 - (1 : ℝ)/(log(log N)))*(N : ℝ)^(-(2 : ℝ)/(log(log N))) = K, {
     rw ← rpow_add,
     have : 1 - (1 : ℝ)/(log(log N))+(-(2 : ℝ)/(log(log N))) = 1 - (3 : ℝ)/(log(log N)),
@@ -1353,16 +1720,17 @@ begin
   have hB'4 : (ppower_rec_sum B' : ℝ) ≤ (2/3)* log(log N), {
     apply le_trans _ hppB, norm_cast, apply ppower_rec_sum_mono hB',
    },
-
-  specialize hforce2 M B' hB'2 hM3 hB'reg hB'3 hB'4,
+  have hB'5 : (∀ (n : ℕ), n ∈ B' → M ≤ n), { intros n hn,
+     specialize hA2 n, apply hA2 (hA' (hB (hB' hn))), },
+  have hB'n0 : 0 ∉ B', { intro hz, exact h0A (hA' (hB (hB' hz))), },
+  specialize hforce2 M B' hB'2 hM1 (le_of_lt hM2) hNMcast hB'n0 hB'5 hB'reg hB'3 hB'4,
   have hzd' : d' ≠ 0, {
     apply ne_of_gt, refine lt_of_lt_of_le zero_lt_one _,
     exact_mod_cast le_trans h14d htech2.2.1,
    },
   have hd'M : (d' : ℝ) ≤ M / 128, {
     apply le_trans htech2.2.2.1, apply le_trans hzN hlargenew2, },
-  have hB'5 : (∀ (n : ℕ), n ∈ B' → M ≤ n), { intros n hn,
-     specialize hA2 n, apply hA2 (hA' (hB (hB' hn))), },
+
   have hB'6 : (∀ (n : ℕ), n ∈ B' → n ≤ N), {
     intros n hn, rw [← nat.lt_add_one_iff, ← finset.mem_range],
     exact hB'2 hn,
@@ -1415,7 +1783,11 @@ begin
       intros q hq, apply le_of_lt, specialize htech' q hq,
       exact htech',
      },
-  specialize hforce1 M A' hrangeA' hM3 hregA' hNA' hppA',
+
+  have hA'5 : (∀ (n : ℕ), n ∈ A' → M ≤ n), { intros n hn,
+   specialize hA2 n, apply hA2 (hA' hn), },
+  have hA'n0 : 0 ∉ A', { intro hz, exact h0A (hA' hz), },
+  specialize hforce1 M A' hrangeA' hM1 (le_of_lt hM2) hNMcast hA'n0 hA'5 hregA' hNA' hppA',
   cases hforce1 with htemp1 htemp2,
   exfalso, apply hgoodsubset htemp1,
   have hgoodA' : good_condition A' K T L, { rw htemp6 at htemp2, exact htemp2, },
@@ -1423,8 +1795,6 @@ begin
     apply le_trans htech.2.2.1, apply le_trans _ (le_trans hzN hlargenew2),
     apply div_le_self, apply le_of_lt hz_pos, apply le_of_lt one_lt_four,
    },
-  have hA'5 : (∀ (n : ℕ), n ∈ A' → M ≤ n), { intros n hn,
-   specialize hA2 n, apply hA2 (hA' hn), },
   have hA'6 : (∀ (n : ℕ), n ∈ A' → n ≤ N), { intros n hn,
     rw [← nat.lt_add_one_iff, ← finset.mem_range], exact hrangeA' hn, },
   have hdA' : d ∣ A'.lcm id, {
@@ -1462,7 +1832,7 @@ end
 
 lemma prop_one_specialise :
   ∀ᶠ N : ℕ in at_top, ∀ A ⊆ finset.range (N + 1),
-    (∀ n ∈ A, (N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) ≤ n)
+    (∀ n ∈ A, (N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) ≤ n) → (0 ∉ A)
   → log N ^ (1 / 500 : ℝ) ≤ (rec_sum A : ℝ)
   → (∀ n ∈ A, ∃ d₂ : ℕ, d₂ ∣ n ∧ 4 ≤ d₂ ∧ (d₂ : ℝ) ≤ log N ^ (1 / 500 : ℝ))
   → (∀ n ∈ A, is_smooth ((N : ℝ) ^ (1 - (8 : ℝ) / log (log N))) n)
@@ -1475,9 +1845,9 @@ begin
     tendsto_coe_log_pow_at_top _ (by norm_num1),
   filter_upwards [technical_prop, hf (eventually_ge_at_top 8), hf' (eventually_ge_at_top 1),
     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top) (eventually_ge_at_top 0)],
-  intros N hN hN' hN'' hN''' A A_upper_bound A_lower_bound hA₁ hA₂ hA₃ hA₄,
+  intros N hN hN' hN'' hN''' A A_upper_bound A_lower_bound h0A hA₁ hA₂ hA₃ hA₄,
   simp only [set.mem_set_of_eq, set.preimage_set_of_eq] at hN' hN'' hN''',
-  exact_mod_cast hN A A_upper_bound 1 _ le_rfl _ le_rfl A_lower_bound _ _ hA₃ hA₄,
+  exact_mod_cast hN A A_upper_bound 1 _ le_rfl _ le_rfl h0A A_lower_bound _ _ hA₃ hA₄,
   { exact le_trans (by norm_num1) hN' },
   { apply (le_trans _ hN').trans hA₁,
     rw [←le_sub_iff_add_le', rpow_neg],
@@ -1564,8 +1934,13 @@ begin
     rw [rec_sum_bUnion_disjoint hS₂, rat.cast_sum],
     linarith [hS] },
   have hA' : A' ⊆ A := finset.sdiff_subset _ _,
+  have h0A' : 0 ∉ A', {
+    intro hz, specialize A_lower_bound 0 (hA' hz), rw ← not_lt at A_lower_bound,
+    apply A_lower_bound, norm_cast, apply rpow_pos_of_pos, norm_cast,
+    exact lt_of_lt_of_le zero_lt_one hN₁,
+  },
   obtain ⟨S', hS', d, hd, hd', hS'₂⟩ :=
-    p1 A' (hA'.trans A_upper_bound) (λ n hn, A_lower_bound n (hA' hn))
+    p1 A' (hA'.trans A_upper_bound) (λ n hn, A_lower_bound n (hA' hn)) h0A'
       RA'_ineq (λ n hn, hA₂ n (hA' hn)) (λ n hn, hA₃ n (hA' hn)) (hA₄.subset hA'),
   have hS'' : ∀ s ∈ S, disjoint S' s :=
     λ s hs, disjoint.mono hS' (finset.subset_bUnion_of_mem id hs) hAS,
@@ -1593,4 +1968,45 @@ begin
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
   simpa using this,
 end
+
+
+#exit
+
+theorem unit_fractions_upper_density (A : set ℕ) (hA : upper_density A > 0):
+   ∃ (S : finset ℕ), (S : set ℕ) ⊆ A ∧ ∑ n in S, (1 / n : ℝ) = 1 :=
+sorry
+
+theorem unit_fractions_upper_log_density :
+  ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range (N+1),
+    25 * log (log (log N)) * log N / log (log N) ≤ ∑ n in A, (1 / n : ℝ) →
+      ∃ S ⊆ A, ∑ n in S, (1 / n : ℝ) = 1 :=
+sorry
+
+-- (Proof: write the filtered cardinality as a sum, using the Mobius function
+-- to detect the divisibility constraint, then rearrange. Uses the trivial bound
+-- of v for number of primes in [u,v])
+
+-- Lemma 1
+lemma sieve_lemma_one  : ∃ C : ℝ,
+  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (3 ≤ y) → (y < z) → (z ≤ log N) →
+   let X : set ℕ := { n : ℕ | ∀ p:ℕ, (prime p) → (p ∣ n) →
+   ( ((p : ℝ) < y) ∨ (z < p)) } in
+   (((finset.range(2*N)).filter (λ n, n ∈ X ∧ N ≤ n)).card : ℝ) ≤
+   C * (log y / log z) * N
+    :=
+sorry
+
+-- Sieve of Eratosthenes-Legendre, again belongs in basic_estimates
+--lemma sieve_eratosthenes :
+
+-- Lemma 2
+lemma sieve_lemma_two : ∃ C : ℝ,
+  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (2 ≤ y) → (4*y < z) → (z^2 ≤ log N) →
+   let Y : set ℕ := { n : ℕ | ∃ p₁ p₂ : ℕ, (p₁ ≠ p₂) ∧ (prime p₁)
+   ∧ (prime p₂) ∧ (p₁ ∣ n) ∧ (p₂ ∣ n) ∧ (y ≤ p₁) ∧ (4*p₁ ≤ p₂)
+   ∧ ((p₂ : ℝ) ≤ z) } in
+   (((finset.range(N+1)).filter (λ n, ¬(n ∈ Y))).card : ℝ) ≤
+   C * (log y / log z)^(1/2) * N
+    :=
+sorry
 

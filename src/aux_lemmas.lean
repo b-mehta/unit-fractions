@@ -10,8 +10,7 @@ import defs
 /-!
 # Title
 
-This file should contain a formal proof of https://arxiv.org/pdf/2112.03726.pdf, but for now it
-contains associated results useful for that paper.
+This file contains a host of independent lemmas used in main_results.
 -/
 
 open_locale big_operators -- this lets me use ∑ and ∏ notation
@@ -22,23 +21,28 @@ open_locale arithmetic_function
 open_locale classical
 noncomputable theory
 
+-- Below are some lemmas which can be tackled completely independently of this project, and are
+-- 'mathlib only'. Possibly some of them should go into mathlib proper.
 
+lemma nat_gcd_prod_le_diff {a b c : ℤ} :
+  nat.gcd (int.nat_abs a) (int.nat_abs (b*c)) ≤ (int.nat_abs (a-b))*(int.nat_abs (a-c)) := sorry
 
-lemma useful_exp_estimate : ((35 : ℝ)/100) ≤ (1-2*(2/99))*real.exp(-1) :=
-begin
-  norm_num1, rw [exp_neg, ← one_div, ← div_eq_mul_one_div, le_div_iff', ← le_div_iff],
-  apply le_trans (le_of_lt real.exp_one_lt_d9), norm_num1, norm_num1, exact exp_pos 1,
-end
+theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (m : ℝ)
+  (h : ∀ (a : ℤ), a ∈ s → ((f a).card : ℝ) < m) :
+((s.bUnion f).card : ℝ) < s.card * m := sorry
 
-lemma floor_sub_ceil {x y z : ℝ} : (⌊z+x⌋:ℝ) - ⌈z-y⌉ ≤ x+y :=
-begin
-  calc (⌊z+x⌋:ℝ) - ⌈z-y⌉ ≤ z + x - ⌈z-y⌉ :_
-      ...  ≤ z + x - (z-y) :_
-      ... = x+y :_,
-  rw [sub_le_sub_iff_right], refine int.floor_le _,
-  rw [sub_le_sub_iff_left], refine int.le_ceil _,
-  ring_nf,
-end
+lemma sum_bUnion_le {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
+(hf : ∀ (i : ℕ), 0 ≤ f i) :
+(s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) := sorry
+
+lemma divisor_function_eq_card_divisors {n : ℕ} : (σ 0 n) = (n.divisors).card := sorry
+
+lemma nat_gcd_eq_zero_iff {n m : ℕ} : nat.gcd n m = 0 ↔ (n=0 ∧ m=0) := sorry
+
+lemma nat_cast_diff_issue {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) := sorry
+
+lemma two_in_Icc' {a b x y: ℤ} (I : finset ℤ) (hI : I = Icc a b) (hx : x ∈ I) (hy : y ∈ I) :
+  (|x-y|:ℝ) ≤ b-a := sorry
 
 lemma two_in_Icc {a b x y: ℤ} (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : (|x-y|:ℝ) ≤ b-a :=
 sorry
@@ -49,12 +53,24 @@ lemma omega_div_le {a b : ℕ} : ω (a/b) ≤ ω a := sorry
 
 lemma omega_mul_ppower {a q : ℕ} (hq : is_prime_pow q) : ω (q*a) ≤ 1 + ω a := sorry
 
+lemma sum_add_sum {A B : finset ℕ} {f : ℕ → ℝ} :
+A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) = (A∪B).sum (λ (i : ℕ), f i) +
+(A∩B).sum (λ (i : ℕ), f i) := sorry
+
+lemma sum_add_sum_add_sum {A B C : finset ℕ} {f : ℕ → ℝ} :
+A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) + C.sum (λ (i : ℕ), f i) =
+(A∪B∪C).sum (λ (i : ℕ), f i) + (A∩B).sum (λ (i : ℕ), f i) + (A∩C).sum (λ (i : ℕ), f i)
++ (B∩C).sum (λ (i : ℕ), f i) - (A∩B∩C).sum (λ (i : ℕ), f i)
+ := sorry
 
 lemma sum_le_sum_of_inj {A B : finset ℕ} {f1 f2 : ℕ → ℝ} (g : ℕ → ℕ) (hf2 : ∀ b ∈ B, 0 ≤ f2 b )
 (hgB : ∀ a ∈ A, g a ∈ B) (hginj : ∀ a1 a2 ∈ A, (g a1 = g a2) → a1 = a2) (hgf : ∀ a ∈ A, f2 (g a) = f1 a) :
 A.sum (λ (i : ℕ), f1 i) ≤ B.sum (λ (i : ℕ), f2 i) := sorry
 
 lemma dvd_iff_ppowers_dvd (d n : ℕ) : d ∣ n ↔ ∀ q ∣ d, is_prime_pow q → q ∣ n := sorry
+
+lemma dvd_iff_ppowers_dvd' (d n : ℕ) : d ∣ n ↔ ∀ q ∣ d, (is_prime_pow q  ∧
+  coprime q (d/q)) → q ∣ n := sorry
 
 lemma eq_iff_ppowers_dvd (a b  : ℕ) : a = b ↔ (∀ q ∣ a, is_prime_pow q → coprime q (a/q)
  → q ∣ b) ∧ (∀ q ∣ b, is_prime_pow q → coprime q (b/q) → q ∣ a) := sorry
@@ -93,17 +109,6 @@ lemma prod_of_subset_le_prod_of_ge_one {ι N : Type*} [ordered_comm_semiring N]
   ∏ i in t, f i ≤ ∏ i in s, f i :=
 sorry
 
-
-lemma useful_identity (i:ℕ) (h : (1:ℝ) < i) : (1:ℝ) + 1 / (i - 1) = |(1 - (i)⁻¹)⁻¹| :=
-begin
-  rw [abs_eq_self.mpr, ← one_div, ← one_div, one_add_div, sub_add, sub_self,
-    sub_zero, one_sub_div, one_div, inv_div],
-  exact ne_of_gt (lt_trans zero_lt_one h),
-  apply ne_of_gt, rw sub_pos, exact h,
-  rw [inv_nonneg, sub_nonneg, inv_le, inv_one], exact le_of_lt h,
-  exact lt_trans zero_lt_one h, exact zero_lt_one,
-end
-
 theorem sum_bUnion_le_sum_of_nonneg
 {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
  (hf : ∀ x ∈ s.bUnion t, 0 ≤ f x) :
@@ -116,6 +121,82 @@ theorem weighted_ph {α M: Type*} {s : finset α}
 (hb : b ≤ s.sum (λ (x : α), ((w x) * (f x)))) :
 ∃ (y : α) (H : y ∈ s), b ≤ (s.sum (λ (x : α), w x))*f y
 := sorry
+
+-- The following are a little more specialised to this project, in proof and/or definitions.
+
+lemma rec_sum_le_card_div {A : finset ℕ} {M : ℝ} (h : ∀ n ∈ A, M ≤ (n:ℝ)) :
+ (rec_sum A : ℝ) ≤ A.card / M := sorry
+
+lemma rec_sum_le_rec_sum_local {A : finset ℕ} :
+  rec_sum A ≤ ∑ q in ppowers_in_set A, (rec_sum_local A q)/q := sorry
+
+lemma div_bound_useful_version {ε : ℝ} (hε1 : 0 < ε) :
+  ∀ᶠ (N : ℕ) in at_top, ∀ n : ℕ, (n ≤ N^2) →
+  (σ 0 n : ℝ) ≤ N ^ (2*real.log 2 / log (log (N : ℝ)) * (1 + ε)) :=
+sorry
+
+lemma rec_sum_le_three { A B C : finset ℕ } :
+rec_sum (A∪B∪C) ≤ rec_sum A + rec_sum B + rec_sum C := sorry
+
+lemma yet_another_large_N : ∀ᶠ (N : ℕ) in at_top,
+(2:ℝ) * N ^ (-2 / log (log N) + 2 * log 2 / log (log N) * (1 + 1 / 3)) < log N ^ -((1:ℝ) / 101) / 6
+:= sorry
+
+lemma rec_pp_sum_close :
+  ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x : ℝ)-y| ≤ N) →
+  ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
+  ((1 : ℝ)/500)*log(log N) :=
+  sorry
+
+lemma turan_primes_estimate : ∃ (C : ℝ), ∀ x : ℝ, (x ≥ 25) →
+  (∑ n in finset.Icc 1 ⌊x⌋₊, ((ω n : ℝ) - log(log n))^2
+  ≤  C * x * log(log x)  ) :=
+sorry
+
+lemma sieve_eratosthenes (x y u v : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (hu : 1 ≤ u) (huv : u ≤ v) :
+  |((((Ioc ⌊x⌋₊ ⌊x+y⌋₊).filter (λ n : ℕ, ∀ p : ℕ, p.prime → p ∣ n → p ∉ Icc ⌈u⌉₊ ⌊v⌋₊))).card : ℝ) -
+   y * ∏ p in (finset.Icc ⌈u⌉₊ ⌊v⌋₊).filter prime, (1 - p⁻¹)| ≤ 2 ^ (v + 1) :=
+sorry
+
+
+lemma yet_another_large_N' : ∀ᶠ (N : ℕ) in at_top,
+1/log N + (1 / (2 * log N ^ ((1:ℝ) / 100)))*((501/500)*log(log N)) ≤
+      (log N)^(-(1/101 : ℝ))/6 := sorry
+
+lemma tendsto_coe_log_pow_at_top (c : ℝ) (hc : 0 < c) :
+  tendsto (λ (x : ℕ), (log x)^c) at_top at_top :=
+(tendsto_rpow_at_top hc).comp (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top)
+
+lemma one_lt_four : (1 : ℝ) < 4 :=
+begin
+  norm_num,
+end
+
+lemma floor_sub_ceil {x y z : ℝ} : (⌊z+x⌋:ℝ) - ⌈z-y⌉ ≤ x+y :=
+begin
+  calc (⌊z+x⌋:ℝ) - ⌈z-y⌉ ≤ z + x - ⌈z-y⌉ :_
+      ...  ≤ z + x - (z-y) :_
+      ... = x+y :_,
+  rw [sub_le_sub_iff_right], refine int.floor_le _,
+  rw [sub_le_sub_iff_left], refine int.le_ceil _,
+  ring_nf,
+end
+
+lemma useful_identity (i:ℕ) (h : (1:ℝ) < i) : (1:ℝ) + 1 / (i - 1) = |(1 - (i)⁻¹)⁻¹| :=
+begin
+  rw [abs_eq_self.mpr, ← one_div, ← one_div, one_add_div, sub_add, sub_self,
+    sub_zero, one_sub_div, one_div, inv_div],
+  exact ne_of_gt (lt_trans zero_lt_one h),
+  apply ne_of_gt, rw sub_pos, exact h,
+  rw [inv_nonneg, sub_nonneg, inv_le, inv_one], exact le_of_lt h,
+  exact lt_trans zero_lt_one h, exact zero_lt_one,
+end
+
+lemma useful_exp_estimate : ((35 : ℝ)/100) ≤ (1-2*(2/99))*real.exp(-1) :=
+begin
+  norm_num1, rw [exp_neg, ← one_div, ← div_eq_mul_one_div, le_div_iff', ← le_div_iff],
+  apply le_trans (le_of_lt real.exp_one_lt_d9), norm_num1, norm_num1, exact exp_pos 1,
+end
 
 lemma useful_rec_aux1 : ∃ C : ℝ, (0 < C) ∧ ∀ N k : ℕ, (1 ≤ k) → ∏ p in (finset.range(N+1)).filter(λ n, nat.prime n ),
     ((1:ℝ) + k/(p*(p-1))) ≤ C^k :=
@@ -472,7 +553,7 @@ end
 
 lemma find_good_d_aux2 : ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ k : ℕ,
   ∀ A ⊆ finset.range(N+1), (0 < M) →
-  (M ≤ N) → ((N : ℝ) ≤ M^(2 : ℝ)) → (1 ≤ k)
+  (M ≤ N) → (1 ≤ k)
   → (∀ n ∈ A, M ≤ (n : ℝ) ∧ ((ω n) : ℝ) < (log N)^((1:ℝ)/k)) →
   ∀ q ∈ ppowers_in_set A,  ∀ n ∈ local_part A q,
   ∃ d ∈ (finset.range(N+1)).filter( λ d, (∀ r : ℕ, is_prime_pow r → r ∣ d → coprime r (d/r) →
@@ -480,7 +561,7 @@ lemma find_good_d_aux2 : ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ k : ℕ,
  (q*d ∣ n) ∧ coprime (q*d) (n/(q*d)) :=
 begin
   filter_upwards [eventually_gt_at_top 1],
-  intros N hlargeN M k A hA hM hMN hNM hk hAreg q hq n hn,
+  intros N hlargeN M k A hA hM hMN hk hAreg q hq n hn,
   have hN : 0 < N, { exact lt_trans zero_lt_one hlargeN, },
     let Q := n.divisors.filter(λ r, is_prime_pow r ∧ coprime r (n/r) ∧
        r ≠ q ∧ real.exp((log N)^((1:ℝ) - 2/k)) < r),
@@ -636,7 +717,7 @@ end
 
 -- Lemma 5.4
 lemma find_good_d : ∃ c C : ℝ, (0 < c) ∧ (0 < C) ∧ ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ k : ℕ,
-  ∀ A ⊆ finset.range(N+1), (0 < M) → (M ≤ N) → ((N : ℝ) ≤ M^(2 : ℝ)) → (1 < k) →
+  ∀ A ⊆ finset.range(N+1), (0 < M) → (M ≤ N) → (1 < k) →
   ((k:ℝ) ≤ c* log(log N))  → (∀ n ∈ A, M ≤ (n : ℝ) ∧ ((ω n) : ℝ) < (log N)^((1:ℝ)/k)) →
   (∀ q ∈ ppowers_in_set A,  (1/(log N) ≤ rec_sum_local A q) →
   (∃ d : ℕ,  ( M*real.exp(-(log N)^((1:ℝ) - 1/k)) < q*d ) ∧
@@ -661,7 +742,7 @@ begin
     eventually_gt_at_top 0,
     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually  (eventually_ge_at_top (16 : ℝ))
     ],
-  intros N haux1 haux2 hlarge hlarge' hlarge'' M k A hAN hzM hMN hNM h1k hkN hAreg q hq hsumq,
+  intros N haux1 haux2 hlarge hlarge' hlarge'' M k A hAN hzM hMN h1k hkN hAreg q hq hsumq,
   dsimp at hlarge,
   have hlarge1 : 0 < log N, { exact lt_trans zero_lt_one hlarge, },
   have hlarge2 : 4 * log N ^ (-((3:ℝ) / 2) + 1) ≤ 1, {
@@ -684,7 +765,7 @@ begin
   have h0k : (0:ℝ) < k, { exact_mod_cast lt_trans zero_lt_one h1k, },
   let D := (finset.range(N+1)).filter( λ d, (∀ r : ℕ, is_prime_pow r → r ∣ d → coprime r (d/r) →
      y < r ∧ r ≤ N) ∧ M*u < q*d ∧ q*d ≤ N),
-  specialize haux2 M k A hAN hzM hMN hNM (le_of_lt h1k) hAreg q hq,
+  specialize haux2 M k A hAN hzM hMN (le_of_lt h1k) hAreg q hq,
   specialize haux1 M u y q A hAN hzM hMN (le_of_lt (real.exp_pos _)),
   let new_local := (λ d : ℕ, (local_part A q).filter(λ n, (q*d)∣n
      ∧ coprime (q*d) (n/(q*d)) )),
@@ -862,11 +943,11 @@ sorry
 
 -- Lemma 6.1
 lemma find_good_x :  ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
-  (0 < M) → (M ≤ N) → ((N : ℝ) ≤ M^(2 : ℝ)) → (0 ∉ A) →
+  (0 < M) → (M ≤ N) → (0 ∉ A) →
   (∀ n ∈ A, M ≤ (n : ℝ)) → arith_regular N A →
   (∀ (t : ℝ) (I : finset ℤ) (q ∈ ppowers_in_set A),
   I = finset.Icc ⌈t - (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌉ ⌊t + (M*(N : ℝ)^(-(2 : ℝ)/log(log N))) / 2⌋ →
-  (((1 : ℝ)/(2*(log N)^((1 : ℝ)/100))) < rec_sum_local (A.filter (λ n, ∃ x ∈ I, (n:ℤ) ∣ x)) q)
+  (((1 : ℝ)/(2*(log N)^((1 : ℝ)/100))) ≤ rec_sum_local (A.filter (λ n, ∃ x ∈ I, (n:ℤ) ∣ x)) q)
   → (∃ xq ∈ I, ((q:ℤ) ∣ xq) ∧ (((35 : ℝ)/100)*log(log N)) ≤
      ∑ r in (ppowers_in_set A).filter(λ n, (n:ℤ) ∣ xq), 1/r ))
   :=
@@ -879,7 +960,7 @@ begin
   -- Work out the right filter later
   filter_upwards [hgoodd, hlargerecbound],
   clear hgoodd hlargerecbound,
-  intros N hgooddN hlargerecbound M A hA h0M hMN hNM h0A hMA hreg t I q hq hI hqlocal,
+  intros N hgooddN hlargerecbound M A hA h0M hMN h0A hMA hreg t I q hq hI hqlocal,
   have hlarge0 : 0 < log(log(log N)), { sorry, },
   have hlarge1 : 0 < log(log N), { sorry, },
   have hlarge2 : 0 < log(N), { sorry, },
@@ -940,9 +1021,9 @@ begin
   have hqA_I : q ∈ ppowers_in_set A_I, {
     have : (local_part A_I q).nonempty, {
       rw finset.nonempty_iff_ne_empty, intro hem,
-      rw [rec_sum_local, hem, sum_empty, ← not_le] at hqlocal, apply hqlocal, norm_cast,
-      rw one_div_nonneg, refine mul_nonneg zero_le_two _, apply rpow_nonneg_of_nonneg,
-      exact le_of_lt hlarge2,
+      rw [rec_sum_local, hem, sum_empty, ← not_lt] at hqlocal, apply hqlocal, norm_cast,
+      rw one_div_pos, refine mul_pos zero_lt_two _, apply rpow_pos_of_pos,
+      exact hlarge2,
      },
     obtain ⟨n,hn⟩ := this, rw [local_part, mem_filter] at hn,
     rw [ppowers_in_set, mem_bUnion], refine ⟨n,hn.1,_⟩, rw mem_filter,
@@ -951,7 +1032,7 @@ begin
     intro hnz, rw hnz at hn, apply h0A, exact mem_of_mem_filter 0 hn.1,
    },
   have hqlocal2 :  (1/(log N) ≤ rec_sum_local A_I q), {
-    refine le_trans _ (le_of_lt hqlocal), rw [one_div_le_one_div, ← le_div_iff],
+    refine le_trans _ hqlocal, rw [one_div_le_one_div, ← le_div_iff],
     nth_rewrite 0 ← rpow_one (log N), rw [← rpow_sub], norm_num1,
     have : (0:ℝ) < 100/99, { norm_num1, },
     rw [← real.rpow_le_rpow_iff _ _ this, ← rpow_mul], norm_num1, rw rpow_one, exact hlarge6,
@@ -959,7 +1040,7 @@ begin
     exact le_of_lt hlarge2, exact hlarge2, apply rpow_pos_of_pos, exact hlarge2, exact hlarge2,
     refine mul_pos zero_lt_two _, apply rpow_pos_of_pos, exact hlarge2,
    },
-  specialize hgooddN M k A_I hA_I h0M hMN hNM h1k hkc hA_I' q hqA_I hqlocal2,
+  specialize hgooddN M k A_I hA_I h0M hMN h1k hkc hA_I' q hqA_I hqlocal2,
   rcases hgooddN with ⟨d,hgood1,hgood2,hgood3⟩,
   let A_I' := A_I.filter(λ n : ℕ, (q*d) ∣ n ),
   let A_I'' := (finset.range(N+1)).filter(λ m : ℕ, ∃ n ∈ A_I', m*(q*d)=n ∧ coprime m (q*d) ),
@@ -974,7 +1055,7 @@ begin
          (q:ℝ) * d / n : hgood3
        ... ≤ _ :_,
        refine div_le_div_of_le_of_nonneg _ _, rw mul_le_mul_left,
-       exact le_of_lt hqlocal, exact hC,
+       exact hqlocal, exact hC,
        apply rpow_nonneg_of_nonneg, exact le_of_lt hlarge2,
        rw rec_sum,
        let g := (λ n : ℕ, n/(q*d) ), push_cast,
