@@ -361,7 +361,7 @@ begin
     norm_cast, rw [← rec_sum_disjoint, sdiff_union_inter], refine disjoint_sdiff_inter _ _,
     rw add_le_add_iff_right, norm_cast, refine rec_sum_mono _, refine sdiff_subset_sdiff _ _,
     refine subset_trans (sdiff_subset _ _) _, refine sdiff_subset _ _, refl,
-    rw add_le_add_iff_right, refine rec_sum_le_card_div _,
+    rw add_le_add_iff_right, refine rec_sum_le_card_div h0M _,
     intros n hn, refine hMA n _, refine (sdiff_subset _ _) hn, rw add_le_add_iff_right,
     rw not_le at hP, rw [div_le_iff', ← div_eq_mul_one_div], refine le_of_lt _,
     refine lt_of_le_of_lt _ hP, norm_cast, refine card_le_of_subset _,
@@ -381,7 +381,7 @@ begin
     exact disjoint_sdiff,
    },
   have hA'size : M*((log N)^(-(1/101 : ℝ))/6) ≤ (A').card, {
-    rw ← le_div_iff', refine le_trans hrecA' (rec_sum_le_card_div _),
+    rw ← le_div_iff', refine le_trans hrecA' (rec_sum_le_card_div h0M _),
     intros n hn, refine hMA n _, refine (sdiff_subset _ _) (mem_of_mem_filter n hn),
     exact h0M,
    },
@@ -401,8 +401,24 @@ begin
   },
   rcases hbadx with ⟨x, hx1, hx2⟩,
   let m := nat.gcd (int.nat_abs x) (int.nat_abs ((f x1)*(f x2))),
+
   have hmsmall : m ≤ N^2, {
-    refine le_trans nat_gcd_prod_le_diff _, rw sq, refine nat.mul_le_mul _ _,
+      have hbadx' : ∃ n ∈ A', (n:ℤ) ∣ x, {
+        have hA'temp : (A'.filter(λ n : ℕ, (n:ℤ) ∣ x )).nonempty, {
+          rw [← finset.card_pos, pos_iff_ne_zero], intro hz, rw hz at hx2, rw ← not_lt at hx2,
+          apply hx2, apply div_pos, refine mul_pos h0M _, refine div_pos _ _,
+          apply rpow_pos_of_pos, exact hlarge0, norm_num1, norm_cast, rw pos_iff_ne_zero,
+          exact hIcardn0,
+        },
+      rcases hA'temp with ⟨n,hn⟩, rw mem_filter at hn,
+      refine ⟨n,hn.1,hn.2⟩,
+      },
+    rcases hbadx' with ⟨ns,hns1,hns2⟩, rw mem_filter at hns1,
+    have hns3 := hns1.1, rw [mem_sdiff, not_mem_union, mem_filter, mem_filter] at hns3,
+    refine le_trans (nat_gcd_prod_le_diff _ _) _,
+    intro hnetemp, rw hnetemp at hns2, apply hns3.2.1, refine ⟨hns3.1,hns2⟩,
+    intro hnetemp, rw hnetemp at hns2, apply hns3.2.2, refine ⟨hns3.1,hns2⟩,
+     rw sq, refine nat.mul_le_mul _ _,
     refine hIclose _ hx1 _ hf.1, refine hIclose _ hx1 _ hfcopy2.1,
    },
   have hdivm : (A'.filter(λ n : ℕ, (n:ℤ) ∣ x )).card ≤ (σ 0 m), {
@@ -421,6 +437,13 @@ begin
     specialize hfcopy this,  refine dvd_trans hfcopy.2.1 _,
     specialize hthreexs q this, cases hthreexs with ht1 ht2,
     rw ht1, refine dvd_mul_right _ _, rw ht2, refine dvd_mul_left _ _,
+    intro hnz, apply h0A,
+    have hbah : A'.filter(λ n : ℕ, (n:ℤ) ∣ x ) ⊆ A, {
+      refine subset_trans (filter_subset _ _) _,
+      refine subset_trans (filter_subset _ _) _,
+      refine sdiff_subset _ _,
+     },
+    rw hnz at hn, exact hbah hn,
     intro hmz, rw nat_gcd_eq_zero_iff at hmz,
     have hmz' := int.eq_zero_of_nat_abs_eq_zero hmz.1,
     rw hmz' at hx1, exact hzI hx1,

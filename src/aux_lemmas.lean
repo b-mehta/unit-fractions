@@ -24,9 +24,10 @@ noncomputable theory
 -- Below are some lemmas which can be tackled completely independently of this project, and are
 -- 'mathlib only'. Possibly some of them should go into mathlib proper.
 
-lemma nat_gcd_prod_le_diff {a b c : ℤ} :
-  nat.gcd (int.nat_abs a) (int.nat_abs (b*c)) ≤ (int.nat_abs (a-b))*(int.nat_abs (a-c)) := sorry
+lemma sum_le_card_mul_real {A : finset ℕ} {M : ℝ} {f : ℕ → ℝ} (h : ∀ n ∈ A, f n ≤ M) :
+A.sum f ≤ (A.card) * M := sorry
 
+-- I realise this actually needs the hypothesis s.nonempty as well
 theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (m : ℝ)
   (h : ∀ (a : ℤ), a ∈ s → ((f a).card : ℝ) < m) :
 ((s.bUnion f).card : ℝ) < s.card * m := sorry
@@ -34,8 +35,6 @@ theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (
 lemma sum_bUnion_le {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
 (hf : ∀ (i : ℕ), 0 ≤ f i) :
 (s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) := sorry
-
-lemma divisor_function_eq_card_divisors {n : ℕ} : (σ 0 n) = (n.divisors).card := sorry
 
 lemma nat_gcd_eq_zero_iff {n m : ℕ} : nat.gcd n m = 0 ↔ (n=0 ∧ m=0) := sorry
 
@@ -67,10 +66,35 @@ lemma sum_le_sum_of_inj {A B : finset ℕ} {f1 f2 : ℕ → ℝ} (g : ℕ → �
 (hgB : ∀ a ∈ A, g a ∈ B) (hginj : ∀ a1 a2 ∈ A, (g a1 = g a2) → a1 = a2) (hgf : ∀ a ∈ A, f2 (g a) = f1 a) :
 A.sum (λ (i : ℕ), f1 i) ≤ B.sum (λ (i : ℕ), f2 i) := sorry
 
-lemma dvd_iff_ppowers_dvd (d n : ℕ) : d ∣ n ↔ ∀ q ∣ d, is_prime_pow q → q ∣ n := sorry
+lemma dvd_iff_ppowers_dvd (d n : ℕ) : d ∣ n ↔ ∀ q ∣ d, is_prime_pow q → q ∣ n :=
+begin
+  split, intros hdn q hqd hq, exact dvd_trans hqd hdn,
+  intro h, rw nat.dvd_iff_prime_pow_dvd_dvd, intros p k hp hpkd,
+  specialize h (p^k) hpkd,
+  by_cases hk0 : k = 0, rw [hk0, pow_zero], exact one_dvd n,
+  refine h _, rw is_prime_pow_pow_iff, exact nat.prime.is_prime_pow hp, exact hk0,
+end
 
-lemma dvd_iff_ppowers_dvd' (d n : ℕ) : d ∣ n ↔ ∀ q ∣ d, (is_prime_pow q  ∧
-  coprime q (d/q)) → q ∣ n := sorry
+lemma dvd_iff_ppowers_dvd' (d n : ℕ) (hd : d ≠ 0): d ∣ n ↔ ∀ q ∣ d, (is_prime_pow q  ∧
+  coprime q (d/q)) → q ∣ n :=
+begin
+  split, intros hdn q hqd hq, exact dvd_trans hqd hdn,
+  intro h, rw dvd_iff_ppowers_dvd, intros q hqd hq,
+   rw is_prime_pow_def at hq,
+  rcases hq with ⟨p,k,hp,h0k,hpq⟩, let r := p ^(d.factorization p),
+  have : k ≤ d.factorization p, {
+     rw ← nat.prime.pow_dvd_iff_le_factorization, rw hpq,
+  exact hqd, rw nat.prime_iff, exact hp, exact hd,
+  },
+  refine @nat.dvd_trans _ r _ _ _,
+  rw ← hpq, refine pow_dvd_pow _ _, exact this,
+  refine h r (nat.pow_factorization_dvd d p) _, refine ⟨_,_⟩,
+  rw is_prime_pow, refine ⟨p,d.factorization p,hp,_,_⟩,
+  exact lt_of_lt_of_le h0k this, refl,
+  have htemp : d.factorization p = d.factorization p, { refl, },
+  rw ← factorization_eq_iff at htemp, exact htemp.2, rw nat.prime_iff, exact hp,
+  rw ← pos_iff_ne_zero, exact lt_of_lt_of_le h0k this,
+end
 
 lemma eq_iff_ppowers_dvd (a b  : ℕ) : a = b ↔ (∀ q ∣ a, is_prime_pow q → coprime q (a/q)
  → q ∣ b) ∧ (∀ q ∣ b, is_prime_pow q → coprime q (b/q) → q ∣ a) := sorry
@@ -124,8 +148,14 @@ theorem weighted_ph {α M: Type*} {s : finset α}
 
 -- The following are a little more specialised to this project, in proof and/or definitions.
 
-lemma rec_sum_le_card_div {A : finset ℕ} {M : ℝ} (h : ∀ n ∈ A, M ≤ (n:ℝ)) :
- (rec_sum A : ℝ) ≤ A.card / M := sorry
+
+lemma rec_sum_le_card_div {A : finset ℕ} {M : ℝ} (hM : 0 < M) (h : ∀ n ∈ A, M ≤ (n:ℝ)) :
+ (rec_sum A : ℝ) ≤ A.card / M :=
+ begin
+  rw [rec_sum, div_eq_mul_one_div], push_cast, refine sum_le_card_mul_real _,
+  intros n hn, rw one_div_le_one_div, exact h n hn,
+  exact lt_of_lt_of_le hM (h n hn), exact hM,
+ end
 
 lemma rec_sum_le_rec_sum_local {A : finset ℕ} :
   rec_sum A ≤ ∑ q in ppowers_in_set A, (rec_sum_local A q)/q := sorry
@@ -158,10 +188,30 @@ lemma sieve_eratosthenes (x y u v : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (hu : 1 �
    y * ∏ p in (finset.Icc ⌈u⌉₊ ⌊v⌋₊).filter prime, (1 - p⁻¹)| ≤ 2 ^ (v + 1) :=
 sorry
 
-
 lemma yet_another_large_N' : ∀ᶠ (N : ℕ) in at_top,
 1/log N + (1 / (2 * log N ^ ((1:ℝ) / 100)))*((501/500)*log(log N)) ≤
       (log N)^(-(1/101 : ℝ))/6 := sorry
+
+lemma nat_gcd_prod_le_diff {a b c : ℤ} (hab : a ≠ b) (hac : a ≠ c):
+  nat.gcd (int.nat_abs a) (int.nat_abs (b*c)) ≤ (int.nat_abs (a-b))*(int.nat_abs (a-c)) :=
+begin
+  refine nat.le_of_dvd _ _, rw pos_iff_ne_zero, intro hz,
+  rw [mul_eq_zero, int.nat_abs_eq_zero, int.nat_abs_eq_zero, sub_eq_zero, sub_eq_zero] at hz,
+  cases hz with hz1 hz2, exact hab hz1, exact hac hz2,
+  rw int.nat_abs_mul, refine dvd_trans (nat.gcd_mul_dvd_mul_gcd  _ _ _) _,
+  refine mul_dvd_mul _ _,
+  rw ← int.coe_nat_dvd_left, refine dvd_sub _ _,  rw ← int.dvd_nat_abs, norm_cast,
+  refine nat.gcd_dvd_left _ _, rw ← int.dvd_nat_abs, norm_cast, refine nat.gcd_dvd_right _ _,
+  rw ← int.coe_nat_dvd_left, refine dvd_sub _ _,  rw ← int.dvd_nat_abs, norm_cast,
+  refine nat.gcd_dvd_left _ _, rw ← int.dvd_nat_abs, norm_cast, refine nat.gcd_dvd_right _ _,
+end
+
+
+lemma divisor_function_eq_card_divisors {n : ℕ} : (σ 0 n) = (n.divisors).card :=
+begin
+  rw [nat.arithmetic_function.sigma_apply, card_eq_sum_ones], refine sum_congr _ _, refl,
+  intros x hx, rw pow_zero,
+end
 
 lemma tendsto_coe_log_pow_at_top (c : ℝ) (hc : 0 < c) :
   tendsto (λ (x : ℕ), (log x)^c) at_top at_top :=
