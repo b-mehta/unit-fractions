@@ -16,9 +16,6 @@ open nat (coprime)
 
 noncomputable theory
 
-lemma sum_le_card_mul_real {A : finset ℕ} {M : ℝ} {f : ℕ → ℝ} (h : ∀ n ∈ A, f n ≤ M) :
-A.sum f ≤ (A.card) * M := sorry
-
 theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ}
  (hs : s.nonempty) (m : ℝ)
   (h : ∀ (a : ℤ), a ∈ s → ((f a).card : ℝ) < m) :
@@ -26,17 +23,43 @@ theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ}
 
 lemma sum_bUnion_le {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
 (hf : ∀ (i : ℕ), 0 ≤ f i) :
-(s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) := sorry
+(s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) :=
+begin
+  induction s using finset.induction_on with k s hks ih,
+  { simp },
+  rw [sum_insert hks, bUnion_insert],
+  apply le_of_add_le_of_nonneg_left,
+  { rw [sum_union_inter],
+    exact add_le_add le_rfl ih },
+  { exact sum_nonneg' hf }
+end
 
-lemma nat_gcd_eq_zero_iff {n m : ℕ} : nat.gcd n m = 0 ↔ (n=0 ∧ m=0) := sorry
-
-lemma nat_cast_diff_issue {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) := sorry
+lemma nat_cast_diff_issue {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) :=
+by rw [←int.cast_sub, int.cast_nat_abs]
 
 lemma two_in_Icc' {a b x y: ℤ} (I : finset ℤ) (hI : I = Icc a b) (hx : x ∈ I) (hy : y ∈ I) :
-  (|x-y|:ℝ) ≤ b-a := sorry
+  (|x-y|:ℝ) ≤ b-a :=
+begin
+  suffices : ∀ {c d}, c ∈ I → d ∈ I → c ≤ d → (|d - c| : ℝ) ≤ b-a,
+  { rcases le_total x y with h | h,
+    { convert this hx hy h using 1,
+      rw [←abs_neg],
+      simp },
+    { exact this hy hx h } },
+  subst hI,
+  clear_except,
+  intros c d hc hd hcd,
+  rw abs_of_nonneg,
+  swap, { norm_cast, rwa sub_nonneg },
+  rw mem_Icc at hc hd,
+  cases hc,
+  cases hd,
+  norm_cast,
+  linarith,
+end
 
 lemma two_in_Icc {a b x y: ℤ} (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : (|x-y|:ℝ) ≤ b-a :=
-sorry
+two_in_Icc' _ rfl hx hy
 
 lemma omega_div {a b : ℕ} (h: b ∣ a) : (ω a:ℝ)- ω b ≤ ω (a/b) := sorry
 
@@ -107,4 +130,3 @@ theorem weighted_ph {α M: Type*} {s : finset α}
 (hb : b ≤ s.sum (λ (x : α), ((w x) * (f x)))) :
 ∃ (y : α) (H : y ∈ s), b ≤ (s.sum (λ (x : α), w x))*f y
 := sorry
-
