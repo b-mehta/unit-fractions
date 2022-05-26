@@ -80,7 +80,18 @@ begin
   rwa [list.mem_append, list.mem_dedup, list.mem_dedup]
 end
 
-lemma omega_div_le_standalone {a b : ℕ}  (h : b ∣ a) : ω (a/b) ≤ ω a := sorry
+lemma omega_div_le_standalone {a b : ℕ} (h : b ∣ a) : ω (a/b) ≤ ω a :=
+begin
+  obtain ⟨k, rfl⟩ := h,
+  rcases eq_or_ne k 0 with rfl|hk,
+  { simp },
+  rcases b.eq_zero_or_pos with rfl|hb,
+  { simp },
+  simp only [nat.arithmetic_function.card_distinct_factors_apply, k.mul_div_cancel_left hb],
+  refine (k.factors.nodup_dedup.subperm $ λ t ht, _).length_le,
+  rw [list.mem_dedup, nat.mem_factors_mul hb.ne' hk],
+  exact or.inr (list.mem_dedup.mp ht),
+end
 
 section list
 
@@ -109,6 +120,16 @@ lemma nat.factors_pow (a : ℕ) {n : ℕ} (hn : n ≠ 0) :
 eq_of_perm_of_sorted ((a.factors_pow_perm hn).trans (perm_merge_sort _ _).symm)
                      ((a ^ n).factors_sorted) $ sorted_merge_sort _ _
 
+lemma list.repeat_cons_dedup {α} [decidable_eq α] {t : α} {n} (hn : n ≠ 0) :
+  ∀ {l}, (list.repeat t n ++ l).dedup = (t :: l).dedup :=
+begin
+  refine nat.le_induction _ (λ x hx ih l, _) _ (show 1 ≤ n, from hn.bot_lt),
+  { simp },
+  clear' n hn,
+  rw [repeat_add, append_assoc, ih],
+  simp
+end
+
 end list
 
 lemma omega_pow {a n : ℕ} (hn : n ≠ 0) : ω a = ω (a ^ n) :=
@@ -120,10 +141,44 @@ begin
   rw [list.mem_dedup, list.mem_dedup, (a.factors_pow_perm hn).mem_iff, list.mem_join_repeat hn]
 end
 
+lemma has_dvd.dvd.omega_mul {a b n : ℕ} (h : a ∣ b) : ω (a ^ n * b) = ω b :=
+begin
+  rcases eq_or_ne n 0 with rfl | hn,
+  { simp },
+  rcases eq_or_ne b 0 with rfl | hb,
+  { simp },
+  have ha := ne_zero_of_dvd_ne_zero hb h,
+  simp only [nat.arithmetic_function.card_distinct_factors_apply],
+  apply list.perm.length_eq,
+  simp only [list.perm_ext (list.nodup_dedup _) (list.nodup_dedup _), list.mem_dedup,
+             nat.mem_factors_mul (pow_ne_zero n ha) hb, or_iff_right_iff_imp,
+             (a.factors_pow_perm hn).mem_iff, list.mem_join_repeat hn],
+  exact nat.factors_subset_of_dvd h hb,
+end
+
+lemma nat.prime.factors {p : ℕ} (hp : p.prime) : p.factors = [p] :=
+by rw [←pow_one p, hp.factors_pow, pow_one, list.repeat_succ, list.repeat]
+
+lemma nat.prime.omega_mul_pow_of_not_dvd {n p k : ℕ} (hp : p.prime) (h : ¬ p ∣ n) (hk : k ≠ 0) :
+  ω (n * p ^ k) = ω n + 1 :=
+begin
+  have hn : n ≠ 0 := λ hn, (hn ▸ h) (dvd_zero p),
+  simp only [nat.arithmetic_function.card_distinct_factors_apply],
+  have key := nat.perm_factors_mul (pow_ne_zero k hp.ne_zero) hn,
+  rw [hp.factors_pow, mul_comm] at key,
+  replace key := key.dedup,
+  rw [list.repeat_cons_dedup hk, list.dedup_cons_of_not_mem] at key,
+  { exact key.length_eq },
+  { rwa nat.mem_factors_iff_dvd hn hp }
+end
+
 lemma omega_mul_ppower_standalone {a q : ℕ} (hq : is_prime_pow q) : ω (q*a) ≤ 1 + ω a :=
 begin
-  obtain ⟨p, n, hp, hn, rfl⟩ := hq,
-  sorry,
+  obtain ⟨p, n, hp, hn, rfl⟩ := (is_prime_pow_nat_iff _).mp hq,
+  by_cases p ∣ a,
+  { rw [h.omega_mul],
+    apply le_add_self },
+  { rw [mul_comm, hp.omega_mul_pow_of_not_dvd h hn.ne', add_comm] }
 end
 
 lemma sum_add_sum_standalone {A B : finset ℕ} {f : ℕ → ℝ} :
