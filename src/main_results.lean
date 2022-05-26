@@ -527,9 +527,7 @@ begin
    },
   rcases hIne with ⟨x,hx⟩, refine ⟨x,hx,_⟩,
   intros q hq, exfalso, apply hDne, use q, exact hq,
-end
-
-#exit
+end 
 
 -- Proposition 6.4
 theorem force_good_properties2 :
