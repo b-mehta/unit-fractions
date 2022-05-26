@@ -178,24 +178,21 @@ lemma rec_pp_sum_close :
   ((1 : ℝ)/500)*log(log N) :=
   sorry
 
-lemma turan_primes_estimate : ∃ (C : ℝ), ∀ x : ℝ, (x ≥ 25) →
-  (∑ n in finset.Icc 1 ⌊x⌋₊, ((ω n : ℝ) - log(log n))^2
-  ≤  C * x * log(log x)  ) :=
-sorry
+lemma triv_ε_estimate (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) : (1-2*ε) ≤ (1-ε)*((1-ε)/(1+ε^2)) := sorry
 
-lemma sieve_eratosthenes (x y u v : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (hu : 1 ≤ u) (huv : u ≤ v) :
-  |((((Ioc ⌊x⌋₊ ⌊x+y⌋₊).filter (λ n : ℕ, ∀ p : ℕ, p.prime → p ∣ n → p ∉ Icc ⌈u⌉₊ ⌊v⌋₊))).card : ℝ) -
-   y * ∏ p in (finset.Icc ⌈u⌉₊ ⌊v⌋₊).filter prime, (1 - p⁻¹)| ≤ 2 ^ (v + 1) :=
-sorry
+lemma help_ε_estimate (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) : log (1 - ε) * (1 - ε) ≤ -ε / 2 := sorry
 
--- Lemma 4
-lemma rec_qsum_lower_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) :
-  ∀ᶠ (N : ℕ) in at_top, ∀ A : finset ℕ,
-  ((log N)^(-ε/2) ≤ rec_sum A )
-  → (∀ n ∈ A, ((1 - ε)*log(log N) ≤ ω n ) ∧ ( (ω n : ℝ) ≤ 2*(log (log N))))
-  → (1 - 2*ε)*real.exp(-1)*log(log N)  ≤ ∑ q in ppowers_in_set A, (1/q : ℝ)
-:=
-sorry
+lemma factorial_bound (t : ℕ) : ((t:ℝ)* exp (-1)) ^ t ≤ t.factorial := sorry
+
+lemma helpful_decreasing_bound {x y : ℝ} {n : ℕ} (hn : x ≤ n) (hy : y ≤ x):
+  (y/(n*exp(-1)))^n ≤ (y/(x*exp(-1)))^x := sorry
+
+lemma rec_sum_le_prod_sum {A : finset ℕ} {I: finset ℕ} (hI : ∀ n ∈ A, ω n ∈ I) :
+  (rec_sum A : ℝ) ≤ ∑ t in I, (∑ q in ppowers_in_set A, (1/q : ℝ))^t/(nat.factorial t) :=
+  sorry
+
+lemma and_another_large_N (ε : ℝ) (h1 : 0 < ε) (h2 : ε < 1/2) :  ∀ᶠ (N : ℕ) in at_top,
+   2 * log (log N) + 1 ≤ (1 + ε ^ 2) ^ ((1 - ε) * log (log N)) := sorry
 
 lemma another_large_N (c C : ℝ) (hc : 0 < c) (hC : 0 < C) : ∀ᶠ (N : ℕ) in at_top,
   1/c/2 ≤ log(log(log N)) ∧ 2^((100:ℝ)/99) ≤ log N ∧ 4*log(log(log N)) ≤ log(log N)
@@ -263,6 +260,101 @@ lemma useful_exp_estimate : ((35 : ℝ)/100) ≤ (1-2*(2/99))*real.exp(-1) :=
 begin
   norm_num1, rw [exp_neg, ← one_div, ← div_eq_mul_one_div, le_div_iff', ← le_div_iff],
   apply le_trans (le_of_lt real.exp_one_lt_d9), norm_num1, norm_num1, exact exp_pos 1,
+end
+
+lemma rec_qsum_lower_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) :
+  ∀ᶠ (N : ℕ) in at_top, ∀ A : finset ℕ,
+  ((log N)^(-ε/2) ≤ rec_sum A )
+  → (∀ n ∈ A, ((1 - ε)*log(log N) ≤ ω n ) ∧ ( (ω n : ℝ) ≤ 2*(log (log N))))
+  → (1 - 2*ε)*real.exp(-1)*log(log N)  ≤ ∑ q in ppowers_in_set A, (1/q : ℝ)
+:=
+begin
+  filter_upwards [eventually_ge_at_top 0, and_another_large_N ε hε1 hε2,
+      (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top 0),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+        (eventually_ge_at_top (1 : ℝ))],
+  intros N hN hlarge0 hlarge1 hlarge2 A hrecA hreg,
+  dsimp at hlarge1 hlarge2,
+  have htemp0 : 0 < 1- ε, { rw sub_pos, exact lt_trans hε2 one_half_lt_one, },
+  have htemp : 0 < (1-ε)*log(log N), { refine mul_pos htemp0 hlarge1, },
+  have hrecpos : (0:ℝ) < ∑ (q : ℕ) in ppowers_in_set A, 1 / q, {
+    apply sum_pos, intros q hq, rw one_div_pos, norm_cast, rw pos_iff_ne_zero,
+    intro hz, rw hz at hq, exact zero_not_mem_ppowers_in_set hq, refine ppowers_in_set_nonempty _,
+    have hAne : A.nonempty, {
+      rw nonempty_iff_ne_empty, intro he, rw [he, rec_sum_empty, ← not_lt] at hrecA,
+      apply hrecA, norm_cast, refine rpow_pos_of_pos _ _, exact lt_of_lt_of_le zero_lt_one hlarge2,
+    },
+    rcases hAne with ⟨a,ha⟩, refine ⟨a,ha,_⟩, rw nat.two_le_iff, refine ⟨_,_⟩,
+    intro ha0, rw ha0 at ha, specialize hreg 0 ha, rw ← not_lt at hreg, refine hreg.1 _,
+    rw nat.arithmetic_function.card_distinct_factors_zero, norm_cast, exact htemp,
+    intro ha1, rw ha1 at ha, specialize hreg 1 ha, rw ← not_lt at hreg, refine hreg.1 _,
+    rw (nat.arithmetic_function.card_distinct_factors_eq_card_factors_iff_squarefree _).mpr _,
+    rw nat.arithmetic_function.card_factors_one, norm_cast, exact htemp,
+    exact one_ne_zero, exact squarefree_one,
+  },
+  have htemp1 : 0 < (1 - ε) / (1 + ε ^ 2) * (exp (-1) * log (log N)), {
+   refine mul_pos _ _, refine div_pos _ _,
+   rw [sub_pos], exact lt_trans hε2 one_half_lt_one,
+   refine lt_trans zero_lt_one _, refine lt_add_of_pos_right _ _, exact sq_pos_of_pos hε1,
+   refine mul_pos (exp_pos (-1)) hlarge1,
+  },
+  by_cases hdone : (1 - ε)*log(log N) < ∑ q in ppowers_in_set A, (1/q : ℝ),
+  refine le_trans _ (le_of_lt hdone), rw [mul_le_mul_right],
+  calc _ ≤ exp(-1) :_
+     ... ≤ (1:ℝ)/2 :_
+     ... ≤ _ :_,
+  refine decidable.mul_le_of_le_one_left _ _, exact le_of_lt (exp_pos (-1)), rw sub_le_self_iff,
+  refine le_of_lt (mul_pos zero_lt_two hε1), refine le_trans (le_of_lt exp_neg_one_lt_d9) _, norm_num1,
+  nth_rewrite 2 ← add_halves' (1:ℝ), rw [← add_sub, le_add_iff_nonneg_right, sub_nonneg],
+  exact le_of_lt hε2, exact hlarge1,
+  calc _ ≤ (1-ε)*((1-ε)/(1+ε^2))*real.exp(-1)*log(log N) :_
+     ... ≤ _ :_,
+  rw [mul_le_mul_right, mul_le_mul_right], exact triv_ε_estimate ε hε1 hε2, exact exp_pos (-1),
+  exact hlarge1, rw [mul_assoc, mul_assoc, ← le_div_iff],
+  rw ← rpow_le_rpow_iff _ _ htemp, nth_rewrite 0 ← exp_log htemp0, rw [← exp_mul, ← mul_assoc,
+    mul_comm _ (log(log N)), exp_mul, exp_log],
+  calc _ ≤ (log N)^(-ε/2) :_
+     ... ≤ _ :_,
+  apply rpow_le_rpow_of_exponent_le, exact hlarge2, exact help_ε_estimate ε hε1 hε2,
+  refine le_trans hrecA _,
+  let I := (finset.range(⌊2*(log (log N))⌋₊+1)).filter( λ n : ℕ,
+     (1 - ε)*log(log N) ≤ n),
+  calc _ ≤ ∑ t in I, (∑ q in ppowers_in_set A, (1/q : ℝ))^t/(nat.factorial t) :_
+     ... ≤ ∑ t in I, ((∑ q in ppowers_in_set A, (1/q : ℝ)) / (t*exp(-1)))^t :_
+     ... ≤ _ :_,
+  refine rec_sum_le_prod_sum _, intros n hn, specialize hreg n hn,
+  rw [mem_filter, mem_range], refine ⟨_,hreg.1⟩, rw nat.lt_succ_iff,
+  refine nat.le_floor hreg.2, refine sum_le_sum _, intros t ht,
+  rw [div_pow, div_le_div_left], exact factorial_bound t, apply pow_pos,
+  exact hrecpos, norm_cast, exact nat.factorial_pos t,
+  apply pow_pos, refine mul_pos _ (exp_pos (-1)), norm_cast, rw pos_iff_ne_zero,
+  intro hz, rw [hz, mem_filter, ← not_lt] at ht, refine ht.2 _, norm_cast, exact htemp,
+  calc _ ≤ (I.card : ℝ) * ((∑ (q : ℕ) in ppowers_in_set A, 1 / q) /
+        ((1 - ε) * (exp (-1) * log (log N)))) ^ ((1 - ε) * log (log N)) :_
+     ... ≤ (1+ε^2)^(((1 - ε) * log (log N))) * ((∑ (q : ℕ) in ppowers_in_set A, 1 / q) /
+        ((1 - ε) * (exp (-1) * log (log N)))) ^ ((1 - ε) * log (log N)) :_
+     ... = _ :_,
+  refine sum_le_card_mul_real _, intros n hn, rw [mul_comm (exp(-1)), ← mul_assoc],
+  refine helpful_decreasing_bound _ _, rw mem_filter at hn, exact hn.2,
+  rw not_lt at hdone, exact hdone, rw mul_le_mul_right,
+  calc _ ≤ ((finset.range(⌊2*(log (log N))⌋₊+1)).card :ℝ) :_
+     ... = (⌊2*(log (log N))⌋₊:ℝ)+1 :_
+     ... ≤ 2*(log (log N))+1 :_
+     ... ≤ _ :_,
+  norm_cast, refine finset.card_filter_le _ _, norm_cast, refine finset.card_range _,
+  rw add_le_add_iff_right, refine nat.floor_le _, exact le_of_lt (mul_pos zero_lt_two hlarge1),
+  exact hlarge0, apply rpow_pos_of_pos, refine div_pos hrecpos _,
+  rw [← mul_assoc, mul_comm (1-ε), mul_assoc], refine mul_pos (exp_pos (-1)) htemp,
+  rw [← mul_rpow], refine congr_fun (congr_arg rpow _) _,
+  rw [mul_comm ((1-ε)/(1+ε^2)), mul_div, mul_div, div_div_eq_mul_div, div_eq_div_iff], ring_nf,
+  refine ne_of_gt _, rw [← mul_assoc, mul_comm (1-ε), mul_assoc], refine mul_pos (exp_pos (-1)) htemp,
+  refine ne_of_gt _, rw [mul_assoc], refine mul_pos (exp_pos (-1)) _, rw mul_comm, exact htemp,
+  refine le_trans zero_le_one _, refine le_add_of_nonneg_right _, exact sq_nonneg ε,
+  refine le_of_lt (div_pos hrecpos _),
+  rw [← mul_assoc, mul_comm (1-ε), mul_assoc], refine mul_pos (exp_pos (-1)) htemp,
+  exact lt_of_lt_of_le zero_lt_one hlarge2, rw [sub_nonneg], exact le_of_lt (lt_trans hε2 one_half_lt_one),
+  refine le_of_lt (div_pos hrecpos _), exact htemp1, exact htemp1,
 end
 
 lemma useful_rec_aux1 : ∃ C : ℝ, (0 < C) ∧ ∀ N k : ℕ, (1 ≤ k) → ∏ p in (finset.range(N+1)).filter(λ n, nat.prime n ),
@@ -579,14 +671,14 @@ begin
   filter_upwards [eventually_ge_at_top 0],
   intros N hN M u y q A hA hM hMN hu d hd,
   let X := (local_part A q).filter(λ n, (q*d)∣n ∧ coprime (q*d) (n/(q*d)) ),
-  -- For the below, could use the aysmptotic for the sum, but that's overkill, is just
-  -- the integral test upper bound in mathlib?
   have hDnotzero : d ≠ 0, {
    intro hzd, rw finset.mem_filter at hd,
    obtain hd' := hd.2.2.1,rw hzd at hd', push_cast at hd', rw mul_zero at hd',
    apply (lt_iff_not_ge (M*u) 0).mp hd', apply mul_nonneg, exact le_of_lt hM,
    exact hu,
   },
+  -- For the below, could use the aysmptotic for the sum, but that's overkill, is just
+  -- the integral test upper bound in mathlib?
   have hharmonic : ∑ n in finset.range(N+1), (1 : ℝ)/n ≤ 2*log N,
   { sorry, },
   have hrectrivialaux : ((∑ n in X, (q:ℚ)/n)) ≤

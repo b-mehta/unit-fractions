@@ -529,6 +529,8 @@ begin
   intros q hq, exfalso, apply hDne, use q, exact hq,
 end
 
+#exit
+
 -- Proposition 6.4
 theorem force_good_properties2 :
   ∀ᶠ (N : ℕ) in at_top, ∀ M : ℝ, ∀ A ⊆ finset.range(N+1),
@@ -1992,42 +1994,4 @@ begin
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
   simpa using this,
 end
-
-theorem unit_fractions_upper_density (A : set ℕ) (hA : upper_density A > 0):
-   ∃ (S : finset ℕ), (S : set ℕ) ⊆ A ∧ ∑ n in S, (1 / n : ℝ) = 1 :=
-sorry
-
-theorem unit_fractions_upper_log_density :
-  ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range (N+1),
-    25 * log (log (log N)) * log N / log (log N) ≤ ∑ n in A, (1 / n : ℝ) →
-      ∃ S ⊆ A, ∑ n in S, (1 / n : ℝ) = 1 :=
-sorry
-
--- (Proof: write the filtered cardinality as a sum, using the Mobius function
--- to detect the divisibility constraint, then rearrange. Uses the trivial bound
--- of v for number of primes in [u,v])
-
--- Lemma 1
-lemma sieve_lemma_one  : ∃ C : ℝ,
-  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (3 ≤ y) → (y < z) → (z ≤ log N) →
-   let X : set ℕ := { n : ℕ | ∀ p:ℕ, (prime p) → (p ∣ n) →
-   ( ((p : ℝ) < y) ∨ (z < p)) } in
-   (((finset.range(2*N)).filter (λ n, n ∈ X ∧ N ≤ n)).card : ℝ) ≤
-   C * (log y / log z) * N
-    :=
-sorry
-
--- Sieve of Eratosthenes-Legendre, again belongs in basic_estimates
---lemma sieve_eratosthenes :
-
--- Lemma 2
-lemma sieve_lemma_two : ∃ C : ℝ,
-  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (2 ≤ y) → (4*y < z) → (z^2 ≤ log N) →
-   let Y : set ℕ := { n : ℕ | ∃ p₁ p₂ : ℕ, (p₁ ≠ p₂) ∧ (prime p₁)
-   ∧ (prime p₂) ∧ (p₁ ∣ n) ∧ (p₂ ∣ n) ∧ (y ≤ p₁) ∧ (4*p₁ ≤ p₂)
-   ∧ ((p₂ : ℝ) ≤ z) } in
-   (((finset.range(N+1)).filter (λ n, ¬(n ∈ Y))).card : ℝ) ≤
-   C * (log y / log z)^(1/2) * N
-    :=
-sorry
 
