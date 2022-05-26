@@ -30,8 +30,7 @@ begin
   rw ← nsmul_eq_mul, refine finset.sum_le_card_nsmul _ _ _ h,
 end
 
--- I realise this actually needs the hypothesis s.nonempty as well
-theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (m : ℝ)
+theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (m : ℝ) (hs : s.nonempty)
   (h : ∀ (a : ℤ), a ∈ s → ((f a).card : ℝ) < m) :
 ((s.bUnion f).card : ℝ) < s.card * m := sorry
 
@@ -47,9 +46,9 @@ lemma two_in_Icc' {a b x y: ℤ} (I : finset ℤ) (hI : I = Icc a b) (hx : x ∈
 lemma two_in_Icc {a b x y: ℤ} (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : (|x-y|:ℝ) ≤ b-a :=
 sorry
 
-lemma omega_div {a b : ℕ} (h: b ∣ a) : (ω a:ℝ)- ω b ≤ ω (a/b) := sorry
+lemma sub_le_omega_div {a b : ℕ} (h: b ∣ a) : (ω a:ℝ) - ω b ≤ ω (a/b) := sorry
 
-lemma omega_div_le {a b : ℕ} : ω (a/b) ≤ ω a := sorry
+lemma omega_div_le {a b : ℕ}  (h : b ∣ a) : ω (a/b) ≤ ω a := sorry
 
 lemma omega_mul_ppower {a q : ℕ} (hq : is_prime_pow q) : ω (q*a) ≤ 1 + ω a := sorry
 
@@ -141,7 +140,7 @@ theorem sum_bUnion_le_sum_of_nonneg
 sorry
 
 theorem weighted_ph {α M: Type*} {s : finset α}
-{f : α → M} {w : α → M} {b : M} [ordered_comm_semiring M]
+{f : α → M} {w : α → M} {b : M} [ordered_comm_semiring M] (h0b : 0 < b)
 (hw : ∀ (a : α), a ∈ s → 0 ≤ w a) (hf : ∀ (a : α), a ∈ s → 0 ≤ f a)
 (hb : b ≤ s.sum (λ (x : α), ((w x) * (f x)))) :
 ∃ (y : α) (H : y ∈ s), b ≤ (s.sum (λ (x : α), w x))*f y
@@ -188,6 +187,23 @@ lemma sieve_eratosthenes (x y u v : ℝ) (hx : 0 ≤ x) (hy : 0 ≤ y) (hu : 1 �
   |((((Ioc ⌊x⌋₊ ⌊x+y⌋₊).filter (λ n : ℕ, ∀ p : ℕ, p.prime → p ∣ n → p ∉ Icc ⌈u⌉₊ ⌊v⌋₊))).card : ℝ) -
    y * ∏ p in (finset.Icc ⌈u⌉₊ ⌊v⌋₊).filter prime, (1 - p⁻¹)| ≤ 2 ^ (v + 1) :=
 sorry
+
+-- Lemma 4
+lemma rec_qsum_lower_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) :
+  ∀ᶠ (N : ℕ) in at_top, ∀ A : finset ℕ,
+  ((log N)^(-ε/2) ≤ rec_sum A )
+  → (∀ n ∈ A, ((1 - ε)*log(log N) ≤ ω n ) ∧ ( (ω n : ℝ) ≤ 2*(log (log N))))
+  → (1 - 2*ε)*real.exp(-1)*log(log N)  ≤ ∑ q in ppowers_in_set A, (1/q : ℝ)
+:=
+sorry
+
+lemma another_large_N (c C : ℝ) (hc : 0 < c) (hC : 0 < C) : ∀ᶠ (N : ℕ) in at_top,
+  1/c/2 ≤ log(log(log N)) ∧ 2^((100:ℝ)/99) ≤ log N ∧ 4*log(log(log N)) ≤ log(log N)
+  ∧ log 2 < log(log(log N)) ∧
+  (log N) ^ (-((2:ℝ) / 99) / 2) ≤
+     C * (1 / (2 * log N ^ ((1:ℝ) / 100))) / log N ^ ((2:ℝ)/⌊(log (log N))/(2*log(log(log N)))⌋₊) ∧
+  (1 - 2 / 99) * log (log N) +
+  (1 + 5 / log (⌊(log (log N))/(2*log(log(log N)))⌋₊) * log (log N)) ≤ 99 / 100 * log (log N) := sorry
 
 lemma yet_another_large_N' : ∀ᶠ (N : ℕ) in at_top,
 1/log N + (1 / (2 * log N ^ ((1:ℝ) / 100)))*((501/500)*log(log N)) ≤
@@ -581,17 +597,37 @@ begin
       intros i hi1 hi2, apply div_nonneg, exact nat.cast_nonneg q,
       exact nat.cast_nonneg i,
   },
-    -- The next is the previous hypothesis with an annoying casting issue
   have hrectrivial' : ((∑ n in X, (q:ℚ)/n):ℝ) ≤
     ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), (q/n), {
-      sorry,
+      calc _ = ((((∑ n in X, (q:ℚ)/n)):ℚ):ℝ) :_
+        ... ≤ ((∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), (q/n):ℚ):ℝ) :_
+        ... ≤ _ :_,
+      rw rat.cast_sum, push_cast, exact_mod_cast hrectrivialaux,
+      rw rat.cast_sum, push_cast,
   },
   apply le_trans hrectrivial',
+  -- Actually have equality here, but inequality is enough and easier to prove
   have hrectrivial'' : ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), ((q : ℝ)/n)
-      = (1/d)*∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), (1/m), {
-        sorry,
+      ≤ (1/d)*∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), (1/m), {
+      let g := (λ n : ℕ, n/(q*d)),
+      rw mul_sum, refine sum_le_sum_of_inj g _ _ _ _,
+      intros n hn, apply mul_nonneg, rw one_div_nonneg, exact nat.cast_nonneg d,
+      rw one_div_nonneg, exact nat.cast_nonneg n, intros n hn,
+      rw [mem_filter, mem_range] at hn,
+      rw [mem_filter, mem_range, nat.mul_div_cancel_left', ← nat.lt_succ_iff],
+      refine ⟨_,hn.1⟩, refine lt_of_le_of_lt _ hn.1,
+      refine nat.div_le_self' _ _, exact hn.2, intros a ha b hb hab,
+      rw nat.div_left_inj at hab, exact hab, rw mem_filter at ha, exact ha.2,
+      rw mem_filter at hb, exact hb.2, intros n hn,
+      have : (g n : ℝ) = (n:ℝ)/(q*d), {
+        rw [nat.cast_div, nat.cast_mul], rw mem_filter at hn, exact hn.2,
+        rw mem_filter at hd, intro hz, rw ← not_le at hd, apply hd.2.2.1,
+        rw nat.cast_mul at hz, rw hz, refine mul_nonneg (le_of_lt hM) hu,
+        },
+      rw [this, one_div_mul_one_div, mul_div, one_div_div, mul_comm (q:ℝ), mul_div_mul_left],
+      norm_cast, exact hDnotzero,
   },
-  rw hrectrivial'', rw le_div_iff, rw mul_comm, rw ← mul_assoc, rw mul_one_div_cancel,
+  refine le_trans hrectrivial'' _, rw le_div_iff, rw mul_comm, rw ← mul_assoc, rw mul_one_div_cancel,
   rw one_mul,
   have hrectrivial''' : ∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), ((1 : ℝ)/m)
       ≤  ∑ n in finset.range(N+1), (1 : ℝ)/n, {
@@ -938,7 +974,12 @@ begin
   },
   have hfound0 : ∃ x ∈ D2, (rec_sum_local A q)/2 ≤
      (∑ d in D2, (1/d))*∑ n in new_local x, (q*x)/n, {
-    refine weighted_ph _ _ hbound3, intros d hd, rw one_div_nonneg,
+    have : 0 < (rec_sum_local A q : ℝ), {
+      refine lt_of_lt_of_le _ hsumq, rw one_div_pos, exact hlarge1,
+    },
+    refine weighted_ph _ _ _ hbound3, refine div_pos _ zero_lt_two,
+    exact_mod_cast this,
+    intros d hd, rw one_div_nonneg,
     exact nat.cast_nonneg d, intros d hd, apply sum_nonneg, intros n hn,
     apply div_nonneg, exact mul_nonneg (nat.cast_nonneg q) (nat.cast_nonneg d),
     exact nat.cast_nonneg n,
@@ -951,8 +992,12 @@ begin
   },
   have hfound1 : ∃ d ∈ D2, (rec_sum_local A q : ℝ)/(2*∑ d in D2, (1/d)) ≤
      ∑ n in new_local d, (q*d)/n, {
-       -- This is identical to hfound, modulo trivial casting issues
-       sorry,
+       rcases hfound with ⟨d,hd1,hd2⟩, refine ⟨d,hd1,_⟩,
+       calc _ = (rec_sum_local A q : ℝ)/(((2*∑ d in D2, (1/d)):ℚ):ℝ) :_
+          ... ≤ ((∑ n in new_local d, (q*d)/n : ℚ):ℝ) :_
+          ... = _ :_,
+       rw [rat.cast_mul, rat.cast_sum], push_cast,
+       exact_mod_cast hd2, rw rat.cast_sum, push_cast,
   },
   have hbound4 : ∑ d in D2, ((1 : ℝ)/d) ≤ (log N)^((2:ℝ)/k) / (C*2), {
     calc  ∑ d in D2, ((1 : ℝ)/d) = ∑ d in D2, 1^(ω d)/d : _
@@ -977,19 +1022,9 @@ begin
   rw ← le_div_iff, exact hbound4, apply mul_pos hC zero_lt_two,
   apply lt_of_lt_of_le _ hsumq, apply div_pos, exact zero_lt_one, exact hlarge1,
   apply rpow_pos_of_pos hlarge1, refine mul_pos zero_lt_two _,
-  -- The remaining goal is identical to hDsumpos, modulo trivial casting issues
-  sorry,
+  rw [← @rat.cast_pos ℝ _ _, rat.cast_sum] at hDsumpos, push_cast at hDsumpos,
+  exact hDsumpos,
 end
-
-
--- Lemma 4
-lemma rec_qsum_lower_bound (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) :
-  ∀ᶠ (N : ℕ) in at_top, ∀ A : finset ℕ,
-  ((log N)^(-ε/2) ≤ rec_sum A )
-  → (∀ n ∈ A, ((1 - ε)*log(log N) ≤ ω n ) ∧ ( (ω n : ℝ) ≤ 2*(log (log N))))
-  → (1 - 2*ε)*real.exp(-1)*log(log N)  ≤ ∑ q in ppowers_in_set A, (1/q : ℝ)
-:=
-sorry
 
 
 -- Lemma 6.1
@@ -1008,18 +1043,17 @@ begin
   have heasy1 : 0 < ((2:ℝ)/99) := by norm_num1,
   have heasy2 : ((2:ℝ)/99) < 1/2 := by norm_num1,
   obtain hlargerecbound := rec_qsum_lower_bound ((2:ℝ)/99) heasy1 heasy2,
-  -- Work out the right filter later
-  filter_upwards [hgoodd, hlargerecbound],
+  filter_upwards [hgoodd, hlargerecbound, another_large_N c C hc hC],
   clear hgoodd hlargerecbound,
-  intros N hgooddN hlargerecbound M A hA h0M hMN h0A hMA hreg t I q hq hI hqlocal,
-  have hlarge0 : 0 < log(log(log N)), { sorry, },
-  have hlarge1 : 0 < log(log N), { sorry, },
-  have hlarge2 : 0 < log(N), { sorry, },
-  have hlarge3 : 1 ≤ log N, { sorry, },
-  have hlarge4 : 4*log(log(log N)) ≤ log(log N), { sorry, },
-  have hlarge5 : 1/c/2 ≤ log(log(log N)), { sorry, },
-  have hlarge6 : 2^((100:ℝ)/99) ≤ log N, { sorry, },
-  have hlarge7 : log 2 < log(log(log N)), { sorry, },
+  intros N hgooddN hlargerecbound hlargegroup M A hA h0M hMN h0A hMA hreg t I q hq hI hqlocal,
+  have hlarge4 : 4*log(log(log N)) ≤ log(log N) := hlargegroup.2.2.1,
+  have hlarge5 : 1/c/2 ≤ log(log(log N)) := hlargegroup.1,
+  have hlarge6 : 2^((100:ℝ)/99) ≤ log N := hlargegroup.2.1,
+  have hlarge7 : log 2 < log(log(log N)) := hlargegroup.2.2.2.1,
+  have hlarge0 : 0 < log(log(log N)), { refine lt_trans _ hlarge7, refine log_pos one_lt_two, },
+  have hlarge1 : 0 < log(log N), { refine lt_of_lt_of_le _ hlarge4, refine mul_pos zero_lt_four hlarge0, },
+  have hlarge3 : 1 ≤ log N, { refine le_trans _ hlarge6, refine one_le_rpow one_le_two _, norm_num1, },
+  have hlarge2 : 0 < log(N), { exact lt_of_lt_of_le zero_lt_one hlarge3, },
   let A_I := A.filter (λ n : ℕ, ∃ x ∈ I, (n:ℤ) ∣ x),
   let k := ⌊(log (log N))/(2*log(log(log N)))⌋₊,
   have h1k : 1 < k, {
@@ -1058,10 +1092,10 @@ begin
     refine mul_pos zero_lt_two hlarge0, norm_cast, exact lt_trans zero_lt_one h1k,
   },
   have hlogNk2 : (log N) ^ (-((2:ℝ) / 99) / 2) ≤ C * (1 / (2 * log N ^ ((1:ℝ) / 100))) / log N ^ ((2:ℝ)/k), {
-    sorry,
+    exact hlargegroup.2.2.2.2.1,
   },
   have hNlogk : (1 - 2 / 99) * log (log N) + (1 + 5 / log k * log (log N)) ≤ 99 / 100 * log (log N), {
-    sorry,
+    exact hlargegroup.2.2.2.2.2,
   },
   have hA_I : A_I ⊆ finset.range(N+1), { apply subset_trans _ hA, apply finset.filter_subset,},
   have hA_I' : (∀ n ∈ A_I, M ≤ (n : ℝ) ∧ ((ω n) : ℝ) < (log N)^((1:ℝ)/k)), {
@@ -1140,8 +1174,8 @@ begin
        have htemp : ω (q*d) ≤ 1 + ω d, { refine omega_mul_ppower _,
          rw mem_ppowers_in_set at hq, exact hq.1, },
        exact_mod_cast htemp, apply add_le_add_left, exact le_of_lt hgood2,
-       refine omega_div _, rw mem_filter at hm1, exact hm1.2, refine le_trans _ hreg.2, norm_cast,
-       exact omega_div_le,
+       refine sub_le_omega_div _, rw mem_filter at hm1, exact hm1.2, refine le_trans _ hreg.2, norm_cast,
+       refine omega_div_le _, rw mem_filter at hm1, exact hm1.2,
    },
   clear hlargerecbound,
   let I' := I.filter(λ x : ℤ, ∃ n ∈ A_I', (n:ℤ) ∣ x),

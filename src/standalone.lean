@@ -16,16 +16,14 @@ open nat (coprime)
 
 noncomputable theory
 
-theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ}
- (hs : s.nonempty) (m : ℝ)
+theorem card_bUnion_lt_card_mul_real_standalone {s : finset ℤ} {f : ℤ → finset ℕ} (m : ℝ) (hs : s.nonempty)
   (h : ∀ (a : ℤ), a ∈ s → ((f a).card : ℝ) < m) :
 ((s.bUnion f).card : ℝ) < s.card * m := sorry
 
-lemma sum_bUnion_le {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
+lemma sum_bUnion_le_standalone {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
 (hf : ∀ (i : ℕ), 0 ≤ f i) :
 (s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) :=
 begin
-  -- card_bUnion_le is this but worse
   induction s using finset.induction_on with k s hks ih,
   { simp },
   rw [sum_insert hks, bUnion_insert],
@@ -35,10 +33,10 @@ begin
   { exact sum_nonneg' hf }
 end
 
-lemma nat_cast_diff_issue {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) :=
+lemma nat_cast_diff_issue_standalone {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) :=
 by rw [←int.cast_sub, int.cast_nat_abs]
 
-lemma two_in_Icc' {a b x y: ℤ} (I : finset ℤ) (hI : I = Icc a b) (hx : x ∈ I) (hy : y ∈ I) :
+lemma two_in_Icc'_standalone {a b x y: ℤ} (I : finset ℤ) (hI : I = Icc a b) (hx : x ∈ I) (hy : y ∈ I) :
   (|x-y|:ℝ) ≤ b-a :=
 begin
   suffices : ∀ {c d}, c ∈ I → d ∈ I → c ≤ d → (|d - c| : ℝ) ≤ b-a,
@@ -59,10 +57,10 @@ begin
   linarith,
 end
 
-lemma two_in_Icc {a b x y: ℤ} (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : (|x-y|:ℝ) ≤ b-a :=
-two_in_Icc' _ rfl hx hy
+lemma two_in_Icc_standalone {a b x y: ℤ} (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : (|x-y|:ℝ) ≤ b-a :=
+two_in_Icc'_standalone _ rfl hx hy
 
-lemma omega_div {a b : ℕ} (h: b ∣ a) : (ω a:ℝ) - ω b ≤ ω (a/b) :=
+lemma omega_div_standalone {a b : ℕ} (h: b ∣ a) : (ω a:ℝ) - ω b ≤ ω (a/b) :=
 begin
   rcases a.eq_zero_or_pos with rfl | ha,
   { simp },
@@ -82,8 +80,7 @@ begin
   rwa [list.mem_append, list.mem_dedup, list.mem_dedup]
 end
 
--- this isn't true: ω 13 = 1, ω (13 / 2) = 2
-lemma omega_div_le {a b : ℕ} : ω (a/b) ≤ ω a := sorry
+lemma omega_div_le_standalone {a b : ℕ}  (h : b ∣ a) : ω (a/b) ≤ ω a := sorry
 
 section list
 
@@ -123,73 +120,73 @@ begin
   rw [list.mem_dedup, list.mem_dedup, (a.factors_pow_perm hn).mem_iff, list.mem_join_repeat hn]
 end
 
-lemma omega_mul_ppower {a q : ℕ} (hq : is_prime_pow q) : ω (q*a) ≤ 1 + ω a :=
+lemma omega_mul_ppower_standalone {a q : ℕ} (hq : is_prime_pow q) : ω (q*a) ≤ 1 + ω a :=
 begin
   obtain ⟨p, n, hp, hn, rfl⟩ := hq,
   sorry,
 end
 
-lemma sum_add_sum {A B : finset ℕ} {f : ℕ → ℝ} :
+lemma sum_add_sum_standalone {A B : finset ℕ} {f : ℕ → ℝ} :
 A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) = (A∪B).sum (λ (i : ℕ), f i) +
 (A∩B).sum (λ (i : ℕ), f i) :=
 by rw sum_union_inter
 
-lemma sum_add_sum_add_sum {A B C : finset ℕ} {f : ℕ → ℝ} :
+lemma sum_add_sum_add_sum_standalone {A B C : finset ℕ} {f : ℕ → ℝ} :
 A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) + C.sum (λ (i : ℕ), f i) =
 (A∪B∪C).sum (λ (i : ℕ), f i) + (A∩B).sum (λ (i : ℕ), f i) + (A∩C).sum (λ (i : ℕ), f i)
 + (B∩C).sum (λ (i : ℕ), f i) - (A∩B∩C).sum (λ (i : ℕ), f i)
  := sorry
 
-lemma sum_le_sum_of_inj {A B : finset ℕ} {f1 f2 : ℕ → ℝ} (g : ℕ → ℕ) (hf2 : ∀ b ∈ B, 0 ≤ f2 b )
+lemma sum_le_sum_of_inj_standalone {A B : finset ℕ} {f1 f2 : ℕ → ℝ} (g : ℕ → ℕ) (hf2 : ∀ b ∈ B, 0 ≤ f2 b )
 (hgB : ∀ a ∈ A, g a ∈ B) (hginj : ∀ a1 a2 ∈ A, (g a1 = g a2) → a1 = a2) (hgf : ∀ a ∈ A, f2 (g a) = f1 a) :
 A.sum (λ (i : ℕ), f1 i) ≤ B.sum (λ (i : ℕ), f2 i) :=
 sorry
 
-lemma eq_iff_ppowers_dvd (a b  : ℕ) : a = b ↔ (∀ q ∣ a, is_prime_pow q → coprime q (a/q)
+lemma eq_iff_ppowers_dvd_standalone (a b  : ℕ) : a = b ↔ (∀ q ∣ a, is_prime_pow q → coprime q (a/q)
  → q ∣ b) ∧ (∀ q ∣ b, is_prime_pow q → coprime q (b/q) → q ∣ a) := sorry
 
-theorem is_prime_pow_dvd_prod {n : ℕ} {D : finset ℕ}
+theorem is_prime_pow_dvd_prod_standalone {n : ℕ} {D : finset ℕ}
  (hD : ∀ a b ∈ D, a ≠ b → coprime a b) (hn : is_prime_pow n) :
 n ∣ ∏ d in D, d ↔ ∃ d ∈ D, n ∣ d := sorry
 
-lemma prime_pow_not_coprime_iff {a b : ℕ} (ha : is_prime_pow a) (hb : is_prime_pow b) :
+lemma prime_pow_not_coprime_iff_standalone {a b : ℕ} (ha : is_prime_pow a) (hb : is_prime_pow b) :
  ¬ coprime a b ↔ ∃ (p : ℕ) (ka kb : ℕ), p.prime ∧ ka ≠ 0 ∧ kb ≠ 0 ∧
  p ^ ka = a ∧ p ^ kb = b := sorry
 
-lemma prime_pow_not_coprime_prod_iff {a : ℕ} {D : finset ℕ} (ha : is_prime_pow a)
+lemma prime_pow_not_coprime_prod_iff_standalone {a : ℕ} {D : finset ℕ} (ha : is_prime_pow a)
 (hD : ∀ d ∈ D, is_prime_pow d) :
  ¬ coprime a (∏ d in D, d) ↔ ∃ (p : ℕ) (ka kd : ℕ) (d ∈ D), p.prime ∧ ka ≠ 0 ∧ kd ≠ 0 ∧
  p ^ ka = a ∧ p ^ kd = d := sorry
 
- lemma prime_pow_dvd_prod_prime_pow {a : ℕ} {D : finset ℕ} (ha : is_prime_pow a)
+ lemma prime_pow_dvd_prod_prime_pow_standalone {a : ℕ} {D : finset ℕ} (ha : is_prime_pow a)
 (hD : ∀ d ∈ D, is_prime_pow d) :
 a ∣ (∏ d in D, d) → coprime a ((∏ d in D, d)/a) → a ∈ D := sorry
 
-lemma prime_pow_prods_coprime {A B : finset ℕ} (hA : ∀ a ∈ A, is_prime_pow a)
+lemma prime_pow_prods_coprime_standalone {A B : finset ℕ} (hA : ∀ a ∈ A, is_prime_pow a)
  (hB : ∀ b ∈ B, is_prime_pow b) : coprime (∏ a in A, a) (∏ b in B, b) ↔
  ∀ a ∈ A, ∀ b ∈ B, coprime a b := sorry
 
-lemma prod_le_max_size {ι N : Type*} [ordered_comm_semiring N]
+lemma prod_le_max_size_standalone {ι N : Type*} [ordered_comm_semiring N]
   {s : finset ι} {f : ι → N} (hs : ∀ i ∈ s, 0 ≤ f i) (M : N) (hf : ∀ i ∈ s, f i ≤ M) :
   ∏ i in s, f i ≤ M^s.card :=
 sorry
 
-lemma omega_count_eq_ppowers {n : ℕ} :
+lemma omega_count_eq_ppowers_standalone {n : ℕ} :
   (filter (λ (r : ℕ), is_prime_pow r ∧ r.coprime (n / r)) n.divisors).card = ω n := sorry
 
-lemma prod_of_subset_le_prod_of_ge_one {ι N : Type*} [ordered_comm_semiring N]
+lemma prod_of_subset_le_prod_of_ge_one_standalone {ι N : Type*} [ordered_comm_semiring N]
   {s t : finset ι} {f : ι → N} (h : t ⊆ s) (hs : ∀ i ∈ t, 0 ≤ f i) (hf : ∀ i ∈ s, i ∉ t → 1 ≤ f i) :
   ∏ i in t, f i ≤ ∏ i in s, f i :=
 sorry
 
-theorem sum_bUnion_le_sum_of_nonneg
+theorem sum_bUnion_le_sum_of_nonneg_standalone
 {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
  (hf : ∀ x ∈ s.bUnion t, 0 ≤ f x) :
 (s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) :=
 sorry
 
-theorem weighted_ph {α M: Type*} {s : finset α}
-{f : α → M} {w : α → M} {b : M} [ordered_comm_semiring M]
+theorem weighted_ph_standalone {α M: Type*} {s : finset α}
+{f : α → M} {w : α → M} {b : M} [ordered_comm_semiring M] (h0b : 0 < b)
 (hw : ∀ (a : α), a ∈ s → 0 ≤ w a) (hf : ∀ (a : α), a ∈ s → 0 ≤ f a)
 (hb : b ≤ s.sum (λ (x : α), ((w x) * (f x)))) :
 ∃ (y : α) (H : y ∈ s), b ≤ (s.sum (λ (x : α), w x))*f y
