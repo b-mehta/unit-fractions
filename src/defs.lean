@@ -29,6 +29,9 @@ noncomputable theory
 def upper_density (A : set ℕ) : ℝ :=
   limsup at_top (λ N : ℕ, (((range N).filter (λ n, n ∈ A)).card : ℝ) / N)
 
+lemma upper_density_preserved {A : set ℕ} {S : finset ℕ} :
+    upper_density A = upper_density (A\(S:set ℕ)) := sorry
+
 lemma frequently_nat_of {A : set ℕ} {ε : ℝ} (hA : ε < upper_density A) :
   ∃ᶠ (N : ℕ) in at_top, ε < ((range N).filter (λ n, n ∈ A)).card / N :=
 begin
@@ -305,3 +308,4 @@ def good_condition (A : finset ℕ) (K T L : ℝ) : Prop :=
 (∀ (t : ℝ) (I : finset ℤ), I = finset.Icc ⌈t - K / 2⌉ ⌊t + K / 2⌋ →
       T ≤ (A.filter (λ n, ∀ x ∈ I, ¬ ↑n ∣ x)).card ∨
       ∃ x ∈ I, ∀ q ∈ interval_rare_ppowers I A L, ↑q ∣ x)
+

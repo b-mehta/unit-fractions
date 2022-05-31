@@ -1,7 +1,7 @@
 /-
 Copyright (c) 2021 Bhavik Mehta, Thomas Bloom. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Bhavik Mehta, Thomas Bloom
+Authors: Bhavik Mehta, Thomas Bloom, Eric Rodriguez
 -/
 
 import for_mathlib.basic_estimates
@@ -21,50 +21,1167 @@ open_locale arithmetic_function
 open_locale classical
 noncomputable theory
 
--- Below are some lemmas which can be tackled completely independently of this project, and are
--- 'mathlib only'. Possibly some of them should go into mathlib proper.
+
+lemma tendsto_pow_rec_loglog_at_top {c : ℝ} (hc : 0 < c) :
+  filter.tendsto (λ x : ℝ, x^(c/log(log x))) filter.at_top filter.at_top := sorry
+
+lemma weird_floor_sq_tendsto_at_top :
+  filter.tendsto (λ x : ℝ, ⌈real.logb 2 x⌉₊^2) filter.at_top filter.at_top := sorry
+
+lemma omega_count_eq_ppowers {n : ℕ} :
+  (filter (λ (r : ℕ), is_prime_pow r ∧ r.coprime (n / r)) n.divisors).card = ω n := sorry
+
+lemma factorial_bound (t : ℕ) : ((t:ℝ)* exp (-1)) ^ t ≤ t.factorial := sorry
+
+lemma helpful_decreasing_bound {x y : ℝ} {n : ℕ} (hn : x ≤ n) (hy : y ≤ x):
+  (y/(n*exp(-1)))^n ≤ (y/(x*exp(-1)))^x := sorry
+
+lemma prime_counting_lower_bound_explicit : ∀ᶠ (N : ℕ) in at_top,
+   ⌊sqrt N⌋₊ ≤ (filter nat.prime (Icc 1 N)).card := sorry
+
+theorem sum_bUnion_le_sum_of_nonneg {N : Type*} [ordered_add_comm_monoid N] {f : ℕ → N}
+ {s : finset ℕ} {t : ℕ → finset ℕ}
+ (hf : ∀ x ∈ s.bUnion t, 0 ≤ f x) :
+(s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) :=
+begin
+  induction s using finset.induction_on with n s hns hs,
+  simp only [le_refl, finset.bUnion_empty, finset.sum_empty, finset.sum_congr],
+  have hins : (insert n s).bUnion t = (s.bUnion t) ∪ ((t n)\(s.bUnion t)), {
+    ext, split, intro ha, rw mem_bUnion at ha, rcases ha with ⟨m,hm1,hm2⟩,
+    rw mem_insert at hm1, rw mem_union, cases hm1 with hm3 hm4,
+    rw or_iff_not_imp_left, intro ha2, rw mem_sdiff, rw hm3 at hm2,
+    refine ⟨hm2,ha2⟩, left, rw mem_bUnion, use m, refine ⟨hm4,hm2⟩,
+    intro ha, rw mem_union at ha, rw mem_bUnion,
+    cases ha with ha2 ha3, rw mem_bUnion at ha2, rcases ha2 with ⟨m,hm1,hm2⟩,
+    use m, refine ⟨mem_insert_of_mem hm1,hm2⟩, use n, rw mem_sdiff at ha3,
+    refine ⟨mem_insert_self _ _,ha3.1⟩,
+   },
+  have hf' : (∀ x ∈ s.bUnion t, 0 ≤ f x), {
+    intros x hx, refine hf x _, rw mem_bUnion at hx, rcases hx with ⟨m,hm1,hm2⟩,
+    rw mem_bUnion, use m, refine ⟨mem_insert_of_mem hm1,hm2⟩,
+   },
+  rw [hins, sum_union, sum_insert hns], rw add_comm (∑ i in t n, f i),
+  refine add_le_add (hs hf') _, refine sum_le_sum_of_subset_of_nonneg _ _,
+  refine sdiff_subset _ _, intros m hm1 hm2, refine hf m _,
+  rw mem_bUnion, use n, refine ⟨mem_insert_self _ _,hm1⟩,
+  refine disjoint_sdiff,
+end
+
+lemma sum_pow {ι α : Type*} (f : ι → ℝ) {s : finset ι} {B : finset α} :
+  (∑ i in s, f i) ^ B.card =
+    ∑ g in B.pi (λ _, s), ∏ j in B.attach, f (g _ j.prop) :=
+  begin
+    sorry
+  end
+
+lemma sum_pow' {ι α : Type*} (f : ι → ℝ) {s : finset ι} {B : finset α} :
+  (∑ i in s, f i) ^ B.card = ∑ (g : B → s), ∏ (j : B), f (g j) :=
+begin
+  rw sum_pow,
+  simp_rw finset.prod_coe_sort_eq_attach,
+  rw eq_comm,
+  refine sum_bij (λ f _ i hi, f ⟨_, hi⟩) _ _ _ _,
+  { intros f hf,
+    rw [finset.mem_pi],
+    intros a ha,
+    exact (f ⟨a, ha⟩).prop },
+  { intros f hf,
+    refine prod_congr rfl _,
+    rintro ⟨x, hx⟩ _,
+    simp },
+  { simp only [function.funext_iff, mem_univ, forall_true_left],
+    rintro f₁ f₂ h ⟨i, hi⟩,
+    ext1,
+    exact h _ _  },
+  intros f hf,
+  refine ⟨λ i, ⟨f _ i.prop, _⟩, mem_univ _, _⟩,
+  { rw [finset.mem_pi] at hf,
+    apply hf _ i.prop },
+  ext i hi,
+  refl,
+end
+
+-- I don't know how to write the image of i
+lemma something_like_this {ι : Type*} (f : ι → ℝ) {s : finset ι} (A B : finset ι)
+  (hA : A.card = B.card) :
+  ∑ (g : B ≃ A), ∏ (j : B), f (g j) = A.card.factorial * ∏ n in A, f n :=
+begin
+  rw [sum_congr rfl, sum_const (∏ n in A, f n)],
+  { rw [nsmul_eq_mul],
+    congr' 2,
+    rw [card_univ, fintype.card_equiv],
+    { simp [hA] },
+    apply fintype.equiv_of_card_eq,
+    simp [hA] },
+  intros g hg,
+  simp only [univ_eq_attach, mem_filter, mem_univ, true_and] at hg,
+  rw ←@prod_coe_sort _ _ A,
+  refine fintype.prod_equiv g _ _ (λ x, rfl),
+end
+
+
+
+--  ∑ (g : B → s), ∏ (j : B), f (g j) ≥  ∑ (g : B → s).filter( g injection ), ∏ (j : B), f (g j)
+-- (g : B → s).filter( g injection ) = ((A ⊆ s).filter(λ A, A.card = t)).bUnion(λ g, g ≃ A)
+--  ∑ (g : B → s).filter( g injection ), ∏ (j : B), f (g j) = ∑ (A ⊆ s).filter(λ A, A.card = t), ∑ (g : B ≃ A), ∏ (j : B), f (g j)
+--  ∑ (A ⊆ s).filter(λ A, A.card = t), A.card.factorial * ∏ n in A, f n
+
+
+lemma rec_sum_le_prod_sum {A : finset ℕ} {I: finset ℕ} (hI : ∀ n ∈ A, ω n ∈ I) :
+  (rec_sum A : ℝ) ≤ ∑ t in I, (∑ q in ppowers_in_set A, (1/q : ℝ))^t/(nat.factorial t) :=
+begin
+  rw rec_sum, push_cast,
+  have hA : I.bUnion(λ t, A.filter(λ n : ℕ, ω n = t)) = A, { refine finset.bUnion_filter_eq_of_maps_to hI, },
+  nth_rewrite 0 ← hA, refine le_trans (sum_bUnion_le_sum_of_nonneg _) _, intros n hn,
+  rw one_div_nonneg, exact nat.cast_nonneg n, refine sum_le_sum _,
+  intros t ht, rw [le_div_iff],
+  {
+    nth_rewrite 0 ←card_range t,
+    nth_rewrite 1 ←card_range t,
+    rw [sum_pow', mul_comm],
+    refine (sum_le_sum_of_subset_of_nonneg (filter_subset function.injective _) _).trans' _,
+    { intros f _ _,
+      apply prod_nonneg,
+      intros i hi,
+      rw one_div_nonneg,
+      apply nat.cast_nonneg },
+   --have : (i : ↥(range t) → ↥(ppowers_in_set A)) in filter function.injective univ
+    have : filter function.injective (univ : finset (↥(range t) → ↥(ppowers_in_set A))) =
+      (((ppowers_in_set A).powerset).filter(λ (B : finset _), B.card = t)).bUnion (λ B,
+         (finset.filter function.injective
+          (univ : finset (↥(range t) → ↥(ppowers_in_set A)))).filter
+            (λ g, univ.image (λ i, (g i : ℕ)) = B)),
+    { rw finset.bUnion_filter_eq_of_maps_to,
+      simp only [mem_filter, mem_univ, true_and, univ_eq_attach, mem_powerset],
+      intros f hf,
+      refine ⟨λ i, _, _⟩,
+      { simp only [mem_image, mem_attach, exists_true_left, forall_exists_index],
+        rintro y rfl,
+        apply (f y).2 },
+      rw [card_image_of_inj_on, card_attach, card_range],
+      simp only [set.inj_on, mem_coe, mem_attach, forall_true_left],
+      intros x₁ x₂ h,
+      exact hf (subtype.ext h) },
+    -- use disjointness
+    -- change to bijections
+    -- ∑ (A ⊆ s).filter(λ A, A.card = t), A.card.factorial * ∏ n in A, f n
+    -- then sum_bij
+    sorry
+  },
+  exact_mod_cast nat.factorial_pos t,
+end
+
+lemma such_large_N_wow : ∀ᶠ (N : ℕ) in at_top,
+  2 * log (log (⌈real.logb 2 N⌉₊ ^ 2)) < 1 / 500 * log (log N) :=
+begin
+  have haux: asymptotics.is_O_with ((1 : ℝ) / 8000) log id at_top,
+  { refine is_o_log_id_at_top.def' _,  rw one_div_pos, norm_num1, },
+  filter_upwards [tendsto_coe_nat_at_top_at_top.eventually
+    (eventually_ge_at_top ((1:ℝ))),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_gt_at_top ((1:ℝ))),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top (2/log 2)),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_gt_at_top (log 2)),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_gt_at_top (exp (exp (2 * log ((2:ℕ):ℝ)))*log 2)),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top (sqrt 2)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top (1500 * log 2 * 2)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually haux.bound] with N h1N h1logN hlogN' hlog2logN hcomplogN
+       hsqrtlogN hloglogN hlarge1,
+  have h0logN : 0 < log N, { exact lt_trans zero_lt_one h1logN, },
+  have h0loglogN : 0 < log(log N), { refine lt_trans _ hloglogN, refine mul_pos _ zero_lt_two,
+    refine mul_pos _ (log_pos one_lt_two),  norm_num1, },
+  have h2000 : (0:ℝ) < 1500 := by norm_num1,
+  have hhelper : (⌈real.logb 2 N⌉₊:ℝ) ≤ (log N)^2, {
+     refine le_trans (le_of_lt (nat.ceil_lt_add_one _)) _, refine logb_nonneg one_lt_two h1N,
+     rw ← add_halves ((log N)^2), refine add_le_add _ _,
+     rw [← log_div_log, div_le_div_iff, sq, mul_assoc, mul_le_mul_left, ← div_le_iff],
+     exact hlogN', exact log_pos one_lt_two, exact h0logN, exact log_pos one_lt_two, exact zero_lt_two,
+     rw [le_div_iff, one_mul, ← real.sqrt_le_left], exact hsqrtlogN, exact le_of_lt h0logN,
+     exact zero_lt_two,
+   },
+  have hhelper2 : (1:ℝ) < ⌈real.logb 2 N⌉₊, {
+    refine lt_of_lt_of_le _ (nat.le_ceil _), rw [← log_div_log, one_lt_div], exact hlog2logN,
+    exact log_pos one_lt_two,
+  },
+  have hhelper3 : exp (exp (2 * log ↑2)) < ⌈real.logb 2 N⌉₊, {
+    refine lt_of_lt_of_le _ (nat.le_ceil _), rw [← log_div_log, lt_div_iff (log_pos one_lt_two)],
+    exact hcomplogN,
+  },
+  rw [← rpow_nat_cast, log_rpow, log_mul, mul_add],
+  transitivity ((2+1)*log (log (⌈real.logb 2 N⌉₊))), rw [add_mul, one_mul, add_comm, real.add_lt_add_iff_left],
+  rw [lt_log_iff_exp_lt, lt_log_iff_exp_lt], exact hhelper3, exact lt_trans zero_lt_one hhelper2,
+  exact log_pos hhelper2, rw [mul_comm ((1:ℝ)/500), ← div_eq_mul_one_div, lt_div_iff', ← mul_assoc],
+  calc _ ≤ (1500:ℝ)*log(log ((log N)^(2:ℝ))) :_
+     ... < _ :_,
+  norm_num1,
+  rw [mul_le_mul_left, log_le_log, log_le_log], rw ← real.rpow_two at hhelper,
+  exact hhelper, exact lt_trans zero_lt_one hhelper2,
+  refine rpow_pos_of_pos h0logN _, exact log_pos hhelper2, refine log_pos _,
+  refine real.one_lt_rpow h1logN zero_lt_two, norm_num1,
+  rw [log_rpow, log_mul, mul_add], nth_rewrite 1 ← add_halves (log(log N)), refine add_lt_add _ _,
+  rw lt_div_iff, exact hloglogN, exact zero_lt_two, rw [← lt_div_iff', div_div, div_eq_mul_one_div,
+     mul_comm],
+  calc _ ≤ ((1:ℝ)/8000)*log(log N) :_
+     ... < _ :_,
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hlarge1, exact hlarge1, exact h0loglogN,
+  refine log_pos _, refine lt_trans _ hloglogN, refine one_lt_mul _ one_lt_two,
+  rw ← div_le_iff', refine le_trans _ (le_of_lt real.log_two_gt_d9), norm_num1, exact h2000,
+  rw mul_lt_mul_right, rw one_div_lt_one_div, norm_num1, norm_num1,
+  exact mul_pos zero_lt_two h2000, exact h0loglogN, exact h2000, exact two_ne_zero,
+  exact ne_of_gt h0loglogN, exact h0logN, norm_num1, norm_cast, exact two_ne_zero,
+  exact (ne_of_gt (log_pos hhelper2)), exact lt_trans zero_lt_one hhelper2,
+end
+
+lemma explicit_mertens :
+  ∀ᶠ N : ℕ in at_top,
+    ((∑ q in (finset.range (N + 1)).filter is_prime_pow, 1 / q) : ℝ) ≤ 2 * log (log N) :=
+begin
+  obtain ⟨b, hb⟩ := prime_power_reciprocal,
+  obtain ⟨c, hc₀, hc⟩ := hb.exists_pos,
+  filter_upwards [(tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top (c : ℝ)), (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top (b + 1)),
+    tendsto_coe_nat_at_top_at_top.eventually hc.bound]
+    with N hN₁ hN₂ hN₃,
+  dsimp at hN₁ hN₂,
+  have hN₄ : 0 < log N := hc₀.trans_le hN₁,
+  simp_rw [norm_inv, ←div_eq_mul_inv, ←one_div, norm_eq_abs, abs_of_nonneg hN₄.le,
+    nat.floor_coe] at hN₃,
+  have : c / log N ≤ 1 := div_le_one_of_le hN₁ hN₄.le,
+  have := sub_le_iff_le_add.1 (sub_le_of_abs_sub_le_right (hN₃.trans this)),
+  convert this.trans (show log (log N) + b + 1 ≤ 2 * log (log N), by linarith) using 2,
+  rw [range_eq_Ico, nat.Ico_succ_right],
+  ext n,
+  simpa only [mem_filter, and.congr_left_iff, mem_Icc, zero_le', iff_and_self, true_and] using
+    λ h _, (is_prime_pow.one_lt h).le,
+end
+
+lemma card_factors_le_log {n : ℕ} : Ω n ≤ ⌊real.logb 2 n⌋₊ :=
+begin
+  by_cases hn : n = 0,
+  rw hn, rw nat.arithmetic_function.map_zero, refine nat.zero_le _,
+  by_cases hΩ : Ω n = 0,
+  rw hΩ, refine nat.zero_le _,  rw nat.le_floor_iff', rw nat.arithmetic_function.card_factors_apply,
+  rw ← real.rpow_le_rpow_left_iff one_lt_two,
+  calc _ ≤ (n.factors.prod:ℝ) :_
+     ... ≤ _ :_,
+  norm_cast, refine list.pow_card_le_prod _ _ _, intros p hp,
+  rw [nat.mem_factors, nat.prime_def_min_fac] at hp, exact hp.1.1, exact hn,
+  rw nat.prod_factors hn, rw real.rpow_logb, exact zero_lt_two, exact ne_of_gt one_lt_two,
+  norm_cast, rw pos_iff_ne_zero, exact hn, exact hΩ,
+end
+
+
+lemma nat_cast_diff_issue {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) :=
+begin
+  have h1 := int.nat_abs_eq (x-y),
+  calc _ = ((int.nat_abs (x-y):ℤ):ℝ) :_
+     ... = _ :_,
+  cases h1 with h1p h1n,
+  rw ← h1p, rw abs_of_nonneg, push_cast, norm_cast, rw h1p, norm_cast, refine nat.zero_le _,
+  rw eq_neg_iff_eq_neg at h1n, rw h1n, rw abs_of_nonpos, push_cast, norm_cast,
+  rw eq_neg_iff_eq_neg at h1n, rw h1n, rw [neg_le, neg_zero], norm_cast, refine nat.zero_le _,
+  push_cast,
+end
+
+lemma this_condition_here {p : ℕ → Prop} [decidable_pred p] {A : finset ℕ} (hA : ∀ a ∈ A, p a)
+  {N : ℕ} (hN : A.card ≤ ((range N).filter p).card) (h : A ≠ (range N).filter p):
+  (∃ r < N, ∃ a ∈ A, r < a) ∨ A ⊂ (range N).filter p :=
+begin
+  have h₁ : ((range N).filter p \ A).nonempty,
+  { rw sdiff_nonempty,
+    intro h',
+    exact h.symm (eq_of_subset_of_card_le h' hN.ge) },
+  rw or_iff_not_imp_right,
+  intro h₂,
+  have h₂ : (A \ (range N).filter p).nonempty,
+  { rw sdiff_nonempty,
+    intro h',
+    apply h₂,
+    apply ssubset_of_ne_of_subset h h' },
+  obtain ⟨r, hr⟩ := h₁,
+  obtain ⟨a, ha⟩ := h₂,
+  simp only [mem_sdiff, mem_filter, mem_range] at hr,
+  simp only [mem_sdiff, mem_filter, mem_range, not_and', not_lt] at ha,
+  exact ⟨r, hr.1.1, a, ha.1, hr.1.1.trans_le (ha.2 (hA _ ha.1))⟩
+end
+
+lemma prime_power_recip_downward_bound (A : finset ℕ) (ha : ∀ q ∈ A, is_prime_pow q)
+  (N : ℕ) (hN : A.card ≤ ((range N).filter is_prime_pow).card) :
+  ∑ q in A, (1 : ℝ) / q ≤ ∑ q in (range N).filter is_prime_pow, 1/q :=
+begin
+  rcases A.eq_empty_or_nonempty with rfl | hA,
+  { rw [sum_empty],
+    apply sum_nonneg,
+    simp },
+  let a := A.max' hA,
+  let choices : finset (finset ℕ) :=
+    ((range (a + 1)).filter is_prime_pow).powerset.filter
+      (λ B, B.card ≤ ((range N).filter is_prime_pow).card),
+  have hAc : A ∈ choices,
+  { simp only [mem_filter, mem_powerset, finset.subset_iff, mem_range, nat.lt_add_one_iff],
+    exact ⟨λ b hb, ⟨finset.le_max' _ _ hb, ha _ hb⟩, hN⟩ },
+  obtain ⟨B, hB, hB'⟩ := exists_max_image choices (λ B, ∑ q in B, (1 : ℚ) / q) ⟨_, hAc⟩,
+  simp only [mem_filter, mem_powerset, and_imp] at hB,
+  suffices : (range N).filter is_prime_pow = B,
+  { rw this,
+    apply hB' _ hAc },
+  by_contra i,
+  have : ∀ (a : ℕ), a ∈ B → is_prime_pow a,
+  { intros x hx,
+    exact (mem_filter.1 (hB.1 hx)).2 },
+  obtain ⟨r, hr, a, ha, hra⟩ := this_condition_here this hB.2 (ne.symm i),
+  {
+    let B' := insert r (B.erase a),
+    have hB'' : B' ∈ choices,
+      sorry,
+    have := hB' B' hB'',
+      sorry
+  },
+  sorry
+  -- add one of the things to B
+
+  -- let a := A.lcm id,
+
+  -- let B be a set of prime powers of the same cardinality as A such that ∑ q in B, (1 : ℚ) / q  is maximal
+  -- enough to show that B= (range N).filter is_prime_pow
+  -- enough to show that (range N).filter is_prime_pow ⊆ B
+  -- if not, there exists r in the first smaller than something in B, swap these two elements, contradiction
+end
+
+lemma rec_pp_sum_close :
+  ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x : ℝ)-y| ≤ N) →
+  ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
+  ((1 : ℝ)/500)*log(log N) :=
+begin
+  filter_upwards [eventually_gt_at_top 0, such_large_N_wow,
+    (weird_floor_sq_tendsto_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+       prime_counting_lower_bound_explicit,
+    (weird_floor_sq_tendsto_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+       explicit_mertens],
+  intros N hlarge0 hlarge1 hprimes hmertens x y hxy hxyN,
+  let m :=  int.nat_abs (x-y),
+  let M := Ω m,
+  let T := ⌈real.logb 2 N⌉₊^2,
+  have hMT : M ≤ ((finset.range(T+1)).filter is_prime_pow).card, {
+    calc _ ≤ ⌊real.logb 2 m⌋₊ : card_factors_le_log
+       ... ≤ ⌊sqrt T⌋₊ :_
+       ... ≤ ((finset.Icc 1 T).filter nat.prime).card : hprimes
+       ... ≤ _ :_,
+    refine nat.le_floor _, refine le_trans (nat.floor_le _) _, refine real.logb_nonneg one_lt_two _,
+    norm_cast, rw nat.one_le_iff_ne_zero, intro hz, rw int.nat_abs_eq_zero at hz,
+    rw sub_eq_zero at hz, exact hxy hz,
+    calc _ ≤ real.logb 2 N :_
+       ... ≤ _ :_,
+    rw logb_le_logb, rw nat_cast_diff_issue at hxyN, exact hxyN, exact one_lt_two,
+    norm_cast, rw pos_iff_ne_zero, intro hz, rw int.nat_abs_eq_zero at hz,
+    rw sub_eq_zero at hz, exact hxy hz, exact_mod_cast hlarge0,
+    push_cast, rw sqrt_sq, exact nat.le_ceil (real.logb 2 N),
+    refine nat.cast_nonneg _,
+    refine card_le_of_subset _, intros p hp, rw [mem_filter, mem_Icc] at hp,
+    rw [mem_filter, mem_range, nat.lt_succ_iff], refine ⟨hp.1.2, nat.prime.is_prime_pow hp.2⟩,
+   },
+  calc _ ≤ ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ n ∣ m ), (1 : ℝ)/q :_
+     ... ≤ ∑ q in (finset.range(T+1)).filter is_prime_pow, (1 : ℝ)/q :_
+     ... < _ :_,
+  refine sum_le_sum_of_subset_of_nonneg _ _, intros q hq, rw mem_filter at hq,
+  rw mem_filter, refine ⟨hq.1,hq.2.1,_⟩,
+  rw ← int.coe_nat_dvd_left, refine dvd_sub _ _,  rw ← int.dvd_nat_abs, norm_cast,
+  rw ← int.coe_nat_dvd_left, exact hq.2.2.1, exact hq.2.2.2, intros q hq1 hq2,
+  rw one_div_nonneg, exact nat.cast_nonneg q,
+  apply prime_power_recip_downward_bound _ _ _ _,
+  { sorry },
+  { apply hMT.trans',
+    sorry },
+  -- refine prime_power_recip_downward_bound,
+
+  -- The idea for the next part is to write an injection from the range of summation of the first
+  -- sum to the second, where we write each set as an increasing list q1, q2,... and r1, r2, r3, ...
+  -- and map qi to ri.
+  -- ∑ (q in A), 1/q ≤ ∑ (q in B), 1/q if there is a function f : A → B (injective) such that
+  -- b ≤ f(a).
+  -- suppose there is some b such that f(a) < b, let a be minimal such that this holds.
+  -- Then a is a prime power that is less than f(b),
+  -- so by inductive construction of f, there is some c such that a = f(c), but then c < b
+  -- .......................A..A.......A....A....
+  -- BBBBBB......................................
+  -- use list.take to truncate second list to be of length M
+  --  (and then list.take_sublist and list.sublist.sum_le_sum
+  -- then list.forall₂.sum_le_sum
+  -- have := list.forall₂.sum_le_sum,
+  --
+  refine lt_of_le_of_lt hmertens _, dsimp, push_cast, exact hlarge1,
+end
+
+#exit
+
+-- No sorries below this line! (except Bhavik's bit)
+-----------------------------------------
+------------------------------------------
+-----------------------------------------
+
+
+lemma sub_le_omega_div {a b : ℕ} (h: b ∣ a) : (ω a:ℝ) - ω b ≤ ω (a/b) :=
+begin
+  rcases a.eq_zero_or_pos with rfl | ha,
+  { simp },
+  rcases b.eq_zero_or_pos with rfl | hb,
+  { simp [zero_dvd_iff.mp h] },
+  rw sub_le_iff_le_add,
+  norm_cast,
+  simp only [nat.arithmetic_function.card_distinct_factors_apply],
+  rw [add_comm, ←list.length_append],
+  apply list.subperm.length_le,
+  obtain ⟨k, rfl⟩ := h,
+  have hk : 0 < k := pos_of_mul_pos_left ha hb.le,
+  rw [k.mul_div_cancel_left hb],
+  refine (list.nodup_dedup _).subperm _,
+  intros x hx,
+  rw [list.mem_dedup, nat.mem_factors_mul hb.ne' hk.ne'] at hx,
+  rwa [list.mem_append, list.mem_dedup, list.mem_dedup]
+end
+
+lemma omega_div_le {a b : ℕ}  (h : b ∣ a) : ω (a/b) ≤ ω a :=
+begin
+  obtain ⟨k, rfl⟩ := h,
+  rcases eq_or_ne k 0 with rfl|hk,
+  { simp },
+  rcases b.eq_zero_or_pos with rfl|hb,
+  { simp },
+  simp only [nat.arithmetic_function.card_distinct_factors_apply, k.mul_div_cancel_left hb],
+  refine (k.factors.nodup_dedup.subperm $ λ t ht, _).length_le,
+  rw [list.mem_dedup, nat.mem_factors_mul hb.ne' hk],
+  exact or.inr (list.mem_dedup.mp ht),
+end
+
+lemma harmonic_sum_bound_two : ∀ᶠ (N : ℕ) in at_top,
+  ∑ n in finset.range(N+1), (1 : ℝ)/n ≤ 2*log N :=
+begin
+  have hhar := harmonic_series_is_O_with,
+  filter_upwards [eventually_ge_at_top 1,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top (euler_mascheroni + 2 * 1)),
+    tendsto_coe_nat_at_top_at_top.eventually hhar.bound]
+    with N hlarge hlogN hbound,
+  clear hhar, rw [norm_eq_abs, norm_eq_abs, ← sub_add_eq_sub_sub, abs_sub_le_iff] at hbound,
+  have hbound' := hbound.1, clear hbound,
+  rw [sub_le_iff_le_add, summatory] at hbound',
+  have h1N : 1 ≤ N + 1, { rw le_add_iff_nonneg_left, exact nat.zero_le N,},
+  calc _ = ∑ (n : ℕ) in Icc 1 ⌊(N:ℝ)⌋₊, ((n:ℝ))⁻¹ :_
+     ... ≤ _ :_,
+  rw ← finset.sum_range_add_sum_Ico _ h1N,
+  have hhelp : ∑ n in finset.range(1), (1 : ℝ)/n = 0, { refine sum_eq_zero _,
+    intros n hn, rw [mem_range, nat.lt_one_iff] at hn, rw hn,
+    simp only [div_zero, nat.cast_zero, eq_self_iff_true],},
+  rw [hhelp, zero_add], refine sum_congr _ _, simp only [nat.floor_coe],
+  ext, rw [mem_Ico, mem_Icc, nat.lt_succ_iff], intros n hn, rw one_div,
+  refine le_trans hbound' _, rw [abs_of_pos, ← one_div, two_mul (log N), ← add_assoc,
+  add_rotate, add_assoc, add_le_add_iff_left],
+  transitivity (euler_mascheroni+(2*1)), rw [add_le_add_iff_left,
+     mul_le_mul_left zero_lt_two, one_div_le, one_div_one], norm_cast,
+  exact hlarge, norm_cast, exact lt_of_lt_of_le zero_lt_one hlarge,
+  exact zero_lt_one, exact real.nontrivial, exact hlogN, rw inv_pos, norm_cast,
+  exact lt_of_lt_of_le zero_lt_one hlarge,
+end
+
+
+lemma div_bound_useful_version {ε : ℝ} (hε1 : 0 < ε) :
+  ∀ᶠ (N : ℕ) in at_top, ∀ n : ℕ, (n ≤ N^2) →
+  (σ 0 n : ℝ) ≤ N ^ (2*real.log 2 / log (log (N : ℝ)) * (1 + ε)) :=
+begin
+  let c := ε/2,
+  have hc : 0 < c := half_pos hε1,
+  have hhelp0 : 1 ≤  2 * log 2 * (1 + ε), { transitivity (2*(log 2)), rw ← div_le_iff',
+    refine le_trans _ (le_of_lt real.log_two_gt_d9), norm_num1, exact zero_lt_two,
+    nth_rewrite 0 ← mul_one (2*(log 2)), rw [mul_le_mul_left],
+    refine le_add_of_nonneg_right (le_of_lt hε1), refine mul_pos zero_lt_two (log_pos one_lt_two), },
+  have hhelp : 0 < 2 * log 2 * (1 + ε), { exact lt_of_lt_of_le zero_lt_one hhelp0, },
+  have hhelp2 : 0 < (1+ε)/(1+c), { refine div_pos (add_pos zero_lt_one hε1) (add_pos zero_lt_one hc), },
+  have haux: asymptotics.is_O_with (((1 + ε) / (1 + c) - 1) / ((1 + ε) / (1 + c))) log id at_top,
+  { refine is_o_log_id_at_top.def' _, refine div_pos _ hhelp2, rw [sub_pos, one_lt_div,
+      real.add_lt_add_iff_left], exact half_lt_self hε1, exact add_pos zero_lt_one hc, },
+  have hdiv := divisor_bound hc, rw filter.eventually_at_top at hdiv,
+  rcases hdiv with ⟨M,hdiv⟩,
+  filter_upwards[tendsto_coe_nat_at_top_at_top.eventually  (eventually_ge_at_top (1:ℝ)),
+    ((tendsto_pow_rec_loglog_at_top hhelp).comp tendsto_coe_nat_at_top_at_top).eventually
+      (eventually_ge_at_top (M:ℝ)),
+    ((tendsto_pow_rec_loglog_at_top hhelp).comp tendsto_coe_nat_at_top_at_top).eventually
+      (eventually_ge_at_top (exp(1))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually haux.bound,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_gt_at_top ((0:ℝ))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top (0:ℝ)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top))).eventually (eventually_gt_at_top (0:ℝ))]
+    with N h1N hN hN' hlarge h0logN h0loglogN h0logloglogN,
+  intros n hn,
+  let X := ((N:ℝ)^(2*real.log 2 / log (log (N : ℝ)) * (1 + ε))),
+  have hXhelp : X = ((N:ℝ)^(2*real.log 2 * (1 + ε) / log (log (N : ℝ)) )), { rw ← div_mul_eq_mul_div, },
+  have hMX : (M:ℝ) ≤ X, { rw hXhelp, exact hN, },
+  have heX : exp(1) ≤ X, { rw hXhelp, exact hN', },
+  have h1X : 1 < X, { refine lt_of_lt_of_le _ heX, rw one_lt_exp_iff, exact zero_lt_one, },
+  have hlogX : 0 < log X := log_pos h1X,
+  by_cases hnbig : (n:ℝ) ≤ X,
+  transitivity (n:ℝ), norm_cast, exact trivial_divisor_bound, exact hnbig, rw not_le at hnbig,
+  have hloglogn' : 0 < log(log n), { refine log_pos _, rw lt_log_iff_exp_lt, refine lt_of_le_of_lt heX hnbig,
+       exact lt_trans (lt_trans zero_lt_one h1X) hnbig, },
+  have hloglogn : 0 ≤ log(log n) := le_of_lt hloglogn',
+  have hnM : (M:ℝ) ≤ n, { refine le_trans hMX (le_of_lt hnbig), },
+  refine le_trans (hdiv n _) _, exact_mod_cast hnM,
+  transitivity ((N:ℝ)^2)^(log 2 / log (log ↑n) * (1 + c)), refine rpow_le_rpow _ _ _,
+  exact nat.cast_nonneg n, norm_cast, exact hn, refine mul_nonneg _ _,
+  refine div_nonneg (log_nonneg one_le_two) _, exact hloglogn, refine add_nonneg zero_le_one (le_of_lt hc),
+  rw [← rpow_nat_cast, ← rpow_mul], refine rpow_le_rpow_of_exponent_le _ _, exact h1N, norm_cast,
+  rw [← mul_div, mul_assoc, mul_le_mul_left zero_lt_two, div_mul, div_mul, div_le_div_left,
+      le_div_iff, div_mul], transitivity log(log X), rw [div_le_iff', ← log_rpow, log_le_log,
+      log_rpow, mul_rpow, ← div_le_iff], nth_rewrite 0 ← rpow_one (log N),
+  rw [← rpow_sub, div_mul_eq_mul_div, div_rpow, ← neg_sub, rpow_neg, ← one_div, div_le_div_iff, one_mul,
+     ← log_le_log, log_rpow, log_mul, log_rpow], refine le_trans _ (le_add_of_nonneg_left _),
+  rw [log_rpow, ← le_div_iff', ← div_mul_eq_mul_div],
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hlarge, exact hlarge, exact h0loglogN,
+  exact h0logloglogN, exact hhelp2, exact h0logN, refine mul_nonneg (le_of_lt hhelp2) (log_nonneg hhelp0),
+  exact hhelp, refine ne_of_gt (rpow_pos_of_pos hhelp _), refine ne_of_gt (rpow_pos_of_pos h0logN _),
+  exact h0loglogN, refine rpow_pos_of_pos h0loglogN _, refine mul_pos (rpow_pos_of_pos hhelp _) _,
+  refine rpow_pos_of_pos h0logN _, refine rpow_pos_of_pos h0logN _, refine rpow_pos_of_pos h0loglogN _,
+  exact le_of_lt h0logN, exact le_of_lt hhelp, exact le_of_lt h0loglogN, exact h0logN,
+  refine rpow_pos_of_pos h0logN _, rw div_mul_eq_mul_div,
+  refine div_nonneg (le_of_lt hhelp) (le_of_lt h0loglogN), exact le_of_lt h0logN,
+  exact lt_of_lt_of_le zero_lt_one h1N, exact h0logN, refine rpow_pos_of_pos _ _, exact hlogX,
+  exact hlogX, exact hhelp2, rw [log_le_log, log_le_log], exact le_of_lt hnbig,
+  refine rpow_pos_of_pos (lt_of_lt_of_le zero_lt_one h1N) _, refine lt_trans _ hnbig,
+  refine rpow_pos_of_pos (lt_of_lt_of_le zero_lt_one h1N) _, exact hlogX,
+  rw log_nonneg_iff at hloglogn, exact lt_of_lt_of_le zero_lt_one hloglogn, refine log_pos _,
+  refine lt_trans h1X hnbig, refine add_pos zero_lt_one hc, exact log_pos one_lt_two,
+  refine div_pos hloglogn' (add_pos zero_lt_one hc), refine div_pos h0loglogN (add_pos zero_lt_one hε1),
+  exact real.nontrivial, exact le_trans zero_le_one h1N,
+end
+
+
+
+lemma another_large_N (c C : ℝ) (hc : 0 < c) (hC : 0 < C) : ∀ᶠ (N : ℕ) in at_top,
+  1/c/2 ≤ log(log(log N)) ∧ 2^((100:ℝ)/99) ≤ log N ∧ 4*log(log(log N)) ≤ log(log N)
+  ∧ log 2 < log(log(log N)) ∧
+  (log N) ^ (-((2:ℝ) / 99) / 2) ≤
+     C * (1 / (2 * log N ^ ((1:ℝ) / 100))) / log N ^ ((2:ℝ)/⌊(log (log N))/(2*log(log(log N)))⌋₊) ∧
+  (1 - 2 / 99) * log (log N) +
+  (1 + 5 / log (⌊(log (log N))/(2*log(log(log N)))⌋₊) * log (log N)) ≤ 99 / 100 * log (log N) :=
+begin
+  have haux: asymptotics.is_O_with ((1:ℝ)/(4)) log id at_top,
+  { refine is_o_log_id_at_top.def' _, norm_num1, },
+  have haux2: asymptotics.is_O_with ((1:ℝ)/(3960000)) log id at_top,
+  { refine is_o_log_id_at_top.def' _, norm_num1, },
+  have haux3: asymptotics.is_O_with (1 / ((exp 10000 + 1) * 2)) log id at_top,
+  { refine is_o_log_id_at_top.def' _, rw one_div_pos, refine mul_pos _ zero_lt_two,
+    refine add_pos (exp_pos _) zero_lt_one, },
+  have hhelp : 0 < (1:ℝ)/10000 := by norm_num1,
+  filter_upwards [
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually haux.bound,
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually haux2.bound,
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually haux3.bound,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_gt_at_top ((0:ℝ))),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top ((1:ℝ))),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top ((2^((100:ℝ)/99):ℝ))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top))).eventually (eventually_ge_at_top (1/c/2)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top))).eventually (eventually_gt_at_top (log 2)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top (0:ℝ)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top (1000:ℝ)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top))).eventually (eventually_gt_at_top (0:ℝ)),
+    (((tendsto_rpow_at_top hhelp).comp (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top))).eventually
+       (eventually_ge_at_top ((C / 2)⁻¹)) ]
+  with N hlarge hlarge2 hlarge3 h0logN h1logN hlogN hlogloglogN' hlogloglogN h0loglogN hloglogN h0logloglogN hlargepow,
+  have hhelp2 : exp(10000) ≤ ⌊(log (log N))/(2*log(log(log N)))⌋₊, {
+      rw nat.cast_floor_eq_cast_int_floor, refine le_trans _ (le_of_lt (int.sub_one_lt_floor _)),
+      rw [le_sub_iff_add_le, le_div_iff, ← mul_assoc, ← le_div_iff', div_eq_mul_one_div, mul_comm],
+      rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hlarge3, exact hlarge3, exact h0loglogN,
+      exact h0logloglogN, refine mul_pos _ zero_lt_two,
+      refine add_pos (exp_pos _) zero_lt_one, exact mul_pos zero_lt_two h0logloglogN,
+      refine div_nonneg (le_of_lt h0loglogN) (mul_nonneg zero_le_two (le_of_lt h0logloglogN)),
+   },
+  have hhelppos : (0:ℝ) < ⌊(log (log N))/(2*log(log(log N)))⌋₊, {
+      refine lt_of_lt_of_le (exp_pos _) hhelp2,
+   },
+  refine ⟨hlogloglogN',hlogN,_,hlogloglogN,_,_⟩,
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos, mul_comm, ← div_eq_mul_one_div,
+      le_div_iff'] at hlarge, exact hlarge, exact zero_lt_four, exact h0loglogN, exact h0logloglogN,
+  rw [le_div_iff, ← div_eq_mul_one_div], nth_rewrite 1 div_mul_eq_div_div,
+  rw [le_div_iff, ← rpow_add, ← rpow_add],
+  calc _ ≤ (log N)^(-(((1:ℝ)/10000))) :_
+     ... ≤ _ :_,
+  refine rpow_le_rpow_of_exponent_le h1logN _, rw [← le_sub_iff_add_le, ← le_sub_iff_add_le'],
+  norm_num1, rw [div_le_div_iff, one_mul], norm_cast, rw [nat.le_floor_iff, le_div_iff, ← mul_assoc],
+  norm_num1, rw [← le_div_iff', div_eq_mul_one_div, mul_comm],
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hlarge2, exact hlarge2, exact h0loglogN,
+  exact h0logloglogN, norm_num1, refine mul_pos zero_lt_two h0logloglogN,
+  refine div_nonneg (le_of_lt h0loglogN) _, refine mul_nonneg (zero_le_two) (le_of_lt h0logloglogN),
+  exact hhelppos, norm_num1, rw [rpow_neg, inv_le], dsimp at hlargepow, exact hlargepow,
+  refine rpow_pos_of_pos h0logN _, refine div_pos hC zero_lt_two, exact le_of_lt h0logN,
+  exact h0logN, exact h0logN, refine rpow_pos_of_pos h0logN _, refine rpow_pos_of_pos h0logN _,
+  calc _ ≤ ((97:ℝ)/99)*(log(log N)) + (1/1000)*(log(log N)) + (5/10000)*log(log N) :_
+     ... ≤ _ :_,
+  rw add_assoc, refine add_le_add _ _, norm_num1, refl, refine add_le_add _ _,
+  rw [mul_comm, ← div_eq_mul_one_div, le_div_iff, one_mul], exact hloglogN, norm_num1,
+  rw [mul_le_mul_right h0loglogN, div_le_div_left, le_log_iff_exp_le], exact hhelp2,
+  exact hhelppos, norm_num1, refine log_pos _, refine lt_of_lt_of_le _ hhelp2, rw one_lt_exp_iff,
+  norm_num1, norm_num1,
+  rw [← add_mul, ← add_mul, mul_le_mul_right h0loglogN], norm_num1,
+end
+
+lemma yet_another_large_N : ∀ᶠ (N : ℕ) in at_top,
+(2:ℝ) * N ^ (-2 / log (log N) + 2 * log 2 / log (log N) * (1 + 1 / 3)) < log N ^ -((1:ℝ) / 101) / 6
+:=
+begin
+  have haux: asymptotics.is_O_with ((1:ℝ)/(2+1)) log id at_top,
+  { refine is_o_log_id_at_top.def' _, norm_num1, },
+  filter_upwards [tendsto_coe_nat_at_top_at_top.eventually  (eventually_gt_at_top ((0:ℝ))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually haux.bound,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_gt_at_top ((0:ℝ))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top (log (6 * 2) / (1 - 1 / 101))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top))).eventually (eventually_ge_at_top (-log (2 + -(2 * log 2) * (1 + 1 / 3)))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top (0:ℝ)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top))).eventually (eventually_gt_at_top (0:ℝ))]
+  with N h0N hlarge h0logN hloglogN hlogloglogN h0loglogN h0logloglogN,
+  have hhelp : 0 <  2 + -(2 * log 2) * (1 + 1 / 3), {
+    rw [neg_mul, ← sub_eq_add_neg, sub_pos], nth_rewrite 2 ← mul_one (2:ℝ),
+    rw [mul_assoc, mul_lt_mul_left zero_lt_two], norm_num1,
+    rw [← lt_div_iff, one_div_div], refine lt_trans real.log_two_lt_d9 _, norm_num1,
+    norm_num1, exact real.nontrivial,
+   },
+  rw [lt_div_iff', ← mul_assoc, ← log_lt_log_iff, log_rpow, log_mul, neg_mul, lt_neg, neg_add,
+      log_rpow, ← sub_eq_neg_add, lt_sub_iff_add_lt, ← neg_mul, neg_add, ← neg_div, neg_neg,
+      ← neg_mul, ← neg_div], nth_rewrite 1 div_mul_eq_mul_div,
+  rw [div_add_div_same],
+  calc _ < log(log N) :_
+     ... ≤ _ :_,
+  rw [← lt_sub_iff_add_lt', ← one_sub_mul, ← div_lt_iff'], exact hloglogN, norm_num1,
+  rw [← log_le_log, log_mul, log_div, sub_add_eq_add_sub, le_sub_iff_add_le, ← two_mul,
+       ← sub_le_iff_le_add'],
+  calc _ ≤ 2*log(log(log N)) + log(log(log N)) :_
+     ... ≤ _ :_,
+  rw [sub_eq_add_neg, add_le_add_iff_left], exact hlogloglogN,
+  rw [← add_one_mul, ← le_div_iff', div_eq_mul_one_div, mul_comm],
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hlarge, exact hlarge, exact h0loglogN,
+  exact h0logloglogN, norm_num1, exact ne_of_gt hhelp, exact ne_of_gt h0loglogN,
+  refine div_ne_zero (ne_of_gt hhelp) (ne_of_gt h0loglogN), exact ne_of_gt h0logN, exact h0loglogN,
+  refine mul_pos _ h0logN, refine div_pos hhelp h0loglogN, exact h0N, norm_num1,
+  refine ne_of_gt (rpow_pos_of_pos h0N _), exact h0logN, refine mul_pos _ (rpow_pos_of_pos h0N _),
+  norm_num1, refine rpow_pos_of_pos h0logN _, norm_num1,
+end
+
+lemma yet_another_large_N' : ∀ᶠ (N : ℕ) in at_top,
+1/log N + (1 / (2 * log N ^ ((1:ℝ) / 100)))*((501/500)*log(log N)) ≤
+      (log N)^(-(1/101 : ℝ))/6 :=
+begin
+  have haux: asymptotics.is_O_with ((1:ℝ)/ 10100 / 2) log id at_top,
+  { refine is_o_log_id_at_top.def' _, norm_num1, },
+  filter_upwards [
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually haux.bound,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_gt_at_top ((0:ℝ))),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_ge_at_top (12 ^ ((101:ℝ) / 100))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top))).eventually (eventually_ge_at_top (log (1503 / 250))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top (0:ℝ))]
+  with N hlarge h0logN hlogN hlogloglogN h0loglogN,
+  rw ← add_halves ((log N)^(-(1/101 : ℝ))/6), refine add_le_add _ _,
+  rw [div_div, div_le_iff h0logN, div_mul_eq_mul_div, ← rpow_add_one, one_le_div],
+  norm_num1,
+  have hhelp : (0:ℝ) < 101/100 := by norm_num1,
+  rw ← real.rpow_le_rpow_iff _ _ hhelp, rw [← rpow_mul], norm_num1, rw rpow_one, exact hlogN,
+  exact le_of_lt h0logN, norm_num1, refine rpow_nonneg_of_nonneg (le_of_lt h0logN) _, norm_num1,
+  exact ne_of_gt h0logN,
+  rw [div_div, div_mul_eq_mul_div, one_mul, div_le_div_iff, mul_comm (2:ℝ), ← mul_assoc,
+    ← mul_assoc, ← rpow_add, mul_le_mul_right zero_lt_two, mul_comm, ← mul_assoc], norm_num1,
+  rw [← log_le_log, log_rpow, log_mul],
+  calc _ ≤ 2*log(log(log N)) :_
+     ... ≤ _ :_,
+  rw [two_mul, add_le_add_iff_right], exact hlogloglogN, rw [← le_div_iff', ← div_mul_eq_mul_div],
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hlarge, exact hlarge, exact h0loglogN,
+  refine lt_of_lt_of_le _ hlogloglogN, refine log_pos _, norm_num1, exact zero_lt_two,
+  norm_num1, exact ne_of_gt h0loglogN, exact h0logN, refine mul_pos _ h0loglogN, norm_num1,
+  refine rpow_pos_of_pos h0logN _, exact real.nontrivial, exact h0logN, refine mul_pos zero_lt_two _,
+  refine rpow_pos_of_pos h0logN _, norm_num1,
+end
+
+lemma and_another_large_N (ε : ℝ) (h1 : 0 < ε) (h2 : ε < 1/2) :  ∀ᶠ (N : ℕ) in at_top,
+   2 * log (log N) + 1 ≤ (1 + ε ^ 2) ^ ((1 - ε) * log (log N)) :=
+begin
+  have haux: asymptotics.is_O_with (log (1 + ε ^ 2) * (1 - ε) / 2) log id at_top,
+  { refine is_o_log_id_at_top.def' _, refine div_pos _ zero_lt_two,
+    refine mul_pos _ _, refine log_pos _, rw lt_add_iff_pos_right, refine sq_pos_of_pos h1,
+    rw sub_pos, refine lt_trans h2 one_half_lt_one,},
+  filter_upwards [
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually haux.bound,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+    (eventually_gt_at_top ((0:ℝ))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top (1:ℝ)),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top))).eventually (eventually_ge_at_top (log(2+1)))]
+  with N hlarge h0logN h1loglogN hlogloglogN,
+  have h1 : 0 < 1 + ε^2, { refine lt_trans zero_lt_one _, rw lt_add_iff_pos_right, refine sq_pos_of_pos h1, },
+  rw [← exp_log h1, ← exp_mul, ← mul_assoc], nth_rewrite 1 mul_comm _ (log(log N)),
+  rw [exp_mul, exp_log h0logN],
+  calc _ ≤ ((2:ℝ)+1)*log(log N) :_
+     ... ≤ _ :_,
+  rw [add_mul, one_mul, add_le_add_iff_left], exact h1loglogN,
+  rw [← log_le_log, log_mul, log_rpow],
+  calc _ ≤ 2*(log(log(log N))) :_
+     ... ≤ _ :_,
+  rw [two_mul, add_le_add_iff_right], exact hlogloglogN, rw [← le_div_iff', ← div_mul_eq_mul_div],
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hlarge, exact hlarge,
+  exact lt_of_lt_of_le zero_lt_one h1loglogN, refine lt_of_lt_of_le _ hlogloglogN, refine log_pos _,
+  norm_num1, exact zero_lt_two, exact h0logN, norm_num1, refine ne_of_gt (lt_of_lt_of_le zero_lt_one h1loglogN),
+  refine mul_pos _ _, exact zero_lt_three, exact lt_of_lt_of_le zero_lt_one h1loglogN,
+  refine rpow_pos_of_pos h0logN _,
+end
+
+lemma prime_pow_not_coprime_prime_pow {a b : ℕ} (ha : is_prime_pow a) (hb : is_prime_pow b) :
+   ¬ (coprime a b) →  ∃ (p k l : ℕ), prime p ∧ (k ≠ 0 ∧ l ≠ 0) ∧ p ^ k = a ∧ p ^ l = b :=
+begin
+  intro hab,
+  rcases (is_prime_pow_def a).1 ha with ⟨q,k,hq,hk,hqa⟩,
+  rcases (is_prime_pow_def b).1 hb with ⟨r,l,hr,hl,hrb⟩,
+  rw pos_iff_ne_zero at hk, rw pos_iff_ne_zero at hl, refine ⟨q,k,l,hq,⟨hk,hl⟩,hqa,_⟩,
+  rw ← hrb, by_contra, apply hab, rw [← hqa, ← hrb], refine nat.coprime_pow_primes _ _ _ _ _,
+  rw nat.prime_iff, exact hq, rw nat.prime_iff, exact hr, intro hbad, refine h _,
+  rw hbad,
+end
+
+lemma omega_mul_ppower {a q : ℕ} (hq : is_prime_pow q) : ω (q*a) ≤ 1 + ω a :=
+begin
+  -- This really needs to be in arithmetic_functions!
+  -- Also, there are a lot of basic lemmas about dedup missing, so this is a bodge
+  have : (ω q : ℝ) = 1, {
+    norm_cast, rw [nat.arithmetic_function.card_distinct_factors_apply, list.length_eq_one],
+    rcases hq with ⟨p,k,hp,hk⟩, rw ← hk.2, use p, rw nat.prime.factors_pow,
+    rw ← list.perm_singleton,
+    rw ← list.nodup.dedup (list.nodup_singleton p),
+    rw ← list.to_finset_eq_iff_perm_dedup, rw list.to_finset_repeat_of_ne_zero,
+    ext n, rw [list.mem_to_finset, mem_singleton, list.mem_singleton], rw ← pos_iff_ne_zero,
+    exact hk.1, rw nat.prime_iff, exact hp,
+   },
+  have hdiv : a = (q*a)/q, { rw nat.mul_div_cancel_left, exact is_prime_pow.pos hq, },
+  rw ← @nat.cast_le ℝ _ _ _ _, push_cast,
+  rw [← sub_le_iff_le_add', zero_add, ← this], nth_rewrite 1 hdiv, refine sub_le_omega_div _,
+  refine dvd_mul_right _ _,
+end
+
+
+lemma prime_dvd_prime_pow_then {a p : ℕ} (ha : is_prime_pow a) (hp : nat.prime p)
+ (hpa : p ∣ a ) : ∃ k : ℕ, k ≠ 0 ∧
+  p ^ k = a :=
+begin
+  rw is_prime_pow_def at ha, rcases ha with ⟨r,k,hr,hk,hkr⟩,
+  refine ⟨k,_,_⟩, rw ← pos_iff_ne_zero, exact hk,
+  rw ← hkr at hpa,
+  have := nat.prime.dvd_of_dvd_pow hp hpa, rw nat.prime_dvd_prime_iff_eq hp at this,
+  rw this, exact hkr, rw nat.prime_iff, exact hr,
+end
+
+lemma prime_pow_not_coprime_prod_iff {a : ℕ} {D : finset ℕ} (ha : is_prime_pow a)
+(hD : ∀ d ∈ D, is_prime_pow d) :
+ ¬ coprime a (∏ d in D, d) ↔ ∃ (p : ℕ) (ka kd : ℕ) (d ∈ D), p.prime ∧ ka ≠ 0 ∧ kd ≠ 0 ∧
+ p ^ ka = a ∧ p ^ kd = d :=
+begin
+  split, intro h, rw nat.prime.not_coprime_iff_dvd at h, rcases h with ⟨p,hp,hpa,hpD⟩,
+  use p, rw [← finset.prod_to_list, prime.dvd_prod_iff] at hpD,
+  rcases hpD with ⟨d,hd1,hd2⟩, rw list.mem_map at hd1, rcases hd1 with ⟨d',hd1⟩,
+  have hdD := hd1.1, rw hd1.2 at hdD, rw finset.mem_to_list at hdD,
+  rcases (prime_dvd_prime_pow_then ha hp hpa) with ⟨ka,hka,hpka⟩,
+  rcases (prime_dvd_prime_pow_then (hD d hdD) hp hd2) with ⟨kd,hkd,hpkd⟩,
+  refine ⟨ka,kd,d,hdD,hp,hka,hkd,hpka,hpkd⟩, rw ← nat.prime_iff, exact hp,
+  intro h, rcases h with ⟨p,ka,ka,d,hd,hp,hka,hkd,hpka,hpkd⟩,
+  rw nat.prime.not_coprime_iff_dvd, refine ⟨p,hp,_,_⟩,
+  rw ← hpka, refine dvd_pow_self _ hka, refine dvd_trans _ (dvd_prod_of_mem _ hd),
+  rw ← hpkd, refine dvd_pow_self _ hkd,
+end
+
+lemma prime_pow_prods_coprime {A B : finset ℕ} (hA : ∀ a ∈ A, is_prime_pow a)
+ (hB : ∀ b ∈ B, is_prime_pow b) : coprime (∏ a in A, a) (∏ b in B, b) ↔
+ ∀ a ∈ A, ∀ b ∈ B, coprime a b :=
+begin
+  split, intros h a ha b hb,
+  by_contra, rw nat.prime.not_coprime_iff_dvd at h, rcases h with ⟨r,hr,h2⟩,
+  have : ¬ ∃ (p : ℕ), nat.prime p ∧ p ∣ ∏ a in A, a ∧ p ∣ ∏ b in B, b, {
+    intro hn, rw ← nat.prime.not_coprime_iff_dvd at hn, exact hn h,
+  },
+  refine this _, refine ⟨r,hr,dvd_trans h2.1 (finset.dvd_prod_of_mem _ ha),
+     dvd_trans h2.2 (finset.dvd_prod_of_mem _ hb)⟩,
+  intro h, refine nat.coprime_prod_left _,intros a ha,
+  refine nat.coprime_prod_right _, intros b hb, refine h a ha b hb,
+end
+
+theorem weighted_ph {s : finset ℕ}
+{f : ℕ → ℚ} {w : ℕ → ℚ} {b : ℚ} (h0b : 0 < b)
+(hw : ∀ (a : ℕ), a ∈ s → 0 ≤ w a) (hb : b ≤ s.sum (λ (x : ℕ), ((w x) * (f x)))) :
+∃ (y : ℕ) (H : y ∈ s), b ≤ (s.sum (λ (x : ℕ), w x))*f y
+:=
+begin
+  have hsne : s.nonempty, { rw nonempty_iff_ne_empty, intro he, rw [he, sum_empty] at hb,
+    rw ← not_le at h0b, exact h0b hb, },
+  by_contra, rw [not_exists] at h, rw ← not_lt at hb, refine hb _,
+  have hmax := exists_max_image s f hsne,
+  rcases hmax with ⟨y,hys,hy⟩, specialize h y, rw not_exists at h, specialize h hys,
+  rw not_le at h, refine lt_of_le_of_lt _ h, rw sum_mul, refine finset.sum_le_sum _,
+  intros n hn, refine mul_le_mul_of_nonneg_left _ _, refine hy n hn,
+  refine hw n hn,
+end
+
+lemma prime_pow_not_coprime_iff {a b : ℕ} (ha : is_prime_pow a) (hb : is_prime_pow b) :
+ ¬ coprime a b ↔ ∃ (p : ℕ) (ka kb : ℕ), p.prime ∧ ka ≠ 0 ∧ kb ≠ 0 ∧
+ p ^ ka = a ∧ p ^ kb = b :=
+ begin
+  split, intro hab,
+  rw is_prime_pow_def at ha, rw is_prime_pow_def at hb,
+  rcases ha with ⟨p,k,hp,hk,hpa⟩, rcases hb with ⟨r,l,hr,hl,hrb⟩,
+  rw ← nat.prime_iff at hp, rw ← nat.prime_iff at hr,
+  by_cases hpr : p = r,
+  refine ⟨p,k,l,hp,_,_,hpa,_⟩,
+  rw ← pos_iff_ne_zero, exact hk, rw ← pos_iff_ne_zero, exact hl, rw hpr,
+  exact hrb, exfalso, refine hab _, rw [← hpa, ← hrb],
+  refine nat.coprime_pow_primes _ _ hp hr hpr,
+  intro he, rcases he with ⟨p,k,l,hp,hk,hl,hpa,hpb⟩,
+  rw nat.prime.not_coprime_iff_dvd, refine ⟨p,hp,_,_⟩,
+  rw ← hpa, refine dvd_pow_self _ hk,
+  rw ← hpb, refine dvd_pow_self _ hl,
+ end
+
+lemma eq_iff_ppowers_dvd (a b  : ℕ) (ha : a ≠ 0) (hb : b ≠ 0) : a = b ↔ (∀ q ∣ a, is_prime_pow q → coprime q (a/q)
+ → q ∣ b) ∧ (∀ q ∣ b, is_prime_pow q → coprime q (b/q) → q ∣ a) :=
+begin
+  split, intro hab, split, intros q hq hqa1 hqa2, rw hab at hq, exact hq,
+  intros q hq hqb1 hqb2, rw ← hab at hq, exact hq,
+  intro hcomp, refine nat.eq_of_factorization_eq ha hb _,
+  intro p,
+  let q := p^(a.factorization p),
+  let r := p^(b.factorization p),
+  by_cases hfac0 : (a.factorization p = 0 ∨ b.factorization p = 0),
+  cases hfac0 with hfac1 hfac2,
+  by_cases hfac3 : b.factorization p = 0,
+  rw [hfac1, hfac3],
+  have hr' := hcomp.2 r,
+  have hp : nat.prime p, {
+    refine @nat.prime_of_mem_factorization b _ _,
+     rw finsupp.mem_support_iff, exact hfac3,
+   },
+  have hr'' : r ∣ b ∧ r.coprime(b/r), {
+     rw factorization_eq_iff, exact hp, exact hfac3, },
+  have hrpp : is_prime_pow r, {
+    refine is_prime_pow.pow (nat.prime.is_prime_pow hp) _, exact hfac3,
+  },
+  specialize hr' hr''.1 hrpp hr''.2, rw nat.prime.pow_dvd_iff_le_factorization hp at hr',
+  rw hfac1 at hr', exfalso, apply hfac3, rw nat.le_zero_iff at hr', exact hr', exact ha,
+  by_cases hfac3 : a.factorization p = 0,
+  rw [hfac2, hfac3],
+  have hr' := hcomp.1 q,
+  have hp : nat.prime p, {
+    refine @nat.prime_of_mem_factorization a _ _,
+     rw finsupp.mem_support_iff, exact hfac3,
+   },
+  have hr'' : q ∣ a ∧ q.coprime(a/q), {
+     rw factorization_eq_iff, exact hp, exact hfac3, },
+  have hrpp : is_prime_pow q, {
+    refine is_prime_pow.pow (nat.prime.is_prime_pow hp) _, exact hfac3,
+  },
+  specialize hr' hr''.1 hrpp hr''.2, rw nat.prime.pow_dvd_iff_le_factorization hp at hr',
+  rw hfac2 at hr', exfalso, apply hfac3, rw nat.le_zero_iff at hr', exact hr', exact hb,
+  rw not_or_distrib at hfac0,
+  have hp : nat.prime p, {
+    refine @nat.prime_of_mem_factorization a _ _,
+     rw finsupp.mem_support_iff, exact hfac0.1,
+   },
+  have hq' : q ∣ a ∧ q.coprime(a/q), {
+     rw factorization_eq_iff, exact hp, exact hfac0.1, },
+  have hqpp : is_prime_pow q, {
+    refine is_prime_pow.pow (nat.prime.is_prime_pow hp) _, exact hfac0.1,
+  },
+  have hr' : r ∣ b ∧ r.coprime(b/r), {
+     rw factorization_eq_iff, exact hp, exact hfac0.2, },
+  have hrpp : is_prime_pow r, {
+    refine is_prime_pow.pow (nat.prime.is_prime_pow hp) _, exact hfac0.2,
+  },
+  have hcompq := hcomp.1 q hq'.1 hqpp hq'.2,
+  have hcompr := hcomp.2 r hr'.1 hrpp hr'.2,
+  rw nat.prime.pow_dvd_iff_le_factorization hp at hcompq,
+  rw nat.prime.pow_dvd_iff_le_factorization hp at hcompr,
+  rw le_antisymm_iff, refine ⟨hcompq, hcompr⟩,
+  exact ha, exact hb,
+end
+
+theorem is_prime_pow_dvd_prod {n : ℕ} {D : finset ℕ}
+ (hD : ∀ a b ∈ D, a ≠ b → coprime a b) (hn : is_prime_pow n) :
+n ∣ ∏ d in D, d ↔ ∃ d ∈ D, n ∣ d :=
+begin
+  induction D using finset.induction_on with q D hqD hDind,
+  simp only [nat.dvd_one, exists_false, finset.prod_empty, iff_false],
+  split, intro hn1, exfalso, exact (is_prime_pow.ne_one hn) hn1,
+  intro hne, exfalso, rcases hne with ⟨d,hd1,hd2⟩, exact (not_mem_empty d) hd1,
+  split, intro h, rw prod_insert hqD at h,
+  have hnec : (∀ (a : ℕ), a ∈ D → ∀ (b : ℕ), b ∈ D → a ≠ b → a.coprime b), {
+    intros a ha b hb hab,refine hD a (mem_insert_of_mem ha) b (mem_insert_of_mem hb) hab,
+  },
+  specialize hDind hnec, rw nat.coprime.is_prime_pow_dvd_mul _ hn at h,
+  cases h with h1 h2, use q, refine ⟨mem_insert_self _ _, h1⟩, rw hDind at h2,
+  rcases h2 with ⟨d,hd1,hd2⟩, use d, refine ⟨mem_insert_of_mem hd1,hd2⟩,
+  refine nat.coprime_prod_right _, intros d hd,
+  refine hD q (mem_insert_self _ _) d (mem_insert_of_mem hd) _, intro hne, rw hne at hqD,
+  exact hqD hd,
+  intro h, rcases h with ⟨d,hd1,hd2⟩, refine dvd_trans hd2 _,
+  refine dvd_prod_of_mem _ hd1,
+end
+
+lemma prime_pow_dvd_prime_pow {a b : ℕ} (ha : is_prime_pow a) (hb : is_prime_pow b) :
+   a ∣ b ↔  ∃ (p k l : ℕ), prime p ∧ 0 < k ∧ k ≤ l ∧ p ^ k = a ∧ p ^ l = b :=
+begin
+  split, intro hab,
+  rw is_prime_pow_def at hb, rcases hb with ⟨r,l,hr,hl,hrb⟩,
+  rw ← hrb at hab, rw ← nat.prime_iff at hr, rw nat.dvd_prime_pow hr at hab,
+  rcases hab with ⟨k,hkl,h⟩,
+  use r, use k, use l, rw nat.prime_iff at hr,
+  refine ⟨hr,_,hkl,_,hrb⟩, rw pos_iff_ne_zero, intro hz,
+  rw [hz, pow_zero] at h, refine is_prime_pow.ne_one ha h,
+  refine eq.symm h,
+  intro he, rcases he with ⟨p,k,l,hp,hk,hkl,hpa,hpb⟩,
+  rw [← hpa, ← hpb, pow_dvd_pow_iff], exact hkl,
+  exact prime.ne_zero hp, exact prime.not_unit hp,
+end
+
+lemma prime_pow_dvd_prod_prime_pow {a : ℕ} {D : finset ℕ} (ha : is_prime_pow a)
+ (hD1 : ∀ a b ∈ D, a ≠ b → coprime a b) (hD2 : ∀ d ∈ D, is_prime_pow d) :
+a ∣ (∏ d in D, d) → coprime a ((∏ d in D, d)/a) → a ∈ D :=
+begin
+  intros haD hacop,
+  by_cases hprod0 : ∏ (d : ℕ) in D, d = 0,
+  rw [hprod0, nat.zero_div, nat.coprime_zero_right] at hacop,
+  exfalso, refine is_prime_pow.ne_one ha hacop,
+  have haD' := haD, rw is_prime_pow_dvd_prod hD1 ha at haD,
+  rcases haD with ⟨d,hd1,hd2⟩,
+  have : a = d, {
+    have hdpp : is_prime_pow d := hD2 d hd1,
+    rw prime_pow_dvd_prime_pow ha (hD2 d hd1) at hd2,
+    rcases hd2 with ⟨p,k,l,hp,h0k,hkl,hpa,hpd⟩, rw [← hpa, ← hpd],
+    have hnec1 : k = (∏ (d : ℕ) in D, d).factorization p, {
+      rw ← nat.prime_iff at hp, rw ← hpa at haD', rw pos_iff_ne_zero at h0k,
+      rw ← hpa at hacop,
+      refine coprime_div_iff hp haD' h0k hacop,
+     },
+    have hnec2 : l ≤ (∏ (d : ℕ) in D, d).factorization p, {
+      rw ← nat.prime_iff at hp,
+      rw ← nat.prime.pow_dvd_iff_le_factorization hp _, rw hpd,
+      refine dvd_prod_of_mem _ hd1, exact hprod0,
+    },
+    have hnec3 : k = l, { rw ← has_le.le.le_iff_eq, exact hkl,
+        rw hnec1, exact hnec2,},
+    rw hnec3,
+   },
+  rw this, exact hd1,
+end
+
+lemma prod_of_subset_le_prod_of_ge_one'
+  {s : finset ℕ} {f : ℕ → ℝ} : ∀ t : finset ℕ, (t ⊆ s) → (∀ i ∈ s, 0 ≤ f i)
+  → (∀ i ∈ s, i ∉ t → 1 ≤ f i) →  ∏ i in t, f i ≤ ∏ i in s, f i :=
+begin
+  induction s using finset.induction_on with n s hns hsind,
+  intros t ht hs hf, rw finset.subset_empty.mp ht, simp only [le_refl, finset.prod_empty],
+  intros t ht hs hf, rw prod_insert hns,
+  by_cases htn : n ∈ t,
+  let t' := erase t n,
+  have htt' : insert n t' = t, { refine insert_erase htn, },
+  rw [← htt', prod_insert (finset.not_mem_erase _ _)], refine mul_le_mul_of_nonneg_left _ _,
+  refine hsind t' _ _ _, refine subset_trans (finset.erase_subset_erase _ ht) _,
+  refine erase_insert_subset _ _, intros a ha, refine hs a _, refine mem_insert_of_mem ha,
+  intros a ha1 ha2, refine hf a (mem_insert_of_mem ha1) _, intro hna, apply ha2,
+  rw mem_erase, refine ⟨_,hna⟩, intro hna2, apply hns, rw hna2 at ha1, exact ha1,
+  refine hs n (ht htn),
+  refine le_trans (hsind t _ _ _) _, rw [subset_insert_iff, erase_eq_of_not_mem htn] at ht,
+  exact ht, intros i hi, refine hs i (mem_insert_of_mem hi),
+  intros i hi1 hi2, refine hf i (mem_insert_of_mem hi1) hi2,
+  refine le_mul_of_one_le_left _ _, refine prod_nonneg _, intros i hi,
+  refine hs i (mem_insert_of_mem hi), refine hf n (mem_insert_self _ _) htn,
+end
+
+lemma prod_of_subset_le_prod_of_ge_one
+  {s t : finset ℕ} {f : ℕ → ℝ} (h : t ⊆ s) (hs : ∀ i ∈ s, 0 ≤ f i) (hf : ∀ i ∈ s, i ∉ t → 1 ≤ f i) :
+  ∏ i in t, f i ≤ ∏ i in s, f i :=
+begin
+  refine prod_of_subset_le_prod_of_ge_one' t h hs hf,
+end
+
+lemma sum_le_sum_of_inj' {A : finset ℕ} {f1 f2 : ℕ → ℝ} (g : ℕ → ℕ) :
+∀ B : finset ℕ, (∀ b ∈ B, 0 ≤ f2 b ) →
+(∀ a ∈ A, g a ∈ B) → (∀ a1 a2 ∈ A, (g a1 = g a2) → a1 = a2) → (∀ a ∈ A, f2 (g a) = f1 a) →
+A.sum (λ (i : ℕ), f1 i) ≤ B.sum (λ (i : ℕ), f2 i) :=
+begin
+  induction A using finset.induction_on with n A hnA hA,
+  intros B hf2 hgB hginj hgf, simp only [finset.sum_empty], refine sum_nonneg hf2,
+  intros B hf2 hgB hginj hgf, rw sum_insert hnA,
+  let B' := erase B (g n),
+  have hBB' : insert (g n) B' = B, { refine insert_erase (hgB n _), refine mem_insert_self _ _, },
+  rw ← hBB', rw sum_insert (finset.not_mem_erase _ _), refine add_le_add _ _,
+  rw hgf n (mem_insert_self _ _), refine hA B' _ _ _ _,
+  intros b hb, refine hf2 b (mem_of_mem_erase hb),
+  intros a ha, rw mem_erase, refine ⟨_,_⟩,
+  intro hne, refine hnA _, rw ← hginj a (mem_insert_of_mem ha) n (mem_insert_self _ _) hne,
+  exact ha, refine hgB a (mem_insert_of_mem ha), intros a1 ha1 a2 ha2 hgai,
+  refine hginj a1 (mem_insert_of_mem ha1) a2 (mem_insert_of_mem ha2) hgai,
+  intros a ha,  refine hgf a (mem_insert_of_mem ha),
+end
+
+lemma sum_le_sum_of_inj {A B : finset ℕ} {f1 f2 : ℕ → ℝ} (g : ℕ → ℕ) (hf2 : ∀ b ∈ B, 0 ≤ f2 b )
+(hgB : ∀ a ∈ A, g a ∈ B) (hginj : ∀ a1 a2 ∈ A, (g a1 = g a2) → a1 = a2) (hgf : ∀ a ∈ A, f2 (g a) = f1 a) :
+A.sum (λ (i : ℕ), f1 i) ≤ B.sum (λ (i : ℕ), f2 i) :=
+begin
+ refine sum_le_sum_of_inj' g B hf2 hgB hginj hgf,
+end
+
+theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (m : ℝ)
+  (h : ∀ (a : ℤ), a ∈ s → ((f a).card : ℝ) < m) :
+ (s.nonempty) → ((s.bUnion f).card : ℝ) < s.card * m :=
+begin
+  induction s using finset.induction_on with n s hns hs,
+  intro he, exfalso, refine finset.not_nonempty_empty he,
+  intro he,
+  have hins : (insert n s).bUnion f = (s.bUnion f) ∪ ((f n)\(s.bUnion f)), {
+    ext, split, intro ha, rw mem_bUnion at ha, rcases ha with ⟨m,hm1,hm2⟩,
+    rw mem_insert at hm1, rw mem_union, cases hm1 with hm3 hm4,
+    rw or_iff_not_imp_left, intro ha2, rw mem_sdiff, rw hm3 at hm2,
+    refine ⟨hm2,ha2⟩, left, rw mem_bUnion, use m, refine ⟨hm4,hm2⟩,
+    intro ha, rw mem_union at ha, rw mem_bUnion,
+    cases ha with ha2 ha3, rw mem_bUnion at ha2, rcases ha2 with ⟨m,hm1,hm2⟩,
+    use m, refine ⟨mem_insert_of_mem hm1,hm2⟩, use n, rw mem_sdiff at ha3,
+    refine ⟨mem_insert_self _ _,ha3.1⟩,
+   },
+  have hf' : ∀ (a : ℤ), a ∈ s → ((f a).card : ℝ) < m, {
+    intros n hn, refine h n (mem_insert_of_mem hn),
+   },
+  rw [hins, finset.card_disjoint_union, card_insert_of_not_mem hns],
+  push_cast, rw [add_mul, one_mul],
+  by_cases hsne : s.nonempty,
+  refine add_lt_add _ _, exact hs hf' hsne,
+  refine lt_of_le_of_lt _ (h n _), norm_cast, refine card_le_of_subset (sdiff_subset _ _),
+  refine mem_insert_self _ _, rw finset.not_nonempty_iff_eq_empty at hsne,
+  rw hsne, simp only [finset.card_empty, finset.bUnion_empty, finset.sdiff_empty,
+    nat.cast_zero, zero_mul, zero_add],
+  refine h n (mem_insert_self _ _), refine disjoint_sdiff,
+end
+
+
+
+lemma prod_le_max_size {ι N : Type*} [ordered_comm_semiring N]
+  {s : finset ι} {f : ι → N} (hs : ∀ i ∈ s, 0 ≤ f i) (M : N) (hf : ∀ i ∈ s, f i ≤ M) :
+  ∏ i in s, f i ≤ M^s.card :=
+begin
+  calc _ ≤ ∏ i in s, M :_
+     ... = _ : _,
+  refine prod_le_prod hs hf, refine finset.prod_const _,
+end
+
+lemma sum_add_sum {A B : finset ℕ} {f : ℕ → ℝ} :
+A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) = (A∪B).sum (λ (i : ℕ), f i) +
+(A∩B).sum (λ (i : ℕ), f i) :=
+begin
+  let B' := B\(A∩B),
+  have hBunion : B = B'∪(A∩B), { refine eq.symm _, refine sdiff_union_of_subset _,
+     refine inter_subset_right _ _, },
+  have hABunion: A∪B=A∪B', {
+    ext, split, intro ha, rw mem_union, rw mem_union at ha,
+    rw or_iff_not_imp_left, intro hna, rw mem_sdiff,
+    cases ha with ha1 ha2, exfalso, exact hna ha1, refine ⟨ha2,_⟩, intro hai,
+    apply hna, rw mem_inter at hai, exact hai.1, intro ha, rw mem_union,
+    rw mem_union at ha, cases ha with ha1 ha2, left, exact ha1, rw mem_sdiff at ha2,
+    right, exact ha2.1,
+   },
+  nth_rewrite 0 hBunion, rw [sum_union, ← add_assoc, hABunion, sum_union],
+  rw finset.disjoint_left, intros a ha haB', rw mem_sdiff at haB', apply haB'.2,
+  rw mem_inter, refine ⟨ha,haB'.1⟩, refine sdiff_disjoint,
+end
+
+lemma sum_add_sum_add_sum {A B C : finset ℕ} {f : ℕ → ℝ} :
+A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) + C.sum (λ (i : ℕ), f i) =
+(A∪B∪C).sum (λ (i : ℕ), f i) + (A∩B).sum (λ (i : ℕ), f i) + (A∩C).sum (λ (i : ℕ), f i)
++ (B∩C).sum (λ (i : ℕ), f i) - (A∩B∩C).sum (λ (i : ℕ), f i)
+ :=
+begin
+  rw sum_add_sum, rw [add_right_comm], rw @sum_add_sum (A∪B) C _,
+  convert_to ∑ (i : ℕ) in A ∪ B ∪ C, f i + (∑ (i : ℕ) in A ∩ B, f i + ∑ (i : ℕ) in (A ∪ B) ∩ C, f i) =
+      ∑ (i : ℕ) in A ∪ B ∪ C, f i + (∑ (i : ℕ) in A ∩ B, f i + (∑ (i : ℕ) in A ∩ C, f i +
+       ∑ (i : ℕ) in B ∩ C, f i - ∑ (i : ℕ) in A ∩ B ∩ C, f i)) using 0, { ring_nf, },
+  refine congr_arg (has_add.add _) _, refine congr_arg (has_add.add _) _,
+  rw @sum_add_sum (A∩C) (B∩C) _,
+  have : (A∩C)∩(B∩C) = A∩B∩C, {
+    rw [inter_comm B C, ← inter_assoc, inter_assoc A C C, inter_self, inter_assoc, inter_comm C B,
+        ← inter_assoc],
+   },
+  rw [this, ← add_sub, sub_self, add_zero, inter_distrib_right],
+end
+
+lemma rec_sum_le_three { A B C : finset ℕ } : rec_sum (A∪B∪C) ≤ rec_sum A + rec_sum B + rec_sum C :=
+begin
+  let B' := B\A,
+  let C' := C\(A∪B'),
+  have hunion : A∪B∪C ⊆ A∪B'∪C', {
+    intros n hn, rw [mem_union, mem_union],
+    rw [mem_union] at hn, rw or_iff_not_imp_left, intro hn2,
+    rw mem_sdiff, cases hn with hab hc, exfalso, apply hn2,
+    rw mem_union at hab, rw or_iff_not_imp_left, intro hna,
+    rw mem_sdiff, refine ⟨_,hna⟩,  cases hab with hab1 hab2,
+    exfalso, exact hna hab1, exact hab2, refine ⟨hc,_⟩, intro hn,
+    apply hn2, rw ← mem_union, exact hn,
+   },
+  refine le_trans (rec_sum_mono hunion) _,
+  rw [rec_sum_disjoint, rec_sum_disjoint], refine add_le_add _ _,
+  rw add_le_add_iff_left, refine rec_sum_mono (sdiff_subset _ _),
+  refine rec_sum_mono (sdiff_subset _ _),
+  refine disjoint_sdiff, refine disjoint_sdiff,
+end
+
+lemma two_in_Icc {a b x y: ℤ} (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : (|x-y|:ℝ) ≤ b-a :=
+begin
+  rw abs_le, rw mem_Icc at hx, rw mem_Icc at hy, norm_cast, refine ⟨_,_⟩,
+  rw [neg_le, neg_sub], refine sub_le_sub hy.2 hx.1,
+  refine sub_le_sub hx.2 hy.1,
+end
+
+lemma two_in_Icc' {a b x y: ℤ} (I : finset ℤ) (hI : I = Icc a b) (hx : x ∈ I) (hy : y ∈ I) :
+  (|x-y|:ℝ) ≤ b-a :=
+begin
+  refine two_in_Icc _ _, rw ← hI, exact hx, rw ← hI, exact hy,
+end
 
 lemma sum_le_card_mul_real {A : finset ℕ} {M : ℝ} {f : ℕ → ℝ} (h : ∀ n ∈ A, f n ≤ M) :
 A.sum f ≤ (A.card) * M :=
 begin
   rw ← nsmul_eq_mul, refine finset.sum_le_card_nsmul _ _ _ h,
 end
-
-theorem card_bUnion_lt_card_mul_real {s : finset ℤ} {f : ℤ → finset ℕ} (m : ℝ) (hs : s.nonempty)
-  (h : ∀ (a : ℤ), a ∈ s → ((f a).card : ℝ) < m) :
-((s.bUnion f).card : ℝ) < s.card * m := sorry
-
-lemma sum_bUnion_le {f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
-(hf : ∀ (i : ℕ), 0 ≤ f i) :
-(s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) := sorry
-
-lemma nat_cast_diff_issue {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) := sorry
-
-lemma two_in_Icc' {a b x y: ℤ} (I : finset ℤ) (hI : I = Icc a b) (hx : x ∈ I) (hy : y ∈ I) :
-  (|x-y|:ℝ) ≤ b-a := sorry
-
-lemma two_in_Icc {a b x y: ℤ} (hx : x ∈ Icc a b) (hy : y ∈ Icc a b) : (|x-y|:ℝ) ≤ b-a :=
-sorry
-
-lemma sub_le_omega_div {a b : ℕ} (h: b ∣ a) : (ω a:ℝ) - ω b ≤ ω (a/b) := sorry
-
-lemma omega_div_le {a b : ℕ}  (h : b ∣ a) : ω (a/b) ≤ ω a := sorry
-
-lemma omega_mul_ppower {a q : ℕ} (hq : is_prime_pow q) : ω (q*a) ≤ 1 + ω a := sorry
-
-lemma sum_add_sum {A B : finset ℕ} {f : ℕ → ℝ} :
-A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) = (A∪B).sum (λ (i : ℕ), f i) +
-(A∩B).sum (λ (i : ℕ), f i) := sorry
-
-lemma sum_add_sum_add_sum {A B C : finset ℕ} {f : ℕ → ℝ} :
-A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) + C.sum (λ (i : ℕ), f i) =
-(A∪B∪C).sum (λ (i : ℕ), f i) + (A∩B).sum (λ (i : ℕ), f i) + (A∩C).sum (λ (i : ℕ), f i)
-+ (B∩C).sum (λ (i : ℕ), f i) - (A∩B∩C).sum (λ (i : ℕ), f i)
- := sorry
-
-lemma sum_le_sum_of_inj {A B : finset ℕ} {f1 f2 : ℕ → ℝ} (g : ℕ → ℕ) (hf2 : ∀ b ∈ B, 0 ≤ f2 b )
-(hgB : ∀ a ∈ A, g a ∈ B) (hginj : ∀ a1 a2 ∈ A, (g a1 = g a2) → a1 = a2) (hgf : ∀ a ∈ A, f2 (g a) = f1 a) :
-A.sum (λ (i : ℕ), f1 i) ≤ B.sum (λ (i : ℕ), f2 i) := sorry
 
 lemma dvd_iff_ppowers_dvd (d n : ℕ) : d ∣ n ↔ ∀ q ∣ d, is_prime_pow q → q ∣ n :=
 begin
@@ -96,58 +1213,6 @@ begin
   rw ← pos_iff_ne_zero, exact lt_of_lt_of_le h0k this,
 end
 
-lemma eq_iff_ppowers_dvd (a b  : ℕ) : a = b ↔ (∀ q ∣ a, is_prime_pow q → coprime q (a/q)
- → q ∣ b) ∧ (∀ q ∣ b, is_prime_pow q → coprime q (b/q) → q ∣ a) := sorry
-
-theorem is_prime_pow_dvd_prod {n : ℕ} {D : finset ℕ}
- (hD : ∀ a b ∈ D, a ≠ b → coprime a b) (hn : is_prime_pow n) :
-n ∣ ∏ d in D, d ↔ ∃ d ∈ D, n ∣ d := sorry
-
-lemma prime_pow_not_coprime_iff {a b : ℕ} (ha : is_prime_pow a) (hb : is_prime_pow b) :
- ¬ coprime a b ↔ ∃ (p : ℕ) (ka kb : ℕ), p.prime ∧ ka ≠ 0 ∧ kb ≠ 0 ∧
- p ^ ka = a ∧ p ^ kb = b := sorry
-
-lemma prime_pow_not_coprime_prod_iff {a : ℕ} {D : finset ℕ} (ha : is_prime_pow a)
-(hD : ∀ d ∈ D, is_prime_pow d) :
- ¬ coprime a (∏ d in D, d) ↔ ∃ (p : ℕ) (ka kd : ℕ) (d ∈ D), p.prime ∧ ka ≠ 0 ∧ kd ≠ 0 ∧
- p ^ ka = a ∧ p ^ kd = d := sorry
-
- lemma prime_pow_dvd_prod_prime_pow {a : ℕ} {D : finset ℕ} (ha : is_prime_pow a)
-(hD : ∀ d ∈ D, is_prime_pow d) :
-a ∣ (∏ d in D, d) → coprime a ((∏ d in D, d)/a) → a ∈ D := sorry
-
-lemma prime_pow_prods_coprime {A B : finset ℕ} (hA : ∀ a ∈ A, is_prime_pow a)
- (hB : ∀ b ∈ B, is_prime_pow b) : coprime (∏ a in A, a) (∏ b in B, b) ↔
- ∀ a ∈ A, ∀ b ∈ B, coprime a b := sorry
-
-lemma prod_le_max_size {ι N : Type*} [ordered_comm_semiring N]
-  {s : finset ι} {f : ι → N} (hs : ∀ i ∈ s, 0 ≤ f i) (M : N) (hf : ∀ i ∈ s, f i ≤ M) :
-  ∏ i in s, f i ≤ M^s.card :=
-sorry
-
-lemma omega_count_eq_ppowers {n : ℕ} :
-  (filter (λ (r : ℕ), is_prime_pow r ∧ r.coprime (n / r)) n.divisors).card = ω n := sorry
-
-lemma prod_of_subset_le_prod_of_ge_one {ι N : Type*} [ordered_comm_semiring N]
-  {s t : finset ι} {f : ι → N} (h : t ⊆ s) (hs : ∀ i ∈ t, 0 ≤ f i) (hf : ∀ i ∈ s, i ∉ t → 1 ≤ f i) :
-  ∏ i in t, f i ≤ ∏ i in s, f i :=
-sorry
-
-theorem sum_bUnion_le_sum_of_nonneg
-{f : ℕ → ℚ} {s : finset ℕ} {t : ℕ → finset ℕ}
- (hf : ∀ x ∈ s.bUnion t, 0 ≤ f x) :
-(s.bUnion t).sum (λ (x : ℕ), f x) ≤ s.sum (λ (x : ℕ), (t x).sum (λ (i : ℕ), f i)) :=
-sorry
-
-theorem weighted_ph {α M: Type*} {s : finset α}
-{f : α → M} {w : α → M} {b : M} [ordered_comm_semiring M] (h0b : 0 < b)
-(hw : ∀ (a : α), a ∈ s → 0 ≤ w a) (hf : ∀ (a : α), a ∈ s → 0 ≤ f a)
-(hb : b ≤ s.sum (λ (x : α), ((w x) * (f x)))) :
-∃ (y : α) (H : y ∈ s), b ≤ (s.sum (λ (x : α), w x))*f y
-:= sorry
-
--- The following are a little more specialised to this project, in proof and/or definitions.
-
 
 lemma rec_sum_le_card_div {A : finset ℕ} {M : ℝ} (hM : 0 < M) (h : ∀ n ∈ A, M ≤ (n:ℝ)) :
  (rec_sum A : ℝ) ≤ A.card / M :=
@@ -157,54 +1222,6 @@ lemma rec_sum_le_card_div {A : finset ℕ} {M : ℝ} (hM : 0 < M) (h : ∀ n ∈
   exact lt_of_lt_of_le hM (h n hn), exact hM,
  end
 
-lemma rec_sum_le_rec_sum_local {A : finset ℕ} :
-  rec_sum A ≤ ∑ q in ppowers_in_set A, (rec_sum_local A q)/q := sorry
-
-lemma div_bound_useful_version {ε : ℝ} (hε1 : 0 < ε) :
-  ∀ᶠ (N : ℕ) in at_top, ∀ n : ℕ, (n ≤ N^2) →
-  (σ 0 n : ℝ) ≤ N ^ (2*real.log 2 / log (log (N : ℝ)) * (1 + ε)) :=
-sorry
-
-lemma rec_sum_le_three { A B C : finset ℕ } :
-rec_sum (A∪B∪C) ≤ rec_sum A + rec_sum B + rec_sum C := sorry
-
-lemma yet_another_large_N : ∀ᶠ (N : ℕ) in at_top,
-(2:ℝ) * N ^ (-2 / log (log N) + 2 * log 2 / log (log N) * (1 + 1 / 3)) < log N ^ -((1:ℝ) / 101) / 6
-:= sorry
-
-lemma rec_pp_sum_close :
-  ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x : ℝ)-y| ≤ N) →
-  ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
-  ((1 : ℝ)/500)*log(log N) :=
-  sorry
-
-lemma triv_ε_estimate (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) : (1-2*ε) ≤ (1-ε)*((1-ε)/(1+ε^2)) := sorry
-
-lemma help_ε_estimate (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) : log (1 - ε) * (1 - ε) ≤ -ε / 2 := sorry
-
-lemma factorial_bound (t : ℕ) : ((t:ℝ)* exp (-1)) ^ t ≤ t.factorial := sorry
-
-lemma helpful_decreasing_bound {x y : ℝ} {n : ℕ} (hn : x ≤ n) (hy : y ≤ x):
-  (y/(n*exp(-1)))^n ≤ (y/(x*exp(-1)))^x := sorry
-
-lemma rec_sum_le_prod_sum {A : finset ℕ} {I: finset ℕ} (hI : ∀ n ∈ A, ω n ∈ I) :
-  (rec_sum A : ℝ) ≤ ∑ t in I, (∑ q in ppowers_in_set A, (1/q : ℝ))^t/(nat.factorial t) :=
-  sorry
-
-lemma and_another_large_N (ε : ℝ) (h1 : 0 < ε) (h2 : ε < 1/2) :  ∀ᶠ (N : ℕ) in at_top,
-   2 * log (log N) + 1 ≤ (1 + ε ^ 2) ^ ((1 - ε) * log (log N)) := sorry
-
-lemma another_large_N (c C : ℝ) (hc : 0 < c) (hC : 0 < C) : ∀ᶠ (N : ℕ) in at_top,
-  1/c/2 ≤ log(log(log N)) ∧ 2^((100:ℝ)/99) ≤ log N ∧ 4*log(log(log N)) ≤ log(log N)
-  ∧ log 2 < log(log(log N)) ∧
-  (log N) ^ (-((2:ℝ) / 99) / 2) ≤
-     C * (1 / (2 * log N ^ ((1:ℝ) / 100))) / log N ^ ((2:ℝ)/⌊(log (log N))/(2*log(log(log N)))⌋₊) ∧
-  (1 - 2 / 99) * log (log N) +
-  (1 + 5 / log (⌊(log (log N))/(2*log(log(log N)))⌋₊) * log (log N)) ≤ 99 / 100 * log (log N) := sorry
-
-lemma yet_another_large_N' : ∀ᶠ (N : ℕ) in at_top,
-1/log N + (1 / (2 * log N ^ ((1:ℝ) / 100)))*((501/500)*log(log N)) ≤
-      (log N)^(-(1/101 : ℝ))/6 := sorry
 
 lemma nat_gcd_prod_le_diff {a b c : ℤ} (hab : a ≠ b) (hac : a ≠ c):
   nat.gcd (int.nat_abs a) (int.nat_abs (b*c)) ≤ (int.nat_abs (a-b))*(int.nat_abs (a-c)) :=
@@ -220,6 +1237,28 @@ begin
   refine nat.gcd_dvd_left _ _, rw ← int.dvd_nat_abs, norm_cast, refine nat.gcd_dvd_right _ _,
 end
 
+lemma triv_ε_estimate (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) : (1-2*ε) ≤ (1-ε)*((1-ε)/(1+ε^2)) :=
+begin
+  rw [mul_div, le_div_iff],
+  convert_to -2*ε^3+1-2*ε+ε^2 ≤ 1-2*ε+ε^2 using 0, { ring_nf, },
+  rw [add_le_add_iff_right, sub_le_sub_iff_right, add_le_iff_nonpos_left],
+  refine mul_nonpos_of_nonpos_of_nonneg _ _, rw [neg_le, neg_zero], exact zero_le_two,
+  refine pow_nonneg _ _, exact le_of_lt hε1, refine lt_of_lt_of_le zero_lt_one _,
+  refine le_add_of_nonneg_right (sq_nonneg ε),
+end
+
+lemma help_ε_estimate (ε : ℝ) (hε1 : 0 < ε) (hε2 : ε < 1/2) : log (1 - ε) * (1 - ε) ≤ -ε / 2 :=
+begin
+  have h1ε : 0 < 1 - ε, { rw sub_pos, refine lt_trans hε2 one_half_lt_one, },
+  calc _ ≤ (1-ε-1)*(1-ε) : _
+     ... = -ε*(1-ε) :_
+     ... ≤ _ :_,
+  rw mul_le_mul_right, refine log_le_sub_one_of_pos h1ε, exact h1ε,
+  simp only [neg_mul, mul_eq_mul_left_iff, true_or, eq_self_iff_true, neg_inj, sub_sub_cancel_left,
+     sub_left_inj],
+  rw [neg_div, neg_mul, neg_le_neg_iff, div_eq_mul_one_div, mul_le_mul_left, le_sub],
+  norm_num1, exact le_of_lt hε2, exact hε1,
+end
 
 lemma divisor_function_eq_card_divisors {n : ℕ} : (σ 0 n) = (n.divisors).card :=
 begin
@@ -535,7 +1574,7 @@ begin
   exact_mod_cast le_trans this (le_of_lt hyN),
   intros i hi, apply add_nonneg, exact zero_le_one,
   apply mul_nonneg, exact zero_le_one, rw [inv_nonneg, sub_nonneg],
-  rw finset.mem_filter at hi, exact_mod_cast (le_of_lt (nat.prime.one_lt hi.2)),
+  rw finset.mem_filter at hi, exact_mod_cast (le_of_lt (nat.prime.one_lt hi.2.1)),
   intros i hi1 hi2, rw le_add_iff_nonneg_right, apply div_nonneg,
   exact zero_le_one, rw sub_nonneg, rw finset.mem_filter at hi1,
   exact_mod_cast (le_of_lt (nat.prime.one_lt hi1.2.1)),
@@ -668,8 +1707,8 @@ lemma find_good_d_aux1 : ∀ᶠ (N : ℕ) in at_top, ∀ M u y : ℝ, ∀ q : �
    ((∑ n in  (local_part A q).filter(λ n, (q*d)∣n
      ∧ coprime (q*d) (n/(q*d)) ), (q:ℚ)/n) : ℝ) ≤ 2*(log N)/d :=
 begin
-  filter_upwards [eventually_ge_at_top 0],
-  intros N hN M u y q A hA hM hMN hu d hd,
+  filter_upwards [eventually_ge_at_top 0, harmonic_sum_bound_two],
+  intros N hN hharmonic M u y q A hA hM hMN hu d hd,
   let X := (local_part A q).filter(λ n, (q*d)∣n ∧ coprime (q*d) (n/(q*d)) ),
   have hDnotzero : d ≠ 0, {
    intro hzd, rw finset.mem_filter at hd,
@@ -677,10 +1716,6 @@ begin
    apply (lt_iff_not_ge (M*u) 0).mp hd', apply mul_nonneg, exact le_of_lt hM,
    exact hu,
   },
-  -- For the below, could use the aysmptotic for the sum, but that's overkill, is just
-  -- the integral test upper bound in mathlib?
-  have hharmonic : ∑ n in finset.range(N+1), (1 : ℝ)/n ≤ 2*log N,
-  { sorry, },
   have hrectrivialaux : ((∑ n in X, (q:ℚ)/n)) ≤
     ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), (q/n), {
       apply sum_le_sum_of_subset_of_nonneg, intros x hx,
@@ -698,7 +1733,6 @@ begin
       rw rat.cast_sum, push_cast,
   },
   apply le_trans hrectrivial',
-  -- Actually have equality here, but inequality is enough and easier to prove
   have hrectrivial'' : ∑ n in (finset.range(N+1)).filter(λ x, (q*d)∣ x), ((q : ℝ)/n)
       ≤ (1/d)*∑ m in (finset.range(N+1)).filter(λ x, q*d*x ≤ N), (1/m), {
       let g := (λ n : ℕ, n/(q*d)),
@@ -853,15 +1887,31 @@ begin
       exact hr2, cases hw2 with hw3 hw4, rw [local_part, mem_filter] at hn,
       exact dvd_trans hw3 hn.2.1,
       refine dvd_trans hw4 (dvd_trans (dvd_mul_left _ _) hqd), exact hqdcop,
-      exact hr2, exact nat.coprime.symm hQ'qd, exact hr2,
+      exact hr2, exact nat.coprime.symm hQ'qd, exact hr2, exact hnz,
+      rw mul_assoc, refine mul_ne_zero _ _, rw prod_ne_zero_iff,
+      intros r hr, rw mem_filter at hr, intro hbad,
+      have := is_prime_pow.pos hr.2.1, rw pos_iff_ne_zero at this, exact this hbad,
+      intro hbad, apply hnz,  rw [hbad, zero_dvd_iff] at hqd, exact hqd,
      },
     use d, split, rw mem_filter, split, rw [mem_range, nat.lt_succ_iff],
     refine le_trans _ hdupp, apply nat.le_mul_of_pos_left,
     rw pos_iff_ne_zero, by_contra, rw h at hq,
     exact zero_not_mem_ppowers_in_set hq, split, intros r hr1 hr2 hr3,
     have hrQ : r ∈ Q, {
-      refine prime_pow_dvd_prod_prime_pow hr1 _ hr2 hr3, intros t ht,
-      rw mem_filter at ht, exact ht.2.1,
+      refine prime_pow_dvd_prod_prime_pow hr1 _ _ hr2 hr3,
+      intros a ha b hb hab, by_contra, rw mem_filter at ha, rw mem_filter at hb,
+      have h' := prime_pow_not_coprime_prime_pow _ _ h,
+      rcases h' with ⟨p,k,l,hp,hkl,hpa,hpb⟩,
+      have hafac : n.factorization p = k, {
+        rw [← factorization_eq_iff, hpa], refine ⟨nat.dvd_of_mem_divisors ha.1,ha.2.2.1⟩,
+        rw nat.prime_iff, exact hp, exact hkl.1,
+      },
+      have hbfac : n.factorization p = l, {
+        rw [← factorization_eq_iff, hpb], refine ⟨nat.dvd_of_mem_divisors hb.1,hb.2.2.1⟩,
+        rw nat.prime_iff, exact hp, exact hkl.2,
+      },
+      apply hab, rw [← hpa, ← hpb, ← hafac, ← hbfac], exact ha.2.1, exact hb.2.1,
+      intros t ht, rw mem_filter at ht, exact ht.2.1,
     },
     rw mem_filter at hrQ, refine ⟨hrQ.2.2.2.2,_⟩,
     exact le_trans ( nat.divisor_le hrQ.1) hnN, refine ⟨_,hdupp⟩,
@@ -1069,12 +2119,10 @@ begin
     have : 0 < (rec_sum_local A q : ℝ), {
       refine lt_of_lt_of_le _ hsumq, rw one_div_pos, exact hlarge1,
     },
-    refine weighted_ph _ _ _ hbound3, refine div_pos _ zero_lt_two,
+    refine weighted_ph _ _ hbound3, refine div_pos _ zero_lt_two,
     exact_mod_cast this,
     intros d hd, rw one_div_nonneg,
-    exact nat.cast_nonneg d, intros d hd, apply sum_nonneg, intros n hn,
-    apply div_nonneg, exact mul_nonneg (nat.cast_nonneg q) (nat.cast_nonneg d),
-    exact nat.cast_nonneg n,
+    exact nat.cast_nonneg d,
   },
   have hfound : ∃ d ∈ D2, (rec_sum_local A q)/(2*∑ d in D2, (1/d)) ≤
      ∑ n in new_local d, (q*d)/n, {

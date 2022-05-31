@@ -7,6 +7,7 @@ Authors: Bhavik Mehta, Thomas Bloom
 import for_mathlib.basic_estimates
 import defs
 import aux_lemmas
+import fourier
 
 /-!
 # Title
@@ -22,22 +23,6 @@ open nat (coprime)
 open_locale arithmetic_function
 open_locale classical
 noncomputable theory
-
-/-- The following is Lemma 4.22, copied directly from fourier.lean - copied here with
- sorry as a temporary measure. I've changed the name to avoid conflicts when building,
- but this needs tidying up at some point. -/
-theorem circle_method_prop2 :
-  ∃ c : ℝ, 0 < c ∧
-    ∀ᶠ (N : ℕ) in filter.at_top,
-    ∀ {K L M T : ℝ} {k : ℕ} {A : finset ℕ},
-    0 < T → 0 < L → 8 ≤ K → K < M → M ≤ N → k ≠ 0 → (k : ℝ) ≤ M / 128 → (∀ n ∈ A, M ≤ ↑n) →
-    (∀ n ∈ A, n ≤ N) →
-    rec_sum A < 2 / k → (2 : ℝ) / k - 1 / M ≤ rec_sum A →
-    k ∣ (A.lcm id : ℕ) →
-    (∀ q ∈ ppowers_in_set A, ↑q ≤ min (L * K^2 / (16 * N^2 * (log N)^2)) (min (c * M / k) (T * K^2 / (N^2 * log N)))) →
-    good_condition A K T L →
-    ∃ S ⊆ A, rec_sum S = 1 / k :=
-sorry
 
 lemma good_d (N : ℕ) (M δ : ℝ) (A : finset ℕ) (hA₁ : A ⊆ finset.range (N + 1)) (hM : 0 < M)
   (hAM : ∀ n ∈ A, M ≤ (n : ℝ)) (hAq : ∀ q ∈ ppowers_in_set A, (2 : ℝ) * δ ≤ rec_sum_local A q)
@@ -103,13 +88,13 @@ begin
  simp_rw [rec_sum, rec_sum_local, sum_div],
  calc _ ≤ ∑ (x : ℕ) in ppowers_in_set A \ E, ∑ (x_1 : ℕ) in local_part B x, (1:ℚ) / x_1 :_
     ... ≤ _ :_,
- refine le_trans _ (sum_bUnion_le _), refine sum_le_sum_of_subset_of_nonneg _ _,
+ refine le_trans _ (sum_bUnion_le_sum_of_nonneg _), refine sum_le_sum_of_subset_of_nonneg _ _,
  intros n hn, rw hC at hn, rw [mem_inter,mem_sdiff, mem_filter, not_and, not_and] at hn,
  have hn' := hn.1.2 hn.1.1 hn.2, rw [not_forall] at hn', rcases hn' with ⟨q,hq⟩,
  rw [not_imp, not_imp] at hq, rw [mem_bUnion], refine ⟨q,_,hq.2.1⟩,
  rw mem_sdiff, refine ⟨hq.1,hq.2.2⟩,
  intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
- intro i, rw one_div_nonneg, exact nat.cast_nonneg i,
+ intros i hi, rw one_div_nonneg, exact nat.cast_nonneg i,
  rw sum_congr, refl, intros x hx, rw sum_congr, refl, intros x1 hx1,
  rw [local_part, mem_filter] at hx1,
  rw [div_div, div_eq_div_iff, one_mul, mul_comm], norm_cast, intro hz, rw hz at hx1,
@@ -396,9 +381,10 @@ begin
         },
        rw hA'union,
        refine lt_of_lt_of_le (card_bUnion_lt_card_mul_real (M*((log N)^(-(1/101 : ℝ))/6)/(I.card : ℝ)) _ _) _,
-       rw [← card_pos, pos_iff_ne_zero], exact hIcardn0,
        intros x hx, rw ← not_le, intro hnle, apply h, use x, refine ⟨hx,hnle⟩,
+       rw [← card_pos, pos_iff_ne_zero], exact hIcardn0,
        rw mul_div_cancel_of_imp', intro hz, exfalso, norm_cast at hz,
+
   },
   rcases hbadx with ⟨x, hx1, hx2⟩,
   let m := nat.gcd (int.nat_abs x) (int.nat_abs ((f x1)*(f x2))),
@@ -527,7 +513,7 @@ begin
    },
   rcases hIne with ⟨x,hx⟩, refine ⟨x,hx,_⟩,
   intros q hq, exfalso, apply hDne, use q, exact hq,
-end 
+end
 
 -- Proposition 6.4
 theorem force_good_properties2 :
@@ -706,29 +692,6 @@ begin
 end
 
 
-lemma explicit_mertens :
-  ∀ᶠ N : ℕ in at_top,
-    ((∑ q in (finset.range (N + 1)).filter is_prime_pow, 1 / q) : ℝ) ≤ 2 * log (log N) :=
-begin
-  obtain ⟨b, hb⟩ := prime_power_reciprocal,
-  obtain ⟨c, hc₀, hc⟩ := hb.exists_pos,
-  filter_upwards [(tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
-    (eventually_ge_at_top (c : ℝ)), (tendsto_log_at_top.comp (tendsto_log_at_top.comp
-    tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top (b + 1)),
-    tendsto_coe_nat_at_top_at_top.eventually hc.bound]
-    with N hN₁ hN₂ hN₃,
-  dsimp at hN₁ hN₂,
-  have hN₄ : 0 < log N := hc₀.trans_le hN₁,
-  simp_rw [norm_inv, ←div_eq_mul_inv, ←one_div, norm_eq_abs, abs_of_nonneg hN₄.le,
-    nat.floor_coe] at hN₃,
-  have : c / log N ≤ 1 := div_le_one_of_le hN₁ hN₄.le,
-  have := sub_le_iff_le_add.1 (sub_le_of_abs_sub_le_right (hN₃.trans this)),
-  convert this.trans (show log (log N) + b + 1 ≤ 2 * log (log N), by linarith) using 2,
-  rw [range_eq_Ico, nat.Ico_succ_right],
-  ext n,
-  simpa only [mem_filter, and.congr_left_iff, mem_Icc, zero_le', iff_and_self, true_and] using
-    λ h _, (is_prime_pow.one_lt h).le,
-end
 
 -- Lemma 5.5
 lemma pruning_lemma_one :
