@@ -34,11 +34,10 @@ lemma sum_prime_counting : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
 begin
   let C := 2,
   use C,
-  filter_upwards [eventually_ge_at_top 0]
-    with N hN,
+  filter_upwards [eventually_ge_at_top 0] with N hN,
   calc _ ≤ ∑ (x : ℕ) in (range N),
        ( ∑ p in (((range(N)).filter(λ p, nat.prime p)).filter(λ p, p ∣ x)), 1 : ℝ) :_
-     ... = _ :_,
+     ... = _ : _,
 
   sorry,
   refine sum_congr _ _, refl, intros n hn, norm_cast, rw ← omega_eq_sum N hn,
@@ -47,17 +46,80 @@ end
 lemma sum_prime_counting_sq : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
    ∑ (x : ℕ) in (range N), (ω x : ℝ)^2 ≤ N*(log(log N))^2 + C*N*log(log N):= sorry
 
+lemma count_divisors {x N : ℕ} (hx : x ≠ 0) :
+  ((filter (λ i, x ∣ i) (range N)).card : ℝ) = (N / x : ℝ) - int.fract (N / x) :=
+begin
+  -- rw count_multiples,
+  sorry
+end
+
+lemma moebius_rec_sum {N : ℕ} (hN : N ≠ 0) :
+  ∑ (x : ℕ) in N.divisors, (μ x : ℝ) / x =  ∏ p in filter prime N.divisors, (1 - p⁻¹) :=
+begin
+  -- use multiplicativity, then both sides trivial
+end
+
 lemma sieve_lemma_prec (N : ℕ) (y z : ℝ) :
-   (((finset.range(N)).filter(λ n, ∀ p : ℕ, prime p → p ∣ n →
+   (((finset.range N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n →
        ((p : ℝ) < y) ∨ (z < p))).card : ℝ) ≤
-   ((partial_euler_product ⌊z⌋₊)/(partial_euler_product ⌊y⌋₊))*N + 2^(z+1) :=
-sorry
+   ((partial_euler_product ⌊y+1⌋₊)/(partial_euler_product ⌊z⌋₊)) * N + 2^(z+1) :=
+begin
+  let P := ∏ p in ((finset.range N).filter (λ p, prime p ∧ (y ≤ p) ∧ ((p:ℝ) ≤ z))), p,
+  have h₁ : ((finset.range N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n →
+       ((p : ℝ) < y) ∨ (z < p))).card = ((finset.range N).filter (λ n, coprime n P)).card := sorry,
+  have : ∀ n, ∑ (i : ℕ) in (nat.gcd n P).divisors, (μ i : ℝ) = ite (nat.gcd n P = 1) 1 0,
+  { intro n,
+    rw ←int.cast_sum,
+    rw ←nat.arithmetic_function.coe_mul_zeta_apply,
+    rw nat.arithmetic_function.moebius_mul_coe_zeta,
+    change coe (ite _ _ _) = _,
+    split_ifs; simp only [int.cast_one, int.cast_zero] },
+  rw h₁,
+  rw ←sum_boole,
+  simp only [nat.coprime],
+  simp_rw [←this],
+  have hgcddiv : ∀ x : ℕ, (x.gcd P).divisors = (P.divisors).filter(λ d, d ∣ x), -- x ≠ 0
+  { intros x,
+    ext m,
+    simp only [nat.mem_divisors, ne.def, nat.gcd_eq_zero_iff, not_and, mem_filter, nat.dvd_gcd_iff],
+    sorry
+
+  },
+  simp_rw [hgcddiv, sum_filter],
+  rw sum_comm,
+  simp_rw [←mul_boole _ (μ _ : ℝ), ←mul_sum],
+  simp_rw [sum_boole],
+  have : ∑ x in P.divisors, (μ x : ℝ) * ((filter (λ i, x ∣ i) (range N)).card : ℝ) =
+      ∑ x in P.divisors, (μ x : ℝ) * ((N / x : ℝ) - int.fract (N / x)),
+  { rw sum_congr rfl,
+    intros x hx,
+    rw count_divisors,
+    rw nat.mem_divisors at hx,
+    exact ne_zero_of_dvd_ne_zero hx.2 hx.1 },
+  simp_rw [this, mul_sub],
+  rw sum_sub_distrib,
+  simp_rw [mul_div_assoc', mul_comm _ (N : ℝ), mul_div_assoc],
+  rw ←mul_sum,
+  have hPsum : ∑ (x : ℕ) in P.divisors, (μ x : ℝ) / x = (partial_euler_product ⌊y+1⌋₊)/(partial_euler_product ⌊z⌋₊), {
+    rw [moebius_rec_sum, partial_euler_product, partial_euler_product],
+  },
+  rw [hPsum, sub_eq_add_neg, add_le_add_iff_left], refine le_trans (le_abs_self _) _,
+  rw [abs_neg], refine le_trans (abs_sum_le_sum_abs _ _) _,
+  --divisor_count_eq_pow_iff_squarefree
+  -- ω P ≤ z+1
+
+end
 
 lemma sieve_lemma_prec' : ∃ C c : ℝ, (0 < C) ∧ (0 < c) ∧
   ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (2 ≤ y) → (z ≤ c*log N) →
    (((finset.range(N)).filter(λ n, ∀ p : ℕ, prime p → p ∣ n →
        ((p : ℝ) < y) ∨ (z < p))).card : ℝ) ≤ C*(log y/log z)*N :=
 sorry
+--weak_mertens_third_upper_all
+--weak_mertens_third_lower_all
+
+
+#exit
 
 lemma plogp_tail_bound (a : ℝ) (ha : 0 < a): ∃ c : ℝ, ∀ᶠ (N : ℕ) in at_top, ∀ z : ℝ,
   ((N:ℝ) ≤ z) →
