@@ -31,7 +31,7 @@ lemma weird_floor_sq_tendsto_at_top :
 lemma omega_count_eq_ppowers {n : ℕ} :
   (filter (λ (r : ℕ), is_prime_pow r ∧ r.coprime (n / r)) n.divisors).card = ω n := sorry
 
-lemma factorial_bound (t : ℕ) : ((t:ℝ)* exp (-1)) ^ t ≤ t.factorial := sorry
+lemma factorial_bound (t : ℕ) : ((t : ℝ) * exp (-1)) ^ t ≤ t.factorial := sorry
 
 lemma helpful_decreasing_bound {x y : ℝ} {n : ℕ} (hn : x ≤ n) (hy : y ≤ x):
   (y/(n*exp(-1)))^n ≤ (y/(x*exp(-1)))^x := sorry
@@ -67,14 +67,14 @@ begin
   refine disjoint_sdiff,
 end
 
-lemma sum_pow {ι α : Type*} (f : ι → ℝ) {s : finset ι} {B : finset α} :
+lemma sum_pow {ι α : Type*} [decidable_eq ι] [decidable_eq α]
+  (f : ι → ℝ) {s : finset ι} {B : finset α} :
   (∑ i in s, f i) ^ B.card =
     ∑ g in B.pi (λ _, s), ∏ j in B.attach, f (g _ j.prop) :=
-  begin
-    sorry
-  end
+by { rw [←prod_const, prod_sum], refl }
 
-lemma sum_pow' {ι α : Type*} (f : ι → ℝ) {s : finset ι} {B : finset α} :
+lemma sum_pow' {ι α : Type*} [decidable_eq ι] [decidable_eq α]
+  (f : ι → ℝ) {s : finset ι} {B : finset α} :
   (∑ i in s, f i) ^ B.card = ∑ (g : B → s), ∏ (j : B), f (g j) :=
 begin
   rw sum_pow,
@@ -101,10 +101,9 @@ begin
   refl,
 end
 
--- I don't know how to write the image of i
-lemma something_like_this {ι : Type*} (f : ι → ℝ) {s : finset ι} (A B : finset ι)
+lemma something_like_this {ι : Type*} [decidable_eq ι] (f : ι → ℝ) (A B : finset ι)
   (hA : A.card = B.card) :
-  ∑ (g : B ≃ A), ∏ (j : B), f (g j) = A.card.factorial * ∏ n in A, f n :=
+  ∑ (g : B ≃ A), ∏ (j : B), f (g j) = B.card.factorial * ∏ n in A, f n :=
 begin
   rw [sum_congr rfl, sum_const (∏ n in A, f n)],
   { rw [nsmul_eq_mul],
@@ -126,8 +125,81 @@ end
 --  ∑ (g : B → s).filter( g injection ), ∏ (j : B), f (g j) = ∑ (A ⊆ s).filter(λ A, A.card = t), ∑ (g : B ≃ A), ∏ (j : B), f (g j)
 --  ∑ (A ⊆ s).filter(λ A, A.card = t), A.card.factorial * ∏ n in A, f n
 
+lemma my_function_aux {n : ℕ} : ((nat.factorization n).sum (λ p k, {p ^ k}) : multiset ℕ).nodup :=
+begin
+  rw multiset.nodup_iff_count_le_one,
+  intro x,
+  rw [finsupp.sum, ←multiset.coe_count_add_monoid_hom, add_monoid_hom.map_sum],
+  simp only [nat.support_factorization, multiset.coe_count_add_monoid_hom,
+    multiset.count_singleton, sum_boole, nat.cast_id],
+  rw finset.card_le_one_iff,
+  simp only [mem_filter, list.mem_to_finset, and_imp],
+  rintro a b ha rfl hb h,
+  apply eq_of_prime_pow_eq _ _ _ h,
+  { rw ←nat.prime_iff,
+    exact nat.prime_of_mem_factors ha },
+  { rw ←nat.prime_iff,
+    exact nat.prime_of_mem_factors hb },
+  rwa [pos_iff_ne_zero, ←finsupp.mem_support_iff, nat.support_factorization, list.mem_to_finset],
+end
 
-lemma rec_sum_le_prod_sum {A : finset ℕ} {I: finset ℕ} (hI : ∀ n ∈ A, ω n ∈ I) :
+def my_function (n : ℕ) : finset ℕ :=
+((nat.factorization n).sum (λ p k, {p ^ k}) : multiset ℕ).to_finset
+
+lemma card_my_function {n : ℕ} : (my_function n).card = ω n :=
+begin
+  rw [my_function, nat.arithmetic_function.card_distinct_factors_apply, multiset.card_to_finset,
+    multiset.nodup.dedup, finsupp.sum, add_monoid_hom.map_sum],
+  { simpa only [multiset.card_singleton, ←card_eq_sum_ones, nat.support_factorization] },
+  apply my_function_aux
+end
+
+lemma prod_my_function {n : ℕ} (hn : n ≠ 0) :
+  ∏ i in my_function n, i = n :=
+begin
+  rw [my_function, finset.prod, multiset.map_id', multiset.to_finset_val,
+    multiset.nodup.dedup my_function_aux, finsupp.sum, multiset.prod_sum],
+  simp only [multiset.prod_singleton],
+  exact nat.factorization_prod_pow_eq_self hn,
+end
+
+lemma my_function_injective {n m : ℕ} (hn : n ≠ 0) (hm : m ≠ 0) :
+  my_function n = my_function m → n = m :=
+λ h, by rw [←prod_my_function hn, h, prod_my_function hm]
+
+lemma rec_sum_le_prod_sum_aux {A : finset ℕ} (t : ℕ) (hA : 0 ∉ A) :
+  ∑ i in filter (λ (n : ℕ), ω n = t) A, (1 : ℝ) / i ≤
+    ∑ x in powerset_len t (ppowers_in_set A), ∏ (n : ℕ) in x, 1 / n :=
+begin
+  have : (filter (λ n : ℕ, ω n = t) A).image my_function ⊆ powerset_len t (ppowers_in_set A),
+  { intros B,
+    simp only [mem_image, mem_filter, exists_prop, forall_exists_index, and_imp, mem_powerset_len],
+    rintro n hn rfl rfl,
+    rw [card_my_function, eq_self_iff_true, and_true],
+    intros m hm,
+    simp only [my_function, multiset.mem_to_finset, finsupp.sum, mem_sum,
+      multiset.mem_singleton] at hm,
+    obtain ⟨a, ha, rfl⟩ := hm,
+    rw mem_ppowers_in_set',
+    { exact ⟨_, hn, rfl⟩ },
+    { exact nat.prime_of_mem_factorization ha },
+    rwa finsupp.mem_support_iff at ha },
+  simp only [one_div],
+  apply (sum_le_sum_of_subset_of_nonneg this _).trans_eq' _,
+  { intros i _ _,
+    refine prod_nonneg (λ _ _, _),
+    simp only [inv_nonneg, nat.cast_nonneg] },
+  rw [sum_image, sum_congr rfl],
+  { intros x hx,
+    simp only [mem_filter] at hx,
+    rw [prod_inv_distrib', ←nat.cast_prod, prod_my_function],
+    exact ne_of_mem_of_not_mem hx.1 hA },
+  simp only [mem_filter, and_imp],
+  intros x hx _ y hy _ h,
+  exact my_function_injective (ne_of_mem_of_not_mem hx hA) (ne_of_mem_of_not_mem hy hA) h,
+end
+
+lemma rec_sum_le_prod_sum {A : finset ℕ} (hA₀ : 0 ∉ A) {I: finset ℕ} (hI : ∀ n ∈ A, ω n ∈ I) :
   (rec_sum A : ℝ) ≤ ∑ t in I, (∑ q in ppowers_in_set A, (1/q : ℝ))^t/(nat.factorial t) :=
 begin
   rw rec_sum, push_cast,
@@ -135,17 +207,13 @@ begin
   nth_rewrite 0 ← hA, refine le_trans (sum_bUnion_le_sum_of_nonneg _) _, intros n hn,
   rw one_div_nonneg, exact nat.cast_nonneg n, refine sum_le_sum _,
   intros t ht, rw [le_div_iff],
-  {
-    nth_rewrite 0 ←card_range t,
-    nth_rewrite 1 ←card_range t,
-    rw [sum_pow', mul_comm],
+  { rw [←card_range t, sum_pow', card_range t, mul_comm],
     refine (sum_le_sum_of_subset_of_nonneg (filter_subset function.injective _) _).trans' _,
     { intros f _ _,
-      apply prod_nonneg,
+      refine prod_nonneg _,
       intros i hi,
       rw one_div_nonneg,
-      apply nat.cast_nonneg },
-   --have : (i : ↥(range t) → ↥(ppowers_in_set A)) in filter function.injective univ
+      exact nat.cast_nonneg _ },
     have : filter function.injective (univ : finset (↥(range t) → ↥(ppowers_in_set A))) =
       (((ppowers_in_set A).powerset).filter(λ (B : finset _), B.card = t)).bUnion (λ B,
          (finset.filter function.injective
@@ -157,17 +225,75 @@ begin
       refine ⟨λ i, _, _⟩,
       { simp only [mem_image, mem_attach, exists_true_left, forall_exists_index],
         rintro y rfl,
-        apply (f y).2 },
+        exact (f y).2 },
       rw [card_image_of_inj_on, card_attach, card_range],
       simp only [set.inj_on, mem_coe, mem_attach, forall_true_left],
       intros x₁ x₂ h,
       exact hf (subtype.ext h) },
-    -- use disjointness
-    -- change to bijections
-    -- ∑ (A ⊆ s).filter(λ A, A.card = t), A.card.factorial * ∏ n in A, f n
-    -- then sum_bij
-    sorry
-  },
+    rw [this, sum_bUnion],
+    swap,
+    { rintro B₁ hB₁ B₂ hB₂ h,
+      simp only [coe_filter, set.mem_sep_eq, mem_coe, mem_powerset] at hB₁ hB₂,
+      change disjoint _ _,
+      rw disjoint_left,
+      simp only [univ_eq_attach, mem_filter, mem_univ, true_and, not_and, and_imp],
+      rintro g hg rfl - rfl,
+      apply h rfl },
+    have : ∀ x ∈ (ppowers_in_set A).powerset.filter (λ B : finset ℕ, B.card = t),
+      ∑ (i : range t → ppowers_in_set A) in
+        filter (λ (g : range t → ppowers_in_set A), image (λ i, (g i : ℕ)) univ = x)
+          (filter function.injective univ),
+            ∏ (j : range t), (1 : ℝ) / ((i j : ℕ) : ℝ) =
+      ∑ (i : range t ≃ x), ∏ (j : range t), (1 : ℝ) / (i j : ℕ),
+    { intros x hx,
+      rw [mem_filter, mem_powerset] at hx,
+      refine (sum_bij _ _ _ _ _).symm,
+      { intros i _ j,
+        exact ⟨i j, hx.1 (i j).prop⟩ },
+      { intros i _,
+        simp only [mem_filter, univ_eq_attach, mem_univ, true_and, subtype.coe_mk],
+        refine ⟨λ j₁ j₂ h, i.injective _, _⟩,
+        { simp only [subtype.mk_eq_mk] at h,
+          apply subtype.ext h },
+        ext j,
+        split,
+        { simp only [mem_image, mem_attach, exists_true_left, forall_exists_index],
+          rintro k rfl,
+          exact (i k).prop },
+        simp only [mem_image, mem_attach, exists_true_left],
+        exact λ hj, ⟨i.symm ⟨_, hj⟩, by simp⟩ },
+      { intros i hi,
+        refl },
+      { intros g₁ g₂ _ _,
+        simp only [function.funext_iff, equiv.ext_iff, subtype.ext_iff, imp_self] },
+      { intros g hg,
+        simp only [mem_filter, mem_univ, true_and, finset.ext_iff, mem_image,
+          iff_def, mem_attach, exists_true_left, forall_exists_index, forall_and_distrib,
+          forall_apply_eq_imp_iff'] at hg,
+        choose f' hf' using hg.2.2,
+        refine ⟨⟨λ j, ⟨g j, hg.2.1 _⟩, λ j, f' _ j.prop, _, _⟩, mem_univ _, _⟩,
+        { rintro ⟨j, hj⟩,
+          apply hg.1,
+          ext1,
+          dsimp,
+          rw hf' },
+        { rintro ⟨j, hj⟩,
+          ext1,
+          dsimp,
+          apply hf' },
+        ext ⟨j, hj⟩,
+        refl } },
+    rw sum_congr rfl this,
+    have : ∀ x ∈ (ppowers_in_set A).powerset.filter (λ B : finset ℕ, B.card = t),
+      ∑ (i : range t ≃ x), ∏ (j : range t), (1 : ℝ) / ((i j : ℕ) : ℝ) =
+        t.factorial * ∏ n in x, (1 : ℝ) / n,
+    { intros x hx,
+      rw [mem_filter] at hx,
+      rw [something_like_this (λ (q : ℕ), (1 : ℝ) / q), card_range],
+      rw [card_range, hx.2] },
+    rw [sum_congr rfl this, ←mul_sum, ←powerset_len_eq_filter],
+    apply mul_le_mul_of_nonneg_left _ (nat.cast_nonneg _),
+    exact rec_sum_le_prod_sum_aux _ hA₀ },
   exact_mod_cast nat.factorial_pos t,
 end
 
@@ -327,7 +453,7 @@ begin
   have hAc : A ∈ choices,
   { simp only [mem_filter, mem_powerset, finset.subset_iff, mem_range, nat.lt_add_one_iff],
     exact ⟨λ b hb, ⟨finset.le_max' _ _ hb, ha _ hb⟩, hN⟩ },
-  obtain ⟨B, hB, hB'⟩ := exists_max_image choices (λ B, ∑ q in B, (1 : ℚ) / q) ⟨_, hAc⟩,
+  obtain ⟨B, hB, hB'⟩ := exists_max_image choices (λ B, ∑ q in B, (1 : ℝ) / q) ⟨_, hAc⟩,
   simp only [mem_filter, mem_powerset, and_imp] at hB,
   suffices : (range N).filter is_prime_pow = B,
   { rw this,
@@ -396,7 +522,7 @@ begin
   rw ← int.coe_nat_dvd_left, exact hq.2.2.1, exact hq.2.2.2, intros q hq1 hq2,
   rw one_div_nonneg, exact nat.cast_nonneg q,
   apply prime_power_recip_downward_bound _ _ _ _,
-  { sorry },
+  { simp only [mem_filter, and_imp, implies_true_iff] {contextual := tt} },
   { apply hMT.trans',
     sorry },
   -- refine prime_power_recip_downward_bound,
@@ -1633,10 +1759,26 @@ end
 --   -- rw prod_sum,
 -- end
 
+lemma my_sum_lemma {α β γ : Type*} [ordered_add_comm_monoid γ] {s : finset α} {t : finset β}
+  (f : α → γ) (g : β → γ) (r : Π i ∈ s, β) (r_inj : ∀ a₁ a₂ ha₁ ha₂, r a₁ ha₁ = r a₂ ha₂ → a₁ = a₂)
+  (hg : ∀ i ∈ t, 0 ≤ g i) (rt : ∀ a ha, r a ha ∈ t) (fr : ∀ a ha, g (r a ha) = f a) :
+  ∑ i in s, f i ≤ ∑ j in t, g j :=
+begin
+  have : ∑ i in s.attach, f i = ∑ i in s.attach, g (r i i.prop),
+  { simp_rw [fr] },
+  rw [←sum_attach, this, ←sum_image],
+  { refine sum_le_sum_of_subset_of_nonneg _ (λ _ q _, hg _ q),
+    simp only [finset.subset_iff, subtype.coe_mk, mem_image, mem_attach, exists_true_left,
+      subtype.exists, bex_imp_distrib],
+    rintro _ _ _ rfl,
+    exact rt _ _ },
+  exact λ _ _ _ _ h, subtype.ext (r_inj _ _ _ _ h),
+end
+
 lemma prod_one_add {D : finset ℕ} {k : ℝ}
-  (f : nat.arithmetic_function ℝ) (hf' : f.is_multiplicative) :
+  (f : nat.arithmetic_function ℝ) (hf' : f.is_multiplicative) (hf'' : ∀ i, 0 ≤ f i):
   ∑ d in D, f d ≤
-    ∏ p in D.bUnion (λ n, (nat.divisors n).filter nat.prime),
+    ∏ p in D.bUnion (λ n, n.factors.to_finset),
       (1 + ∑ q in (ppowers_in_set D).filter (λ q, p ∣ q), f q) :=
 begin
   simp only [add_comm (1 : ℝ)],
@@ -1645,9 +1787,33 @@ begin
     ∑ x in finset.powerset _,
       ∏ t in _,
         ∑ i in _, f i,
-  sorry
-  -- simp_rw [prod_sum],
+  -- sorry
+  simp_rw [prod_sum],
+  dsimp,
+  rw sum_sigma',
+  dsimp,
+  refine my_sum_lemma _ _ _ _ _ _ _,
+  { intros d hd,
+    exact ⟨D.bUnion (λ n, n.factors.to_finset), λ p hp, p ^ d.factorization p⟩ },
+  { intros d₁ d₂ hd₁ hd₂ h,
+    dsimp at h,
+    simp only [eq_self_iff_true, heq_iff_eq, true_and] at h,
+    sorry },
+  { intros i hi,
+    apply prod_nonneg,
+    intros j hj,
+    apply hf'' },
+  { intros d hd,
+    dsimp,
+    simp only [mem_sigma, mem_powerset_self, finset.mem_pi, mem_bUnion, list.mem_to_finset,
+      exists_prop, mem_filter, forall_exists_index, and_imp, true_and],
+    sorry },
+  { intros d hd,
+    dsimp,
+    -- refine (@prod_attach _ _ _ _ _).trans _,
+    sorry },
 
+  -- have := sum_le_sum_of_subset_of_nonneg,
   -- simp only [subtype.val_eq_coe],
 
   -- simp only [prod_attach],
@@ -1667,13 +1833,11 @@ begin
 
 end
 
-lemma useful_rec_aux4 : ∀ y : ℝ, ∀ k N : ℕ, ∀ D : finset ℕ,
- (∀ q : ℕ, q ∈ ppowers_in_set D → (y < q) ∧ q ≤ N) →
-  ∑ d in D, (k:ℝ)^(ω d) / d ≤
-  ( ∏ p in (finset.range(N+1)).filter(λ n, nat.prime n ),
-    ((1:ℝ) + k/(p*(p-1)))) *
-  (∏ p in  (finset.range(N+1)).filter(λ n, nat.prime n ∧ y < n ),
-    ((1:ℝ) + k/(p-1))) :=
+lemma useful_rec_aux4 (y : ℝ) (k N : ℕ) (D : finset ℕ)
+  (hD : ∀ q : ℕ, q ∈ ppowers_in_set D → y < q ∧ q ≤ N) :
+  ∑ d in D, (k : ℝ) ^ ω d / d ≤
+    (∏ p in (finset.range (N+1)).filter nat.prime, (1 + k / (p * (p - 1)))) *
+    (∏ p in (finset.range (N+1)).filter (λ n, nat.prime n ∧ y < n), (1 + k * (p - 1)⁻¹)) :=
 begin
   sorry
   -- have : ∑ d in D, (k : ℝ) ^ ω d / d ≤ ∏ q in ppowers_in_set D, (1 + k / q),
@@ -2410,4 +2574,3 @@ begin
   apply le_trans hsum, refine sum_le_sum_of_subset_of_nonneg hpp _,
   intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
 end
-
