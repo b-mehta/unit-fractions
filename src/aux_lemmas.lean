@@ -28,16 +28,47 @@ lemma tendsto_pow_rec_loglog_at_top {c : ℝ} (hc : 0 < c) :
 lemma weird_floor_sq_tendsto_at_top :
   filter.tendsto (λ x : ℝ, ⌈real.logb 2 x⌉₊^2) filter.at_top filter.at_top := sorry
 
-lemma omega_count_eq_ppowers {n : ℕ} :
-  (filter (λ (r : ℕ), is_prime_pow r ∧ r.coprime (n / r)) n.divisors).card = ω n := sorry
-
-lemma factorial_bound (t : ℕ) : ((t : ℝ) * exp (-1)) ^ t ≤ t.factorial := sorry
-
-lemma helpful_decreasing_bound {x y : ℝ} {n : ℕ} (hn : x ≤ n) (hy : y ≤ x):
-  (y/(n*exp(-1)))^n ≤ (y/(x*exp(-1)))^x := sorry
+lemma tendsto_pow_rec_loglog_spec_at_top :
+  filter.tendsto (λ x : ℝ, x^((1:ℝ)-8/log(log x))) filter.at_top filter.at_top := sorry
 
 lemma prime_counting_lower_bound_explicit : ∀ᶠ (N : ℕ) in at_top,
-   ⌊sqrt N⌋₊ ≤ (filter nat.prime (Icc 1 N)).card := sorry
+   ⌊sqrt N⌋₊ ≤ (filter nat.prime (Icc 1 N)).card :=
+begin
+  have haux: asymptotics.is_O_with ((1 : ℝ) / 4) log id at_top,
+  { refine is_o_log_id_at_top.def' _,  rw one_div_pos, norm_num1, },
+  rcases chebyshev_first_all with ⟨c,h0c,hcheb⟩,
+  filter_upwards [
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux.bound,
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually (eventually_gt_at_top ((0:ℝ))),
+    tendsto_coe_nat_at_top_at_top.eventually (eventually_ge_at_top ((2:ℝ))),
+    tendsto_coe_nat_at_top_at_top.eventually (eventually_ge_at_top ((1/c)^(4:ℝ))),
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp
+    tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top (0:ℝ))]
+  with N hlarge hlogN h2N hcN hloglogN,
+  have h0N : (0:ℝ) < N := lt_of_lt_of_le zero_lt_two h2N,
+  specialize hcheb (N:ℝ) h2N,
+  rw [norm_eq_abs, norm_eq_abs, abs_of_nonneg, abs_of_nonneg] at hcheb,
+  rw [← prime_counting_eq_card_primes], nth_rewrite 1 ← nat.floor_coe N,
+  rw [← @nat.cast_le ℝ _ _ _ _, ← mul_le_mul_right hlogN],
+  refine le_trans (le_trans _ hcheb) (chebyshev_first_trivial_bound _),
+  rw [← le_div_iff hlogN], refine le_trans (nat.floor_le _) _, refine sqrt_nonneg _,
+  rw [le_div_iff hlogN, ← log_le_log, log_mul, sqrt_eq_rpow, log_rpow],
+  calc _ ≤ (1/2)*(log N) + (1/4)*(log N) :_
+     ... ≤ _ :_,
+  rw add_le_add_iff_left, rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hlarge,
+  exact hlarge, exact hlogN, exact hloglogN,
+  rw [← add_mul, ← log_rpow, log_le_log, ← one_le_div, div_eq_mul_inv, ← rpow_neg, mul_assoc,
+     mul_comm (N:ℝ), ← rpow_add_one, ← div_le_iff'], norm_num1,
+  rw [← rpow_le_rpow_iff _ _ (zero_lt_four), ← rpow_mul], norm_num1, rw rpow_one, exact hcN,
+  exact nat.cast_nonneg N, rw one_div_nonneg, exact le_of_lt h0c,
+  refine rpow_nonneg_of_nonneg (nat.cast_nonneg N) _, exact h0c,
+  exact ne_of_gt h0N,  exact nat.cast_nonneg N, refine rpow_pos_of_pos h0N _,
+  refine rpow_pos_of_pos h0N _, exact mul_pos h0c h0N, exact h0N, exact h0N,
+  refine ne_of_gt _, rw sqrt_pos, exact h0N, exact ne_of_gt hlogN, refine mul_pos _ hlogN,
+  rw sqrt_pos, exact h0N, exact mul_pos h0c h0N,
+  exact le_of_lt (chebyshev_first_pos (N:ℝ) h2N),
+  exact nat.cast_nonneg N,
+end
 
 theorem sum_bUnion_le_sum_of_nonneg {N : Type*} [ordered_add_comm_monoid N] {f : ℕ → N}
  {s : finset ℕ} {t : ℕ → finset ℕ}
@@ -403,7 +434,6 @@ begin
   norm_cast, rw pos_iff_ne_zero, exact hn, exact hΩ,
 end
 
-
 lemma nat_cast_diff_issue {x y : ℤ} : (|x-y|:ℝ) = int.nat_abs (x-y) :=
 begin
   have h1 := int.nat_abs_eq (x-y),
@@ -481,6 +511,16 @@ begin
   -- if not, there exists r in the first smaller than something in B, swap these two elements, contradiction
 end
 
+lemma Omega_eq_card_prime_pow_divisors {n : ℕ} (hn : n ≠ 0) :
+  Ω n = (n.divisors.filter is_prime_pow).card :=
+begin
+  revert hn,
+  refine nat.rec_on_prime_coprime _ _ _ n,
+  { simp },
+  { sorry },
+  { sorry },
+end
+
 lemma rec_pp_sum_close :
   ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x : ℝ)-y| ≤ N) →
   ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
@@ -524,7 +564,8 @@ begin
   apply prime_power_recip_downward_bound _ _ _ _,
   { simp only [mem_filter, and_imp, implies_true_iff] {contextual := tt} },
   { apply hMT.trans',
-    sorry },
+    sorry
+     },
   -- refine prime_power_recip_downward_bound,
 
   -- The idea for the next part is to write an injection from the range of summation of the first
@@ -545,13 +586,146 @@ begin
   refine lt_of_le_of_lt hmertens _, dsimp, push_cast, exact hlarge1,
 end
 
-#exit
-
 -- No sorries below this line! (except Bhavik's bit)
 -----------------------------------------
 ------------------------------------------
 -----------------------------------------
 
+
+lemma ppowers_count_eq_prime_count {n : ℕ} (hn : n ≠ 0) :
+  (filter (λ (r : ℕ), is_prime_pow r ∧ r.coprime (n / r)) n.divisors).card
+    = (filter (λ (p : ℕ), nat.prime p) n.divisors).card :=
+begin
+  let f := (λ p, p^(n.factorization p)),
+  have h₁ : (filter (λ (r : ℕ), is_prime_pow r ∧ r.coprime (n / r)) n.divisors)
+    = finset.image f (filter (λ (p : ℕ), nat.prime p) n.divisors), {
+      ext, rw [finset.mem_image, mem_filter], split,
+      intro ha, rw is_prime_pow_def at ha, rcases ha.2.1 with ⟨p,k,hp,hk⟩,
+       rw [← hk.2, nat.mem_divisors] at ha,
+      use p, rw [mem_filter, nat.prime_iff, nat.mem_divisors],
+      refine ⟨⟨⟨_,hn⟩,hp⟩,_⟩,
+      refine dvd_trans (dvd_pow_self p (ne_of_gt hk.1)) ha.1.1, rw ← nat.prime_iff at hp, rw ← hk.2,
+      rw coprime_div_iff hp ha.1.1 (ne_of_gt hk.1) ha.2.2,
+      intro a, rcases a with ⟨p,hp,hpa⟩, rw ← hpa, rw nat.mem_divisors,
+      rw is_prime_pow_def, rw [mem_filter, nat.prime_iff] at hp,
+      have h0fac : 0 < n.factorization p, {
+        refine nat.prime.factorization_pos_of_dvd _ hn _, rw nat.prime_iff, exact hp.2,
+        refine nat.dvd_of_mem_divisors hp.1,
+      },
+      refine ⟨⟨(nat.pow_factorization_dvd n p),hn⟩,_,_⟩,
+      refine ⟨p,(n.factorization p),hp.2,h0fac,_⟩, refl,
+      have : n.factorization p = n.factorization p := by refl,
+      rw [← factorization_eq_iff] at this, exact this.2,
+      rw nat.prime_iff, exact hp.2, refine ne_of_gt h0fac,
+     },
+  rw h₁, refine finset.card_image_of_inj_on _,
+  intros p₁ hp₁ p₂ hp₂ hps, norm_cast at hp₁, rw mem_filter at hp₁, refine eq_of_prime_pow_eq _ _ _ hps,
+  rw [← nat.prime_iff], exact hp₁.2,
+  rw [← nat.prime_iff], norm_cast at hp₂, rw mem_filter at hp₂, exact hp₂.2,
+  refine nat.prime.factorization_pos_of_dvd _ hn _, exact hp₁.2, refine nat.dvd_of_mem_divisors hp₁.1,
+end
+
+lemma omega_count_eq_ppowers {n : ℕ} :
+  (filter (λ (r : ℕ), is_prime_pow r ∧ r.coprime (n / r)) n.divisors).card = ω n :=
+begin
+  by_cases hn0 : n = 0,
+  {
+  rw [hn0, nat.arithmetic_function.card_distinct_factors_zero, card_eq_zero,
+     finset.eq_empty_iff_forall_not_mem], intros r hr,
+  rw [mem_filter, nat.zero_div, nat.coprime_zero_right] at hr,
+  exact is_prime_pow.ne_one hr.2.1 hr.2.2,
+  },
+  rw [ppowers_count_eq_prime_count hn0,
+     nat.arithmetic_function.card_distinct_factors_apply, ← finset.length_to_list],
+  refine list.perm.length_eq _, rw list.perm_ext (finset.nodup_to_list _) (list.nodup_dedup _),
+  intro q, rw [mem_to_list, list.mem_dedup, nat.mem_factors hn0],  split,
+  intro hq,
+  rw mem_filter at hq, refine ⟨hq.2,nat.dvd_of_mem_divisors hq.1⟩,
+  intro hq, rw [mem_filter, nat.mem_divisors], refine ⟨⟨hq.2,hn0⟩,hq.1⟩,
+end
+
+lemma exp_pol_lbound (k : ℕ) (x : ℝ) (h : 0 < x) : x^k < k.factorial * exp(x) :=
+begin
+  induction k with k hind generalizing x,
+  simp only [pow_zero, nat.factorial_zero, nat.cast_one, one_mul, one_lt_exp_iff, h],
+  let f := (λ y:ℝ, ((k.succ).factorial : ℝ)* exp(y) - y^(k.succ)),
+  have h₁ : differentiable ℝ f, {
+    refine differentiable.sub _ _,
+    refine differentiable.const_mul differentiable_exp ((k.succ).factorial : ℝ),
+    simp only [differentiable.pow, differentiable_id'],
+  },
+  have h₂ : ∀ t, deriv f t = (k.succ).factorial* exp(t) - (k.succ)*t^k, {
+    intro y,
+    rw [deriv_sub, deriv_const_mul, real.deriv_exp, deriv_pow, nat.succ_sub_one],
+    simp only [differentiable_at.exp, differentiable_at_id'],
+    simp only [differentiable_at.mul, differentiable_at_const, differentiable_at.exp, differentiable_at_id'],
+    simp only [differentiable_at.pow, differentiable_at_id'],
+  },
+  rw ← sub_pos, have h' := (le_of_lt h), rw ← set.mem_Ici at h',
+  have := (convex_Ici 0).monotone_on_of_deriv_nonneg h₁.continuous.continuous_on
+      h₁.differentiable_on _ (set.left_mem_Ici) h' h',
+  refine lt_of_lt_of_le _ this, simp only [sub_pos, zero_pow', ne.def, nat.succ_ne_zero,
+     not_false_iff, nat.cast_mul, nat.cast_add, nat.cast_one, exp_zero, mul_one], norm_cast,
+  exact nat.factorial_pos (k.succ), intros y hy, rw [h₂ y, sub_nonneg],
+  simp only [nat.cast_succ, nat.factorial_succ, nat.cast_mul], rw [mul_assoc, mul_le_mul_left],
+  refine le_of_lt (hind y _), rw [interior_Ici, set.mem_Ioi] at hy, exact hy, norm_cast,
+  exact nat.succ_pos k,
+end
+
+lemma factorial_bound (t : ℕ) : ((t:ℝ)* exp (-1)) ^ t ≤ t.factorial :=
+begin
+  by_cases h0 : 0 < t,
+  rw [mul_pow, ← rpow_nat_cast, ← rpow_nat_cast, ← exp_mul, ← neg_eq_neg_one_mul, exp_neg,
+       mul_inv_le_iff', rpow_nat_cast],
+  refine le_of_lt (exp_pol_lbound t (t:ℝ) _), exact_mod_cast h0, refine exp_pos _,
+  rw [not_lt, nat.le_zero_iff] at h0, rw h0,
+  simp only [pow_zero, nat.factorial_zero, nat.cast_one],
+end
+
+lemma helpful_decreasing_bound {x y : ℝ} {n : ℕ} (h0y : 0 < y) (hn : x ≤ n) (hy : y ≤ x):
+  (y/(n*exp(-1)))^n ≤ (y/(x*exp(-1)))^x :=
+begin
+  have hhelp₆ : 0 < x := lt_of_lt_of_le h0y hy,
+  have hhelp₅ : (0:ℝ) < n := lt_of_lt_of_le hhelp₆ hn,
+  have hhelp₃ : (0:ℝ) < (n*exp(-1)) := mul_pos hhelp₅ (exp_pos (-1)),
+  have hhelp₄ : 0 < x*exp(-1) := mul_pos hhelp₆ (exp_pos (-1)),
+  have hhelp₁ : 0 < y/(n*exp(-1)) := div_pos h0y hhelp₃,
+  have hhelp₂ : 0 < y/(x*exp(-1)) := div_pos h0y hhelp₄,
+  rw [← rpow_nat_cast, ← exp_log hhelp₁, ← exp_mul, ← exp_log hhelp₂, ← exp_mul, exp_le_exp,
+       log_div (ne_of_gt h0y) (ne_of_gt hhelp₃), log_div (ne_of_gt h0y) (ne_of_gt hhelp₄),
+      sub_mul, sub_mul, log_mul (ne_of_gt hhelp₆) (ne_of_gt (exp_pos (-1))),
+      log_mul (ne_of_gt hhelp₅) (ne_of_gt (exp_pos (-1))), add_mul, add_mul, sub_add_eq_sub_sub,
+      sub_add_eq_sub_sub, sub_right_comm, ← sub_mul, sub_right_comm, log_exp, sub_neg_eq_add],
+  nth_rewrite 1 ← sub_mul, rw [sub_neg_eq_add],
+  let f := (λ x : ℝ, (log y + 1)*x - x*log x),
+  have h₂ : ∀ t, t ≠ 0 → deriv f t = log y - log t, {
+    intros t ht,
+    rw [deriv_sub, deriv_const_mul], simp only [deriv_id'', mul_one],
+    rw [deriv_mul, deriv_id'', one_mul, real.deriv_log, mul_inv_cancel ht],
+    simp only [add_sub_add_right_eq_sub], exact differentiable_at_id',
+    rw differentiable_at_log_iff, exact ht, exact differentiable_at_id',
+    simp only [differentiable_at.mul, differentiable_at_const, differentiable_at_id'],
+    refine differentiable_at.mul _ _, exact differentiable_at_id',
+    rw differentiable_at_log_iff, exact ht,
+  },
+  have h₁ : differentiable_on ℝ f (set.Ici y), {
+    refine differentiable_on.sub _ _, refine differentiable_on.const_mul _ _,
+    refine differentiable_on_id, refine differentiable_on.mul _ _, refine differentiable_on_id,
+    refine differentiable_on.log _ _, refine differentiable_on_id, intros z hz,
+    rw set.mem_Ici at hz, exact ne_of_gt (lt_of_lt_of_le h0y hz),
+  },
+  have hxIci : x ∈ set.Ici y, { rw set.mem_Ici, exact hy, },
+  have := (convex_Ici y).antitone_on_of_deriv_nonpos h₁.continuous_on _ _ hxIci,
+  have hny : (n:ℝ) ∈ set.Ici y, { rw set.mem_Ici, exact le_trans hy hn, },
+  specialize this hny hn, rw [mul_comm (log n), mul_comm (log x)], exact this,
+      refine differentiable_on.sub _ _, refine differentiable_on.const_mul _ _,
+    refine differentiable_on_id, refine differentiable_on.mul _ _, refine differentiable_on_id,
+    refine differentiable_on.log _ _, refine differentiable_on_id, intros z hz,
+    rw interior_Ici at hz, rw set.mem_Ioi at hz, exact ne_of_gt (lt_trans h0y hz),
+  intros z hz, rw [interior_Ici, set.mem_Ioi] at hz, rw [h₂, sub_nonpos, log_le_log],
+  exact le_of_lt hz, exact h0y, exact lt_trans h0y hz,
+  exact ne_of_gt (lt_trans h0y hz),
+end
 
 lemma sub_le_omega_div {a b : ℕ} (h: b ∣ a) : (ω a:ℝ) - ω b ≤ ω (a/b) :=
 begin
@@ -1443,6 +1617,9 @@ begin
   dsimp at hlarge1 hlarge2,
   have htemp0 : 0 < 1- ε, { rw sub_pos, exact lt_trans hε2 one_half_lt_one, },
   have htemp : 0 < (1-ε)*log(log N), { refine mul_pos htemp0 hlarge1, },
+  have h0A : 0 ∉ A, { intro hbad, specialize hreg 0 hbad,
+    rw nat.arithmetic_function.card_distinct_factors_zero at hreg,
+    rw ← not_lt at hreg, exact hreg.1 htemp, },
   have hrecpos : (0:ℝ) < ∑ (q : ℕ) in ppowers_in_set A, 1 / q, {
     apply sum_pos, intros q hq, rw one_div_pos, norm_cast, rw pos_iff_ne_zero,
     intro hz, rw hz at hq, exact zero_not_mem_ppowers_in_set hq, refine ppowers_in_set_nonempty _,
@@ -1488,7 +1665,7 @@ begin
   calc _ ≤ ∑ t in I, (∑ q in ppowers_in_set A, (1/q : ℝ))^t/(nat.factorial t) :_
      ... ≤ ∑ t in I, ((∑ q in ppowers_in_set A, (1/q : ℝ)) / (t*exp(-1)))^t :_
      ... ≤ _ :_,
-  refine rec_sum_le_prod_sum _, intros n hn, specialize hreg n hn,
+  refine rec_sum_le_prod_sum h0A _, intros n hn, specialize hreg n hn,
   rw [mem_filter, mem_range], refine ⟨_,hreg.1⟩, rw nat.lt_succ_iff,
   refine nat.le_floor hreg.2, refine sum_le_sum _, intros t ht,
   rw [div_pow, div_le_div_left], exact factorial_bound t, apply pow_pos,
@@ -1501,7 +1678,7 @@ begin
         ((1 - ε) * (exp (-1) * log (log N)))) ^ ((1 - ε) * log (log N)) :_
      ... = _ :_,
   refine sum_le_card_mul_real _, intros n hn, rw [mul_comm (exp(-1)), ← mul_assoc],
-  refine helpful_decreasing_bound _ _, rw mem_filter at hn, exact hn.2,
+  refine helpful_decreasing_bound _ _ _, exact hrecpos, rw mem_filter at hn, exact hn.2,
   rw not_lt at hdone, exact hdone, rw mul_le_mul_right,
   calc _ ≤ ((finset.range(⌊2*(log (log N))⌋₊+1)).card :ℝ) :_
      ... = (⌊2*(log (log N))⌋₊:ℝ)+1 :_
@@ -1731,6 +1908,7 @@ begin
 end
 
 
+
 lemma nat.coprime_symmetric : symmetric coprime := λ n m h, h.symm
 
 -- lemma symmetric.on {α β : Type*} {f : α → β} {r : β → β → Prop} (hr : symmetric r) :
@@ -1775,7 +1953,7 @@ begin
   exact λ _ _ _ _ h, subtype.ext (r_inj _ _ _ _ h),
 end
 
-lemma prod_one_add {D : finset ℕ} {k : ℝ}
+lemma prod_one_add {D : finset ℕ}
   (f : nat.arithmetic_function ℝ) (hf' : f.is_multiplicative) (hf'' : ∀ i, 0 ≤ f i):
   ∑ d in D, f d ≤
     ∏ p in D.bUnion (λ n, n.factors.to_finset),
@@ -1786,7 +1964,7 @@ begin
   change ∑ d in D, f d ≤
     ∑ x in finset.powerset _,
       ∏ t in _,
-        ∑ i in _, f i,
+        ∑ i in filter (λ q, t ∣ q) _, f i,
   -- sorry
   simp_rw [prod_sum],
   dsimp,
@@ -1794,7 +1972,8 @@ begin
   dsimp,
   refine my_sum_lemma _ _ _ _ _ _ _,
   { intros d hd,
-    exact ⟨D.bUnion (λ n, n.factors.to_finset), λ p hp, p ^ d.factorization p⟩ },
+    exact ⟨(D.bUnion (λ n, n.factors.to_finset)).filter (λ z, z ∣ d),
+           λ p hp, p ^ d.factorization p⟩ },
   { intros d₁ d₂ hd₁ hd₂ h,
     dsimp at h,
     simp only [eq_self_iff_true, heq_iff_eq, true_and] at h,
@@ -1805,11 +1984,14 @@ begin
     apply hf'' },
   { intros d hd,
     dsimp,
+
     simp only [mem_sigma, mem_powerset_self, finset.mem_pi, mem_bUnion, list.mem_to_finset,
       exists_prop, mem_filter, forall_exists_index, and_imp, true_and],
-    sorry },
+    sorry
+     },
   { intros d hd,
     dsimp,
+    -- rw prod_attach,
     -- refine (@prod_attach _ _ _ _ _).trans _,
     sorry },
 
@@ -1839,11 +2021,20 @@ lemma useful_rec_aux4 (y : ℝ) (k N : ℕ) (D : finset ℕ)
     (∏ p in (finset.range (N+1)).filter nat.prime, (1 + k / (p * (p - 1)))) *
     (∏ p in (finset.range (N+1)).filter (λ n, nat.prime n ∧ y < n), (1 + k * (p - 1)⁻¹)) :=
 begin
-  sorry
-  -- have : ∑ d in D, (k : ℝ) ^ ω d / d ≤ ∏ q in ppowers_in_set D, (1 + k / q),
-  -- {
-
-  -- },
+  have h₁ : ∑ d in D, (k : ℝ) ^ ω d / d ≤  ∏ p in D.bUnion (λ n, n.factors.to_finset),
+     (1 + ∑ q in (ppowers_in_set D).filter (λ q, p ∣ q), k/q),
+  { let f : nat.arithmetic_function ℝ := ⟨λ d, (k : ℝ) ^ ω d / d, by simp⟩,
+    have hf' : f.is_multiplicative := sorry,
+    have hf'' : ∀ i, 0 ≤ f i := sorry,
+    refine (prod_one_add f hf' hf'').trans_eq _,
+    sorry },
+  have : D.bUnion (λ n, n.factors.to_finset) ⊆ (finset.range (N+1)).filter nat.prime,
+  { sorry },
+  apply h₁.trans _,
+  refine ((prod_of_subset_le_prod_of_one_le this _ _).trans _),
+  { sorry },
+  { sorry },
+  sorry,
 end
 
 lemma useful_rec_bound : ∃ C : ℝ, (0 < C) ∧ ∀ y : ℝ, ∀ k N : ℕ, ∀ D : finset ℕ,
@@ -2574,3 +2765,4 @@ begin
   apply le_trans hsum, refine sum_le_sum_of_subset_of_nonneg hpp _,
   intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
 end
+

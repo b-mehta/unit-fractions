@@ -1330,7 +1330,7 @@ let M := (N : ℝ)^(1 - (1 : ℝ)/(log(log N))), L := M / (2 * log N ^ ((1 : ℝ
   2*ε*log(log N) ≤ (log N)^(-(1/200 : ℝ)) ∧
   3*ε*log(log N) ≤ 2 / ((log N)^((1/500 : ℝ)))^2 ∧
   3 * (2 * ε' * log (log ↑N)) + 1 / M ≤ (1/(2*(log N)^((1/500 : ℝ)))) ∧
-  (log N)^((1/500 : ℝ)) ≤ M/128  ∧ 1/M < ε'*log(log N) ∧
+  (log N)^((1/500 : ℝ)) ≤ M/192  ∧ 1/M < ε'*log(log N) ∧
   3*ε'*log(log N) ≤ 2/((log N)^((1/500 : ℝ)))^2 ∧
    2*ε'*log(log N) ≤ (log N)^(-(1/200 : ℝ)) ∧
   (N : ℝ)^(1 - (8 : ℝ)/(log(log N))) ≤  ε'*M ∧
@@ -1358,7 +1358,7 @@ begin
   filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
     tendsto_coe_nat_at_top_at_top)).eventually (eventually_ge_at_top 6),
     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
-    (eventually_ge_at_top (128^(500 : ℝ))), eventually_ge_at_top 64,
+    (eventually_ge_at_top (192^(500 : ℝ))), eventually_ge_at_top 64,
     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux.bound,
     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux2.bound,
     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually haux3.bound,
@@ -1395,8 +1395,8 @@ begin
   clear hN3new hN3new2 hN3new3,
   have h500 : (0 : ℝ) < 500 := by norm_num1,
   have h5002 : (0 : ℝ) < 500/2 := by norm_num1,
-    have hTp : 128*(log N)^((1/500 : ℝ)) < (N : ℝ)^(1 - (1 : ℝ)/(log(log N))),
-  { have : 128*(log N)^((1/500 : ℝ)) ≤ (log N)^((1/500 : ℝ))*(log N)^((1/500 : ℝ)),
+    have hTp : 192*(log N)^((1/500 : ℝ)) < (N : ℝ)^(1 - (1 : ℝ)/(log(log N))),
+  { have : 192*(log N)^((1/500 : ℝ)) ≤ (log N)^((1/500 : ℝ))*(log N)^((1/500 : ℝ)),
     { apply mul_le_mul, rw ← (real.rpow_le_rpow_iff _ _ h500), rw ← rpow_mul,
     apply le_trans hN2, norm_num1, rw rpow_one, exact le_of_lt hN8, norm_num1,
     apply rpow_nonneg_of_nonneg (le_of_lt hN8), refl,
@@ -1715,7 +1715,7 @@ begin
     apply ne_of_gt, refine lt_of_lt_of_le zero_lt_one _,
     exact_mod_cast le_trans h14d htech2.2.1,
    },
-  have hd'M : (d' : ℝ) ≤ M / 128, {
+  have hd'M : (d' : ℝ) ≤ M / 192, {
     apply le_trans htech2.2.2.1, apply le_trans hzN hlargenew2, },
 
   have hB'6 : (∀ (n : ℕ), n ∈ B' → n ≤ N), {
@@ -1778,7 +1778,7 @@ begin
   cases hforce1 with htemp1 htemp2,
   exfalso, apply hgoodsubset htemp1,
   have hgoodA' : good_condition A' K T L, { rw htemp6 at htemp2, exact htemp2, },
-  have hdM : (d : ℝ) ≤ M / 128, {
+  have hdM : (d : ℝ) ≤ M / 192, {
     apply le_trans htech.2.2.1, apply le_trans _ (le_trans hzN hlargenew2),
     apply div_le_self, apply le_of_lt hz_pos, apply le_of_lt one_lt_four,
    },
