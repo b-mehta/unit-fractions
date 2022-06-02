@@ -56,6 +56,7 @@ end
 lemma moebius_rec_sum {N : ℕ} (hN : N ≠ 0) :
   ∑ (x : ℕ) in N.divisors, (μ x : ℝ) / x =  ∏ p in filter prime N.divisors, (1 - p⁻¹) :=
 begin
+sorry,
   -- use multiplicativity, then both sides trivial
 end
 
@@ -101,10 +102,10 @@ begin
   simp_rw [mul_div_assoc', mul_comm _ (N : ℝ), mul_div_assoc],
   rw ←mul_sum,
   have hPsum : ∑ (x : ℕ) in P.divisors, (μ x : ℝ) / x = (partial_euler_product ⌊y+1⌋₊)/(partial_euler_product ⌊z⌋₊), {
-    rw [moebius_rec_sum, partial_euler_product, partial_euler_product],
+    rw [moebius_rec_sum, partial_euler_product, partial_euler_product], sorry, sorry,
   },
   rw [hPsum, sub_eq_add_neg, add_le_add_iff_left], refine le_trans (le_abs_self _) _,
-  rw [abs_neg], refine le_trans (abs_sum_le_sum_abs _ _) _,
+  rw [abs_neg], refine le_trans (abs_sum_le_sum_abs _ _) _, sorry,
   --divisor_count_eq_pow_iff_squarefree
   -- ω P ≤ z+1
 
@@ -118,25 +119,28 @@ sorry
 --weak_mertens_third_upper_all
 --weak_mertens_third_lower_all
 
-
-#exit
-
-lemma plogp_tail_bound (a : ℝ) (ha : 0 < a): ∃ c : ℝ, ∀ᶠ (N : ℕ) in at_top, ∀ z : ℝ,
-  ((N:ℝ) ≤ z) →
+lemma plogp_tail_bound (a : ℝ) (ha : 0 < a): ∃ c : ℝ, (0 < c) ∧ ∀ᶠ (N : ℕ) in at_top, ∀ z : ℝ,
+  (0 ≤ log(log (⌊z⌋₊))) →
   ∑ (x : ℕ) in filter nat.prime (Icc N ⌊z⌋₊), (a / (log(x/4)*x)) ≤ c*(log(log (⌊z⌋₊)))/log(N/4) :=
 begin
   have hmertens := explicit_mertens,
   rw eventually_at_top at hmertens,
   rcases hmertens with ⟨c₁,hmertens⟩,
-  let c := 2,
-  use c,
+  let c := a*2,
+  use c, refine ⟨mul_pos ha zero_lt_two,_⟩,
   filter_upwards [eventually_gt_at_top 4,
-    tendsto_coe_nat_at_top_at_top.eventually (eventually_gt_at_top c₁)]
-    with N h4N hcN,
-  have h0N : (0:ℝ) < N, { sorry, },
+    tendsto_coe_nat_at_top_at_top.eventually (eventually_ge_at_top c₁),
+    tendsto_coe_nat_at_top_at_top.eventually (eventually_gt_at_top (exp(1)))]
+    with N h4N hcN heN,
+  have h0N : (0:ℝ) < N, { norm_cast, exact lt_trans zero_lt_four h4N, },
   have hlogN : 0 < log(N/4), {  refine log_pos _,
     rw one_lt_div, exact_mod_cast h4N, exact zero_lt_four, },
-  intros z hz,
+  intros z hz',
+  by_cases hz : (N:ℝ) ≤ z,
+  have hexpz : exp 1 < ⌊z⌋₊, {
+    rw ← nat.le_floor_iff' at hz, refine lt_of_lt_of_le heN _, exact_mod_cast hz,
+    refine ne_of_gt _, exact_mod_cast h0N,
+   },
   calc _ ≤ ∑ (x : ℕ) in filter nat.prime (Icc N ⌊z⌋₊), (a/log(N/4)) * (1/x) :_
      ... ≤ _ :_,
   refine sum_le_sum _, intros p hp, rw [mem_filter, mem_Icc] at hp,
@@ -149,60 +153,22 @@ begin
   exact_mod_cast (nat.prime.pos hp.2), rw [← mul_sum, div_mul_eq_mul_div, div_le_div_right hlogN,
     ← le_div_iff' ha],
   transitivity ((∑ q in (finset.range (⌊z⌋₊ + 1)).filter is_prime_pow, 1 / q) : ℝ),
-  sorry,
-  refine le_trans (hmertens ⌊z⌋₊ _) _,
-  -- nth_rewrite 0 ← div_div, rw div_le_div_left,
+  refine sum_le_sum_of_subset_of_nonneg _ _, intros q hq,
+  rw [mem_filter, mem_range], rw [mem_filter, mem_Icc, nat.prime_iff] at hq,
+  rw nat.lt_succ_iff, refine ⟨hq.1.2,prime.is_prime_pow hq.2⟩,
+  intros n hn1 hn2, rw one_div_nonneg, exact nat.cast_nonneg n,
+  refine le_trans (hmertens ⌊z⌋₊ _) _, rw ← nat.le_floor_iff' at hz,
+  refine le_trans hcN _, exact_mod_cast hz, refine ne_of_gt _,
+  exact_mod_cast h0N, rw [le_div_iff ha, mul_comm _ a, ← mul_assoc, mul_le_mul_right],
+  refine log_pos _, rw [← exp_lt_exp, exp_log], exact hexpz,
+  refine lt_trans _ hexpz, exact exp_pos 1,
+  have : Icc N ⌊z⌋₊ = ∅, { refine finset.Icc_eq_empty _, rw nat.le_floor_iff', exact hz,
+    refine ne_of_gt _, exact_mod_cast h0N, },
+  rw [this, filter_empty, sum_empty], refine div_nonneg _ _, refine mul_nonneg _ _,
+  refine mul_nonneg _ zero_le_two, exact le_of_lt ha, exact hz',
+  refine log_nonneg _, rw le_div_iff, norm_cast, rw one_mul,
+  exact le_of_lt h4N, exact zero_lt_four,
 end
-
-/-
-lemma explicit_mertens :
-  ∀ᶠ N : ℕ in at_top,
-    ((∑ q in (finset.range (N + 1)).filter is_prime_pow, 1 / q) : ℝ) ≤ 2 * log (log N)-/
-/-
-lemma plogp_tail_bound (a : ℝ) (ha : 0 < a): ∃ c : ℝ, ∀ᶠ (N : ℕ) in at_top, ∀ z : ℝ,
-  (4 < z) →
-  prime_summatory (λ n:ℕ, (a/(log(n/4)*n))) N z ≤ c/log N :=
-  --∑ (x : ℕ) in filter nat.prime (Icc N ⌊z⌋₊), (a / (log(x/4)*x)) ≤ c/log N :=
-begin
-  rcases prime_counting_le_const_mul_div_log with ⟨cp,h0cp,hplb⟩,
-  let c := 2,
-  use c,
-  filter_upwards [eventually_ge_at_top 1,
-  (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually (eventually_gt_at_top
-       (0:ℝ))]
-  with N h1N h0logN,
-  intros z h4z, rw prime_summatory_eq_summatory,
-  have hz₁ : z * (cp * (a * (log N * 2))) ≤ c * (log (z / 4) * z) * log z, { sorry, },
-  have h0z : 0 < z, { sorry, },
-  have h0logz : 0 < log z, { sorry, },
-  have h0zlogz : 0 < log (z / 4) * z, { refine mul_pos _ h0z, refine log_pos _,
-    rw one_lt_div, exact h4z, exact zero_lt_four, },
-  let f := (λ n:ℕ, ite (nat.prime n) (1:ℝ) 0),
-  let g := (λ x:ℝ, a / (log (x / 4) * x)),
-  have h0gz : 0 < g z := div_pos ha h0zlogz,
-  let g' := (λ x:ℝ, (-7*(log(x/4)+1))/(x^2*log(x/4)^2)),
-  have hg : ∀ i ∈ (set.Icc (N:ℝ) z), has_deriv_at g (g' i) i, { sorry, },
-  have h₁ : (λ n:ℕ, ite (nat.prime n) (a / (log (n / 4) * n)) 0) = (λ n:ℕ, (f n)*(g n)) := sorry,
-  simp_rw h₁, rw [partial_summation f g g' _ hg _, ← prime_summatory_eq_summatory, sub_eq_add_neg,
-    ← neg_one_mul, ← measure_theory.integral_mul_left, ← add_halves ((c:ℝ)/log N)],
-  refine add_le_add _ _,
-  transitivity (nat.prime_counting ⌊z⌋₊ : ℝ)* g z,
-  rw [mul_le_mul_right, prime_counting_eq_prime_summatory', prime_summatory_eq_summatory, summatory,
-      summatory], refine sum_le_sum_of_subset_of_nonneg (finset.Icc_subset_Icc h1N _) _, refl,
-  intros n hn1 hn2, split_ifs, exact zero_le_one, refl, exact h0gz,
-  rw [← le_div_iff h0gz], refine le_trans (hplb z) _, rw [norm_eq_abs, abs_of_pos,
-     le_div_iff, div_div, mul_div, div_le_div_iff, mul_assoc, mul_comm cp, mul_assoc, div_mul_eq_mul_div,
-     div_le_iff], exact hz₁, exact h0logz, exact h0zlogz, refine mul_pos h0logN zero_lt_two,
-  exact h0gz, exact div_pos h0z h0logz, refine le_trans (le_abs_self _) _,
-  rw ← norm_eq_abs,
-  let g'' := (λ x:ℝ, (3:ℝ)),
-  transitivity (∫ (a:ℝ), g'' a), refine measure_theory.norm_integral_le_of_norm_le _ _,
-
-  --rw ← prime_counting_eq_prime_summatory,
-
-end-/
-
-#exit
 
 lemma filter_div_aux (a b c d: ℝ) (hb : 0 < b) (hc : 0 < c) : ∃ y z w : ℝ,
  (2 ≤ y) ∧ (16 ≤ w) ∧ (0 < z) ∧ (4*y + 4 ≤ z) ∧ (a ≤ y) ∧ (d ≤ y) ∧ (log w / log z ≤ b) ∧
@@ -210,27 +176,96 @@ lemma filter_div_aux (a b c d: ℝ) (hb : 0 < b) (hc : 0 < c) : ∃ y z w : ℝ,
 begin
   let y := max (2:ℝ) (max a d),
   have hlogy : 0 < log y, { refine log_pos _, exact lt_of_lt_of_le one_lt_two (le_max_left _ _), },
-  rcases plogp_tail_bound (log y) hlogy with ⟨C₁,htail⟩,
-  rw eventually_at_top at htail, rcases htail with ⟨C₂,htail'⟩,
-  let w := max (16:ℝ) (max(exp (C₁ / c)) (C₂:ℝ)),
-  let z := max (2:ℝ) (max (4*y + 4) (exp (log w / b))),
-  refine ⟨y,z,w,le_max_left _ _,le_max_left _ _,lt_of_lt_of_le zero_lt_two (le_max_left _ _),
-     le_trans (le_max_left _ _) (le_max_right _ _),le_trans (le_max_left _ _) (le_max_right _ _),
-     le_trans (le_max_right _ _) (le_max_right _ _),_,_⟩,
-  rw [div_le_iff, ← div_le_iff' hb, ← exp_le_exp, exp_log],
-  refine le_trans (le_max_right _ _) (le_max_right _ _),
-  refine lt_of_lt_of_le zero_lt_two (le_max_left _ _),
-  refine log_pos _, refine lt_of_lt_of_le one_lt_two (le_max_left _ _),
-  have h₁ : C₂ ≤ ⌈w⌉₊, {
-    rw ← @nat.cast_le ℝ _ _ _ _, refine le_trans _ (nat.le_ceil _),
-    refine le_trans (le_max_right _ _) (le_max_right _ _),
+  rcases plogp_tail_bound (log y) hlogy with ⟨C₁,h0C₁,htail⟩,
+  rw eventually_at_top at htail, rcases htail with ⟨C₂',htail'⟩,
+  let C₂ := max 1 C₂',
+  have haux: asymptotics.is_O_with (1 / (C₁ * (1 / c * (2 * (1 / b))))) (λ (x : ℝ), (log x))
+     (λ (x : ℝ), x^((1:ℝ))) at_top, {
+    refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _, exact zero_lt_one,
+    rw one_div_pos, refine mul_pos h0C₁ _, refine mul_pos _ _, rw one_div_pos, exact hc,
+    refine mul_pos zero_lt_two _, rw one_div_pos, exact hb,
+    },
+  have haux' := tendsto_log_at_top.eventually haux.bound,
+  rw eventually_at_top at haux', rcases haux' with ⟨C₃,haux'⟩,
+  let z := max (exp (log 4 * 2 / b)) (max C₃ (max (3:ℝ) (max
+     (4*y + 4)
+     (max (exp (exp (log (16 / 4) * c / C₁)) + 1) (exp (exp (log (C₂ / 4) * c / C₁)) + 1))))),
+  let w := 4*exp (C₁ * log (log ⌊z⌋₊) / c),
+  have hz₁ : exp (log 4 * 2 / b) ≤ z, { refine le_max_left _ _, },
+  have hz₂ : C₃ ≤ z, { refine le_trans (le_max_left _ _) (le_max_right _ _), },
+  have hz₄' : 3 ≤ z, { refine le_trans (le_max_left _ _)
+    (le_trans (le_max_right _ _) (le_max_right _ _) ), },
+  have hz₄ : 2 < z, { refine lt_of_lt_of_le _ hz₄', norm_num1, },
+  have hz₅ : exp(1) < z, { refine lt_of_lt_of_le _ hz₄',
+    refine lt_trans real.exp_one_lt_d9 _, norm_num1, },
+  have hz₆ : (4*y + 4) ≤ z, { refine le_trans (le_max_left _ _)
+   (le_trans (le_max_right _ _) ((le_trans (le_max_right _ _) (le_max_right _ _) ))), },
+  have hzfloor : z - 1 ≤ ⌊z⌋₊, { rw sub_le_iff_le_add, refine le_of_lt (nat.lt_floor_add_one _), },
+  have hz₃ : 1 ≤ z := le_trans one_le_two (le_of_lt hz₄),
+  have hz₀ : 0 < z := lt_of_lt_of_le zero_lt_one hz₃,
+  have hz₈' : exp (exp (log (16 / 4) * c / C₁)) + 1 ≤ z, { refine le_trans (le_max_left _ _)
+   (le_trans (le_max_right _ _) ((le_trans (le_max_right _ _)
+      ((le_trans (le_max_right _ _) (le_max_right _ _) ))))), },
+  have hz₉' : exp (exp (log (C₂ / 4) * c / C₁)) + 1 ≤ z, { refine le_trans (le_max_right _ _)
+   (le_trans (le_max_right _ _) ((le_trans (le_max_right _ _)
+      ((le_trans (le_max_right _ _) (le_max_right _ _) ))))), },
+  have hz₈ : log (16 / 4) * c / C₁ ≤ log (log ⌊z⌋₊), {
+    rw [← exp_le_exp, exp_log, ← exp_le_exp, exp_log], refine le_trans _ hzfloor,
+    rw le_sub_iff_add_le, exact hz₈', norm_cast, rw nat.floor_pos, exact hz₃,
+    refine log_pos _, refine lt_of_lt_of_le _ hzfloor, rw lt_sub_iff_add_lt,
+    exact hz₄,
    },
-  refine le_trans (htail' ⌈w⌉₊ h₁ z) _,
-  rw [div_le_iff, ← div_le_iff' hc, ← exp_le_exp, exp_log], refine le_trans _ (nat.le_ceil _),
-  refine le_trans (le_max_left _ _) (le_max_right _ _), refine lt_of_lt_of_le _ (nat.le_ceil _),
-  refine lt_of_lt_of_le _ (le_max_left _ _), norm_num1, refine log_pos _,
-  refine lt_of_lt_of_le _ (nat.le_ceil _),
-  refine lt_of_lt_of_le _ (le_max_left _ _), norm_num1,
+  have hz₉ : log (C₂ / 4) * c / C₁ ≤ log (log ⌊z⌋₊), {
+    rw [← exp_le_exp, exp_log, ← exp_le_exp, exp_log], refine le_trans _ hzfloor,
+    rw le_sub_iff_add_le, exact hz₉', norm_cast, rw nat.floor_pos, exact hz₃,
+    refine log_pos _, refine lt_of_lt_of_le _ hzfloor, rw lt_sub_iff_add_lt,
+    exact hz₄,
+   },
+  have hz₇ : (0 ≤ log(log (⌊z⌋₊))), { refine le_trans _ hz₈, refine div_nonneg _ _,
+    refine mul_nonneg _ _, refine log_nonneg _, norm_num1, exact le_of_lt hc,
+    exact le_of_lt h0C₁, },
+  have hzw : (exp (log w / b)) ≤ z, {
+    rw [← log_le_log, log_exp, div_le_iff, log_mul, log_exp, ← add_halves (log z*b)],
+    refine add_le_add _ _, rw [le_div_iff, ← div_le_iff, ← exp_le_exp, exp_log],
+    exact hz₁, exact hz₀, exact hb, exact zero_lt_two,
+    rw [le_div_iff, div_eq_mul_one_div, ← div_le_iff, div_eq_mul_one_div, mul_assoc,
+      mul_assoc, mul_comm C₁, mul_assoc, mul_comm], specialize haux' z hz₂,
+    rw [← le_div_iff', div_eq_mul_one_div, mul_comm],
+    transitivity log(log z), rw [log_le_log, log_le_log], refine nat.floor_le _,
+    exact le_of_lt hz₀, norm_cast, rw nat.floor_pos, exact hz₃, exact hz₀, refine log_pos _,
+    norm_cast, rw ← nat.succ_lt_succ_iff, rw ← @nat.cast_lt ℝ _ _ _ _,
+    refine lt_trans _ (nat.lt_succ_floor _), norm_num1, exact hz₄, refine log_pos _,
+    exact lt_trans one_lt_two hz₄, rw [norm_eq_abs, norm_eq_abs, rpow_one, abs_of_pos,
+      abs_of_pos] at haux', exact haux', refine log_pos (lt_trans one_lt_two hz₄),
+    refine log_pos _, rw [← exp_lt_exp, exp_log], exact hz₅, exact hz₀,
+    refine mul_pos h0C₁ _, refine mul_pos _ _, rw one_div_pos, exact hc,
+    refine mul_pos zero_lt_two _, rw one_div_pos, exact hb, exact hb, exact zero_lt_two,
+    exact four_ne_zero, refine exp_ne_zero _, exact hb, refine exp_pos _, exact hz₀,
+  },
+  have h16w : 16 ≤ w, {
+    rw [← div_le_iff', ← log_le_log, log_exp, le_div_iff, ← div_le_iff'], exact hz₈,
+    exact h0C₁, exact hc, norm_num1, refine exp_pos _, exact zero_lt_four,
+  },
+  have hC₂w : (C₂ :ℝ) ≤ w, {
+    rw [← div_le_iff', ← log_le_log, log_exp, le_div_iff, ← div_le_iff'], exact hz₉,
+    exact h0C₁, exact hc, refine div_pos _ _, norm_cast, refine lt_of_lt_of_le zero_lt_one _,
+    refine le_max_left _ _, norm_num1, refine exp_pos _,
+    exact zero_lt_four,
+  },
+  have h0w' : (1:ℝ) < ⌈w⌉₊ / 4, { rw lt_div_iff, refine lt_of_lt_of_le _ (nat.le_ceil _),
+    refine lt_of_lt_of_le _ h16w, norm_num1, exact zero_lt_four, },
+  refine ⟨y,z,w,le_max_left _ _,h16w, hz₀, hz₆, le_trans (le_max_left _ _) (le_max_right _ _),
+     le_trans (le_max_right _ _) (le_max_right _ _),_,_⟩,
+  rw [div_le_iff, ← div_le_iff' hb, ← exp_le_exp, exp_log], exact hzw, exact hz₀,
+  refine log_pos _, refine lt_trans one_lt_two hz₄,
+  have h₁ : C₂' ≤ ⌈w⌉₊, {
+    rw ← @nat.cast_le ℝ _ _ _ _, refine le_trans _ (nat.le_ceil _),
+    refine le_trans _ hC₂w, norm_cast, refine le_max_right _ _,
+   },
+  refine le_trans (htail' ⌈w⌉₊ h₁ z hz₇) _,
+  rw [div_le_iff, ← div_le_iff' hc, ← exp_le_exp, exp_log],
+  rw le_div_iff, refine le_trans _ (nat.le_ceil _), rw mul_comm _ (4:ℝ),
+  exact zero_lt_four,  exact lt_trans zero_lt_one h0w', exact log_pos h0w',
 end
 
 #exit
@@ -358,8 +393,6 @@ begin
   rw [← two_mul, ← le_div_iff', div_div, mul_comm _ (2:ℝ), ← mul_assoc], norm_num1, refl,
   norm_num1,
 end
-
--- No sorries below this point!
 
 
 lemma turan_primes_estimate : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
@@ -862,17 +895,17 @@ end
 
 
 -- Lemma 1
-lemma sieve_lemma_one  : ∃ C : ℝ,
-  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (3 ≤ y) → (y < z) → (z ≤ log N) →
-   (((finset.range(2*N)).filter(λ n, N ≤ n ∧ ∀ p : ℕ, prime p → p ∣ n →
-       ((p : ℝ) < y) ∨ (z < p))).card : ℝ) ≤
-   C * (log y / log z) * N
-    :=
-sorry
+-- lemma sieve_lemma_one  : ∃ C : ℝ,
+--   ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (3 ≤ y) → (y < z) → (z ≤ log N) →
+--    (((finset.range(2*N)).filter(λ n, N ≤ n ∧ ∀ p : ℕ, prime p → p ∣ n →
+--        ((p : ℝ) < y) ∨ (z < p))).card : ℝ) ≤
+--    C * (log y / log z) * N
+--     :=
+-- sorry
 
-theorem unit_fractions_upper_log_density :
-  ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range (N+1),
-    25 * log (log (log N)) * log N / log (log N) ≤ ∑ n in A, (1 / n : ℝ) →
-      ∃ S ⊆ A, ∑ n in S, (1 / n : ℝ) = 1 :=
-sorry
+-- theorem unit_fractions_upper_log_density :
+--   ∀ᶠ (N : ℕ) in at_top, ∀ A ⊆ finset.range (N+1),
+--     25 * log (log (log N)) * log N / log (log N) ≤ ∑ n in A, (1 / n : ℝ) →
+--       ∃ S ⊆ A, ∑ n in S, (1 / n : ℝ) = 1 :=
+-- sorry
 
