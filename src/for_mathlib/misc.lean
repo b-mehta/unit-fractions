@@ -61,8 +61,8 @@ begin
 end
 
 lemma Ico_disjoint_Icc_consecutive {α : Type*} [linear_order α]
-  [locally_finite_order α] (a b c : α): disjoint (finset.Ico a b) (finset.Icc b c) :=
-le_of_eq $ Ico_inter_Icc_consecutive a b c
+  [locally_finite_order α] (a b c : α) : disjoint (finset.Ico a b) (finset.Icc b c) :=
+(Ico_inter_Icc_consecutive a b c).le
 
 lemma finset.Icc_sdiff_Icc_right {x y z : ℕ} (h₁ : x ≤ y) (h₂ : y ≤ z) :
   finset.Icc x z \ finset.Icc y z = finset.Ico x y :=
@@ -98,10 +98,6 @@ open_locale big_operators
   (f : α → ℚ) :
   ↑(∑ x in s, f x : ℚ) = (∑ x in s, (f x : β)) :=
 (rat.cast_hom β).map_sum f s
-
-lemma complex.re_sum {α : Type*} (s : finset α) (f : α → ℂ) :
-  (∑ i in s, f i).re = ∑ i in s, (f i).re :=
-complex.re_add_group_hom.map_sum f s
 
 lemma finset.prod_rpow {ι : Type*} {s : finset ι} {f : ι → ℝ}
   (c : ℝ) (hf : ∀ x ∈ s, 0 ≤ f x) :

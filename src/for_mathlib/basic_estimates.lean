@@ -658,13 +658,6 @@ begin
   rw divisor_function_exact_prime_power _ (nat.prime_of_mem_factorization hp),
 end
 
-lemma finset.prod_div_distrib {α : Type*} {s : finset α} {f g : α → R} [comm_group_with_zero R] :
-  ∏ i in s, (f i / g i) = (∏ i in s, f i) / (∏ i in s, g i) :=
-begin
-  simp only [div_eq_mul_inv],
-  rw [finset.prod_mul_distrib, finset.prod_inv_distrib'],
-end
-
 lemma divisor_function_div_pow_eq {n : ℕ} (K : ℝ) (hn : n ≠ 0) :
   (σ 0 n : ℝ) / n ^ K⁻¹ = n.factorization.prod (λ p k, (k + 1) / (p ^ (↑k / K))) :=
 begin
@@ -1139,8 +1132,9 @@ begin
     mul_assoc _ c n, two_mul (_ * _), add_le_add_iff_left, mul_assoc, mul_left_comm],
   apply mul_le_mul_of_nonneg_left _ (le_trans (log_nonneg one_le_two) hc.le),
   rw ←le_div_iff' (zero_lt_two : (0 : ℝ) < 2),
-  convert nat.cast_div_le,
-  simp
+  { convert nat.cast_div_le,
+    simp },
+  apply_instance,
 end
 
 lemma chebyshev_upper_real {c : ℝ} (hc : 2 * real.log 2 < c) :
@@ -1339,7 +1333,7 @@ begin
       rw [von_mangoldt_apply_pow (zero_lt_two.trans_le (finset.mem_Icc.1 hk).1).ne', abs_div,
         abs_of_nonneg von_mangoldt_nonneg, abs_pow, nat.abs_cast] },
     rw [this, von_mangoldt_apply_prime h],
-    simp only [div_eq_mul_inv (log (p : ℝ)), ←mul_sum, ←inv_pow₀],
+    simp only [div_eq_mul_inv (log (p : ℝ)), ←mul_sum, ←inv_pow],
     apply le_trans _ (log_div_sq_sub_le (nat.one_lt_cast.2 h.one_lt)),
     rw [←nat.Ico_succ_right],
     refine mul_le_mul_of_nonneg_left (geom_sum_Ico'_le _ _ _) _;
@@ -2236,8 +2230,8 @@ begin
     { exact hp.1.2 },
     apply log_pos,
     exact_mod_cast hp.2.one_lt },
-  simp only [←nat.Ico_succ_right, nat.cast_pow, ←inv_pow₀],
-  rw [geom_sum_Ico', inv_pow₀, inv_pow₀, ←one_div (p : ℝ), one_sub_div hp₀.ne', div_div_eq_mul_div,
+  simp only [←nat.Ico_succ_right, nat.cast_pow, ←inv_pow],
+  rw [geom_sum_Ico', inv_pow, inv_pow, ←one_div (p : ℝ), one_sub_div hp₀.ne', div_div_eq_mul_div,
     sq, pow_succ', mul_inv, mul_inv, ←sub_mul, inv_mul_cancel_right₀ hp₀.ne', sub_div,
     div_eq_mul_inv, mul_inv, mul_comm, sub_sub_cancel_left, abs_neg, abs_div, abs_inv, abs_pow,
     abs_of_nonneg (sub_nonneg_of_le hp₁.le), nat.abs_cast, div_le_iff (sub_pos_of_lt hp₁)],
@@ -2330,7 +2324,7 @@ begin
   { rwa [abs_inv, nat.abs_cast, inv_lt_one_iff_of_pos hp₀] },
   have := abs_log_sub_add_sum_range_le hp_inv 1,
   rwa [range_one, sum_singleton, nat.cast_zero, abs_inv, nat.abs_cast, zero_add, zero_add, div_one,
-    pow_one, inv_pow₀ _ 2, inv_div_left, sq, ←mul_assoc, sub_mul, one_mul,
+    pow_one, inv_pow _ 2, inv_div_left, sq, ←mul_assoc, sub_mul, one_mul,
     inv_mul_cancel hp₀.ne'] at this,
 end
 

@@ -223,7 +223,7 @@ begin
   rw [sum_image, sum_congr rfl],
   { intros x hx,
     simp only [mem_filter] at hx,
-    rw [prod_inv_distrib', ←nat.cast_prod, prod_my_function],
+    rw [prod_inv_distrib, ←nat.cast_prod, prod_my_function],
     exact ne_of_mem_of_not_mem hx.1 hA },
   simp only [mem_filter, and_imp],
   intros x hx _ y hy _ h,

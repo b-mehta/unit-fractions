@@ -833,7 +833,7 @@ begin
     replace := (this.trans (complex.abs_re_le_abs _)).trans (abv_sum_le_sum_abv _ _),
     simp only [complex.abs_prod, abs_one_add_e, prod_mul_distrib, mul_div_assoc',
       prod_const, ←finset.mul_sum, ←int.cast_coe_nat k, ←int.cast_mul, mul_comm (k : ℤ)] at this,
-    rwa [←div_le_iff', ←zpow_coe_nat, ←zpow_sub₀, sub_sub_cancel_left, zpow_neg₀, zpow_one,
+    rwa [←div_le_iff', ←zpow_coe_nat, ←zpow_sub₀, sub_sub_cancel_left, zpow_neg, zpow_one,
       ←one_div] at this,
     { exact two_ne_zero },
     exact pow_pos zero_lt_two _ },
@@ -1418,7 +1418,7 @@ begin
     { rw [mul_div_assoc', div_le_iff (zero_lt_one.trans_le h₃), ←nat.cast_add_one, rpow_nat_cast,
         pow_succ],
       transitivity ((2 : ℝ) * N) * (2 * (k * N ^ (ppowers_in_set A \ D).card * [D])),
-      { rw [two_mul (_ * _)],
+      { rw [two_mul (_ * _ : ℝ)],
         refine mul_le_mul h₂ (add_le_add (by nlinarith only [h₁, h₄]) _) _ (by simp),
         { apply (hKN.trans h₅).trans,
           rw mul_right_comm,
@@ -1632,4 +1632,3 @@ begin
      ... < _ :_,
   refine add_le_add m2 m1, norm_num1, rw minor_arc₂, refine sdiff_disjoint,
 end
-

@@ -53,21 +53,96 @@ begin
   sorry
 end
 
-lemma moebius_rec_sum {N : ℕ} (hN : N ≠ 0) :
-  ∑ (x : ℕ) in N.divisors, (μ x : ℝ) / x =  ∏ p in filter prime N.divisors, (1 - p⁻¹) :=
+lemma is_multiplicative_one {R : Type*} [ring R] :
+  (1 : nat.arithmetic_function R).is_multiplicative :=
 begin
-sorry,
-  -- use multiplicativity, then both sides trivial
+  refine ⟨nat.arithmetic_function.one_one, _⟩,
+  intros m n hmn,
+  change ite _ _ _ = ite _ _ _ * ite _ _ _,
+  simp only [boole_mul, ←ite_and, nat.mul_eq_one_iff],
+end
+
+lemma moebius_rec_sum {N : ℕ} (hN : N ≠ 0) :
+  ∑ (x : ℕ) in N.divisors, (μ x : ℝ) / x = ∏ p in filter nat.prime N.divisors, (1 - p⁻¹) :=
+begin
+  let f' : nat.arithmetic_function ℝ := ⟨λ x, (μ x : ℝ) / x, by simp⟩,
+  have hf' : f'.is_multiplicative,
+  { refine ⟨_, λ m n hmn, _⟩,
+    { simp only [f', zero_hom.coe_mk, nat.arithmetic_function.moebius_apply_of_squarefree,
+        squarefree_one, nat.arithmetic_function.card_factors_one, pow_zero, int.cast_one,
+        nat.cast_one, div_one] },
+    simp only [zero_hom.coe_mk, nat.cast_mul, int.cast_mul, mul_div_mul_comm,
+      nat.arithmetic_function.is_multiplicative_moebius.map_mul_of_coprime hmn] },
+  let f : nat.arithmetic_function ℝ := f' * ζ,
+  have hf : f.is_multiplicative := hf'.mul nat.arithmetic_function.is_multiplicative_zeta.nat_cast,
+  change ∑ x : ℕ in N.divisors, f' x = _,
+  rw ←nat.arithmetic_function.coe_mul_zeta_apply,
+  change f N = _,
+  rw ←nat.prime_divisors_eq_to_filter_divisors_prime,
+  revert hN N,
+  refine nat.rec_on_pos_prime_pos_coprime _ _ _ _,
+  { intros p k hp hk hpk,
+    -- rw [nat.prime_pow_prime_divisor hk.ne' hp, prod_singleton],
+    sorry },
+  { intro h,
+    cases h rfl,
+    },
+  { intro _,
+    simp only [nat.factors_one, list.to_finset_nil, prod_empty, hf.map_one] },
+  { intros a b ha hb hab aih bih k,
+    rw [hf.map_mul_of_coprime hab, nat.factors_mul_to_finset_of_coprime hab, prod_union, aih, bih],
+    { linarith },
+    { linarith },
+    rw list.disjoint_to_finset_iff_disjoint,
+    apply nat.coprime_factors_disjoint hab
+    },
+end
+
+lemma prod_sdiff'' {ι α : Type*} [comm_group_with_zero α] (f : ι → α) (s t : finset ι) (h : t ⊆ s)
+  (ht : ∀ i ∈ t, f i ≠ 0) :
+  ∏ i in s \ t, f i = (∏ i in s, f i) / ∏ i in t, f i :=
+begin
+  rw [eq_div_iff_mul_eq, prod_sdiff h],
+  rwa prod_ne_zero_iff,
+end
+
+lemma filter_sdiff {ι : Type*} (p : ι → Prop) [decidable_eq ι] [decidable_pred p] (s t : finset ι) :
+  (s \ t).filter p = s.filter p \ t.filter p :=
+begin
+  ext x,
+  simp only [mem_sdiff, mem_filter],
+  tauto,
 end
 
 lemma sieve_lemma_prec (N : ℕ) (y z : ℝ) :
-   (((finset.range N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n →
+   (((finset.range N).filter (λ n, ∀ p : ℕ, nat.prime p → p ∣ n →
        ((p : ℝ) < y) ∨ (z < p))).card : ℝ) ≤
    ((partial_euler_product ⌊y+1⌋₊)/(partial_euler_product ⌊z⌋₊)) * N + 2^(z+1) :=
 begin
-  let P := ∏ p in ((finset.range N).filter (λ p, prime p ∧ (y ≤ p) ∧ ((p:ℝ) ≤ z))), p,
-  have h₁ : ((finset.range N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n →
-       ((p : ℝ) < y) ∨ (z < p))).card = ((finset.range N).filter (λ n, coprime n P)).card := sorry,
+  cases lt_or_le z y,
+  { sorry },
+  let P := ∏ p in ((finset.range N).filter (λ p, nat.prime p ∧ (y ≤ p) ∧ ((p:ℝ) ≤ z))), p,
+  have hP : P ≠ 0,
+  { rw prod_ne_zero_iff,
+    intros x hx,
+    simp only [mem_filter, mem_range] at hx,
+    exact hx.2.1.pos.ne' },
+  have h₁ : ((finset.range N).filter (λ n, ∀ p : ℕ, nat.prime p → p ∣ n →
+       ((p : ℝ) < y) ∨ (z < p))).card = ((finset.range N).filter (λ n, coprime n P)).card,
+  { congr' 1,
+    apply filter_congr,
+    simp only [mem_range, nat.coprime_prod, mem_filter, and_imp],
+    intros n hn,
+    split,
+    { intros h p pn hp hy hz,
+      rw [nat.coprime_comm, hp.coprime_iff_not_dvd],
+      intro t,
+      cases h p hp t with h' h',
+      { exact h'.not_le hy },
+      { exact h'.not_le hz } },
+    { intros h p hp pn,
+      by_contra',
+      sorry } },
   have : ∀ n, ∑ (i : ℕ) in (nat.gcd n P).divisors, (μ i : ℝ) = ite (nat.gcd n P = 1) 1 0,
   { intro n,
     rw ←int.cast_sum,
@@ -79,13 +154,11 @@ begin
   rw ←sum_boole,
   simp only [nat.coprime],
   simp_rw [←this],
-  have hgcddiv : ∀ x : ℕ, (x.gcd P).divisors = (P.divisors).filter(λ d, d ∣ x), -- x ≠ 0
+  have hgcddiv : ∀ x : ℕ, (x.gcd P).divisors = (P.divisors).filter (λ d, d ∣ x), -- x ≠ 0
   { intros x,
     ext m,
-    simp only [nat.mem_divisors, ne.def, nat.gcd_eq_zero_iff, not_and, mem_filter, nat.dvd_gcd_iff],
-    sorry
-
-  },
+    simp only [nat.mem_divisors, mem_filter, nat.dvd_gcd_iff, hP, nat.gcd_eq_zero_iff, ne.def,
+      and_false, not_false_iff, and_true, and_comm (m ∣ P) (m ∣ x)] },
   simp_rw [hgcddiv, sum_filter],
   rw sum_comm,
   simp_rw [←mul_boole _ (μ _ : ℝ), ←mul_sum],
@@ -101,8 +174,11 @@ begin
   rw sum_sub_distrib,
   simp_rw [mul_div_assoc', mul_comm _ (N : ℝ), mul_div_assoc],
   rw ←mul_sum,
-  have hPsum : ∑ (x : ℕ) in P.divisors, (μ x : ℝ) / x = (partial_euler_product ⌊y+1⌋₊)/(partial_euler_product ⌊z⌋₊), {
-    rw [moebius_rec_sum, partial_euler_product, partial_euler_product], sorry, sorry,
+  have hPsum : ∑ (x : ℕ) in P.divisors, (μ x : ℝ) / x =
+    (partial_euler_product ⌊y+1⌋₊) / (partial_euler_product ⌊z⌋₊),
+  { rw [moebius_rec_sum hP, partial_euler_product, partial_euler_product, prod_inv_distrib,
+      prod_inv_distrib, inv_div_inv, ←prod_sdiff'', ←filter_sdiff],
+    sorry, sorry, sorry
   },
   rw [hPsum, sub_eq_add_neg, add_le_add_iff_left], refine le_trans (le_abs_self _) _,
   rw [abs_neg], refine le_trans (abs_sum_le_sum_abs _ _) _, sorry,
@@ -267,8 +343,6 @@ begin
   rw le_div_iff, refine le_trans _ (nat.le_ceil _), rw mul_comm _ (4:ℝ),
   exact zero_lt_four,  exact lt_trans zero_lt_one h0w', exact log_pos h0w',
 end
-
-#exit
 
 lemma filter_div  (D : ℝ) (hD : 0 < D) : ∃ y z : ℝ,
 (1 ≤ y) ∧ (4*y + 4 ≤ z) ∧ (0<z) ∧ (2 / (1 / (5 * D * 2) * D) ≤ y) ∧ ((2 / (1 / (5 * D * 2))) ≤ y) ∧
@@ -908,4 +982,3 @@ end
 --     25 * log (log (log N)) * log N / log (log N) ≤ ∑ n in A, (1 / n : ℝ) →
 --       ∃ S ⊆ A, ∑ n in S, (1 / n : ℝ) = 1 :=
 -- sorry
-
