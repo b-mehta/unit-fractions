@@ -26,6 +26,11 @@ open_locale arithmetic_function
 open_locale classical
 noncomputable theory
 
+
+lemma another_weird_tendsto_at_top :
+  filter.tendsto (λ x : ℝ, x / (2 ^ (1 / 2 * log x + 1) * log (1 / 2 * log x)))
+     filter.at_top filter.at_top := sorry
+
 lemma omega_eq_sum (N : ℕ) {n : ℕ} (hn : n ∈ range(N)) :
    ω n = ∑ p in (((range(N)).filter(λ p, nat.prime p)).filter(λ p, p ∣ n)), 1 := sorry
 
@@ -180,20 +185,78 @@ begin
       prod_inv_distrib, inv_div_inv, ←prod_sdiff'', ←filter_sdiff],
     sorry, sorry, sorry
   },
-  rw [hPsum, sub_eq_add_neg, add_le_add_iff_left], refine le_trans (le_abs_self _) _,
+  rw [sub_eq_add_neg], refine add_le_add _ _, refine mul_le_mul_of_nonneg_left _ _,
+  exact hPsum, exact nat.cast_nonneg N, refine le_trans (le_abs_self _) _,
   rw [abs_neg], refine le_trans (abs_sum_le_sum_abs _ _) _, sorry,
   --divisor_count_eq_pow_iff_squarefree
   -- ω P ≤ z+1
-
 end
 
 lemma sieve_lemma_prec' : ∃ C c : ℝ, (0 < C) ∧ (0 < c) ∧
-  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (2 ≤ y) → (z ≤ c*log N) →
+  ∀ᶠ (N : ℕ) in at_top, ∀ y z : ℝ, (2 ≤ y) → (1 < z) → (z ≤ c*log N) →
    (((finset.range(N)).filter(λ n, ∀ p : ℕ, prime p → p ∣ n →
        ((p : ℝ) < y) ∨ (z < p))).card : ℝ) ≤ C*(log y/log z)*N :=
-sorry
---weak_mertens_third_upper_all
---weak_mertens_third_lower_all
+begin
+  rcases weak_mertens_third_lower_all with ⟨C₁,hC₁,hml⟩,
+  rcases weak_mertens_third_upper_all with ⟨C₂,hC₂,hmu⟩,
+  let C := 1 / C₁ * C₂ * 2 * 2,
+  let c := (1:ℝ)/2,
+  have h0C : 0 < C, { refine mul_pos _ zero_lt_two, refine mul_pos _ zero_lt_two,
+    refine mul_pos _ hC₂, rw one_div_pos, exact hC₁, },
+  use C, use c, refine ⟨h0C,one_half_pos,_⟩,
+  filter_upwards [tendsto_coe_nat_at_top_at_top.eventually (eventually_gt_at_top (0:ℝ)),
+    (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually (eventually_gt_at_top (1*2:ℝ)),
+    (another_weird_tendsto_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
+       (eventually_ge_at_top (1 / (C / 2 * log 2)))
+    ]
+    with N h0N hlogN hweirdN,
+  intros y z h2y h1z hzN,
+  have h0logN : 0 < log N, { refine lt_trans _ hlogN, norm_num1, },
+  have h2y1 : 2 ≤ y + 1, {
+  refine le_trans h2y _, rw [le_add_iff_nonneg_right], exact zero_le_one, },
+  refine le_trans (sieve_lemma_prec N y z) _,
+  rw [← add_halves C, add_mul, add_mul], refine add_le_add _ _,
+  rw [mul_le_mul_right h0N, mul_div, div_le_div_iff],
+  specialize hmu (y+1), specialize hml z (le_of_lt h1z),
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hml,
+  rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hmu,
+  transitivity (C₂*log(y+1)*log z), refine mul_le_mul_of_nonneg_right (hmu _) _, exact h2y1,
+  exact log_nonneg (le_of_lt h1z), transitivity (C₂*log(y+1)*partial_euler_product ⌊z⌋₊/C₁),
+  rw [le_div_iff hC₁, mul_assoc _ _ C₁], refine mul_le_mul_of_nonneg_left _ _,
+  rw mul_comm, exact hml, refine mul_nonneg (le_of_lt hC₂) (log_nonneg _),
+  refine le_trans one_le_two h2y1, rw [div_eq_mul_one_div, mul_comm _ (1/C₁), ← mul_assoc,
+    mul_le_mul_right, ← mul_assoc],
+  have hy₁ : log(y+1) ≤ 2*log y, { rw [← log_rpow, log_le_log],
+    refine le_trans (add_one_le_two_mul _) _, exact le_trans one_le_two h2y,
+    transitivity y*y, refine mul_le_mul h2y _ _ _, refl,
+    exact le_trans zero_le_two h2y, exact le_trans zero_le_two h2y,
+    rw [← sq, ← rpow_nat_cast], norm_cast, exact lt_of_lt_of_le zero_lt_two h2y1,
+    refine rpow_pos_of_pos _ _, exact lt_of_lt_of_le zero_lt_two h2y,
+    exact lt_of_lt_of_le zero_lt_two h2y,},
+  transitivity ((1/C₁)*C₂*(2*log y)), rw mul_le_mul_left, exact hy₁, refine mul_pos _ hC₂,
+  rw one_div_pos, exact hC₁, rw [← mul_assoc, mul_le_mul_right, le_div_iff], exact zero_lt_two,
+  refine log_pos _, exact lt_of_lt_of_le one_lt_two h2y,
+  exact lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound, refine log_pos _,
+  exact lt_of_lt_of_le one_lt_two h2y1,
+  exact lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound,
+  exact lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound, exact log_pos h1z,
+  exact lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound, exact log_pos h1z,
+  transitivity ((C / 2 * (log 2))*N / log z),
+  transitivity (2:ℝ)^(((1:ℝ)/2)*log N+1),
+  refine rpow_le_rpow_of_exponent_le one_le_two _, rw add_le_add_iff_right, exact hzN,
+  rw le_div_iff, transitivity ((2:ℝ)^(((1:ℝ)/2)*log N+1))*(log(((1:ℝ)/2)*log N)),
+  rw mul_le_mul_left, rw log_le_log, exact hzN, exact lt_trans zero_lt_one h1z,
+  exact mul_pos (one_half_pos) h0logN, refine rpow_pos_of_pos zero_lt_two _,
+  rw [← one_le_div, ← mul_div, ← div_le_iff'], exact hweirdN,
+  refine mul_pos _ _, exact div_pos h0C zero_lt_two,
+  exact log_pos one_lt_two, refine mul_pos _ _, refine rpow_pos_of_pos zero_lt_two _,
+  refine log_pos _, rw [mul_comm, ← div_eq_mul_one_div, lt_div_iff], exact hlogN,
+  exact zero_lt_two, exact log_pos h1z, rw [mul_assoc, ← mul_div, mul_assoc,
+    mul_le_mul_left, mul_comm _ (N:ℝ), ← mul_div, mul_comm, mul_le_mul_right,
+    div_le_div_right, log_le_log], exact h2y, exact zero_lt_two,
+  exact lt_of_lt_of_le zero_lt_two h2y, exact log_pos h1z, exact h0N,
+  exact div_pos h0C zero_lt_two,
+end
 
 lemma plogp_tail_bound (a : ℝ) (ha : 0 < a): ∃ c : ℝ, (0 < c) ∧ ∀ᶠ (N : ℕ) in at_top, ∀ z : ℝ,
   (0 ≤ log(log (⌊z⌋₊))) →
@@ -247,7 +310,7 @@ begin
 end
 
 lemma filter_div_aux (a b c d: ℝ) (hb : 0 < b) (hc : 0 < c) : ∃ y z w : ℝ,
- (2 ≤ y) ∧ (16 ≤ w) ∧ (0 < z) ∧ (4*y + 4 ≤ z) ∧ (a ≤ y) ∧ (d ≤ y) ∧ (log w / log z ≤ b) ∧
+ (2 ≤ y) ∧ (16 ≤ w) ∧ (0 < z) ∧ (1 < z) ∧ (4*y + 4 ≤ z) ∧ (a ≤ y) ∧ (d ≤ y) ∧ (log w / log z ≤ b) ∧
  (∑ (x : ℕ) in filter nat.prime (Icc ⌈w⌉₊ ⌊z⌋₊), (log y / (log (x/4) * x)) ≤ c) :=
 begin
   let y := max (2:ℝ) (max a d),
@@ -330,7 +393,7 @@ begin
   },
   have h0w' : (1:ℝ) < ⌈w⌉₊ / 4, { rw lt_div_iff, refine lt_of_lt_of_le _ (nat.le_ceil _),
     refine lt_of_lt_of_le _ h16w, norm_num1, exact zero_lt_four, },
-  refine ⟨y,z,w,le_max_left _ _,h16w, hz₀, hz₆, le_trans (le_max_left _ _) (le_max_right _ _),
+  refine ⟨y,z,w,le_max_left _ _,h16w, hz₀, (lt_trans one_lt_two hz₄), hz₆, le_trans (le_max_left _ _) (le_max_right _ _),
      le_trans (le_max_right _ _) (le_max_right _ _),_,_⟩,
   rw [div_le_iff, ← div_le_iff' hb, ← exp_le_exp, exp_log], exact hzw, exact hz₀,
   refine log_pos _, refine lt_trans one_lt_two hz₄,
@@ -357,7 +420,7 @@ begin
   rw filter.eventually_at_top at hsieve,
   rcases hsieve with ⟨T,hsieve⟩,
   rcases (filter_div_aux (2 / (1 / (5 * D * 2) * D)) _ _ ((2 / (1 / (5 * D * 2)))) haux1 haux2)
-     with ⟨y,z,w,h2y,h16w,h0z,hyz,hDy,hDy',hwzD',hzsum⟩,
+     with ⟨y,z,w,h2y,h16w,h0z,h1z,hyz,hDy,hDy',hwzD',hzsum⟩,
   have hwzD : C * (log w / log z) ≤ 1 / (10 * D), { rw ← le_div_iff', exact hwzD', exact h0C, },
   have h2w : 2 ≤ w, { refine le_trans _ h16w, norm_num1, },
   have h1y : 1 ≤ y := le_trans one_le_two h2y,
@@ -386,7 +449,7 @@ begin
                      ((p : ℝ) < w) ∨ (z < p))),
   let Y := (λ m, (finset.range(N)).filter(λ n, m ∣ n ∧ ∀ p : ℕ, prime p → p ∣ n →
                      ((p : ℝ) < y) ∨ (m < 4*p))),
-  have hXbound : (X.card : ℝ) ≤ C*(log w/log z)*N := hsieve N hlarge w z h2w hz',
+  have hXbound : (X.card : ℝ) ≤ C*(log w/log z)*N := hsieve N hlarge w z h2w h1z hz',
   have hYlocbound : ∀ m : ℕ, (16 ≤ m) → ((m:ℝ)/4 ≤ c*log ⌈(N:ℝ)/m⌉₊) → (T ≤ ⌈(N:ℝ)/m⌉₊) →
       ((Y m).card : ℝ) ≤ C*(log y/log ((m:ℝ)/4))*(N/m + 1), {
     intros m h16m hm hTm,
@@ -402,7 +465,9 @@ begin
     refine hn.2.2 p hp _, refine dvd_trans hpnm (nat.div_dvd_of_dvd hn.2.1), exact zero_lt_four,
     intros a ha b hb hab, rw mem_filter at ha, rw mem_filter at hb,
     rw [nat.div_eq_iff_eq_mul_right h0m ha.2.1, nat.mul_div_cancel_left' hb.2.1] at hab, exact hab,
-    refine le_trans (hsieve ⌈(N:ℝ)/m⌉₊ hTm y ((m:ℝ)/4) h2y hm) _,
+    have h1m' : 1 < ((m:ℝ)/4), { rw one_lt_div, norm_cast,
+       refine lt_of_lt_of_le _ h16m, norm_num1, exact zero_lt_four, },
+    refine le_trans (hsieve ⌈(N:ℝ)/m⌉₊ hTm y ((m:ℝ)/4) h2y h1m' hm) _,
     rw mul_le_mul_left, refine le_of_lt (nat.ceil_lt_add_one _), refine div_nonneg (nat.cast_nonneg N) (nat.cast_nonneg m),
     refine mul_pos h0C (div_pos (log_pos _) (log_pos _)), exact lt_of_lt_of_le one_lt_two h2y,
     have h14 : (1:ℝ) < 4*1 := by norm_num1, refine lt_of_lt_of_le h14 _,
