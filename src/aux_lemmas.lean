@@ -34,7 +34,7 @@ lemma tendsto_pow_rec_loglog_spec_at_top :
 lemma prime_counting_lower_bound_explicit : ∀ᶠ (N : ℕ) in at_top,
    ⌊sqrt N⌋₊ ≤ (filter nat.prime (Icc 1 N)).card :=
 begin
-  have haux: asymptotics.is_O_with ((1 : ℝ) / 4) log id at_top,
+  have haux: asymptotics.is_O_with ((1 : ℝ) / 4) at_top log id,
   { refine is_o_log_id_at_top.def' _,  rw one_div_pos, norm_num1, },
   rcases chebyshev_first_all with ⟨c,h0c,hcheb⟩,
   filter_upwards [
@@ -331,7 +331,7 @@ end
 lemma such_large_N_wow : ∀ᶠ (N : ℕ) in at_top,
   2 * log (log (⌈real.logb 2 N⌉₊ ^ 2)) < 1 / 500 * log (log N) :=
 begin
-  have haux: asymptotics.is_O_with ((1 : ℝ) / 8000) log id at_top,
+  have haux: asymptotics.is_O_with ((1 : ℝ) / 8000) at_top log id,
   { refine is_o_log_id_at_top.def' _,  rw one_div_pos, norm_num1, },
   filter_upwards [tendsto_coe_nat_at_top_at_top.eventually
     (eventually_ge_at_top ((1:ℝ))),
@@ -818,7 +818,7 @@ begin
     refine le_add_of_nonneg_right (le_of_lt hε1), refine mul_pos zero_lt_two (log_pos one_lt_two), },
   have hhelp : 0 < 2 * log 2 * (1 + ε), { exact lt_of_lt_of_le zero_lt_one hhelp0, },
   have hhelp2 : 0 < (1+ε)/(1+c), { refine div_pos (add_pos zero_lt_one hε1) (add_pos zero_lt_one hc), },
-  have haux: asymptotics.is_O_with (((1 + ε) / (1 + c) - 1) / ((1 + ε) / (1 + c))) log id at_top,
+  have haux: asymptotics.is_O_with (((1 + ε) / (1 + c) - 1) / ((1 + ε) / (1 + c))) at_top log id,
   { refine is_o_log_id_at_top.def' _, refine div_pos _ hhelp2, rw [sub_pos, one_lt_div,
       real.add_lt_add_iff_left], exact half_lt_self hε1, exact add_pos zero_lt_one hc, },
   have hdiv := divisor_bound hc, rw filter.eventually_at_top at hdiv,
@@ -889,11 +889,11 @@ lemma another_large_N (c C : ℝ) (hc : 0 < c) (hC : 0 < C) : ∀ᶠ (N : ℕ) i
   (1 - 2 / 99) * log (log N) +
   (1 + 5 / log (⌊(log (log N))/(2*log(log(log N)))⌋₊) * log (log N)) ≤ 99 / 100 * log (log N) :=
 begin
-  have haux: asymptotics.is_O_with ((1:ℝ)/(4)) log id at_top,
+  have haux: asymptotics.is_O_with ((1:ℝ)/(4)) at_top log id,
   { refine is_o_log_id_at_top.def' _, norm_num1, },
-  have haux2: asymptotics.is_O_with ((1:ℝ)/(3960000)) log id at_top,
+  have haux2: asymptotics.is_O_with ((1:ℝ)/(3960000)) at_top log id,
   { refine is_o_log_id_at_top.def' _, norm_num1, },
-  have haux3: asymptotics.is_O_with (1 / ((exp 10000 + 1) * 2)) log id at_top,
+  have haux3: asymptotics.is_O_with (1 / ((exp 10000 + 1) * 2)) at_top log id,
   { refine is_o_log_id_at_top.def' _, rw one_div_pos, refine mul_pos _ zero_lt_two,
     refine add_pos (exp_pos _) zero_lt_one, },
   have hhelp : 0 < (1:ℝ)/10000 := by norm_num1,
@@ -964,7 +964,7 @@ lemma yet_another_large_N : ∀ᶠ (N : ℕ) in at_top,
 (2:ℝ) * N ^ (-2 / log (log N) + 2 * log 2 / log (log N) * (1 + 1 / 3)) < log N ^ -((1:ℝ) / 101) / 6
 :=
 begin
-  have haux: asymptotics.is_O_with ((1:ℝ)/(2+1)) log id at_top,
+  have haux: asymptotics.is_O_with ((1:ℝ)/(2+1)) at_top log id,
   { refine is_o_log_id_at_top.def' _, norm_num1, },
   filter_upwards [tendsto_coe_nat_at_top_at_top.eventually  (eventually_gt_at_top ((0:ℝ))),
     (tendsto_log_at_top.comp (tendsto_log_at_top.comp
@@ -1011,7 +1011,7 @@ lemma yet_another_large_N' : ∀ᶠ (N : ℕ) in at_top,
 1/log N + (1 / (2 * log N ^ ((1:ℝ) / 100)))*((501/500)*log(log N)) ≤
       (log N)^(-(1/101 : ℝ))/6 :=
 begin
-  have haux: asymptotics.is_O_with ((1:ℝ)/ 10100 / 2) log id at_top,
+  have haux: asymptotics.is_O_with ((1:ℝ)/ 10100 / 2) at_top log id,
   { refine is_o_log_id_at_top.def' _, norm_num1, },
   filter_upwards [
     (tendsto_log_at_top.comp (tendsto_log_at_top.comp
@@ -1048,7 +1048,7 @@ end
 lemma and_another_large_N (ε : ℝ) (h1 : 0 < ε) (h2 : ε < 1/2) :  ∀ᶠ (N : ℕ) in at_top,
    2 * log (log N) + 1 ≤ (1 + ε ^ 2) ^ ((1 - ε) * log (log N)) :=
 begin
-  have haux: asymptotics.is_O_with (log (1 + ε ^ 2) * (1 - ε) / 2) log id at_top,
+  have haux: asymptotics.is_O_with (log (1 + ε ^ 2) * (1 - ε) / 2) at_top log id,
   { refine is_o_log_id_at_top.def' _, refine div_pos _ zero_lt_two,
     refine mul_pos _ _, refine log_pos _, rw lt_add_iff_pos_right, refine sq_pos_of_pos h1,
     rw sub_pos, refine lt_trans h2 one_half_lt_one,},
@@ -1785,12 +1785,12 @@ begin
         exact ne_of_gt zero_lt_two, intros x hx,
         apply ne_of_gt, apply add_pos, exact zero_lt_one,
         apply div_pos, exact zero_lt_one, rw mem_filter at hx,
-         apply mul_pos, apply lt_of_le_of_lt zero_le_one, norm_cast,
+         apply mul_pos, refine lt_of_le_of_lt zero_le_one _, norm_cast,
     exact nat.prime.one_lt hx.2, rw sub_pos, norm_cast,
     exact nat.prime.one_lt hx.2, apply prod_pos,
     intros i hi, apply add_pos, exact zero_lt_one,
         apply div_pos, exact zero_lt_one, rw mem_filter at hi,
-         apply mul_pos, apply lt_of_le_of_lt zero_le_one, norm_cast,
+         apply mul_pos, refine lt_of_le_of_lt zero_le_one _, norm_cast,
     exact nat.prime.one_lt hi.2, rw sub_pos, norm_cast,
     exact nat.prime.one_lt hi.2, exact exp_pos C,
     },
@@ -1798,18 +1798,18 @@ begin
   specialize hN N,
   rw [← @real.rpow_le_rpow_iff _ _ k, rpow_nat_cast, rpow_nat_cast] at hN,
   apply le_trans _ hN, rw ← prod_pow, refine finset.prod_le_prod _ _,
-  intros i hi, apply le_trans zero_le_one, apply le_add_of_nonneg_right,
-  apply div_nonneg, norm_cast, apply le_trans zero_le_one hk, apply mul_nonneg,
+  intros i hi, refine le_trans zero_le_one _, apply le_add_of_nonneg_right,
+  apply div_nonneg, norm_cast, refine le_trans zero_le_one hk, apply mul_nonneg,
   exact nat.cast_nonneg i, rw mem_filter at hi, rw sub_nonneg, norm_cast,
   exact le_of_lt (nat.prime.one_lt hi.2), intros i hi, rw mem_filter at hi,
-  rw ← mul_one_div, apply one_add_mul_le_pow, rw le_div_iff, apply le_trans _ zero_le_one,
+  rw ← mul_one_div, apply one_add_mul_le_pow, rw le_div_iff, refine le_trans _ zero_le_one,
   apply mul_nonpos_of_nonpos_of_nonneg, rw neg_nonpos, exact zero_le_two,
   apply mul_nonneg, exact nat.cast_nonneg i,
   rw sub_nonneg, norm_cast, exact le_of_lt (nat.prime.one_lt hi.2),
-  apply mul_pos, apply lt_of_le_of_lt zero_le_one, norm_cast,
+  apply mul_pos, refine lt_of_le_of_lt zero_le_one _, norm_cast,
   exact nat.prime.one_lt hi.2, rw sub_pos, norm_cast,
   exact nat.prime.one_lt hi.2, apply finset.prod_nonneg,
-  intros i hi, apply le_trans zero_le_one, apply le_add_of_nonneg_right,
+  intros i hi, refine le_trans zero_le_one _, apply le_add_of_nonneg_right,
   apply div_nonneg, norm_cast, exact zero_le_one, apply mul_nonneg,
   exact nat.cast_nonneg i, rw mem_filter at hi, rw sub_nonneg, norm_cast,
   exact le_of_lt (nat.prime.one_lt hi.2), exact le_of_lt hC, norm_cast,
@@ -2064,7 +2064,7 @@ begin
  specialize h y k N D hq,
  apply le_trans h, rw [mul_assoc, ← mul_div, mul_pow],
  apply mul_le_mul hprod1 hprod2, apply prod_nonneg,
- intros i hi, apply le_trans zero_le_one, apply le_add_of_nonneg_right,
+ intros i hi, refine le_trans zero_le_one _, apply le_add_of_nonneg_right,
  apply div_nonneg, norm_cast, exact le_trans zero_le_one hk,
  rw finset.mem_filter at hi, rw sub_nonneg, exact_mod_cast (le_of_lt (nat.prime.one_lt hi.2.1)),
  exact pow_nonneg (le_of_lt hC_1) k,

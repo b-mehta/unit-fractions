@@ -22,12 +22,12 @@ open_locale big_operators -- this lets me use ∑ and ∏ notation
 open filter real finset
 open nat (coprime)
 
-open_locale arithmetic_function
+open_locale arithmetic_function classical
 noncomputable theory
 
 section
 
-variables (A : set ℕ) [decidable_pred (λ i, i ∈ A)]
+variables (A : set ℕ)
 
 def partial_density (N : ℕ) : ℝ := ((range N).filter (λ n, n ∈ A)).card / N
 
@@ -59,13 +59,15 @@ is_bounded_under_of
   ⟨1, λ x, div_le_one_of_le
     (nat.cast_le.2 ((card_le_of_subset (filter_subset _ _)).trans (by simp))) (nat.cast_nonneg _)⟩
 
-lemma upper_density_preserved {S : finset ℕ} : upper_density A = upper_density (A \ (S : set ℕ)) :=
+lemma upper_density_preserved {S : finset ℕ} :
+  upper_density A = upper_density (A \ (S : set ℕ)) :=
 begin
   apply ge_antisymm,
   { refine limsup_le_limsup _ is_cobounded_under_le_partial_density
       is_bounded_under_le_partial_density,
     refine eventually_of_forall (λ N, div_le_div_of_le (nat.cast_nonneg _) _),
     refine nat.mono_cast (card_le_of_subset _),
+    letI := classical.prop_decidable,
     refine monotone_filter_right _ (λ n, _),
     simp only [set.mem_diff, le_Prop_eq, and_imp, implies_true_iff] {contextual := tt} },
   rw le_iff_forall_pos_le_add,
@@ -107,8 +109,6 @@ begin
 end
 
 end
-
-open_locale classical
 
 -- This is R(A) in the paper.
 def rec_sum (A : finset ℕ) : ℚ := ∑ n in A, 1/n
@@ -256,7 +256,7 @@ begin
     simpa using hk'.symm },
   refine ⟨this, _⟩,
   rw ←factorization_disjoint_iff (pow_ne_zero _ hp.ne_zero),
-  { rw [nat.factorization_div this, hp.factorization_pow, finsupp.support_single_ne_zero hk,
+  { rw [nat.factorization_div this, hp.factorization_pow, finsupp.support_single_ne_zero _ hk,
       disjoint_singleton_left, finsupp.mem_support_iff, finsupp.coe_tsub, pi.sub_apply, ne.def,
       tsub_eq_zero_iff_le, not_not, finsupp.single_eq_same, hk'] },
   rw [ne.def, nat.div_eq_zero_iff (pow_pos hp.pos _), not_lt],

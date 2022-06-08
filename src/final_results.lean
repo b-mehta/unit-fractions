@@ -374,8 +374,8 @@ begin
   rcases plogp_tail_bound (log y) hlogy with ⟨C₁,h0C₁,htail⟩,
   rw eventually_at_top at htail, rcases htail with ⟨C₂',htail'⟩,
   let C₂ := max 1 C₂',
-  have haux: asymptotics.is_O_with (1 / (C₁ * (1 / c * (2 * (1 / b))))) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1:ℝ))) at_top, {
+  have haux: asymptotics.is_O_with (1 / (C₁ * (1 / c * (2 * (1 / b))))) at_top (λ (x : ℝ), (log x))
+     (λ (x : ℝ), x^((1:ℝ))), {
     refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _, exact zero_lt_one,
     rw one_div_pos, refine mul_pos h0C₁ _, refine mul_pos _ _, rw one_div_pos, exact hc,
     refine mul_pos zero_lt_two _, rw one_div_pos, exact hb,
@@ -644,8 +644,8 @@ begin
   rw mul_lt_mul_right, exact h, refine sq_pos_of_pos _, refine mul_pos _ hlargeN,
   norm_num1, rw [← nsmul_eq_mul], refine finset.card_nsmul_le_sum _ _ _ _,
   clear h, intros n hn,
-  rw [mem_filter, not_and_distrib] at hn, refine sq_le_sq _,
-  rw [le_abs, abs_of_pos], cases hn.2 with hn1 hn2,
+  rw [mem_filter, not_and_distrib] at hn,
+  rw [sq_le_sq, le_abs, abs_of_pos], cases hn.2 with hn1 hn2,
   right, rw [neg_sub, le_sub, ← one_sub_mul], rw not_le at hn1, norm_num1,
   exact le_of_lt hn1, left, rw [le_sub_iff_add_le, add_comm, ← one_add_mul],
   rw not_le at hn2, refine le_trans _ (le_of_lt hn2), rw mul_le_mul_right, norm_num1,
@@ -678,8 +678,8 @@ lemma diff_mertens_sum : ∃ c : ℝ, ∀ᶠ (N : ℕ) in at_top,
   ∑ q in (range N).filter (λ r, is_prime_pow r ∧ (N:ℝ)^((1:ℝ)-8/(log(log N))) < r), (q : ℝ)⁻¹
   ≤ c/log(log N) :=
 begin
-  have haux: asymptotics.is_O_with ((1: ℝ)/8) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1:ℝ))) at_top, {
+  have haux: asymptotics.is_O_with ((1: ℝ)/8) at_top (λ (x : ℝ), (log x))
+     (λ (x : ℝ), x^((1:ℝ))), {
     refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
     norm_num1, norm_num1,
     },
@@ -898,7 +898,7 @@ end
 
 theorem unit_fractions_upper_density' (D : ℝ) (hD : 0 < D) : ∃ y z : ℝ,
 (1 ≤ y) ∧ (0 ≤ z) ∧
-∀ A : set ℕ, (upper_density A > 1/D) →  ∃ d ∈ finset.Icc ⌈y⌉₊ ⌊z⌋₊,
+∀ A : set ℕ, (upper_density A > 1 / D) → ∃ d ∈ finset.Icc ⌈y⌉₊ ⌊z⌋₊,
   ∃ (S : finset ℕ), (S : set ℕ) ⊆ A ∧ ∑ n in S, (1 / n : ℚ) = 1/d :=
 begin
   rcases (final_large_N D hD) with ⟨y,z,h1y,hyz,h0z,hfinal⟩,
@@ -996,7 +996,7 @@ end
 theorem unit_fractions_upper_density (A : set ℕ) (hA : upper_density A > 0):
    ∃ (S : finset ℕ), (S : set ℕ) ⊆ A ∧ ∑ n in S, (1 / n : ℚ) = 1 :=
 begin
-  let D := 2/(upper_density A),
+  let D := 2/ upper_density A,
   have hD : 0 < D := div_pos zero_lt_two hA,
   have hDA : 1/D < upper_density A, { rw one_div_div, refine half_lt_self hA, },
   rcases (unit_fractions_upper_density' D hD) with ⟨y,z,h1y,h0z,hupp⟩,
@@ -1035,8 +1035,7 @@ begin
   have hAS : disjoint A' (S.bUnion id) := (set.disjoint_diff).symm,
   have hDA' : 1/D < upper_density A', {
     have : upper_density A = upper_density A' := upper_density_preserved,
-    rw ← this, exact hDA,
-   },
+    rw ← this, exact hDA },
   specialize hupp A' hDA', rcases hupp with ⟨d,hd,S',hS'⟩,
   have hd' : y ≤ d ∧ (d : ℝ) ≤ z, {
     rw mem_Icc at hd, refine ⟨_,_⟩,

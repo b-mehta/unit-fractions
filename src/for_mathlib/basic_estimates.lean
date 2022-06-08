@@ -201,7 +201,7 @@ begin
       ←interval_integral.integral_of_le hN'', interval_integral.integral_eq_sub_of_has_deriv_at],
   { rw interval_of_le hN'',
     exact hf.2 },
-  { exact (interval_integral.interval_integrable_iff_integrable_Icc_of_le hN'').2 hf'.2 },
+  { exact (interval_integrable_iff_integrable_Icc_of_le hN'').2 hf'.2 },
 end
 
 /--
@@ -239,7 +239,7 @@ begin
       interval_integral.integral_eq_sub_of_has_deriv_at],
     { rw interval_of_le hx',
       exact hf.2 },
-    { exact (interval_integral.interval_integrable_iff_integrable_Icc_of_le hx').2 hf'.2 } },
+    { exact (interval_integrable_iff_integrable_Icc_of_le hx').2 hf'.2 } },
   { apply partial_summation_integrable _ hf'.1 },
   { apply partial_summation_integrable _ hf'.2 },
   { rw [ae_disjoint, Icc_inter_Icc_eq_singleton hx'' hx',
@@ -293,8 +293,8 @@ begin
 end
 
 lemma euler_mascheroni_convergence_rate :
-  is_O_with 1 (λ x : ℝ, 1 - (∫ t in Ioc 1 x, int.fract t * (t^2)⁻¹) - euler_mascheroni)
-    (λ x, x⁻¹) at_top :=
+  is_O_with 1 at_top
+    (λ x : ℝ, 1 - (∫ t in Ioc 1 x, int.fract t * (t^2)⁻¹) - euler_mascheroni) (λ x, x⁻¹) :=
 begin
   apply is_O_with.of_bound,
   rw eventually_at_top,
@@ -365,7 +365,7 @@ begin
 end
 
 lemma is_O_with_one_fract_mul (f : ℝ → ℝ) :
-  is_O_with 1 (λ (x : ℝ), int.fract x * f x) f at_top :=
+  is_O_with 1 at_top (λ (x : ℝ), int.fract x * f x) f :=
 begin
   apply is_O_with.of_bound (eventually_of_forall _),
   intro x,
@@ -376,9 +376,9 @@ begin
 end
 
 lemma harmonic_series_is_O_with :
-  is_O_with 2 (λ x, summatory (λ i, (i : ℝ)⁻¹) 1 x - log x - euler_mascheroni) (λ x, x⁻¹) at_top :=
+  is_O_with 2 at_top (λ x, summatory (λ i, (i : ℝ)⁻¹) 1 x - log x - euler_mascheroni) (λ x, x⁻¹) :=
 begin
-  have : is_O_with 1 (λ (x : ℝ), int.fract x * x⁻¹) (λ x, x⁻¹) at_top := is_O_with_one_fract_mul _,
+  have : is_O_with 1 at_top (λ (x : ℝ), int.fract x * x⁻¹) (λ x, x⁻¹) := is_O_with_one_fract_mul _,
   refine (euler_mascheroni_convergence_rate.sub this).congr' _ _ eventually_eq.rfl,
   { norm_num1 }, -- I seriously need to prove 1 + 1 = 2
   filter_upwards [eventually_ge_at_top (1 : ℝ)],
@@ -426,7 +426,7 @@ begin
 end
 
 lemma is_o_const_of_tendsto_at_top (f : ℝ → ℝ) (l : filter ℝ) (h : tendsto f l at_top) (c : ℝ) :
-  is_o (λ (x : ℝ), c) f l :=
+  is_o l (λ (x : ℝ), c) f :=
 begin
   rw is_o_iff,
   intros ε hε,
@@ -437,16 +437,16 @@ begin
   exact h.eventually this,
 end
 
-lemma is_o_one_log (c : ℝ) : is_o (λ (x : ℝ), c) log at_top :=
+lemma is_o_one_log (c : ℝ) : is_o at_top (λ (x : ℝ), c) log :=
 is_o_const_of_tendsto_at_top _ _ tendsto_log_at_top _
 
 lemma summatory_log {c : ℝ} (hc : 2 < c) :
-  is_O_with c (λ x, summatory (λ i, log i) 1 x - (x * log x - x)) (λ x, log x) at_top :=
+  is_O_with c at_top (λ x, summatory (λ i, log i) 1 x - (x * log x - x)) (λ x, log x) :=
 begin
-  have f₁ : is_O_with 1 (λ (x : ℝ), int.fract x * log x) (λ x, log x) at_top :=
+  have f₁ : is_O_with 1 at_top (λ (x : ℝ), int.fract x * log x) (λ x, log x) :=
     is_O_with_one_fract_mul _,
-  have f₂ : is_o (λ (x : ℝ), (1 : ℝ)) log at_top := is_o_one_log _,
-  have f₃ : is_O_with 1 (λ (x : ℝ), ∫ t in 1..x, int.fract t * t⁻¹) log at_top,
+  have f₂ : is_o at_top (λ (x : ℝ), (1 : ℝ)) log  := is_o_one_log _,
+  have f₃ : is_O_with 1 at_top (λ (x : ℝ), ∫ t in 1..x, int.fract t * t⁻¹) log,
   { simp only [is_O_with_iff, eventually_at_top, ge_iff_le, one_mul],
     refine ⟨1, λ x hx, _⟩,
     rw [norm_of_nonneg (log_nonneg hx), norm_of_nonneg, ←div_one x,
@@ -477,9 +477,9 @@ begin
           exact Ioc_subset_Icc_self hy },
         exact measurable_set_interval_oc } } },
   apply (f₂.add_is_O_with (f₃.sub f₁) _).congr' rfl _ eventually_eq.rfl,
-  { rw [eventually_eq, eventually_at_top],
-    exact ⟨1, λ x hx, (summatory_log_aux hx).symm⟩ },
-  norm_num [hc]
+  { norm_num [hc] },
+  rw [eventually_eq, eventually_at_top],
+  exact ⟨1, λ x hx, (summatory_log_aux hx).symm⟩,
 end
 
 lemma summatory_mul_floor_eq_summatory_sum_divisors {x y : ℝ}
@@ -532,13 +532,6 @@ end
 
 namespace nat.arithmetic_function
 
-lemma pow_zero_eq_zeta :
-  pow 0 = ζ :=
-begin
-  ext i,
-  simp,
-end
-
 lemma sigma_zero_eq_zeta_mul_zeta :
   σ 0 = ζ * ζ :=
 by rw [←zeta_mul_pow_eq_sigma, pow_zero_eq_zeta]
@@ -560,7 +553,6 @@ end nat.arithmetic_function
 localized "notation `τ` := nat.arithmetic_function.sigma 0" in arithmetic_function
 open nat.arithmetic_function
 
--- This lemma and proof is from Bhavik
 lemma exp_sub_mul {x c : ℝ} {hc : 0 ≤ c} : c - c * log c ≤ exp x - c * x :=
 begin
   rcases eq_or_lt_of_le hc with rfl | hc,
@@ -971,7 +963,7 @@ begin
   apply log_nat_nonneg,
 end
 
-lemma is_O_chebyshev_first_chebyshev_second : is_O ϑ ψ at_top :=
+lemma is_O_chebyshev_first_chebyshev_second : is_O at_top ϑ ψ :=
 is_O_of_le _
   (λ x, by { rw [norm_of_nonneg (chebyshev_first_nonneg _),
                  norm_of_nonneg (chebyshev_second_nonneg _)],
@@ -1036,7 +1028,7 @@ begin
 end
 
 lemma chebyshev_error_O :
-  is_O chebyshev_error log at_top :=
+  is_O at_top chebyshev_error log :=
 begin
   have t : (2 : ℝ) < 3 := by norm_num,
   refine (summatory_log t).is_O.sub (is_O.const_mul_left _ _),
@@ -1061,7 +1053,7 @@ begin
 end
 
 lemma chebyshev_lower :
-  is_O id ψ at_top :=
+  is_O at_top id ψ :=
 begin
   rw [is_O_iff],
   refine ⟨(real.log 2 / 2)⁻¹, _⟩,
@@ -1138,7 +1130,7 @@ begin
 end
 
 lemma chebyshev_upper_real {c : ℝ} (hc : 2 * real.log 2 < c) :
-  ∃ C, 1 ≤ C ∧ is_O_with 1 ψ (λ x, c * x + C * log C) at_top :=
+  ∃ C, 1 ≤ C ∧ is_O_with 1 at_top ψ (λ x, c * x + C * log C) :=
 begin
   have hc' : real.log 2 < c / 2 := by rwa lt_div_iff' (zero_lt_two : (0 : ℝ) < _),
   obtain ⟨C, hC₁, hC⟩ := chebyshev_upper_inductive hc',
@@ -1150,11 +1142,11 @@ begin
   refine (hC ⌊x⌋₊).trans (le_trans _ (le_abs_self _)),
   rw [mul_div_cancel' _ (@two_ne_zero ℝ _ _), add_le_add_iff_right],
   refine mul_le_mul_of_nonneg_left (nat.floor_le hx) _,
-  exact (mul_nonneg zero_le_two (log_nonneg one_le_two)).trans hc.le,
+  exact (mul_nonneg (zero_le_two : (0 : ℝ) ≤ 2) (log_nonneg one_le_two)).trans hc.le,
 end
 
 lemma chebyshev_upper_explicit {c : ℝ} (hc : 2 * real.log 2 < c) :
-  is_O_with c ψ id at_top :=
+  is_O_with c at_top ψ id :=
 begin
   let c' := real.log 2 + c/2,
   have hc'₁ : c' < c,
@@ -1168,14 +1160,14 @@ begin
   exact le_trans (mul_nonneg zero_le_two (log_nonneg one_le_two)) hc'₂.le,
 end
 
-lemma chebyshev_upper : is_O ψ id at_top :=
+lemma chebyshev_upper : is_O at_top ψ id :=
 (chebyshev_upper_explicit (lt_add_one _)).is_O
 
-lemma chebyshev_first_upper : is_O ϑ id at_top :=
+lemma chebyshev_first_upper : is_O at_top ϑ id :=
 is_O_chebyshev_first_chebyshev_second.trans chebyshev_upper
 
 lemma is_O_sum_one_of_summable {f : ℕ → ℝ} (hf : summable f) :
-  is_O (λ (n : ℕ), ∑ i in finset.range n, f i) (λ _, (1 : ℝ)) at_top :=
+  is_O at_top (λ (n : ℕ), ∑ i in finset.range n, f i) (λ _, (1 : ℝ)) :=
 is_O_one_of_tendsto _ hf.has_sum.tendsto_sum_nat
 
 lemma log_le_thing {x : ℝ} (hx : 1 ≤ x) :
@@ -1344,9 +1336,9 @@ begin
 end
 
 lemma is_O_von_mangoldt_div_self_sub_log_div_self :
-  is_O
+  is_O at_top
     (λ x, ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹ - ∑ p in filter nat.prime (Icc 1 ⌊x⌋₊), real.log p * p⁻¹)
-    (λ _ : ℝ, (1 : ℝ)) at_top :=
+    (λ _ : ℝ, (1 : ℝ)) :=
 begin
   have : ∀ x : ℝ,
     ∥∑ n in Icc 1 ⌊x⌋₊, Λ n / n - ∑ p in filter nat.prime (Icc 1 ⌊x⌋₊), real.log p / p∥
@@ -1365,7 +1357,7 @@ begin
 end
 
 lemma summatory_log_sub :
-  is_O (λ x, (∑ n in Icc 1 ⌊x⌋₊, log (n : ℝ)) - x * ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹) (λ x, x) at_top :=
+  is_O at_top (λ x, (∑ n in Icc 1 ⌊x⌋₊, log (n : ℝ)) - x * ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹) (λ x, x) :=
 begin
   have : ∀ (x : ℝ), 0 ≤ x →
     |(∑ n in Icc 1 ⌊x⌋₊, log (n : ℝ)) - x * ∑ n in Icc 1 ⌊x⌋₊, Λ n / n| ≤
@@ -1387,9 +1379,9 @@ begin
 end
 
 lemma is_O_von_mangoldt_div_self :
-  is_O (λ x : ℝ, ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹ - log x) (λ _, (1 : ℝ)) at_top :=
+  is_O at_top (λ x : ℝ, ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹ - log x) (λ _, (1 : ℝ)) :=
 begin
-  suffices : is_O (λ x : ℝ, x * ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹ - x * log x) (λ x, x) at_top,
+  suffices : is_O at_top (λ x : ℝ, x * ∑ n in Icc 1 ⌊x⌋₊, Λ n * n⁻¹ - x * log x) (λ x, x),
   { refine ((is_O_refl (λ (x : ℝ), x⁻¹) _).mul this).congr' _ _,
     { filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx,
       rw [←mul_sub, inv_mul_cancel_left₀ hx.ne'] },
@@ -1431,7 +1423,7 @@ begin
 end
 
 lemma log_reciprocal :
-  is_O (λ x, prime_summatory (λ p, real.log p / p) 1 x - log x) (λ _, (1 : ℝ)) at_top :=
+  is_O at_top (λ x, prime_summatory (λ p, real.log p / p) 1 x - log x) (λ _, (1 : ℝ)) :=
 is_O_von_mangoldt_div_self_sub_log_div_self.symm.triangle is_O_von_mangoldt_div_self
 
 open_locale nat
@@ -1523,7 +1515,7 @@ begin
 end
 
 lemma is_O_chebyshev_first_sub_prime_counting_mul_log :
-  is_O (λ x, (π ⌊x⌋₊ : ℝ) * real.log x - ϑ x) id at_top :=
+  is_O at_top (λ x, (π ⌊x⌋₊ : ℝ) * real.log x - ϑ x) id :=
 begin
   simp only [chebyshev_first_sub_prime_counting_mul_log_eq],
   apply is_O.of_bound 1,
@@ -1550,9 +1542,9 @@ begin
 end
 
 lemma is_O_prime_counting_div_log :
-  is_O (λ x, (π ⌊x⌋₊ : ℝ)) (λ x, x / log x) at_top :=
+  is_O at_top (λ x, (π ⌊x⌋₊ : ℝ)) (λ x, x / log x) :=
 begin
-  have : is_O (λ x, (π ⌊x⌋₊ : ℝ) * real.log x) id at_top,
+  have : is_O at_top (λ x, (π ⌊x⌋₊ : ℝ) * real.log x) id,
   { apply (is_O_chebyshev_first_sub_prime_counting_mul_log.add chebyshev_first_upper).congr_left _,
     simp },
   refine (is_O.mul this (is_O_refl (λ x, (real.log x)⁻¹) _)).congr' _ _,
@@ -1714,9 +1706,9 @@ end
 lemma chebyshev_first_pos : ∀ x, 2 ≤ x → 0 < ϑ x :=
 λ x hx, lt_of_lt_of_le (by norm_num) (chebyshev_first_trivial_lower x hx)
 
-lemma chebyshev_first_lower : is_O id ϑ at_top :=
+lemma chebyshev_first_lower : is_O at_top id ϑ :=
 begin
-  have : is_O (ψ - ϑ) (λ x, x ^ (1 / 2 : ℝ) * (log x)^2) at_top,
+  have : is_O at_top (ψ - ϑ) (λ x, x ^ (1 / 2 : ℝ) * (log x)^2),
   { apply is_O.of_bound 1,
     filter_upwards [eventually_ge_at_top (2 : ℝ)],
     intros x hx,
@@ -1724,15 +1716,15 @@ begin
       abs_of_nonneg (sub_nonneg_of_le (chebyshev_first_le_chebyshev_second x)),
       abs_of_nonneg (rpow_nonneg_of_nonneg (zero_le_two.trans hx) _)],
     apply chebyshev_second_sub_chebyshev_first_eq hx },
-  have : is_o (ψ - ϑ) id at_top,
+  have : is_o at_top (ψ - ϑ) id,
   { refine this.trans_is_o _,
     have t := (is_o_log_rpow_at_top (show (0 : ℝ) < 1 / 4, by norm_num1)).pow zero_lt_two,
     refine (is_O.mul_is_o _ t).congr' eventually_eq.rfl _,
     { exact (λ x, x ^ (1 / 2 : ℝ)) },
+    { exact is_O_refl _ _ },
     { filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx,
       rw [←rpow_nat_cast, ←rpow_mul hx.le, ←rpow_add hx],
-      norm_num },
-    { exact is_O_refl _ _ } },
+      norm_num } },
   have := this.symm.trans_is_O chebyshev_lower,
   apply (chebyshev_lower.trans (is_o.right_is_O_add this)).congr_right _,
   simp
@@ -1755,9 +1747,9 @@ begin
 end
 
 lemma is_O_div_log_prime_counting :
-  is_O (λ x, x / log x) (λ x, (π ⌊x⌋₊ : ℝ)) at_top :=
+  is_O at_top (λ x, x / log x) (λ x, (π ⌊x⌋₊ : ℝ)) :=
 begin
-  have : is_O ϑ (λ x, (π ⌊x⌋₊ : ℝ) * real.log x) at_top,
+  have : is_O at_top ϑ (λ x, (π ⌊x⌋₊ : ℝ) * real.log x),
   { apply is_O_of_le _ _,
     intro x,
     rw [norm_of_nonneg (chebyshev_first_nonneg x), norm_eq_abs],
@@ -1785,7 +1777,7 @@ begin
     prime_summatory_one_eq_prime_summatory_two]
 end
 
-lemma is_O_prime_log_div_sum_error : is_O prime_log_div_sum_error (λ _, (1 : ℝ)) at_top :=
+lemma is_O_prime_log_div_sum_error : is_O at_top prime_log_div_sum_error (λ _, (1 : ℝ)) :=
 log_reciprocal
 
 @[measurability] lemma measurable_prime_log_div_sum_error :
@@ -1999,8 +1991,8 @@ begin
 end
 
 lemma prime_reciprocal_error :
-  is_O (λ x, prime_log_div_sum_error x / log x -
-      ∫ t in Ici x, prime_log_div_sum_error t / (t * log t ^ 2)) (λ x, (log x)⁻¹) at_top :=
+  is_O at_top (λ x, prime_log_div_sum_error x / log x -
+      ∫ t in Ici x, prime_log_div_sum_error t / (t * log t ^ 2)) (λ x, (log x)⁻¹) :=
 begin
   simp only [div_eq_mul_inv],
   apply is_O.sub,
@@ -2017,8 +2009,8 @@ begin
     apply (mul_le_mul_of_nonneg_right (hk _ (hy.trans hx)) (norm_nonneg _)).trans _,
     rw [norm_eq_abs, abs_one, mul_one, norm_eq_abs, abs_inv, abs_mul, abs_sq, abs_of_nonneg],
     exact zero_le_two.trans (hk₂.trans (hy.trans hx)) },
-  have : is_O (λ y, ∫ x in Ici y, prime_log_div_sum_error x * (x * log x ^ 2)⁻¹)
-          (λ y, ∫ x in Ici y, c * (x * log x ^ 2)⁻¹) at_top,
+  have : is_O at_top (λ y, ∫ x in Ici y, prime_log_div_sum_error x * (x * log x ^ 2)⁻¹)
+          (λ y, ∫ x in Ici y, c * (x * log x ^ 2)⁻¹),
   { apply is_O.of_bound 1,
     filter_upwards [eventually_ge_at_top k] with y hy,
     apply (norm_integral_le_integral_norm _).trans _,
@@ -2041,8 +2033,8 @@ end
 def meissel_mertens := 1 - log (real.log 2) + prime_reciprocal_integral
 
 lemma prime_reciprocal :
-  is_O (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) 1 x - (log (log x) + meissel_mertens))
-    (λ x, (log x)⁻¹) at_top :=
+  is_O at_top (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) 1 x - (log (log x) + meissel_mertens))
+    (λ x, (log x)⁻¹) :=
 begin
   apply prime_reciprocal_error.congr' _ eventually_eq.rfl,
   filter_upwards [eventually_ge_at_top (2 : ℝ)] with x hx,
@@ -2050,14 +2042,14 @@ begin
   refl
 end
 
-lemma is_o_log_inv_one {c : ℝ} (hc : c ≠ 0) : is_o (λ x : ℝ, (log x)⁻¹) (λ x, (c : ℝ)) at_top :=
+lemma is_o_log_inv_one {c : ℝ} (hc : c ≠ 0) : is_o at_top (λ x : ℝ, (log x)⁻¹) (λ x, (c : ℝ)) :=
 (is_o.inv_rev (is_o_one_log c⁻¹) (by simp [hc])).congr_right (by simp)
 
-lemma is_o_const_log_log (c : ℝ) : is_o (λ x : ℝ, (c : ℝ)) (λ x : ℝ, log (log x)) at_top :=
+lemma is_o_const_log_log (c : ℝ) : is_o at_top (λ x : ℝ, (c : ℝ)) (λ x : ℝ, log (log x)) :=
 is_o_const_of_tendsto_at_top _ _ (tendsto_log_at_top.comp tendsto_log_at_top) _
 
 lemma prime_reciprocal_upper :
-  is_O (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) 1 x) (λ x, log (log x)) at_top :=
+  is_O at_top (λ x, prime_summatory (λ p, (p : ℝ)⁻¹) 1 x) (λ x, log (log x)) :=
 ((prime_reciprocal.trans ((is_o_log_inv_one one_ne_zero).trans (is_o_const_log_log _)).is_O).add
   ((is_O_refl _ _).add_is_o (is_o_const_log_log _))).congr (λ x, sub_add_cancel _ _) (λ _, rfl)
 
@@ -2150,7 +2142,7 @@ lemma my_mul_thing : ∀ {n : ℕ}, (0 : ℝ) ≤ (n - 1) * n
 lemma my_mul_thing' : ∀ {n : ℕ}, (0 : ℝ) ≤ ((n - 1) * n)⁻¹ := λ n, inv_nonneg.2 my_mul_thing
 
 lemma is_O_partial_of_bound {f : ℕ → ℝ} (hf : ∀ n, f n ≤ ((n - 1) * n)⁻¹) (hf' : ∀ n, 0 ≤ f n) :
-  ∃ c, is_O (λ x : ℝ, ∑ i in range (⌊x⌋₊ + 1), f i - c) (λ x, x⁻¹) at_top :=
+  ∃ c, is_O at_top (λ x : ℝ, ∑ i in range (⌊x⌋₊ + 1), f i - c) (λ x, x⁻¹) :=
 begin
   have hf'' : summable f := summable_of_nonneg_of_le hf' hf sum_thing'_has_sum.summable,
   refine ⟨tsum f, (is_O.of_bound 2 _).symm⟩,
@@ -2169,7 +2161,7 @@ begin
 end
 
 lemma is_O_partial_of_bound' {f : ℕ → ℝ} (hf : ∀ n, f n ≤ ((n - 1) * n)⁻¹) (hf' : ∀ n, 0 ≤ f n) :
-  ∃ c, is_O (λ x : ℝ, ∑ i in Icc 1 ⌊x⌋₊, f i - c) (λ x, x⁻¹) at_top :=
+  ∃ c, is_O at_top (λ x : ℝ, ∑ i in Icc 1 ⌊x⌋₊, f i - c) (λ x, x⁻¹) :=
 begin
   obtain ⟨c, hc⟩ := is_O_partial_of_bound hf hf',
   refine ⟨c, hc.congr_left (λ x, eq.symm _)⟩,
@@ -2182,7 +2174,7 @@ begin
 end
 
 lemma intermediate_bound :
-  ∃ c, is_O (λ x, prime_summatory (λ p, ((p - 1) * p : ℝ)⁻¹) 1 x - c) (λ x, x⁻¹) at_top :=
+  ∃ c, is_O at_top (λ x, prime_summatory (λ p, ((p - 1) * p : ℝ)⁻¹) 1 x - c) (λ x, x⁻¹) :=
 begin
   simp only [prime_summatory, sum_filter],
   refine is_O_partial_of_bound' (λ n, _) (λ n, _);
@@ -2251,17 +2243,17 @@ begin
 end
 
 lemma is_O_reciprocal_difference : ∃ c,
-  is_O (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) -
+  is_O at_top (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) -
           prime_summatory (λ p, p⁻¹) 1 x - c)
-    (λ x, (log x)⁻¹) at_top :=
+    (λ x, (log x)⁻¹) :=
 begin
   obtain ⟨c, hc⟩ := intermediate_bound,
   refine ⟨c, _⟩,
-  have hc' : is_O (λ x, prime_summatory (λ p, ((p - 1) * p : ℝ)⁻¹) 1 x - c) (λ x, (log x)⁻¹) at_top,
+  have hc' : is_O at_top (λ x, prime_summatory (λ p, ((p - 1) * p : ℝ)⁻¹) 1 x - c) (λ x, (log x)⁻¹),
   { refine hc.trans (is_o_log_id_at_top.is_O.inv_rev _),
-    filter_upwards [eventually_gt_at_top (1 : ℝ)] with x hx using (log_pos hx).ne' },
+    filter_upwards [eventually_gt_at_top (1 : ℝ)] with x hx i using ((log_pos hx).ne' i).elim },
   refine is_O.triangle _ hc',
-  have : is_O (λ x, (π ⌊x⌋₊ * (2 * x⁻¹) : ℝ)) (λ x, (log x)⁻¹) at_top,
+  have : is_O at_top (λ x, (π ⌊x⌋₊ * (2 * x⁻¹) : ℝ)) (λ x, (log x)⁻¹),
   { simp_rw [mul_left_comm],
     apply is_O.const_mul_left,
     refine (is_O_prime_counting_div_log.mul (is_O_refl _ _)).congr' eventually_eq.rfl _,
@@ -2275,8 +2267,8 @@ begin
 end
 
 lemma prime_power_reciprocal : ∃ b,
-  is_O (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) - (log (log x) + b))
-    (λ x, (log x)⁻¹) at_top :=
+  is_O at_top (λ x : ℝ, (∑ q in (finset.Icc 1 ⌊x⌋₊).filter is_prime_pow, (q : ℝ)⁻¹) - (log (log x) + b))
+    (λ x, (log x)⁻¹) :=
 begin
   obtain ⟨c, hc⟩ := is_O_reciprocal_difference,
   exact ⟨_ + c, (hc.add prime_reciprocal).congr_left (λ x, by ring_nf)⟩,
@@ -2332,9 +2324,9 @@ lemma my_func_neg {p : ℕ} (hp : 1 < p) : (p : ℝ)⁻¹ + log (1 - (p : ℝ)�
 by linarith [log_le_sub_one_of_pos (sub_pos_of_lt (inv_lt_one (nat.one_lt_cast.2 hp)))]
 
 lemma mertens_third_log_error :
-  ∃ c, is_O
+  ∃ c, is_O at_top
     (λ x, ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, -((p : ℝ)⁻¹ + log (1 - (p : ℝ)⁻¹)) - c)
-      (λ x : ℝ, x⁻¹) at_top :=
+      (λ x : ℝ, x⁻¹) :=
 begin
   simp only [sum_filter],
   refine is_O_partial_of_bound' (λ n, _) (λ n, _); split_ifs,
@@ -2345,15 +2337,15 @@ begin
 end
 
 lemma mertens_third_log :
-  ∃ c, is_O
+  ∃ c, is_O at_top
     (λ x : ℝ,
       ∑ p in (finset.Icc 1 ⌊x⌋₊).filter nat.prime, log (1 - (p : ℝ)⁻¹)⁻¹ - (log (log x) + c))
-      (λ x : ℝ, (log x)⁻¹) at_top :=
+      (λ x : ℝ, (log x)⁻¹) :=
 begin
   obtain ⟨c₂, hc₂⟩ := mertens_third_log_error,
   replace hc₂ := hc₂.trans (is_o_log_id_at_top.is_O.inv_rev _),
   swap,
-  { filter_upwards [eventually_gt_at_top (1 : ℝ)] with x hx using (log_pos hx).ne' },
+  { filter_upwards [eventually_gt_at_top (1 : ℝ)] with x hx i using ((log_pos hx).ne' i).elim },
   refine ⟨c₂ + meissel_mertens, (prime_reciprocal.add hc₂).congr_left _⟩,
   intro x,
   simp only [log_inv, sum_neg_distrib, sum_add_distrib, neg_add, prime_summatory, sum_sub_distrib],
@@ -2389,7 +2381,7 @@ begin
 end
 
 lemma mertens_third :
-  ∃ c, 0 < c ∧ is_O (λ x, partial_euler_product ⌊x⌋₊ - c * real.log x) (λ _, (1 : ℝ)) at_top :=
+  ∃ c, 0 < c ∧ is_O at_top (λ x, partial_euler_product ⌊x⌋₊ - c * real.log x) (λ _, (1 : ℝ)) :=
 begin
   obtain ⟨c, hc⟩ := mertens_third_log,
   obtain ⟨k, hk₀, hk⟩ := hc.exists_pos,
@@ -2412,11 +2404,11 @@ begin
   rwa [norm_eq_abs, norm_one, mul_one],
 end
 
-lemma weak_mertens_third_upper : is_O (λ x, partial_euler_product ⌊x⌋₊) log at_top :=
+lemma weak_mertens_third_upper : is_O at_top (λ x, partial_euler_product ⌊x⌋₊) log :=
 let ⟨c, _, hc⟩ := mertens_third in
   ((hc.trans (is_o_one_log 1).is_O).add (is_O_const_mul_self c _ _)).congr_left (by simp)
 
-lemma weak_mertens_third_lower : is_O log (λ x, partial_euler_product ⌊x⌋₊) at_top :=
+lemma weak_mertens_third_lower : is_O at_top log (λ x, partial_euler_product ⌊x⌋₊) :=
 begin
   obtain ⟨c, hc₀, hc⟩ := mertens_third,
   have h := is_O_self_const_mul _ hc₀.ne' log at_top,
