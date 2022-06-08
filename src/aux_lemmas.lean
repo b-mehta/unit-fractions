@@ -447,30 +447,27 @@ begin
 end
 
 lemma this_condition_here {p : ℕ → Prop} [decidable_pred p] {A : finset ℕ} (hA : ∀ a ∈ A, p a)
-  {N : ℕ} (hN : A.card ≤ ((range N).filter p).card) (h : A ≠ (range N).filter p):
-  (∃ r < N, ∃ a ∈ A, r < a) ∨ A ⊂ (range N).filter p :=
+  {N : ℕ} (hN : A.card ≤ ((range N).filter p).card) (h : ¬(range N).filter p ⊆ A):
+  (∃ r < N, r ∉ A ∧ p r ∧ ∃ a ∈ A, r < a) ∨ A ⊂ (range N).filter p :=
 begin
   have h₁ : ((range N).filter p \ A).nonempty,
-  { rw sdiff_nonempty,
-    intro h',
-    exact h.symm (eq_of_subset_of_card_le h' hN.ge) },
+  { rwa sdiff_nonempty },
   rw or_iff_not_imp_right,
   intro h₂,
   have h₂ : (A \ (range N).filter p).nonempty,
   { rw sdiff_nonempty,
     intro h',
-    apply h₂,
-    apply ssubset_of_ne_of_subset h h' },
+    exact h₂ ⟨h', h⟩ },
   obtain ⟨r, hr⟩ := h₁,
   obtain ⟨a, ha⟩ := h₂,
   simp only [mem_sdiff, mem_filter, mem_range] at hr,
   simp only [mem_sdiff, mem_filter, mem_range, not_and', not_lt] at ha,
-  exact ⟨r, hr.1.1, a, ha.1, hr.1.1.trans_le (ha.2 (hA _ ha.1))⟩
+  exact ⟨r, hr.1.1, hr.2, hr.1.2, a, ha.1, hr.1.1.trans_le (ha.2 (hA _ ha.1))⟩
 end
 
 lemma prime_power_recip_downward_bound (A : finset ℕ) (ha : ∀ q ∈ A, is_prime_pow q)
   (N : ℕ) (hN : A.card ≤ ((range N).filter is_prime_pow).card) :
-  ∑ q in A, (1 : ℝ) / q ≤ ∑ q in (range N).filter is_prime_pow, 1/q :=
+  ∑ q in A, (1 : ℝ) / q ≤ ∑ q in (range N).filter is_prime_pow, 1 / q :=
 begin
   rcases A.eq_empty_or_nonempty with rfl | hA,
   { rw [sum_empty],
@@ -483,32 +480,50 @@ begin
   have hAc : A ∈ choices,
   { simp only [mem_filter, mem_powerset, finset.subset_iff, mem_range, nat.lt_add_one_iff],
     exact ⟨λ b hb, ⟨finset.le_max' _ _ hb, ha _ hb⟩, hN⟩ },
+  cases lt_or_le a N with haN haN,
+  { refine sum_le_sum_of_subset_of_nonneg (λ a' ha', _) (by simp),
+    rw [mem_filter, mem_range],
+    exact ⟨haN.trans_le' (le_max' _ _ ha'), ha _ ha'⟩ },
   obtain ⟨B, hB, hB'⟩ := exists_max_image choices (λ B, ∑ q in B, (1 : ℝ) / q) ⟨_, hAc⟩,
   simp only [mem_filter, mem_powerset, and_imp] at hB,
   suffices : (range N).filter is_prime_pow = B,
   { rw this,
     apply hB' _ hAc },
+  suffices : (range N).filter is_prime_pow ⊆ B,
+  { exact eq_of_subset_of_card_le this hB.2 },
+  dsimp at hB',
   by_contra i,
   have : ∀ (a : ℕ), a ∈ B → is_prime_pow a,
   { intros x hx,
     exact (mem_filter.1 (hB.1 hx)).2 },
-  obtain ⟨r, hr, a, ha, hra⟩ := this_condition_here this hB.2 (ne.symm i),
-  {
-    let B' := insert r (B.erase a),
+  obtain ⟨r, hr, hr', hr'', a', ha', hra'⟩ := this_condition_here this hB.2 i,
+  { have hr'''  : r ∉ B.erase a' := λ h, hr' (erase_subset _ _ h),
+    let B' := cons _ _ hr''',
+    have hra : r ≤ a := hra'.le.trans (mem_range_succ_iff.1 (mem_filter.1 (hB.1 ha')).1),
     have hB'' : B' ∈ choices,
-      sorry,
+    { simp only [mem_filter, mem_powerset, cons_subset, mem_range_succ_iff, hr'', hra, true_and],
+      rw [card_cons, card_erase_of_mem ha', nat.sub_add_cancel],
+      { exact ⟨(erase_subset _ _).trans hB.1, hB.2⟩ },
+      { rw [nat.add_one_le_iff, card_pos],
+        exact ⟨_, ha'⟩ } },
     have := hB' B' hB'',
-      sorry
-  },
-  sorry
-  -- add one of the things to B
-
-  -- let a := A.lcm id,
-
-  -- let B be a set of prime powers of the same cardinality as A such that ∑ q in B, (1 : ℚ) / q  is maximal
-  -- enough to show that B= (range N).filter is_prime_pow
-  -- enough to show that (range N).filter is_prime_pow ⊆ B
-  -- if not, there exists r in the first smaller than something in B, swap these two elements, contradiction
+    rw [sum_cons, ←add_sum_erase _ _ ha', add_le_add_iff_right] at this,
+    refine hra'.not_le (nat.cast_le.1 (le_of_one_div_le_one_div _ this)),
+    rw nat.cast_pos,
+    exact hr''.pos },
+  obtain ⟨b, hb, hb'⟩ := ssubset_iff_exists_cons_subset.1 h,
+  set B' := cons _ _ hb,
+  have hB'' : B' ∈ choices,
+  { simp only [mem_filter, mem_powerset, card_le_of_subset hb', and_true],
+    intros b hb,
+    have := hb' hb,
+    simp only [mem_filter, mem_range, nat.lt_add_one_iff] at this ⊢,
+    exact ⟨this.1.le.trans haN, this.2⟩ },
+  have := hB' _ hB'',
+  rw [sum_cons, add_le_iff_nonpos_left, one_div_nonpos, ←nat.cast_zero, nat.cast_le,
+    le_zero_iff] at this,
+  rw [cons_subset, mem_filter] at hb',
+  exact hb'.1.2.pos.ne' this,
 end
 
 lemma Omega_eq_card_prime_pow_divisors {n : ℕ} (hn : n ≠ 0) :
@@ -2765,4 +2780,3 @@ begin
   apply le_trans hsum, refine sum_le_sum_of_subset_of_nonneg hpp _,
   intros i hi1 hi2, rw one_div_nonneg, exact nat.cast_nonneg i,
 end
-

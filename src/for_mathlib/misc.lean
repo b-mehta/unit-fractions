@@ -73,6 +73,14 @@ begin
   apply Ico_disjoint_Icc_consecutive,
 end
 
+lemma finset.Icc_sdiff_Icc_left {x y z : ℕ} (h₁ : z ≤ y) (h₂ : x ≤ z) :
+  finset.Icc x y \ finset.Icc x z = finset.Ioc z y :=
+begin
+  ext m,
+  simp only [finset.mem_Icc, finset.mem_sdiff, finset.mem_Ioc, not_and, not_le],
+  exact ⟨λ h, ⟨h.2 h.1.1, h.1.2⟩, λ h, ⟨⟨h₂.trans h.1.le, h.2⟩, λ _, h.1⟩⟩,
+end
+
 lemma range_sdiff_Icc {x y : ℕ} (h : x ≤ y) :
   finset.range (y+1) \ finset.Icc x y = finset.Ico 0 x :=
 begin

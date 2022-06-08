@@ -23,28 +23,75 @@ open filter real finset
 open nat (coprime)
 
 open_locale arithmetic_function
-open_locale classical
 noncomputable theory
 
-def upper_density (A : set ℕ) : ℝ :=
-  limsup at_top (λ N : ℕ, (((range N).filter (λ n, n ∈ A)).card : ℝ) / N)
+section
 
-lemma upper_density_preserved {A : set ℕ} {S : finset ℕ} :
-  upper_density A = upper_density (A \ (S : set ℕ)) := sorry
+variables (A : set ℕ) [decidable_pred (λ i, i ∈ A)]
 
-lemma frequently_nat_of {A : set ℕ} {ε : ℝ} (hA : ε < upper_density A) :
-  ∃ᶠ (N : ℕ) in at_top, ε < ((range N).filter (λ n, n ∈ A)).card / N :=
+def partial_density (N : ℕ) : ℝ := ((range N).filter (λ n, n ∈ A)).card / N
+
+def upper_density : ℝ := limsup at_top (partial_density A)
+
+variables {A}
+
+lemma partial_density_sdiff_finset (N : ℕ) (S : finset ℕ) :
+  partial_density A N ≤ partial_density (A \ S) N + S.card / N :=
 begin
-  refine frequently_lt_of_lt_limsup _ hA,
-  apply is_bounded.is_cobounded_le,
-  exact is_bounded_under_of ⟨0, λ x, div_nonneg (nat.cast_nonneg _) (nat.cast_nonneg _)⟩,
+  rw [partial_density, partial_density, ←add_div],
+  refine div_le_div_of_le (nat.cast_nonneg _) _,
+  rw [←nat.cast_add, nat.cast_le],
+  refine (card_le_of_subset _).trans (card_union_le _ _),
+  intros x hx,
+  simp only [mem_filter] at hx,
+  simp only [mem_union, mem_filter, set.mem_diff, hx.1, hx.2, mem_coe, true_and],
+  apply em'
 end
 
-lemma exists_nat_of {A : set ℕ} {ε : ℝ} (hA : ε < upper_density A) :
+lemma is_bounded_under_ge_partial_density : is_bounded_under (≥) at_top (partial_density A) :=
+is_bounded_under_of ⟨0, λ x, div_nonneg (nat.cast_nonneg _) (nat.cast_nonneg _)⟩
+
+lemma is_cobounded_under_le_partial_density : is_cobounded_under (≤) at_top (partial_density A) :=
+is_bounded_under_ge_partial_density.is_cobounded_le
+
+lemma is_bounded_under_le_partial_density : is_bounded_under (≤) at_top (partial_density A) :=
+is_bounded_under_of
+  ⟨1, λ x, div_le_one_of_le
+    (nat.cast_le.2 ((card_le_of_subset (filter_subset _ _)).trans (by simp))) (nat.cast_nonneg _)⟩
+
+lemma upper_density_preserved {S : finset ℕ} : upper_density A = upper_density (A \ (S : set ℕ)) :=
+begin
+  apply ge_antisymm,
+  { refine limsup_le_limsup _ is_cobounded_under_le_partial_density
+      is_bounded_under_le_partial_density,
+    refine eventually_of_forall (λ N, div_le_div_of_le (nat.cast_nonneg _) _),
+    refine nat.mono_cast (card_le_of_subset _),
+    refine monotone_filter_right _ (λ n, _),
+    simp only [set.mem_diff, le_Prop_eq, and_imp, implies_true_iff] {contextual := tt} },
+  rw le_iff_forall_pos_le_add,
+  intros ε hε,
+  rw ←sub_le_iff_le_add,
+  apply le_Limsup_of_le is_bounded_under_le_partial_density,
+  rintro a (ha : ∀ᶠ n : ℕ in at_top, _ ≤ _),
+  rw sub_le_iff_le_add,
+  apply Limsup_le_of_le is_cobounded_under_le_partial_density,
+  change ∀ᶠ n : ℕ in at_top, _ ≤ _,
+  have := tendsto_coe_nat_at_top_at_top.eventually_ge_at_top (↑S.card / ε),
+  filter_upwards [ha, this, eventually_gt_at_top 0] with N hN hN' hN'',
+  have : 0 < (N : ℝ) := nat.cast_pos.2 hN'',
+  rw [div_le_iff hε, ←div_le_iff' this] at hN',
+  exact (partial_density_sdiff_finset _ S).trans (add_le_add hN hN'),
+end
+
+lemma frequently_nat_of {ε : ℝ} (hA : ε < upper_density A) :
+  ∃ᶠ (N : ℕ) in at_top, ε < ((range N).filter (λ n, n ∈ A)).card / N :=
+frequently_lt_of_lt_limsup is_cobounded_under_le_partial_density hA
+
+lemma exists_nat_of {ε : ℝ} (hA : ε < upper_density A) :
   ∃ (N : ℕ), 0 < N ∧ ε < ((range N).filter (λ n, n ∈ A)).card / N :=
 by simpa using frequently_at_top'.1 (frequently_nat_of hA) 0
 
-lemma exists_density_of {A : set ℕ} {ε : ℝ} (hA : ε < upper_density A) :
+lemma exists_density_of {ε : ℝ} (hA : ε < upper_density A) :
   ∃ (N : ℕ), 0 < N ∧ ε * N < ((range N).filter (λ n, n ∈ A)).card :=
 begin
   obtain ⟨N, hN, hN'⟩ := exists_nat_of hA,
@@ -53,15 +100,15 @@ begin
   rwa nat.cast_pos
 end
 
-lemma upper_density_nonneg {A : set ℕ} :
-  0 ≤ upper_density A :=
+lemma upper_density_nonneg : 0 ≤ upper_density A :=
 begin
-  refine le_limsup_of_frequently_le _ _,
-  { exact frequently_of_forall (λ x, div_nonneg (nat.cast_nonneg _) (nat.cast_nonneg _)) },
-  refine is_bounded_under_of ⟨1, λ x, _⟩,
-  refine div_le_one_of_le (nat.cast_le.2 _) (nat.cast_nonneg _),
-  exact (card_le_of_subset (filter_subset _ _)).trans (by simp),
+  refine le_limsup_of_frequently_le _ is_bounded_under_le_partial_density,
+  exact frequently_of_forall (λ x, div_nonneg (nat.cast_nonneg _) (nat.cast_nonneg _)),
 end
+
+end
+
+open_locale classical
 
 -- This is R(A) in the paper.
 def rec_sum (A : finset ℕ) : ℚ := ∑ n in A, 1/n
