@@ -188,6 +188,16 @@ A.bUnion (λ n, n.divisors.filter (λ q, is_prime_pow q ∧ coprime q (n / q)))
 
 @[simp] lemma ppowers_in_set_empty : ppowers_in_set ∅ = ∅ := bUnion_empty
 
+lemma ppowers_in_set_insert_zero (A : finset ℕ) : ppowers_in_set (insert 0 A) = ppowers_in_set A :=
+by rw [ppowers_in_set, ppowers_in_set, bUnion_insert, nat.divisors_zero, filter_empty, empty_union]
+
+lemma ppowers_in_set_erase_zero (A : finset ℕ) : ppowers_in_set (A.erase 0) = ppowers_in_set A :=
+begin
+  by_cases 0 ∈ A,
+  { rw [←ppowers_in_set_insert_zero, insert_erase h] },
+  { rw finset.erase_eq_of_not_mem h },
+end
+
 lemma mem_ppowers_in_set {A : finset ℕ} {q : ℕ} :
   q ∈ ppowers_in_set A ↔ is_prime_pow q ∧ (local_part A q).nonempty :=
 begin

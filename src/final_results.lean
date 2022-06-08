@@ -856,7 +856,7 @@ begin
   filter_upwards [eventually_gt_at_top 0, (filter_smooth (5*D) h5D),filter_regular (5*D) h5D,
      hfilterdiv,
      tendsto_coe_nat_at_top_at_top.eventually  (eventually_gt_at_top (2*(5*D))),
-    ((tendsto_pow_rec_loglog_at_top h1pos).comp tendsto_coe_nat_at_top_at_top).eventually
+    ((tendsto_pow_rec_log_log_at_top h1pos).comp tendsto_coe_nat_at_top_at_top).eventually
         (eventually_ge_at_top (5 * D * 2)),
     (tendsto_log_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
         (eventually_ge_at_top (z^(500:ℝ))),

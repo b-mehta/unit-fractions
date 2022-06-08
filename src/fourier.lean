@@ -1145,16 +1145,6 @@ begin
   exact hq'.1.1.pos,
 end
 
--- lemma counting_lemma {K L M : ℝ} {k : ℕ} {A : finset ℕ} {m₂ : finset ℤ}
---   (D : finset ℕ) (hA : 0 ∉ A)
---   (hK : 0 < K) (hKM : K < M) (hL : 0 < L) (hk : k ≠ 0)
---   (z : ∀ h ∈ m₂, ∃ x ∈ I h K k, ∀ q ∈ interval_rare_ppowers (I h K k) A L, ↑q ∣ x) :
---   ((m₂.filter (λ h, interval_rare_ppowers (I h K k) A L = D)).card : ℝ) ≤
---     M * (k * [A]) / [D] :=
--- begin
---   sorry
--- end
-
 lemma powerset_sum_pow {α : Type*} {s : finset α} {x : ℝ} :
   ∑ t in s.powerset, x ^ t.card = (1 + x) ^ s.card :=
 begin

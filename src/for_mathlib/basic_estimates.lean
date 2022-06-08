@@ -1762,11 +1762,6 @@ begin
     rw mul_inv_cancel_right₀ (log_pos hx).ne' }
 end
 
--- lemma prime_counting_asymptotic :
---   is_O (λ x, prime_summatory (λ _, (1 : ℝ)) 1 x - ψ x / log x)
---     (λ x, x / (log x)^2) at_top :=
--- sorry
-
 def prime_log_div_sum_error (x : ℝ) : ℝ := prime_summatory (λ p, real.log p * p⁻¹) 1 x - log x
 
 lemma prime_summatory_log_mul_inv_eq :

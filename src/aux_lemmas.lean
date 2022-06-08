@@ -21,12 +21,28 @@ open_locale arithmetic_function
 open_locale classical
 noncomputable theory
 
+lemma tendsto_mul_add_div_pow_log_at_top (b c : ℝ) (n : ℕ) (hb : 0 < b) :
+  tendsto (λ x, (b * x + c) / (log x) ^ n) at_top at_top :=
+((tendsto_mul_exp_add_div_pow_at_top b c n hb).comp tendsto_log_at_top).congr'
+  (by filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx using by simp [exp_log hx])
 
-lemma tendsto_pow_rec_loglog_at_top {c : ℝ} (hc : 0 < c) :
-  filter.tendsto (λ x : ℝ, x^(c/log(log x))) filter.at_top filter.at_top := sorry
+lemma tendsto_pow_rec_log_log_at_top {c : ℝ} (hc : 0 < c) :
+  filter.tendsto (λ x : ℝ, x ^ (c / log (log x))) filter.at_top filter.at_top :=
+begin
+  suffices : filter.tendsto (λ x : ℝ, c * x / log x) at_top at_top,
+  { apply ((tendsto_exp_at_top.comp this).comp tendsto_log_at_top).congr' _,
+    filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx using
+      by simp only [rpow_def_of_pos hx, mul_div_assoc' (log x), mul_comm c] },
+  simpa using tendsto_mul_add_div_pow_log_at_top _ 0 1 hc,
+end
+
+lemma tendsto_nat_ceil_at_top {α : Type*} [linear_ordered_semiring α] [floor_semiring α] :
+  tendsto (λ (x : α), ⌈x⌉₊) at_top at_top :=
+nat.ceil_mono.tendsto_at_top_at_top (λ x, ⟨x, by simp⟩)
 
 lemma weird_floor_sq_tendsto_at_top :
-  filter.tendsto (λ x : ℝ, ⌈real.logb 2 x⌉₊^2) filter.at_top filter.at_top := sorry
+  filter.tendsto (λ x : ℝ, ⌈real.logb 2 x⌉₊^2) filter.at_top filter.at_top :=
+(tendsto_pow_at_top one_le_two).comp (tendsto_nat_ceil_at_top.comp (tendsto_logb_at_top one_lt_two))
 
 lemma tendsto_pow_rec_loglog_spec_at_top :
   filter.tendsto (λ x : ℝ, x^((1:ℝ)-8/log(log x))) filter.at_top filter.at_top := sorry
@@ -530,10 +546,35 @@ lemma Omega_eq_card_prime_pow_divisors {n : ℕ} (hn : n ≠ 0) :
   Ω n = (n.divisors.filter is_prime_pow).card :=
 begin
   revert hn,
-  refine nat.rec_on_prime_coprime _ _ _ n,
+  refine nat.rec_on_pos_prime_pos_coprime _ _ _ _ n,
+  { intros p k hp hk hpk,
+    rw [nat.divisors_prime_pow hp, nat.arithmetic_function.card_factors_apply_prime_pow hp],
+    suffices : ((range (k + 1)).map ⟨_, nat.pow_right_injective hp.two_le⟩).filter is_prime_pow =
+      (Ico 1 (k + 1)).map ⟨_, nat.pow_right_injective hp.two_le⟩,
+    { rw [this, card_map, nat.card_Ico, nat.add_sub_cancel] },
+    rw [finset.map_filter],
+    congr' 1,
+    ext i,
+    simp only [mem_Ico, mem_range, mem_filter, function.comp_app, function.embedding.coe_fn_mk,
+      and_comm],
+    refine and_congr_right' _,
+    rw ←not_iff_not,
+    simp only [not_le, nat.lt_one_iff],
+    split,
+    { intro h,
+      by_contra h',
+      rw is_prime_pow_pow_iff h' at h,
+      exact h hp.is_prime_pow },
+    { rintro rfl,
+      exact not_is_prime_pow_one } },
   { simp },
-  { sorry },
-  { sorry },
+  { simp [filter_singleton, not_is_prime_pow_one] },
+  { intros a b ha hb hab aih bih hab',
+    have ha' : a ≠ 0 := by linarith,
+    have hb' : b ≠ 0 := by linarith,
+    rw [nat.mul_divisors_filter_prime_pow hab, filter_union,
+      nat.arithmetic_function.card_factors_mul ha' hb', aih ha', bih hb',
+      card_union_eq (nat.disjoint_divisors_filter_prime_pow hab)] },
 end
 
 lemma rec_pp_sum_close :
@@ -824,9 +865,9 @@ begin
   have hdiv := divisor_bound hc, rw filter.eventually_at_top at hdiv,
   rcases hdiv with ⟨M,hdiv⟩,
   filter_upwards[tendsto_coe_nat_at_top_at_top.eventually  (eventually_ge_at_top (1:ℝ)),
-    ((tendsto_pow_rec_loglog_at_top hhelp).comp tendsto_coe_nat_at_top_at_top).eventually
+    ((tendsto_pow_rec_log_log_at_top hhelp).comp tendsto_coe_nat_at_top_at_top).eventually
       (eventually_ge_at_top (M:ℝ)),
-    ((tendsto_pow_rec_loglog_at_top hhelp).comp tendsto_coe_nat_at_top_at_top).eventually
+    ((tendsto_pow_rec_log_log_at_top hhelp).comp tendsto_coe_nat_at_top_at_top).eventually
       (eventually_ge_at_top (exp(1))),
     (tendsto_log_at_top.comp (tendsto_log_at_top.comp
     tendsto_coe_nat_at_top_at_top)).eventually haux.bound,
@@ -1968,7 +2009,23 @@ begin
   exact λ _ _ _ _ h, subtype.ext (r_inj _ _ _ _ h),
 end
 
-lemma prod_one_add {D : finset ℕ}
+lemma hcongr_thing {α β : Type*} (f g : α → β) :
+  ∀ (p q : α → Prop), p = q →
+    (λ x _, f x : Π (a : α), p a → β) == (λ x _, g x : Π (a : α), q a → β) → ∀ x, p x → f x = g x
+| p _ rfl h x hx := congr_fun₂ (eq_of_heq h) x hx
+
+lemma card_distinct_factors_apply' {m : ℕ} : ω m = m.factors.to_finset.card := rfl
+
+lemma card_distinct_factors_mul_of_coprime {m n : ℕ} (hmn : m.coprime n) :
+  ω (m * n) = ω m + ω n :=
+begin
+  rw [card_distinct_factors_apply', card_distinct_factors_apply', card_distinct_factors_apply',
+    nat.factors_mul_to_finset_of_coprime hmn, card_union_eq],
+  rw list.disjoint_to_finset_iff_disjoint,
+  apply nat.coprime_factors_disjoint hmn,
+end
+
+lemma prod_one_add' {D : finset ℕ} (hD : 0 ∉ D)
   (f : nat.arithmetic_function ℝ) (hf' : f.is_multiplicative) (hf'' : ∀ i, 0 ≤ f i):
   ∑ d in D, f d ≤
     ∏ p in D.bUnion (λ n, n.factors.to_finset),
@@ -1980,69 +2037,98 @@ begin
     ∑ x in finset.powerset _,
       ∏ t in _,
         ∑ i in filter (λ q, t ∣ q) _, f i,
-  -- sorry
-  simp_rw [prod_sum],
+  simp only [prod_sum],
   dsimp,
   rw sum_sigma',
   dsimp,
   refine my_sum_lemma _ _ _ _ _ _ _,
   { intros d hd,
-    exact ⟨(D.bUnion (λ n, n.factors.to_finset)).filter (λ z, z ∣ d),
-           λ p hp, p ^ d.factorization p⟩ },
+    exact ⟨d.factors.to_finset, λ p hp, p ^ d.factorization p⟩ },
   { intros d₁ d₂ hd₁ hd₂ h,
     dsimp at h,
     simp only [eq_self_iff_true, heq_iff_eq, true_and] at h,
-    sorry },
+    have : ∀ p ∈ d₁.factors.to_finset, p ^ d₁.factorization p = p ^ d₂.factorization p,
+    { apply hcongr_thing _ _ _ _ _ h.2,
+      simp only [h.1] },
+    apply nat.eq_of_factorization_eq,
+    { exact ne_of_mem_of_not_mem hd₁ hD },
+    { exact ne_of_mem_of_not_mem hd₂ hD },
+    intro p,
+    by_cases h' : p ∈ d₁.factors.to_finset,
+    { apply nat.pow_right_injective _ (this _ h'),
+      rw list.mem_to_finset at h',
+      exact (nat.prime_of_mem_factors h').two_le },
+    rw [←nat.support_factorization, finsupp.not_mem_support_iff] at h',
+    rwa [h', eq_comm, ←finsupp.not_mem_support_iff, nat.support_factorization, ←h.1,
+      ←nat.support_factorization, finsupp.not_mem_support_iff] },
   { intros i hi,
     apply prod_nonneg,
     intros j hj,
     apply hf'' },
   { intros d hd,
-    dsimp,
-
-    simp only [mem_sigma, mem_powerset_self, finset.mem_pi, mem_bUnion, list.mem_to_finset,
-      exists_prop, mem_filter, forall_exists_index, and_imp, true_and],
-    sorry
-     },
+    simp only [mem_sigma, mem_powerset, mem_bUnion, finset.mem_pi, mem_filter, list.mem_to_finset],
+    refine ⟨subset_bUnion_of_mem _ hd, _⟩,
+    intros a had,
+    have hd₀ : d ≠ 0 := ne_of_mem_of_not_mem hd hD,
+    have : d.factorization a ≠ 0,
+    { rwa [←finsupp.mem_support_iff, nat.support_factorization, list.mem_to_finset] },
+    rw nat.mem_factors hd₀ at had,
+    rw [mem_ppowers_in_set' had.1 this],
+    exact ⟨⟨_, hd, rfl⟩, dvd_pow_self _ this⟩ },
   { intros d hd,
-    dsimp,
-    -- rw prod_attach,
-    -- refine (@prod_attach _ _ _ _ _).trans _,
-    sorry },
-
-  -- have := sum_le_sum_of_subset_of_nonneg,
-  -- simp only [subtype.val_eq_coe],
-
-  -- simp only [prod_attach],
-
-  -- have : ∀ x ∈ (D.bUnion (λ (n : ℕ), filter nat.prime n.divisors)).powerset,
-  --   ∏ (a : ℕ) in D.bUnion (λ (n : ℕ), filter nat.prime n.divisors) \ x,
-  --     (filter (λ q, a ∣ q) (ppowers_in_set D)).sum ⇑f = f sorry,
-  -- { intros x hx,
-  --   simp only [mem_powerset] at hx,
-
-  -- },
-  -- rw sum_powerset,
-  -- rw finset.prod_power
-  -- refine finset.induction_on D _ _,
-  -- { simp },
-  -- intros a s has ih,
-
+    -- dsimp,
+    -- change ∏ (y : {x // x ∈ d.factors.to_finset}) in d.factors.to_finset.attach,
+    --   f (y ^ d.factorization y) = _,
+    refine (@prod_attach ℝ _ d.factors.to_finset _ (λ y, f (y ^ d.factorization y))).trans _,
+    change ∏ x in d.factors.to_finset, f _ = f d,
+    rw is_multiplicative.prod _ hf',
+    { congr' 1,
+      rw ←nat.support_factorization,
+      change d.factorization.prod pow = _,
+      rw nat.factorization_prod_pow_eq_self,
+      apply ne_of_mem_of_not_mem hd hD },
+    intros p₁ hp₁ p₂ hp₂ h,
+    simp only [mem_coe, list.mem_to_finset] at hp₁ hp₂,
+    change coprime (p₁ ^ _) (p₂ ^ _),
+    exact nat.coprime_pow_primes _ _ (nat.prime_of_mem_factors hp₁) (nat.prime_of_mem_factors hp₂) h
+    },
 end
 
-lemma useful_rec_aux4 (y : ℝ) (k N : ℕ) (D : finset ℕ)
+@[simp] lemma card_distinct_factors_apply_is_prime_pow {q : ℕ} (hq : is_prime_pow q) : ω q = 1 :=
+begin
+  rw is_prime_pow_nat_iff at hq,
+  obtain ⟨p, k, hp, hk, rfl⟩ := hq,
+  rw nat.arithmetic_function.card_distinct_factors_apply_prime_pow hp hk.ne',
+end
+
+lemma useful_rec_aux4' (y : ℝ) (k N : ℕ) (D : finset ℕ) (hD' : 0 ∉ D)
   (hD : ∀ q : ℕ, q ∈ ppowers_in_set D → y < q ∧ q ≤ N) :
   ∑ d in D, (k : ℝ) ^ ω d / d ≤
     (∏ p in (finset.range (N+1)).filter nat.prime, (1 + k / (p * (p - 1)))) *
     (∏ p in (finset.range (N+1)).filter (λ n, nat.prime n ∧ y < n), (1 + k * (p - 1)⁻¹)) :=
 begin
-  have h₁ : ∑ d in D, (k : ℝ) ^ ω d / d ≤  ∏ p in D.bUnion (λ n, n.factors.to_finset),
+  have h₁ : ∑ d in D, (k : ℝ) ^ ω d / d ≤ ∏ p in D.bUnion (λ n, n.factors.to_finset),
      (1 + ∑ q in (ppowers_in_set D).filter (λ q, p ∣ q), k/q),
   { let f : nat.arithmetic_function ℝ := ⟨λ d, (k : ℝ) ^ ω d / d, by simp⟩,
-    have hf' : f.is_multiplicative := sorry,
-    have hf'' : ∀ i, 0 ≤ f i := sorry,
-    refine (prod_one_add f hf' hf'').trans_eq _,
-    sorry },
+    have hf' : f.is_multiplicative,
+    { rw nat.arithmetic_function.is_multiplicative.iff_ne_zero,
+      refine ⟨_, _⟩,
+      { simp },
+      intros m n hm hn hmn,
+      change _ / _ = (_ / _) * (_ / _),
+      rw [card_distinct_factors_mul_of_coprime hmn, div_mul_div_comm, nat.cast_mul, pow_add] },
+    have hf'' : ∀ i, 0 ≤ f i,
+    { intro i,
+      exact div_nonneg (pow_nonneg (nat.cast_nonneg _) _) (nat.cast_nonneg _) },
+    refine (prod_one_add' hD' f hf' hf'').trans_eq _,
+    refine prod_congr rfl (λ p hp, _),
+    rw add_right_inj,
+    refine sum_congr rfl (λ q hq, _),
+    suffices : ω q = 1,
+    { rw [zero_hom.coe_mk, this, pow_one] },
+    rw [mem_filter] at hq,
+    rw mem_ppowers_in_set at hq,
+    apply card_distinct_factors_apply_is_prime_pow hq.1.1 },
   have : D.bUnion (λ n, n.factors.to_finset) ⊆ (finset.range (N+1)).filter nat.prime,
   { sorry },
   apply h₁.trans _,
@@ -2050,6 +2136,22 @@ begin
   { sorry },
   { sorry },
   sorry,
+end
+
+#exit
+
+lemma useful_rec_aux4 (y : ℝ) (k N : ℕ) (D : finset ℕ)
+  (hD : ∀ q : ℕ, q ∈ ppowers_in_set D → y < q ∧ q ≤ N) :
+  ∑ d in D, (k : ℝ) ^ ω d / d ≤
+    (∏ p in (finset.range (N+1)).filter nat.prime, (1 + k / (p * (p - 1)))) *
+    (∏ p in (finset.range (N+1)).filter (λ n, nat.prime n ∧ y < n), (1 + k * (p - 1)⁻¹)) :=
+begin
+  by_cases 0 ∈ D,
+  { have hD' : 0 ∉ D.erase 0 := not_mem_erase _ _,
+    rw [←sum_erase_add _ _ h, nat.cast_zero, div_zero, add_zero],
+    apply useful_rec_aux4' y k N _ hD',
+    rwa ppowers_in_set_erase_zero },
+  apply useful_rec_aux4' y k N D h hD,
 end
 
 lemma useful_rec_bound : ∃ C : ℝ, (0 < C) ∧ ∀ y : ℝ, ∀ k N : ℕ, ∀ D : finset ℕ,
