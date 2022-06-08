@@ -954,7 +954,7 @@ begin
   apply finset.card_nsmul_le_sum,
   intros n hn,
   simp only [mem_filter] at hn,
-  apply sq_le_sq,
+  rw sq_le_sq,
   rw abs_of_pos (div_pos hK zero_lt_two),
   apply le_of_not_lt,
   intro i,

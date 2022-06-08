@@ -1094,12 +1094,12 @@ lemma large_enough_Naux1 : (∀ᶠ (N : ℕ) in at_top,
    ((N : ℝ) ^ (1 - (1 : ℝ) / log (log N)) / (2 * log N ^ ((1 : ℝ) / 100))) *
      (((N : ℝ) ^ (1 - (3 : ℝ)/ log (log N)))) ^ 2 / (16 * N ^ 2 * log N ^ 2)) :=
 begin
-  have haux4: asymptotics.is_O_with ((1 : ℝ) / (2 * log (2 * 16))) log id at_top,
+  have haux4: asymptotics.is_O_with ((1 : ℝ) / (2 * log (2 * 16))) at_top log id,
   { refine is_o_log_id_at_top.def' _,
     rw one_div_pos,
     exact mul_pos zero_lt_two (log_pos (by norm_num1)) },
-  have haux5: asymptotics.is_O_with ((1 : ℝ) / ((2 * (2 + 1 / 100)) ^ ((1 : ℝ) / 2))) log
-     (λ x, x^((1 : ℝ) / 2)) at_top,
+  have haux5: asymptotics.is_O_with ((1 : ℝ) / ((2 * (2 + 1 / 100)) ^ ((1 : ℝ) / 2))) at_top log
+     (λ x, x^((1 : ℝ) / 2)),
   { refine (is_o_log_rpow_at_top (half_pos zero_lt_one)).def' _,
     rw one_div_pos,
     refine rpow_pos_of_pos _ _,
@@ -1159,7 +1159,7 @@ begin
   exact hN13,
   refine ne_of_gt zero_lt_two,
   exact le_of_lt hN7,
-  apply mul_nonneg zero_le_two,
+  refine mul_nonneg zero_le_two _,
   norm_num1,
   exact rpow_nonneg_of_nonneg hN7.le _,
   exact le_of_lt hN8,
@@ -1192,13 +1192,13 @@ lemma large_enough_Naux2 : ∀ (c: ℝ), (c > 0) → ∀ᶠ (N : ℕ) in at_top,
   :=
 begin
   intros c hc,
-  have haux: asymptotics.is_O_with ((1 : ℝ)) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1 : ℝ)/2)) at_top, {
+  have haux: asymptotics.is_O_with ((1 : ℝ)) at_top (λ (x : ℝ), (log x))
+     (λ (x : ℝ), x^((1 : ℝ)/2)), {
     refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
     norm_num1, exact zero_lt_one,
     },
-  have haux2: asymptotics.is_O_with ((1 : ℝ)) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1 : ℝ))) at_top, {
+  have haux2: asymptotics.is_O_with ((1 : ℝ)) at_top (λ (x : ℝ), (log x))
+     (λ (x : ℝ), x^((1 : ℝ))), {
     refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
      norm_num1, norm_num1, },
   filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
@@ -1343,16 +1343,16 @@ begin
   intros c hc,
   obtain hlargeaux := large_enough_Naux,
   specialize hlargeaux c hc,
-  have haux: asymptotics.is_O_with ((1 : ℝ)/24) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1 : ℝ)/125)) at_top,
+  have haux: asymptotics.is_O_with ((1 : ℝ)/24) at_top (λ (x : ℝ), (log x))
+     (λ (x : ℝ), x^((1 : ℝ)/125)),
   { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
      norm_num1, norm_num1, },
- have haux2: asymptotics.is_O_with ((2 : ℝ)/3) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((3 : ℝ)/500)) at_top,
+ have haux2: asymptotics.is_O_with ((2 : ℝ)/3) at_top (λ (x : ℝ), (log x))
+     (λ (x : ℝ), x^((3 : ℝ)/500)),
   { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
      norm_num1, norm_num1, },
-      have haux3: asymptotics.is_O_with ((1 : ℝ)/2) (λ (x : ℝ), (log x))
-     (λ (x : ℝ), x^((1 : ℝ)/200)) at_top,
+      have haux3: asymptotics.is_O_with ((1 : ℝ)/2) at_top (λ (x : ℝ), (log x))
+     (λ (x : ℝ), x^((1 : ℝ)/200)),
   { refine asymptotics.is_o.def' _ _, refine is_o_log_rpow_at_top _,
      norm_num1, norm_num1, },
   filter_upwards [(tendsto_log_at_top.comp (tendsto_log_at_top.comp
@@ -1570,7 +1570,7 @@ begin
   have hyzaux : y ≤ z, { apply @le_trans _ _ y (4*y) z, apply le_mul_of_one_le_left,
     apply le_trans zero_le_one h1y, apply le_of_lt one_lt_four,
     apply le_trans _ hyz, apply le_add_of_nonneg_right,
-    apply le_trans zero_le_one, apply le_of_lt one_lt_four,},
+    refine le_trans zero_le_one _, apply le_of_lt one_lt_four,},
   have hz_pos : 0 < z, {
     apply @lt_of_lt_of_le _ _ 0 1 z, exact zero_lt_one, apply le_trans h1y hyzaux, },
   have hwM : (z/4) < 2*M, {
@@ -1955,4 +1955,3 @@ begin
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
   simpa using this,
 end
-
