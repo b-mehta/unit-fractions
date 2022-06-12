@@ -2104,6 +2104,33 @@ lemma nat.le_pow_self : ∀ {x y : ℕ}, y ≠ 0 → x ≤ x ^ y
 | 0 y hy := by simp
 | (n+1) y hy := by simpa using nat.pow_le_pow_of_le_right n.succ_pos hy.bot_lt
 
+lemma dvd_prime_powers {p : ℕ} (hp : p.prime) (S : finset ℕ) (hS : ∀ x ∈ S, is_prime_pow x) :
+  ∃ m, S.filter (λ q, p ∣ q) ⊆ finset.map ⟨_, nat.pow_right_injective hp.two_le⟩ (Ico 1 m) :=
+begin
+  rcases S.eq_empty_or_nonempty with rfl | hS',
+  { simp },
+  refine ⟨S.max' hS', λ x hx, _⟩,
+  obtain ⟨p', k, hp', hk, rfl⟩ := (is_prime_pow_nat_iff _).1 (hS x (filter_subset _ _ hx)),
+  simp only [mem_filter] at hx,
+  cases (nat.prime_dvd_prime_iff_eq hp hp').1 (hp.dvd_of_dvd_pow hx.2),
+  simp only [finset.mem_map, mem_Ico, function.embedding.coe_fn_mk],
+  exact ⟨k, ⟨hk, (nat.lt_pow_self hp'.one_lt k).trans_le (finset.le_max' _ _ hx.1)⟩, rfl⟩,
+end
+
+lemma dvd_prime_powers' {p : ℕ} (hp : p.prime) (S : finset ℕ) (hS : ∀ x ∈ S, is_prime_pow x)
+  (hSp : p ∉ S) :
+  ∃ m, S.filter (λ q, p ∣ q) ⊆ finset.map ⟨_, nat.pow_right_injective hp.two_le⟩ (Ico 2 m) :=
+begin
+  obtain ⟨m, hm⟩ := dvd_prime_powers hp S hS,
+  refine ⟨m, λ x hx, _⟩,
+  obtain ⟨n, hn, rfl : p ^ n = _⟩ := finset.mem_map.1 (hm hx),
+  refine finset.mem_map.2 ⟨n, _, rfl⟩,
+  rw [nat.Ico_succ_left, ←Ico_erase_left],
+  refine finset.mem_erase.2 ⟨_, hn⟩,
+  rintro rfl,
+  exact hSp (by simpa using hx),
+end
+
 -- geom_sum_Ico_le_of_lt_one
 -- BM: should be easy to fix, I will try finish this on Sunday
 lemma useful_rec_aux4' (y : ℝ) (k N : ℕ) (D : finset ℕ) (hD' : 0 ∉ D)
@@ -2168,10 +2195,19 @@ begin
       div_eq_mul_inv, ←mul_sum],
     intros p hpN hp hpy,
     refine mul_le_mul_of_nonneg_left _ (nat.cast_nonneg _),
-    -- m = log_p N ? doesn't really matter tho
-    -- ∃ m, filter (λ q, p ∣ q) (ppowers_in_set D) ⊆ map pow (Ico 2 m)
-    sorry
-  },
+    obtain ⟨m, hm⟩ := dvd_prime_powers' hp (ppowers_in_set D)
+      (by simp only [mem_ppowers_in_set, implies_true_iff] {contextual := tt})
+      (λ h, hpy.not_lt (hD _ h).1),
+    refine (sum_le_sum_of_subset_of_nonneg hm (λ i _ _, _)).trans _,
+    { exact inv_nonneg.2 (nat.cast_nonneg _) },
+    rw sum_map,
+    simp only [function.embedding.coe_fn_mk, nat.cast_pow, ←inv_pow],
+    refine (geom_sum_Ico_le_of_lt_one _ _).trans_eq _,
+    { exact inv_nonneg.2 (nat.cast_nonneg p) },
+    { exact inv_lt_one (nat.one_lt_cast.2 hp.one_lt) },
+    rw [inv_pow, div_eq_mul_inv, ←mul_inv, sq, mul_assoc, mul_one_sub, mul_inv_cancel],
+    rw nat.cast_ne_zero,
+    apply hp.ne_zero },
   { rw filter_filter,
     refine prod_le_prod _ _,
     { intros i _,
@@ -2180,9 +2216,18 @@ begin
       ←mul_sum],
     intros p hpN hp hpy,
     refine mul_le_mul_of_nonneg_left _ (nat.cast_nonneg _),
-    -- ∃ m, filter (λ q, p ∣ q) (ppowers_in_set D) ⊆ map pow (Ico 1 m)
-    sorry
-  },
+    obtain ⟨m, hm⟩ := dvd_prime_powers hp (ppowers_in_set D)
+      (by simp only [mem_ppowers_in_set, implies_true_iff] {contextual := tt}),
+    refine (sum_le_sum_of_subset_of_nonneg hm (λ i _ _, _)).trans _,
+    { exact inv_nonneg.2 (nat.cast_nonneg _) },
+    rw sum_map,
+    simp only [function.embedding.coe_fn_mk, nat.cast_pow, ←inv_pow],
+    refine (geom_sum_Ico_le_of_lt_one _ _).trans_eq _,
+    { exact inv_nonneg.2 (nat.cast_nonneg p) },
+    { exact inv_lt_one (nat.one_lt_cast.2 hp.one_lt) },
+    rw [inv_pow, div_eq_mul_inv, ←mul_inv, pow_one, mul_one_sub, mul_inv_cancel],
+    rw nat.cast_ne_zero,
+    apply hp.ne_zero },
   { intros i hi,
     exact add_nonneg zero_le_one (h₃ _) },
   { intros i hi,
