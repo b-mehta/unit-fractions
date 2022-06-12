@@ -123,17 +123,30 @@ begin
   ring,
 end
 
-lemma range_eq_insert_Icc {n : ℕ} {hn : 1 ≤ n} : range n = insert 0 (Icc 1 (n - 1)) :=
+lemma range_eq_insert_Icc {n : ℕ} (hn : 1 ≤ n) : range n = insert 0 (Icc 1 (n - 1)) :=
 begin
   rw [Icc_succ_left, Ioc_insert_left (nat.zero_le _), ←nat.Ico_succ_right, nat.succ_eq_add_one,
     nat.sub_add_cancel hn, range_eq_Ico],
 end
 
+lemma prime_recip_lazy :
+  ∃ c, ∀ᶠ N : ℕ in at_top, ∑ p in (Icc 1 N).filter nat.prime, (p : ℝ)⁻¹ ≤ log (log N) + c :=
+begin
+  obtain ⟨c, hc⟩ := (prime_reciprocal.trans (is_o_log_inv_one one_ne_zero).is_O).bound,
+  use meissel_mertens + c,
+  filter_upwards [tendsto_coe_nat_at_top_at_top hc] with N hN,
+  dsimp at hN,
+  simp only [prime_summatory, nat.floor_coe, abs_one, mul_one, norm_eq_abs, abs_sub_le_iff,
+    sub_le_iff_le_add', add_assoc] at hN,
+  exact hN.1
+end
+
 lemma sum_prime_counting_sq : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
    ∑ x in Icc 1 N, (ω x : ℝ) ^ 2 ≤ N * log (log N) ^ 2 + C * N * log (log N) :=
 begin
-  use 1,
-  filter_upwards with N,
+  obtain ⟨c, hc⟩ := prime_recip_lazy,
+  use ((2 * c + 1) + 1),
+  filter_upwards [hc, tendsto_log_log_coe_at_top.eventually_ge_at_top (c ^ 2 + c)] with N hN hN',
   have : ∀ x ∈ Icc 1 N, (ω x : ℝ) ^ 2 = (∑ p in (Icc 1 N).filter nat.prime, ite (p ∣ x) 1 0) ^ 2,
   { intros x hx,
     rw [omega_eq_sum _ hx, nat.cast_sum, nat.cast_one, sum_filter] },
@@ -175,7 +188,12 @@ begin
     simp only [mem_filter, mem_Icc] at hp hq,
     apply count_multiples''' (one_le_mul hp.1.1 hq.1.1) },
   refine (add_le_add h₁ h₂).trans _,
-  sorry
+  rw [mul_comm (2 * c + 1 + 1), mul_assoc, ←mul_add, ←mul_add],
+  refine mul_le_mul_of_nonneg_left _ (nat.cast_nonneg _),
+  refine (add_le_add hN (pow_le_pow_of_le_left _ hN 2)).trans _,
+  { exact sum_nonneg (by simp) },
+  rw [add_sq],
+  linarith only [hN'],
 end
 
 -- I think this is false because the LHS set includes 0
@@ -190,9 +208,13 @@ begin
 end
 
 lemma count_divisors' {x N : ℕ} (hx : x ≠ 0) (hN : N ≠ 0):
-  ((filter (λ i, x ∣ i) (range(N))).card : ℝ) = (N / x : ℝ) - (1/x - 1 + int.fract (N-1 / x)) :=
+  ((filter (λ i, x ∣ i) (range(N))).card : ℝ) = (N / x : ℝ) - (1/x - 1 + int.fract ((N-1) / x)) :=
 begin
-  sorry,
+  have hN' : 1 ≤ N := hN.bot_lt,
+  rw [range_eq_insert_Icc hN', filter_insert, if_pos (dvd_zero _), card_insert_of_not_mem,
+    nat.cast_add_one, count_divisors hx, nat.cast_sub hN', nat.cast_one, sub_div],
+  { ring },
+  simp,
 end
 
 lemma is_multiplicative_one {R : Type*} [ring R] :
@@ -384,7 +406,7 @@ begin
   simp_rw [←mul_boole _ (μ _ : ℝ), ←mul_sum],
   simp_rw [sum_boole],
   have : ∑ x in P.divisors, (μ x : ℝ) * ((filter (λ i, x ∣ i) (finset.range(N))).card : ℝ) =
-      ∑ x in P.divisors, (μ x : ℝ) * ((N / x : ℝ) - (1/x - 1 + int.fract (N-1 / x))),
+      ∑ x in P.divisors, (μ x : ℝ) * ((N / x : ℝ) - (1/x - 1 + int.fract ((N-1) / x))),
   { rw sum_congr rfl,
     intros x hx,
     rw count_divisors',
