@@ -843,7 +843,7 @@ end
 
 
 lemma turan_primes_estimate : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
-  (∑ n in finset.range(N), ((ω n : ℝ) - log(log N))^2
+  (∑ n in (Icc 1 N), ((ω n : ℝ) - log(log N))^2
   ≤  C * N * log(log N)  ) :=
 begin
   rcases sum_prime_counting with ⟨C1,hsum⟩,
@@ -854,9 +854,12 @@ begin
        (tendsto_log_at_top.comp (tendsto_log_at_top.comp
     tendsto_coe_nat_at_top_at_top)).eventually (eventually_gt_at_top (0:ℝ))]
    with N hlargesum hlargesumsq hlargeN,
+  have hcardIcc : (Icc 1 N).card = N, {
+    rw nat.card_Icc, simp only [nat.add_succ_sub_one, add_zero],
+   },
   simp_rw [sub_sq, sum_add_distrib, sum_sub_distrib, ← sum_mul, ← mul_sum,
-    sum_const, nsmul_eq_mul, card_range],
-  calc _ ≤ ∑ (x : ℕ) in range N, (ω x:ℝ) ^ 2 - 2*(-(C1*N)+N*log(log N))*log(log N) + N * log (log N) ^ 2 :_
+    sum_const, nsmul_eq_mul, hcardIcc],
+  calc _ ≤ ∑ (x : ℕ) in Icc 1 N, (ω x:ℝ) ^ 2 - 2*(-(C1*N)+N*log(log N))*log(log N) + N * log (log N) ^ 2 :_
      ... ≤ C2*N*log(log N) + N*(log(log N))^2- 2*(-(C1*N)+N*log(log N))*log(log N) + N * log (log N) ^ 2 :_
      ... = _ :_,
   rw [add_le_add_iff_right, sub_le_sub_iff_left, mul_le_mul_right, mul_le_mul_left zero_lt_two],
@@ -865,9 +868,11 @@ begin
   rw [mul_assoc (2*C1), mul_comm _ C2, ← add_mul, ← mul_assoc],
 end
 
+
+
 lemma filter_regular  (D : ℝ) (hD : 0 < D) : ∀ᶠ (N : ℕ) in at_top,
   ∀ A ⊆ range(N),
-   ((A.filter(λ n:ℕ, ¬ (((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N)))).card : ℝ)
+   ((A.filter(λ n:ℕ, n ≠ 0 ∧ ¬ (((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N)))).card : ℝ)
    ≤ N/D :=
 begin
   rcases turan_primes_estimate with ⟨C,hturan⟩,
@@ -883,7 +888,7 @@ begin
   clear hturan,
   intros A hA,
   by_contra, rw not_le at h, rw ← not_lt at hNturan, refine hNturan _, clear hNturan,
-  let A' := A.filter(λ n:ℕ, ¬ (((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N))),
+  let A' := A.filter(λ n:ℕ, n ≠ 0 ∧ ¬ (((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N))),
   calc _ ≤ ((N:ℝ)/D)*((1/100)*log(log N))^2 :_
      ... < (A'.card : ℝ)*((1/100)*log(log N))^2 :_
      ... ≤ (∑ n in A', ((ω n : ℝ) - log(log N))^2) :_
@@ -897,12 +902,17 @@ begin
   norm_num1, rw [← nsmul_eq_mul], refine finset.card_nsmul_le_sum _ _ _ _,
   clear h, intros n hn,
   rw [mem_filter, not_and_distrib] at hn,
-  rw [sq_le_sq, le_abs, abs_of_pos], cases hn.2 with hn1 hn2,
+  rw [sq_le_sq, le_abs, abs_of_pos], cases hn.2.2 with hn1 hn2,
   right, rw [neg_sub, le_sub, ← one_sub_mul], rw not_le at hn1, norm_num1,
   exact le_of_lt hn1, left, rw [le_sub_iff_add_le, add_comm, ← one_add_mul],
   rw not_le at hn2, refine le_trans _ (le_of_lt hn2), rw mul_le_mul_right, norm_num1,
   exact hlargeN, refine mul_pos _ hlargeN, norm_num1,
-  refine sum_le_sum_of_subset_of_nonneg _ _, refine subset_trans (filter_subset _ _) hA,
+  refine sum_le_sum_of_subset_of_nonneg _ _,
+  intros m hm, rw mem_Icc, refine ⟨_,_⟩,
+  rw [nat.succ_le_iff, pos_iff_ne_zero], intro hbad,
+  rw [hbad, mem_filter] at hm, refine hm.2.1 _, refl,
+  have htempy := hA ((filter_subset _ _) hm),
+  rw mem_range at htempy, exact le_of_lt htempy,
   intros n hn1 hn2, refine sq_nonneg _,
 end
 
@@ -1094,7 +1104,7 @@ lemma final_large_N (D:ℝ) (hD : 0 < D) : ∃ y z : ℝ,
  (N : ℝ)^(1 - (1 : ℝ)/(log(log N))) + 1 < N/(5*D) ∧ (∀ A ⊆ range(N),
    (((A.filter(λ n, ∃ q : ℕ, is_prime_pow q ∧ (N:ℝ)^((1:ℝ)-8/(log(log N))) < q ∧ q ∣ n)).card : ℝ)
    ≤ N/(5*D))) ∧  (∀ A ⊆ range(N),
-   ((A.filter(λ n:ℕ, ¬ (((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N)))).card : ℝ)
+   ((A.filter(λ n:ℕ, n ≠ 0 ∧ ¬ (((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N)))).card : ℝ)
    ≤ N/(5*D)) ∧ (∀ A ⊆ range(N),
    ((A.filter(λ n, ¬ ∃ d₁ d₂ : ℕ, (d₁ ∣ n) ∧ (d₂ ∣ n) ∧ (y ≤ d₁) ∧
       (4*d₁ ≤ d₂) ∧ ((d₂ : ℝ) ≤ z))).card : ℝ) ≤ N/(5*D))
@@ -1181,7 +1191,7 @@ begin
   have hA1card : (A1.card : ℝ) ≤ N/(5*D), {
     refine hlargeN.2.2.2.1 A' _, refine filter_subset _ _,
   },
-  let A2 := A'.filter(λ n, ¬ (((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N))),
+  let A2 := A'.filter(λ n, n ≠ 0 ∧ ¬ (((99 : ℝ) / 100) * log (log N) ≤ ω n ∧ (ω n : ℝ) ≤ 2 * log (log N))),
   have hA2card : (A2.card : ℝ) ≤ N/(5*D), {
     refine hlargeN.2.2.2.2.1 A' _, refine filter_subset _ _,
   },
@@ -1233,7 +1243,10 @@ begin
     nth_rewrite 2 mem_filter at hn, rw not_and at hn, rw ← not_lt, intro hbad,
     refine hn.2.1.1.2 hn.1 _, refine ⟨q,hq,hbad,hqn⟩,
     rw arith_regular, intros n hn, rw [mem_sdiff, not_mem_union, not_mem_union, not_mem_union] at hn,
-    nth_rewrite 3 mem_filter at hn, rw [not_and, not_not] at hn, exact hn.2.1.2 hn.1,
+    nth_rewrite 3 mem_filter at hn, rw [not_and, not_and, not_not] at hn,
+    refine hn.2.1.2 hn.1 _, intro hbad, refine hn.2.1.1.1 _,
+    rw [hbad, mem_filter], rw hbad at hn, refine ⟨hn.1,_⟩, norm_cast,
+    refine rpow_pos_of_pos _ _, exact hlargeN.2.1,
   },
   clear htech,
   rcases hstep with ⟨S,hS,d,hyd,hdz,hrecd⟩, refine ⟨d,_,S,_,_⟩,
