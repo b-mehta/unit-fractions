@@ -189,6 +189,12 @@ begin
   exact hx.bot_lt,
 end
 
+lemma count_divisors' {x N : ℕ} (hx : x ≠ 0) (hN : N ≠ 0):
+  ((filter (λ i, x ∣ i) (range(N))).card : ℝ) = (N / x : ℝ) - (1/x - 1 + int.fract (N-1 / x)) :=
+begin
+  sorry,
+end
+
 lemma is_multiplicative_one {R : Type*} [ring R] :
   (1 : nat.arithmetic_function R).is_multiplicative :=
 begin
@@ -304,15 +310,18 @@ begin
 end
 
 lemma sieve_lemma_prec (N : ℕ) (y z : ℝ) (hy : 1 ≤ y) (hzN : z < N) :
-   (((Icc 1 N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n → ((p : ℝ) < y) ∨ z < p)).card : ℝ) ≤
+   (((finset.range(N)).filter (λ n, ∀ p : ℕ, prime p → p ∣ n → ((p : ℝ) < y) ∨ z < p)).card : ℝ) ≤
    ((partial_euler_product ⌊y⌋₊)/(partial_euler_product ⌊z⌋₊)) * N + 2^(z+1) :=
 begin
+  by_cases hN0 : N = 0,
+  rw [hN0, range_zero, filter_empty], norm_cast, rw [mul_zero, zero_add],
+  simp only [card_empty, nat.cast_zero], refine rpow_nonneg_of_nonneg _ _,
+  exact zero_le_two,
   cases lt_or_le z y,
   { calc _ ≤ (N:ℝ) :_
        ... ≤ _ :_,
     norm_cast,
-    have : N = (Icc 1 N).card, { rw nat.card_Icc,
-    simp only [nat.add_succ_sub_one, add_zero], },
+    have : N = (finset.range(N)).card, { rw card_range, },
     nth_rewrite 1 this, refine finset.card_filter_le _ _,
     rw ← add_zero (N:ℝ), refine add_le_add _ _, rw add_zero, refine le_mul_of_one_le_left _ _,
     exact nat.cast_nonneg N, rw [one_le_div, partial_euler_product, partial_euler_product],
@@ -337,8 +346,8 @@ begin
     intros x hx,
     simp only [mem_filter, mem_range] at hx,
     exact hx.2.1.pos.ne' },
-  have h₁ : ((Icc 1 N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n →
-       ((p : ℝ) < y) ∨ (z < p))).card = ((Icc 1 N).filter (λ n, coprime n P)).card,
+  have h₁ : ((finset.range(N)).filter (λ n, ∀ p : ℕ, prime p → p ∣ n →
+       ((p : ℝ) < y) ∨ (z < p))).card = ((finset.range(N)).filter (λ n, coprime n P)).card,
   { congr' 1,
     apply filter_congr,
     simp only [mem_range, nat.coprime_prod, mem_filter, and_imp, ←nat.prime_iff],
@@ -374,13 +383,14 @@ begin
   rw sum_comm,
   simp_rw [←mul_boole _ (μ _ : ℝ), ←mul_sum],
   simp_rw [sum_boole],
-  have : ∑ x in P.divisors, (μ x : ℝ) * ((filter (λ i, x ∣ i) (Icc 1 N)).card : ℝ) =
-      ∑ x in P.divisors, (μ x : ℝ) * ((N / x : ℝ) - int.fract (N / x)),
+  have : ∑ x in P.divisors, (μ x : ℝ) * ((filter (λ i, x ∣ i) (finset.range(N))).card : ℝ) =
+      ∑ x in P.divisors, (μ x : ℝ) * ((N / x : ℝ) - (1/x - 1 + int.fract (N-1 / x))),
   { rw sum_congr rfl,
     intros x hx,
-    rw count_divisors,
+    rw count_divisors',
     rw nat.mem_divisors at hx,
-    exact ne_zero_of_dvd_ne_zero hx.2 hx.1 },
+    exact ne_zero_of_dvd_ne_zero hx.2 hx.1, exact hN0,
+    },
   simp_rw [this, mul_sub],
   rw sum_sub_distrib,
   simp_rw [mul_div_assoc', mul_comm _ (N : ℝ), mul_div_assoc],
@@ -427,28 +437,41 @@ begin
   refine mul_le_mul_of_nonneg_left hPsum _,
   exact nat.cast_nonneg N, refine le_trans (le_abs_self _) _,
   rw [abs_neg], refine le_trans (abs_sum_le_sum_abs _ _) _,
-  calc _ ≤ (σ 0 P : ℝ) :_
+  calc _ ≤ (2:ℝ)*(σ 0 P : ℝ) :_
      ... ≤ _ :_,
   rw nat.arithmetic_function.sigma_zero_apply,
-  refine le_trans (finset.sum_le_card_nsmul _ _ 1 _) _,
-  intros d hd, rw [abs_mul], refine mul_le_one _ _ _,
+  refine le_trans (finset.sum_le_card_nsmul _ _ 2 _) _,
+  intros d hd, rw [abs_mul], rw ← one_mul (2:ℝ), refine mul_le_mul _ _ _ _,
   by_cases hdsq : squarefree d,
   rw [nat.arithmetic_function.moebius_apply_of_squarefree hdsq], norm_cast,
   rw [abs_pow, abs_neg, abs_one, one_pow],
   rw nat.arithmetic_function.moebius_eq_zero_of_not_squarefree hdsq, norm_cast,
-  exact zero_le_one, refine abs_nonneg _, rw abs_of_nonneg,
-  refine le_of_lt (int.fract_lt_one _), refine int.fract_nonneg _,
-  simp only [nat.smul_one_eq_coe],
+  exact zero_le_one,
+  rw [← add_sub_right_comm, ← add_sub], refine le_trans (abs_add _ _) _,
+  transitivity (1:ℝ)+1, refine add_le_add _ _,
+  rw [abs_of_nonneg, one_div_le], norm_num1, norm_cast, rw nat.succ_le_iff,
+  exact nat.pos_of_mem_divisors hd, exact_mod_cast nat.pos_of_mem_divisors hd,
+  exact zero_lt_one, rw one_div_nonneg, exact nat.cast_nonneg d,
+  rw [abs_of_nonpos, neg_sub], refine sub_le_self _ _, refine int.fract_nonneg _,
+  rw sub_nonpos, refine le_of_lt (int.fract_lt_one _), norm_num1,
+  refine abs_nonneg _, exact zero_le_one,
+  simp only [nsmul_eq_mul], rw mul_comm,
   have hPsq : squarefree P, { refine prod_primes_squarefree _,
     intros p hp, rw mem_filter at hp, exact hp.2.1, },
   rw divisor_count_eq_pow_iff_squarefree.2 hPsq, rw nat.cast_pow, norm_num1,
-  rw ← rpow_nat_cast,
+  rw [← rpow_nat_cast, mul_comm, ← rpow_add_one],
   refine rpow_le_rpow_of_exponent_le one_le_two _,
   rw [nat.arithmetic_function.card_distinct_factors_apply, ← list.card_to_finset],
   transitivity ((Icc 0 ⌊z⌋₊).card : ℝ),
-  norm_cast, refine finset.card_le_of_subset _, intros p hp,
-  rw [list.mem_to_finset, mem_factors_prod] at hp,
-  rcases hp with ⟨q,hq1,hq2⟩, rw mem_filter at hq1,
+  norm_cast,
+  transitivity (insert 0 P.factors.to_finset).card, rw finset.card_insert_of_not_mem,
+  rw list.mem_to_finset, intro hbad, refine nat.not_prime_zero _,
+  exact nat.prime_of_mem_factors hbad,
+  refine finset.card_le_of_subset _, intros p hp,
+  rw mem_insert at hp, cases hp with hp₁ hp₂, rw hp₁,
+  simp only [left_mem_Icc, zero_le'],
+  rw [list.mem_to_finset, mem_factors_prod] at hp₂,
+  rcases hp₂ with ⟨q,hq1,hq2⟩, rw mem_filter at hq1,
   rw [nat.factors_prime hq1.2.1, list.mem_singleton] at hq2, rw [hq2, mem_Icc],
   refine ⟨zero_le q,_⟩, rw nat.le_floor_iff, exact hq1.2.2.2,
   refine le_trans _ h, exact le_trans zero_le_one hy,
@@ -456,7 +479,7 @@ begin
   rw [nat.card_Icc, nat.cast_sub], push_cast, rw sub_zero,
   rw add_le_add_iff_right, refine nat.floor_le _,
   refine le_trans _ h, exact le_trans zero_le_one hy,
-  exact zero_le (⌊z⌋₊ + 1),
+  exact zero_le (⌊z⌋₊ + 1), refine ne_of_gt zero_lt_two,
 end
 
 lemma sieve_lemma_prec' : ∃ C c : ℝ, (0 < C) ∧ (0 < c) ∧
