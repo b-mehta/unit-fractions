@@ -26,10 +26,33 @@ open_locale arithmetic_function
 open_locale classical
 noncomputable theory
 
+lemma another_weird_tendsto_at_top_aux (c : ℝ) (hc : 1 < c) :
+  tendsto (λ x, c ^ x / log x) at_top at_top :=
+((tendsto_exp_mul_div_rpow_at_top 1 _ (log_pos hc)).at_top_mul_at_top
+  (tendsto_mul_add_div_pow_log_at_top 1 0 1 zero_lt_one)).congr' $
+by filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx using
+  by simp [rpow_def_of_pos (zero_le_one.trans_lt hc), div_mul_div_cancel _ hx.ne']
+
+lemma the_thing : 1 < exp 2 / 2 :=
+begin
+  rw [one_lt_div, ←log_lt_iff_lt_exp zero_lt_two],
+  { exact log_two_lt_d9.trans_le (by norm_num) },
+  exact zero_lt_two
+end
 
 lemma another_weird_tendsto_at_top :
-  filter.tendsto (λ x : ℝ, x / (2 ^ (1 / 2 * log x + 1) * log (1 / 2 * log x)))
-     filter.at_top filter.at_top := sorry
+  tendsto (λ x : ℝ, x / (2 ^ (1 / 2 * log x + 1) * log (1 / 2 * log x))) at_top at_top :=
+(tendsto.const_mul_at_top (show (0 : ℝ) < 1 / 2, by norm_num)
+  ((another_weird_tendsto_at_top_aux (exp 2 / 2) the_thing).comp
+    (tendsto_log_at_top.const_mul_at_top (show (0 : ℝ) < 1 / 2, by norm_num)))).congr' $
+begin
+  filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx,
+  dsimp,
+  rw [div_rpow (exp_pos _).le zero_le_two, div_div, div_mul_div_comm, one_mul,
+    rpow_add_one two_ne_zero, rpow_def_of_pos (exp_pos _), log_exp, ←mul_assoc,
+    mul_one_div_cancel (two_ne_zero : (2 : ℝ) ≠ 0), one_mul, exp_log hx, ←mul_assoc,
+    mul_comm (2 : ℝ)],
+end
 
 lemma omega_eq_sum (N : ℕ) {n : ℕ} (hn : n ∈ range N) :
   ω n = ∑ p in (((range N).filter (λ p, nat.prime p)).filter (λ p, p ∣ n)), 1 :=
@@ -52,15 +75,19 @@ end
 lemma sum_prime_counting_sq : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
    ∑ (x : ℕ) in (range N), (ω x : ℝ)^2 ≤ N*(log(log N))^2 + C*N*log(log N):= sorry
 
+-- I think this is false because the LHS set includes 0
+-- but does changing to
+-- ((filter (λ i, x ∣ i) (Icc 1 N)).card : ℝ) make anything afterwards more annoying?
+-- same for the three above
 lemma count_divisors {x N : ℕ} (hx : x ≠ 0) :
   ((filter (λ i, x ∣ i) (range N)).card : ℝ) = (N / x : ℝ) - int.fract (N / x) :=
 begin
-  have : filter (λ i, x ∣ i) (Icc 1 N) = filter (λ i, x ∣ i) (range N),
-  { ext m,
-    simp only [mem_filter, mem_Icc, mem_range],
-    apply and_congr_left',
-    sorry },
-  -- rw count_multiples,
+  -- have : filter (λ i, x ∣ i) (Icc 1 N) = filter (λ i, x ∣ i) (range N),
+  -- { ext m,
+  --   simp only [mem_filter, mem_Icc, mem_range],
+  --   apply and_congr_left',
+  -- },
+  -- -- rw count_multiples,
   sorry
 end
 
@@ -72,6 +99,10 @@ begin
   change ite _ _ _ = ite _ _ _ * ite _ _ _,
   simp only [boole_mul, ←ite_and, nat.mul_eq_one_iff],
 end
+
+lemma ite_div (p : Prop) [decidable p] {x y z : ℝ} :
+  ite p x y / z = ite p (x / z) (y / z) :=
+apply_ite (λ i, i / z) _ _ _
 
 lemma moebius_rec_sum {N : ℕ} (hN : N ≠ 0) :
   ∑ (x : ℕ) in N.divisors, (μ x : ℝ) / x = ∏ p in filter nat.prime N.divisors, (1 - p⁻¹) :=
@@ -93,11 +124,16 @@ begin
   revert hN N,
   refine nat.rec_on_pos_prime_pos_coprime _ _ _ _,
   { intros p k hp hk hpk,
-    rw [nat.prime_pow_prime_divisor hk.ne' hp, prod_singleton],
-    sorry },
+    rw [nat.prime_pow_prime_divisor hk.ne' hp, prod_singleton,
+      nat.arithmetic_function.coe_mul_zeta_apply, nat.sum_divisors_prime_pow hp],
+    simp only [zero_hom.coe_mk, nat.cast_pow, sum_range_succ', pow_zero,
+      nat.arithmetic_function.moebius_apply_one, int.cast_one, div_one],
+    simp_rw [nat.arithmetic_function.moebius_apply_prime_pow hp (nat.succ_ne_zero _),
+      int.cast_ite, int.cast_neg, int.cast_zero, int.cast_one, nat.succ_inj',
+      ite_div, zero_div, sum_ite_eq', neg_div, pow_one, one_div, mem_range, if_pos hk,
+      neg_add_eq_sub] },
   { intro h,
-    cases h rfl,
-    },
+    cases h rfl },
   { intro _,
     simp only [nat.factors_one, list.to_finset_nil, prod_empty, hf.map_one] },
   { intros a b ha hb hab aih bih k,
@@ -143,6 +179,7 @@ lemma sieve_lemma_prec (N : ℕ) (y z : ℝ) (hy : 1 ≤ y) (hzN : z < N) :
    ((partial_euler_product ⌊y + 1⌋₊)/(partial_euler_product ⌊z⌋₊)) * N + 2^(z+1) :=
 begin
   cases lt_or_le z y,
+    -- maybe can assume y ≤ z anyway but if not the z < y case should be easy anyway
   { sorry },
   let P := ∏ p in ((finset.range N).filter (λ p, nat.prime p ∧ (y ≤ p) ∧ ((p:ℝ) ≤ z))), p,
   have hP : P ≠ 0,
@@ -202,6 +239,7 @@ begin
     (range N).filter (λ p, nat.prime p ∧ y ≤ p ∧ (p : ℝ) ≤ z),
   { rw [←nat.prime_divisors_eq_to_filter_divisors_prime, product_of_primes_factors_to_finset],
     simp only [mem_filter, implies_true_iff] {contextual := tt} },
+  -- this is false as written (I think) - y+1 won't be the right bound
   have hP_divisors' :
     P.divisors.filter nat.prime = filter nat.prime (Icc 1 ⌊z⌋₊ \ Icc 1 ⌊y + 1⌋₊),
   {

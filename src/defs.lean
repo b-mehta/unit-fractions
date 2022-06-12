@@ -282,6 +282,11 @@ begin
   rw factorization_eq_iff hp hk,
 end
 
+lemma mem_ppowers_in_set'' {A : finset ℕ} {n p : ℕ} (hn : n ∈ A) (hpk : n.factorization p ≠ 0) :
+  p ^ n.factorization p ∈ ppowers_in_set A :=
+(mem_ppowers_in_set' (nat.prime_of_mem_factorization (finsupp.mem_support_iff.2 hpk)) hpk).2
+  ⟨_, hn, rfl⟩
+
 lemma ppowers_in_set_subset { A B : finset ℕ} (hAB : A ⊆ B) :
   ppowers_in_set A ⊆ ppowers_in_set B :=
 bUnion_subset_bUnion_of_subset_left _ hAB

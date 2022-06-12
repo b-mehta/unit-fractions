@@ -44,8 +44,22 @@ lemma weird_floor_sq_tendsto_at_top :
   filter.tendsto (λ x : ℝ, ⌈real.logb 2 x⌉₊^2) filter.at_top filter.at_top :=
 (tendsto_pow_at_top one_le_two).comp (tendsto_nat_ceil_at_top.comp (tendsto_logb_at_top one_lt_two))
 
+lemma tendsto_pow_at_top_of {f g : ℝ → ℝ} {l : filter ℝ} {c : ℝ} (hc : 0 < c)
+  (hf : tendsto f l (nhds c)) (hg : tendsto g l at_top) :
+  tendsto (λ x : ℝ, g x ^ f x) l at_top :=
+begin
+  refine (tendsto_exp_at_top.comp ((tendsto_log_at_top.comp hg).at_top_mul hc hf)).congr' _,
+  filter_upwards [hg.eventually_gt_at_top (0 : ℝ)] with x hx,
+  simp only [rpow_def_of_pos hx],
+end
+
 lemma tendsto_pow_rec_loglog_spec_at_top :
-  filter.tendsto (λ x : ℝ, x^((1:ℝ)-8/log(log x))) filter.at_top filter.at_top := sorry
+  tendsto (λ x : ℝ, x ^ ((1 : ℝ) - 8 / log (log x))) at_top at_top :=
+begin
+  apply tendsto_pow_at_top_of zero_lt_one _ tendsto_id,
+  have := (tendsto_const_nhds.div_at_top (tendsto_log_at_top.comp tendsto_log_at_top)).const_sub 1,
+  simpa using this,
+end
 
 lemma prime_counting_lower_bound_explicit : ∀ᶠ (N : ℕ) in at_top,
    ⌊sqrt N⌋₊ ≤ (filter nat.prime (Icc 1 N)).card :=
@@ -578,9 +592,9 @@ begin
 end
 
 lemma rec_pp_sum_close :
-  ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, (x ≠ y) → (|(x : ℝ)-y| ≤ N) →
-  ∑ q in (finset.range(N+1)).filter(λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
-  ((1 : ℝ)/500)*log(log N) :=
+  ∀ᶠ (N : ℕ) in at_top, ∀ x y : ℤ, x ≠ y → |(x : ℝ) - y| ≤ N →
+  ∑ q in (finset.range (N+1)).filter (λ n, is_prime_pow n ∧ (n:ℤ) ∣ x ∧ (n:ℤ) ∣ y), (1 : ℝ)/q <
+  ((1 : ℝ) / 500) * log (log N) :=
 begin
   filter_upwards [eventually_gt_at_top 0, such_large_N_wow,
     (weird_floor_sq_tendsto_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
@@ -588,9 +602,10 @@ begin
     (weird_floor_sq_tendsto_at_top.comp tendsto_coe_nat_at_top_at_top).eventually
        explicit_mertens],
   intros N hlarge0 hlarge1 hprimes hmertens x y hxy hxyN,
-  let m :=  int.nat_abs (x-y),
+  let m := int.nat_abs (x-y),
   let M := Ω m,
   let T := ⌈real.logb 2 N⌉₊^2,
+  have hm : m ≠ 0, { rwa [int.nat_abs_ne_zero, sub_ne_zero] },
   have hMT : M ≤ ((finset.range(T+1)).filter is_prime_pow).card, {
     calc _ ≤ ⌊real.logb 2 m⌋₊ : card_factors_le_log
        ... ≤ ⌊sqrt T⌋₊ :_
@@ -602,8 +617,8 @@ begin
     calc _ ≤ real.logb 2 N :_
        ... ≤ _ :_,
     rw logb_le_logb, rw nat_cast_diff_issue at hxyN, exact hxyN, exact one_lt_two,
-    norm_cast, rw pos_iff_ne_zero, intro hz, rw int.nat_abs_eq_zero at hz,
-    rw sub_eq_zero at hz, exact hxy hz, exact_mod_cast hlarge0,
+    norm_cast, rwa pos_iff_ne_zero,
+    exact_mod_cast hlarge0,
     push_cast, rw sqrt_sq, exact nat.le_ceil (real.logb 2 N),
     refine nat.cast_nonneg _,
     refine card_le_of_subset _, intros p hp, rw [mem_filter, mem_Icc] at hp,
@@ -620,25 +635,11 @@ begin
   apply prime_power_recip_downward_bound _ _ _ _,
   { simp only [mem_filter, and_imp, implies_true_iff] {contextual := tt} },
   { apply hMT.trans',
-    sorry
-     },
-  -- refine prime_power_recip_downward_bound,
-
-  -- The idea for the next part is to write an injection from the range of summation of the first
-  -- sum to the second, where we write each set as an increasing list q1, q2,... and r1, r2, r3, ...
-  -- and map qi to ri.
-  -- ∑ (q in A), 1/q ≤ ∑ (q in B), 1/q if there is a function f : A → B (injective) such that
-  -- b ≤ f(a).
-  -- suppose there is some b such that f(a) < b, let a be minimal such that this holds.
-  -- Then a is a prime power that is less than f(b),
-  -- so by inductive construction of f, there is some c such that a = f(c), but then c < b
-  -- .......................A..A.......A....A....
-  -- BBBBBB......................................
-  -- use list.take to truncate second list to be of length M
-  --  (and then list.take_sublist and list.sublist.sum_le_sum
-  -- then list.forall₂.sum_le_sum
-  -- have := list.forall₂.sum_le_sum,
-  --
+    change _ ≤ Ω m,
+    rw Omega_eq_card_prime_pow_divisors hm,
+    refine card_le_of_subset (λ x, _),
+    simp only [mem_filter, nat.mem_divisors, hm, ne.def, not_false_iff, and_self, implies_true_iff]
+      {contextual := tt} },
   refine lt_of_le_of_lt hmertens _, dsimp, push_cast, exact hlarge1,
 end
 
@@ -1482,10 +1483,8 @@ begin
 end
 
 lemma sum_add_sum_add_sum {A B C : finset ℕ} {f : ℕ → ℝ} :
-A.sum (λ (i : ℕ), f i) + B.sum (λ (i : ℕ), f i) + C.sum (λ (i : ℕ), f i) =
-(A∪B∪C).sum (λ (i : ℕ), f i) + (A∩B).sum (λ (i : ℕ), f i) + (A∩C).sum (λ (i : ℕ), f i)
-+ (B∩C).sum (λ (i : ℕ), f i) - (A∩B∩C).sum (λ (i : ℕ), f i)
- :=
+A.sum f + B.sum f + C.sum f =
+  (A∪B∪C).sum f + (A∩B).sum f + (A∩C).sum f + (B∩C).sum f - (A∩B∩C).sum f :=
 begin
   rw sum_add_sum, rw [add_right_comm], rw @sum_add_sum (A∪B) C _,
   convert_to ∑ (i : ℕ) in A ∪ B ∪ C, f i + (∑ (i : ℕ) in A ∩ B, f i + ∑ (i : ℕ) in (A ∪ B) ∩ C, f i) =
@@ -2101,6 +2100,12 @@ begin
   rw nat.arithmetic_function.card_distinct_factors_apply_prime_pow hp hk.ne',
 end
 
+lemma nat.le_pow_self : ∀ {x y : ℕ}, y ≠ 0 → x ≤ x ^ y
+| 0 y hy := by simp
+| (n+1) y hy := by simpa using nat.pow_le_pow_of_le_right n.succ_pos hy.bot_lt
+
+-- geom_sum_Ico_le_of_lt_one
+-- BM: should be easy to fix, I will try finish this on Sunday
 lemma useful_rec_aux4' (y : ℝ) (k N : ℕ) (D : finset ℕ) (hD' : 0 ∉ D)
   (hD : ∀ q : ℕ, q ∈ ppowers_in_set D → y < q ∧ q ≤ N) :
   ∑ d in D, (k : ℝ) ^ ω d / d ≤
@@ -2130,15 +2135,60 @@ begin
     rw mem_ppowers_in_set at hq,
     apply card_distinct_factors_apply_is_prime_pow hq.1.1 },
   have : D.bUnion (λ n, n.factors.to_finset) ⊆ (finset.range (N+1)).filter nat.prime,
-  { sorry },
+  { intros x,
+    simp only [mem_bUnion, mem_filter, mem_range_succ_iff, forall_exists_index],
+    intros d hd hd',
+    have hd'' : d.factorization x ≠ 0,
+    { rwa [←finsupp.mem_support_iff, nat.support_factorization] },
+    rw list.mem_to_finset at hd',
+    refine ⟨_, nat.prime_of_mem_factors hd'⟩,
+    apply (hD (x ^ d.factorization x) (mem_ppowers_in_set'' hd hd'')).2.trans',
+    apply nat.le_pow_self hd'' },
   apply h₁.trans _,
+  have h₃ : ∀ i, (0 : ℝ) ≤ ∑ (q : ℕ) in filter (λ (q : ℕ), i ∣ q) (ppowers_in_set D), k / q,
+  { exact λ i, sum_nonneg (λ q hq, div_nonneg (nat.cast_nonneg _) (nat.cast_nonneg _)) },
   refine ((prod_of_subset_le_prod_of_one_le this _ _).trans _),
-  { sorry },
-  { sorry },
-  sorry,
+  { intros i hi,
+    exact add_nonneg zero_le_one (h₃ _) },
+  { intros i _ _,
+    exact le_add_of_nonneg_right (h₃ _) },
+  rw [←prod_filter_mul_prod_filter_not ((range (N + 1)).filter nat.prime) (λ n, y < n), mul_comm],
+  refine mul_le_mul _ _ (prod_nonneg _) (prod_nonneg _),
+  { refine (prod_le_prod _ _).trans (prod_of_subset_le_prod_of_one_le (filter_subset _ _) _ _),
+    { intros i hi,
+      exact add_nonneg zero_le_one (h₃ _) },
+    rotate,
+    { intros i hi,
+      rw mul_comm,
+      exact add_nonneg zero_le_one (div_nonneg (nat.cast_nonneg _) my_mul_thing) },
+    { intros i _ _,
+      rw mul_comm,
+      exact le_add_of_nonneg_right (div_nonneg (nat.cast_nonneg _) my_mul_thing) },
+    simp only [mem_filter, not_lt, and_imp, mem_range_succ_iff, add_le_add_iff_left,
+      div_eq_mul_inv, ←mul_sum],
+    intros p hpN hp hpy,
+    refine mul_le_mul_of_nonneg_left _ (nat.cast_nonneg _),
+    -- m = log_p N ? doesn't really matter tho
+    -- ∃ m, filter (λ q, p ∣ q) (ppowers_in_set D) ⊆ map pow (Ico 2 m)
+    sorry
+  },
+  { rw filter_filter,
+    refine prod_le_prod _ _,
+    { intros i _,
+      exact add_nonneg zero_le_one (h₃ _) },
+    simp only [mem_filter, and_imp, mem_range_succ_iff, add_le_add_iff_left, div_eq_mul_inv,
+      ←mul_sum],
+    intros p hpN hp hpy,
+    refine mul_le_mul_of_nonneg_left _ (nat.cast_nonneg _),
+    -- ∃ m, filter (λ q, p ∣ q) (ppowers_in_set D) ⊆ map pow (Ico 1 m)
+    sorry
+  },
+  { intros i hi,
+    exact add_nonneg zero_le_one (h₃ _) },
+  { intros i hi,
+    rw mul_comm,
+    exact add_nonneg zero_le_one (div_nonneg (nat.cast_nonneg _) my_mul_thing) }
 end
-
-#exit
 
 lemma useful_rec_aux4 (y : ℝ) (k N : ℕ) (D : finset ℕ)
   (hD : ∀ q : ℕ, q ∈ ppowers_in_set D → y < q ∧ q ≤ N) :
