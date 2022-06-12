@@ -9,6 +9,7 @@ This section contains the deductions of the headline results from the main techn
 If $A\subset \bbn$ has positive upper density then there is a finite $S\subset A$ such that $\sum_{n\in S}\frac{1}{n}=1$.
 \end{theorem}
 \begin{proof}\uses{lem:sieve2,prop:techmain,lem:turan}
+  \leanok
   Suppose $A\subset \bbn$ has upper density $\delta>0$. Let $y=C_1/\delta$ and $z=\delta^{-C_2\delta^{-2}}$, where $C_1,C_2$ are two absolute constants to be determined later. It suffices to show that there is some $d\in [y,z]$ and finite $S\subset A$ such that $R(S)=1/d$. Indeed, given such an $S$ we can remove it from $A$ and still have an infinite set of upper density $\delta$, so we can find another $S'\subset A\backslash S$ with $R(S')=1/d'$ for some $d'\in [y,z]$, and so on. After repeating this process at least $\lceil z-y\rceil^2$ times there must be some $d\in [y,z]$ with at least $d$ disjoint $S_1,\ldots,S_d\subset A$ with $R(S_i)=1/d$. Taking $S=S_1\cup\cdots \cup S_d$ yields $R(S)=1$ as required.
 
   By definition of the upper density, there exist arbitrarily large $N$ such that $\abs{A\cap [1,N]}\geq \frac{\delta}{2}N$. The number of $n\in [1,N]$ divisible by some prime power $q\geq N^{1-6/\log\log N}$ is
@@ -92,6 +93,7 @@ Let $N$ be sufficiently large and $z,y$ be two parameters such that $\log N \geq
 \[\abs{ X\cap [N,2N)}\ll \frac{\log y}{\log z}N.\]
 \end{lemma}
 \begin{proof}\uses{lem:sieve_eratosthenes,lem:mertens2}
+  \leanok
   Lemma~\ref{lem:sieve_eratosthenes} yields
   \[\abs{X\cap [N,2N)} = \prod_{y\leq p\leq z}\brac{1-\frac{1}{p}}N+ O(2^z).\]
   Mertens' estimate \ref{lem:mertens2} yields
@@ -115,6 +117,7 @@ Let $N$ be sufficiently large and $z,y$ be two parameters such that $(\log N)^{1
 \[\abs{ \{1,\ldots,N\}\backslash Y}\ll \brac{\frac{\log y}{\log z}}^{1/2}N.\]
 \end{lemma}
 \begin{proof}\uses{lem:sieve1}
+  \leanok
   Let $w\in (4y,z)$ be some parameter to be chosen later. Lemma~\ref{lem:sieve1} implies that the number of $n\in \{1,\ldots,N\}$ not divisible by any prime $p\in [w,z]$ is $\ll \frac{\log w}{\log z}N$.
 
   Similarly, for any $p\in [w,z]$, the number of those $n\in [1,N]$ divisible by $p$ and no prime  $q\in [y,p/4)$ is
@@ -125,5 +128,3 @@ Let $N$ be sufficiently large and $z,y$ be two parameters such that $(\log N)^{1
   \[\abs{ \{1,\ldots,N\}\backslash Y}\ll \brac{\frac{\log w}{\log z}+\frac{ \log y}{\log w}}N.\]
   Choosing $w=\exp\brac{\sqrt{(\log y)(\log z)}}$ completes the proof.
 \end{proof}
-
-

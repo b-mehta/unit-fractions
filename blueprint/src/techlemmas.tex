@@ -11,6 +11,7 @@
   where the summation is restricted to prime powers.
 \end{lemma}
 \begin{proof}
+  \leanok
   \uses{lem:mertens1}
   If $q\mid (n_1,n_2)$ then $q$ divides $\abs{n_1-n_2}$, and hence in particular $q\leq N$. The contribution of all prime powers $p^r$ with $r\geq 2$ is $O(1)$, and hence it suffices to show that $\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \log\log\log N$. Any integer $\leq N$ is trivially divisible by $O(\log N)$ many primes. Clearly summing $1/p$ over $O(\log N)$ many primes is maximised summing over the smallest $O(\log N)$ primes. Since there are $\gg (\log N)^{3/2}$ many primes $\leq (\log N)^2$, we have
   \[\sum_{p\mid \abs{n_1-n_2}}\frac{1}{p}\ll \sum_{p\leq (\log N)^2}\frac{1}{p}\ll \log\log\log N\]
@@ -25,32 +26,34 @@ Let $1/2>\epsilon>0$ and $N$ be sufficiently large, depending on $\epsilon$. If 
 \lean{rec_qsum_lower_bound}
 \end{lemma}
 \begin{proof}
+  \leanok
 Since, by definition, every integer $n\in A$ can be written uniquely as $q_1\cdots q_t$ for $q_i\in \mathcal{Q}_A$ for some $t\in I = [(1-\epsilon)\log\log N, 2\log\log N]$, we have that, since $t!\geq (t/e)^t$,
 \[R(A)\leq  \sum_{t\in I}\frac{\brac{\sum_{q\in \mathcal{Q}_A}\frac{1}{q}}^t}{t!}\leq \sum_{t\in I}\brac{\frac{e}{t}\sum_{q\in \mathcal{Q}_A}\frac{1}{q}}^t.\]
 Since $(ex/t)^t$ is decreasing in $t$ for $x<t$, either $\sum_{q\in \mathcal{Q}_A}\frac{1}{q}\geq (1-\epsilon)\log\log N$ (and we are done), or the summand is decreasing in $t$, and hence we have
 \[(\log N)^{-\epsilon/2}\leq R(A)\leq 2\log\log N\brac{\frac{\sum_{q\in \mathcal{Q}_A}\frac{1}{q}}{(1-\epsilon)e^{-1}\log\log N}}^{(1-\epsilon)\log\log N}.\]
 The claimed bound follows, using the fact that $e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq 1-\epsilon$ for $\epsilon\in (0,1/2)$, choosing $N$ large enough such that $(2\log\log N)^{2/\log\log N}\leq 1+\epsilon^2$, say.
 
-To verify the inequality $e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq 1-\epsilon$ for $\epsilon\in (0,1/2)$, note that $\frac{\epsilon}{2(1-\epsilon)}\leq \epsilon$ for all $\epsilon\in (0,1/2)$, and hence using $1+x\leq e^{x}$ for all $x\geq -1$, we have 
+To verify the inequality $e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq 1-\epsilon$ for $\epsilon\in (0,1/2)$, note that $\frac{\epsilon}{2(1-\epsilon)}\leq \epsilon$ for all $\epsilon\in (0,1/2)$, and hence using $1+x\leq e^{x}$ for all $x\geq -1$, we have
 \[e^{-\frac{\epsilon}{2(1-\epsilon)}}\geq e^{-\epsilon}\geq 1-\epsilon\]
-as required. 
+as required.
 \end{proof}
 
 \begin{lemma}\label{lem:smoothsum}
-\leanok 
+\leanok
 \lean{useful_rec_bound}
-There is a constant $C>0$ such that the following holds. Let $0<y<N$ be some reals, and suppose that $D$ is a finite set of integers such that if $d\in D$ and $p^r\| d$ then $y<p^r\leq N$. Then, for any real $k\geq 1$, 
+There is a constant $C>0$ such that the following holds. Let $0<y<N$ be some reals, and suppose that $D$ is a finite set of integers such that if $d\in D$ and $p^r\| d$ then $y<p^r\leq N$. Then, for any real $k\geq 1$,
 \[\sum_{d\in D}\frac{k^{\omega(d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k.\]
 \end{lemma}
 \begin{proof}
+  \leanok
 \uses{lem:mertens1}
 We can write every $d\in D$ uniquely as a product of prime powers $d=p_1^{r_1}\cdots p_k^{r_k}$, where for each $i$ either $r_i=1$ and $y<p_i\leq N$, or $r_i\geq 2$ and $p_i\leq N$. Therefore the left-hand side is at most
 \[\prod_{y<p\leq N}\left(1+\frac{k}{p}\right)\prod_{p\leq N}\left(1+\frac{k}{p^2}+\cdots\right).\]
 The second product is, using $1+kx\leq (1+x)^k$,
 \[=\prod_{p\leq N}\left(1+\frac{k}{p(p-1)}\right)\leq \left(\prod_{p\leq N}\left(1+\frac{1}{p(p-1)}\right)\right)^k\leq C_1^k\]
-for some constant $C_1>0$, since the product converges. Similarly, 
+for some constant $C_1>0$, since the product converges. Similarly,
 \[\prod_{y<p\leq N}\left(1+\frac{k}{p}\right)\leq \left(\prod_{y<p\leq N}\left(1+\frac{1}{p}\right)\right)^k,\]
-and the product here is $\ll (\log N/\log y)$ by Mertens' bound \ref{lem:mertens1}. Combining these yields the required estimate. 
+and the product here is $\ll (\log N/\log y)$ by Mertens' bound \ref{lem:mertens1}. Combining these yields the required estimate.
 \end{proof}
 
 
@@ -68,21 +71,22 @@ For all $q$ such that $R(A;q)\geq 1/\log N$ there exists $d$ such that
 \end{enumerate}
 \end{lemma}
 \begin{proof}\uses{lem:smoothsum}
-Fix some $q$ with $R(A;q)\geq (\log N)^{-1/2}$. Let $y=\exp((\log N)^{1-2/k})$. Let $D$ be the set of all $d$ such that if $r$ is a prime power such that $r\mid d$ and $(r,d/r)=1$ then $y<r\leq N$, and furthermore 
+  \leanok
+Fix some $q$ with $R(A;q)\geq (\log N)^{-1/2}$. Let $y=\exp((\log N)^{1-2/k})$. Let $D$ be the set of all $d$ such that if $r$ is a prime power such that $r\mid d$ and $(r,d/r)=1$ then $y<r\leq N$, and furthermore
 \[qd\in (M\exp(-(\log N)^{1-1/k}),N].\]
-We first claim that every $n\in A_q$ is divisible by some $qd$ with $d\in D$, such that $(qd,n/qd)=1$. Let $Q_n$ be the set of prime powers $r$ dividing $n$ such that $(r,n/r)=1$, so that $n=\prod_{r\in Q_n}r$. Let 
+We first claim that every $n\in A_q$ is divisible by some $qd$ with $d\in D$, such that $(qd,n/qd)=1$. Let $Q_n$ be the set of prime powers $r$ dividing $n$ such that $(r,n/r)=1$, so that $n=\prod_{r\in Q_n}r$. Let
 \[Q_n'=\{ r\in Q_n: r\neq q\textrm{ and }r>y\}.\]
-We let $d=\prod_{r\in Q_n'}r$. We need to check that $d\in D$ and $qd\mid n$. It is immediate from the definitions that if a prime power $r$ divides $d$ with $(r,d/r)=1$ then $r\in Q_n'$, whence $r>y$. It is also straightforward to check, by comparing prime powers, that $qd\mid n$, and hence $qd\leq n\leq N$. Furthermore, 
+We let $d=\prod_{r\in Q_n'}r$. We need to check that $d\in D$ and $qd\mid n$. It is immediate from the definitions that if a prime power $r$ divides $d$ with $(r,d/r)=1$ then $r\in Q_n'$, whence $r>y$. It is also straightforward to check, by comparing prime powers, that $qd\mid n$, and hence $qd\leq n\leq N$. Furthermore,
 \[\frac{n}{qd}=\prod_{r\in Q_n\backslash Q_n'\cup\{q\}}r\leq y^{\abs{Q_n}}=y^{\omega(n)}\leq \exp((\log N)^{1-1/k}),\]
-by definition of $y$ and the hypothesis that $\omega(n)\leq (\log N)^{1/k}$. It follows that $d\in D$ as required. 	
+by definition of $y$ and the hypothesis that $\omega(n)\leq (\log N)^{1/k}$. It follows that $d\in D$ as required.
 
 If we let $A_q(d)=\{ n \in A_q : qd\mid n\textrm{ and }(qd,n/qd)=1\}$ then we have shown that $A_q\subseteq \bigcup_{d\in D}A_q(d)$. Therefore
 \[R(A;q) = \sum_{n\in A_q}\frac{q}{n}\leq \sum_{d\in D}\sum_{n\in A_q(d)}\frac{q}{n}.\]
 
 We will control the contribution from those $d$ with $\omega(d)>\omega_0= \frac{5}{\log k}\log\log N$ with the trivial bound
 \[\sum_{A_q(d)}\frac{q}{n} \leq \sum_{\substack{n\leq N\\ qd\mid n}}\frac{q}{n}\leq \sum_{m\leq N}\frac{q}{dqm}\leq 2\frac{\log N}{d},\]
-using the harmonic sum bound $\sum_{m\leq N}\frac{1}{m}\leq \log N+1\leq 2\log N$. 
-Therefore 
+using the harmonic sum bound $\sum_{m\leq N}\frac{1}{m}\leq \log N+1\leq 2\log N$.
+Therefore
 \[
 \sum_{\substack{d\in D\\ \omega(d)>\omega_0}}\sum_{n\in A_q(d)}\frac{q}{n}
 \leq 2\log N\sum_{\substack{d\in D\\ \omega(d)> \omega_0}} \frac{1}{d}\]
@@ -91,9 +95,9 @@ By \ref{lem:smoothsum} we have
 \[\sum_{d\in D}\frac{k^{\omega(d)}}{d}\leq \left(C\frac{\log N}{\log y}\right)^k.\]
 and therefore
 \[\sum_{\substack{d\in D\\ \omega(d)>\omega_0}}\sum_{n\in A_q(d)}\frac{q}{n}\leq 2k^{-\omega_0}\log N \left(C\frac{\log N}{\log y}\right)^k.\]
-Recalling $\omega_0=\frac{5}{\log k}\log\log N$ and  $y=\exp((\log N)^{1-2/k})$ the right-hand side here is at most 
+Recalling $\omega_0=\frac{5}{\log k}\log\log N$ and  $y=\exp((\log N)^{1-2/k})$ the right-hand side here is at most
 \[2(\log N)^{-5}C^k\leq 1/2\log N\leq \tfrac{1}{2}R(A;q),\]
-for sufficiently large $N$, assuming $k\leq c\log\log N$ for sufficiently small $c$.  
+for sufficiently large $N$, assuming $k\leq c\log\log N$ for sufficiently small $c$.
 
 It follows that
 \[\tfrac{1}{2}R(A;q)\leq \sum_{\substack{d\in D\\ \omega(d)\leq \omega_0}}\sum_{d\in D}\frac{q}{n} .\]
@@ -111,20 +115,20 @@ and $\epsilon < R(B;q)$ for all $q\in \mathcal{Q}_B$.
 \end{lemma}
 \begin{proof}
 \leanok
-We will prove the following claim, valid for any finite set $A\subset \mathbb{N}$ with $0\not\in A$ and $\epsilon>0$, via induction: for all $i\geq 0$ there exists $A_i\subseteq A$ and $Q_i\subseteq \mathcal{Q}_A$ such that 
+We will prove the following claim, valid for any finite set $A\subset \mathbb{N}$ with $0\not\in A$ and $\epsilon>0$, via induction: for all $i\geq 0$ there exists $A_i\subseteq A$ and $Q_i\subseteq \mathcal{Q}_A$ such that
 \begin{enumerate}
 \item the sets $\mathcal{Q}_{A_i}$ and $Q_i$ are disjoint,
 \item $R(A_i)\geq R(A)- \epsilon\sum_{q\in Q_i}\frac{1}{q}$,
-\item either $i\leq \abs{A\backslash A_i}$ or, for all $q'\in \mathcal{Q}_{A_i}$, $\epsilon < R(A_i;q')$. 
-\end{enumerate} 
+\item either $i\leq \abs{A\backslash A_i}$ or, for all $q'\in \mathcal{Q}_{A_i}$, $\epsilon < R(A_i;q')$.
+\end{enumerate}
 
 Given this claim, the stated lemma follows by choosing $B=A_{\abs{A}+1}$, noting that in the 5th point above the first alternative cannot hold, and furthermore
 \[\epsilon \sum_{q\in Q_{\abs{A}+1}}\frac{1}{q}\leq \epsilon \sum_{q\leq N}\frac{1}{q}\leq 2\epsilon \log\log N,\]
-by Lemma~\ref{lem:mertens1}, assuming $N$ is sufficiently large. 
+by Lemma~\ref{lem:mertens1}, assuming $N$ is sufficiently large.
 
 To prove the inductive claim, we begin by choosing $Q_0=\emptyset$, and $A_0=A$. All of the properties are trivial to verify.
 
-Suppose the proposition is true for $i\geq 0$, with associated $A_i,Q_i$. We will now prove it for $i+1$. If it is true that, for all $q'\in\mathcal{Q}_{A_i}$, we have $\epsilon <R(A_i;q')$, then we let $A_{i+1}=A_i$ and $Q_{i+1}=Q_i$. 
+Suppose the proposition is true for $i\geq 0$, with associated $A_i,Q_i$. We will now prove it for $i+1$. If it is true that, for all $q'\in\mathcal{Q}_{A_i}$, we have $\epsilon <R(A_i;q')$, then we let $A_{i+1}=A_i$ and $Q_{i+1}=Q_i$.
 
 Otherwise, let $q'\in \mathcal{Q}_{A_i}$ be such that $R(A_i;q')\leq \epsilon$, set $A_{i+1} = A_i\backslash \{ n\in A_i : q'\mid n \textrm{ and }(q',n/q')=1\}$, and $Q_{i+1}=Q_i\cup \{q'\}$.
 
@@ -132,13 +136,13 @@ It remains to verify the required properties. That $Q_{i+1}\subseteq \mathcal{Q}
 
 For point (1), since $A_{i+1}\subseteq A_i$, and hence $\mathcal{Q}_{A_{i+1}}\subseteq \mathcal{Q}_{A_i}$, it suffices to show that $q'\not\in \mathcal{Q}_{A_{i+1}}$. If this were not true, there would be some $n\in A_{i+1}$ such that $q'\mid n$ and $(q',n/q')=1$, contradiction to the definition of $A_{i+1}$.
 
-For point (2), we note that 
+For point (2), we note that
 \[R(A_{i+1})= R(A_i)-\sum_{\substack{n\in A_i\\ q'\mid n\\ (q',n/q')=1}}\frac{1}{n} = R(A_i)-\frac{1}{q'}R(A_i;q')\geq R(A_i)-\epsilon \frac{1}{q'},\]
 and point (2) follows from induction and the observation that
 \[\frac{1}{q'}+\sum_{q\in Q_i}\frac{1}{q}=\sum_{q\in Q_{i+1}}\frac{1}{q},\]
-since $q'\in\mathcal{Q}_{A_i}$ and hence $q'\not\in Q_{i}$. 
+since $q'\in\mathcal{Q}_{A_i}$ and hence $q'\not\in Q_{i}$.
 
-Finally, for point (3), we note that since we assume that it is not true that for all $q'\in\mathcal{Q}_{A_i}$, we have $\epsilon <R(A_i;q')$, it must be true that $i\leq \abs{A\backslash A_{i}}$. We now claim that $i+1\leq \abs{A\backslash A_{i+1}}$, for which it suffices to show that $A_{i+1}\subsetneq A_i$. This is true since $q'\in\mathcal{Q}_{A_i}$, and hence the set $\{ n\in A_i : q'\mid n \textrm{ and }(q',n/q')=1\}$ is not empty. 
+Finally, for point (3), we note that since we assume that it is not true that for all $q'\in\mathcal{Q}_{A_i}$, we have $\epsilon <R(A_i;q')$, it must be true that $i\leq \abs{A\backslash A_{i}}$. We now claim that $i+1\leq \abs{A\backslash A_{i+1}}$, for which it suffices to show that $A_{i+1}\subsetneq A_i$. This is true since $q'\in\mathcal{Q}_{A_i}$, and hence the set $\{ n\in A_i : q'\mid n \textrm{ and }(q',n/q')=1\}$ is not empty.
 \end{proof}
 
 \begin{lemma}\label{lem:pisq}
@@ -148,31 +152,31 @@ Suppose that $N$ is sufficiently large and $N>M$. Let $\epsilon,\alpha$ be reals
 \[R(A) \geq \alpha+2\epsilon\log\log N\]
 and if $q\in\mathcal{Q}_A$ then $q\leq \epsilon M$.
 
-There is a subset $B\subset A$ such that $R(B)\in [\alpha-1/M,\alpha)$ and, for all $q\in \mathcal{Q}_B$, we have $\epsilon < R(B;q)$. 
+There is a subset $B\subset A$ such that $R(B)\in [\alpha-1/M,\alpha)$ and, for all $q\in \mathcal{Q}_B$, we have $\epsilon < R(B;q)$.
 \end{lemma}
 \begin{proof}
 \uses{lem:pisqa}
 \leanok
-We will prove the following, for all $N$ sufficiently large, real $0<M<N$, reals $\epsilon>0$ and $\alpha > 4\epsilon\log\log N$ and finite sets $A\subseteq [M,N]$ such that $R(A)\geq \alpha$ and $R(A;q)> \epsilon$ for all $q\in\mathcal{Q}_A$, by induction: for all $i\geq 0$ there exists $A_i\subseteq A$ such that 
+We will prove the following, for all $N$ sufficiently large, real $0<M<N$, reals $\epsilon>0$ and $\alpha > 4\epsilon\log\log N$ and finite sets $A\subseteq [M,N]$ such that $R(A)\geq \alpha$ and $R(A;q)> \epsilon$ for all $q\in\mathcal{Q}_A$, by induction: for all $i\geq 0$ there exists $A_i\subseteq A$ such that
 \begin{enumerate}
-\item $R(A_i)\geq \alpha-1/M$, 
+\item $R(A_i)\geq \alpha-1/M$,
 \item $R(A_i;q) > \epsilon$ for all $q\in\mathcal{Q}_{A_i}$, and
-\item either $i\leq \abs{A\backslash A_i}$ or $R(A_i)<\alpha$. 
+\item either $i\leq \abs{A\backslash A_i}$ or $R(A_i)<\alpha$.
 \end{enumerate}
 
-Given this claim, we prove the lemma as follows. Let $A'\subseteq A$ be as given by Lemma~\ref{lem:pisqa}, so that the hypotheses of the inductive claim are satisfied for $A'$. We now apply the inductive claim, and choose $B=A_{\abs{A}+1}$, noting that the first alternative of point (3) cannot hold. 
+Given this claim, we prove the lemma as follows. Let $A'\subseteq A$ be as given by Lemma~\ref{lem:pisqa}, so that the hypotheses of the inductive claim are satisfied for $A'$. We now apply the inductive claim, and choose $B=A_{\abs{A}+1}$, noting that the first alternative of point (3) cannot hold.
 
-It remains to prove the inductive claim. The base case $i=0$ is immediate by hypotheses, choosing $A_0=A$. 
+It remains to prove the inductive claim. The base case $i=0$ is immediate by hypotheses, choosing $A_0=A$.
 
 We now fix some $i\geq 0$, with associated $A_i$ as above, and prove the claim for $i+1$. If $R(A_i)<\alpha$ then we set $A_{i+1}=A_i$. Otherwise, we have $R(A_i)\geq \alpha$. By Lemma~\ref{lem:pisqa} there exists $B\subset A_i$ such that
 \[R(B)\geq  R(A_i)-4\epsilon\log\log N\geq \alpha - 4\epsilon\log\log N>0\]
-and $2\epsilon < R(B;q)$ for all $q\in \mathcal{Q}_B$. In particular, since $R(B)>0$, the set $B$ is not empty. Let $x\in B$ be arbitrary, and set $A_{i+1}=A_i\backslash \{x\}$. 
+and $2\epsilon < R(B;q)$ for all $q\in \mathcal{Q}_B$. In particular, since $R(B)>0$, the set $B$ is not empty. Let $x\in B$ be arbitrary, and set $A_{i+1}=A_i\backslash \{x\}$.
 
-We note that since $x\in B\subseteq A$, we have $x\geq M$, and hence $R(A_{i+1})=R(A_i)-1/x\geq \alpha-1/M$, so point (1) is satisfied. Furthermore, since $R(A_i)\geq \alpha$, we have $i\leq \abs{A\backslash A_i}$, and hence $i+1 \leq \abs{A\backslash A_{i+1}}$ and point (3) is satisfied. 
+We note that since $x\in B\subseteq A$, we have $x\geq M$, and hence $R(A_{i+1})=R(A_i)-1/x\geq \alpha-1/M$, so point (1) is satisfied. Furthermore, since $R(A_i)\geq \alpha$, we have $i\leq \abs{A\backslash A_i}$, and hence $i+1 \leq \abs{A\backslash A_{i+1}}$ and point (3) is satisfied.
 
 For point (2), let $q\in \mathcal{Q}_{A_{i+1}}\subseteq \mathcal{Q}_{A_i}$. If it is not true that $q\mid x$ and $(q,x/q)=1$ then
 \[R(A_{i+1};q) = R(A_i; q)>\epsilon.\]
 Otherwise, if $q\mid x$ and $(q,x/q)=1$, then $q\in\mathcal{Q}_B$. It follows that, since $B\subseteq A_i$, we have
 \[R(A_{i+1};q)\geq R(B;q)-\frac{q}{x}>2\epsilon -\frac{q}{M}\geq \epsilon,\]
-since $q\leq \epsilon M$. The inductive claim now follows. 
+since $q\leq \epsilon M$. The inductive claim now follows.
 \end{proof}
