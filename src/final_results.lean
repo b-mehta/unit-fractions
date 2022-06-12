@@ -80,7 +80,7 @@ lemma sum_prime_counting_sq : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
 -- ((filter (λ i, x ∣ i) (Icc 1 N)).card : ℝ) make anything afterwards more annoying?
 -- same for the three above
 lemma count_divisors {x N : ℕ} (hx : x ≠ 0) :
-  ((filter (λ i, x ∣ i) (range N)).card : ℝ) = (N / x : ℝ) - int.fract (N / x) :=
+  ((filter (λ i, x ∣ i) (Icc 1 N)).card : ℝ) = (N / x : ℝ) - int.fract (N / x) :=
 begin
   -- have : filter (λ i, x ∣ i) (Icc 1 N) = filter (λ i, x ∣ i) (range N),
   -- { ext m,
@@ -174,21 +174,73 @@ lemma product_of_primes_factors_to_finset {s : finset ℕ} (hs : ∀ p ∈ s, na
   (∏ p in s, p).factors.to_finset = s :=
 by rw [product_of_primes_factors hs, sort_to_finset]
 
+lemma mem_factors_prod {A : finset ℕ} (h : ∀ n ∈ A, n ≠ 0) {p : ℕ} :
+p ∈ (∏ a in A, a).factors ↔ ∃ a ∈ A, p ∈ (a:ℕ).factors :=
+begin
+  induction A using finset.induction_on with n A hnA hA,
+  simp only [prod_empty, nat.factors_one, list.not_mem_nil, not_mem_empty, exists_false_left,
+     exists_false],
+  rw [prod_insert hnA, nat.mem_factors_mul], split, intro h',
+  cases h' with h₁ h₂, use n, refine ⟨mem_insert_self _ _,h₁⟩,
+  rw hA at h₂, rcases h₂ with ⟨b,hb₁,hb₂⟩, use b, refine ⟨_,hb₂⟩,
+  refine mem_insert_of_mem hb₁, intros n hn, refine h n _,
+  refine mem_insert_of_mem hn, intro h', rcases h' with ⟨a,ha₁,ha₂⟩,
+  rw mem_insert at ha₁, cases ha₁, rw ha₁ at ha₂, left, exact ha₂,
+  right, rw hA, use a, refine ⟨ha₁,ha₂⟩, intros n hn, refine h n _,
+  refine mem_insert_of_mem hn, refine h n _, refine mem_insert_self _ _,
+  rw prod_ne_zero_iff, intros n hn, refine h n _,
+  refine mem_insert_of_mem hn,
+end
+
+lemma prod_primes_squarefree {A : finset ℕ} (h : ∀ n ∈ A, nat.prime n) :
+ squarefree ∏ p in A, p :=
+begin
+  unfreezingI { induction A using finset.induction_on with p A hpA hA },
+  simp only [prod_empty, squarefree_one],
+  rw prod_insert hpA, rw nat.squarefree_mul,
+  refine ⟨prime.squarefree _,_⟩, rw ← nat.prime_iff, refine h p _, refine mem_insert_self _ _,
+  refine hA _, intros n hn, refine h n _, refine mem_insert_of_mem hn,
+  refine nat.coprime_prod_right _, intros q hq, rw nat.coprime_primes, intro hbad,
+  rw hbad at hpA, exact hpA hq, refine h p _, refine mem_insert_self _ _,
+  refine h q _, refine mem_insert_of_mem hq,
+end
+
 lemma sieve_lemma_prec (N : ℕ) (y z : ℝ) (hy : 1 ≤ y) (hzN : z < N) :
-   (((finset.range N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n → ((p : ℝ) < y) ∨ z < p)).card : ℝ) ≤
-   ((partial_euler_product ⌊y + 1⌋₊)/(partial_euler_product ⌊z⌋₊)) * N + 2^(z+1) :=
+   (((Icc 1 N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n → ((p : ℝ) < y) ∨ z < p)).card : ℝ) ≤
+   ((partial_euler_product ⌊y⌋₊)/(partial_euler_product ⌊z⌋₊)) * N + 2^(z+1) :=
 begin
   cases lt_or_le z y,
-    -- maybe can assume y ≤ z anyway but if not the z < y case should be easy anyway
-  { sorry },
+  { calc _ ≤ (N:ℝ) :_
+       ... ≤ _ :_,
+    norm_cast,
+    have : N = (Icc 1 N).card, { rw nat.card_Icc,
+    simp only [nat.add_succ_sub_one, add_zero], },
+    nth_rewrite 1 this, refine finset.card_filter_le _ _,
+    rw ← add_zero (N:ℝ), refine add_le_add _ _, rw add_zero, refine le_mul_of_one_le_left _ _,
+    exact nat.cast_nonneg N, rw [one_le_div, partial_euler_product, partial_euler_product],
+    refine prod_of_subset_le_prod_of_one_le _ _ _, intros p hp,
+    rw [mem_filter, mem_Icc], rw [mem_filter, mem_Icc] at hp, refine ⟨⟨hp.1.1,_⟩,hp.2⟩,
+    refine le_trans hp.1.2 _,
+    by_cases h0z : 1 ≤ z,
+    rw nat.le_floor_iff, refine le_trans _ (le_of_lt h), refine nat.floor_le _,
+    exact le_trans zero_le_one h0z,  exact le_trans zero_le_one hy,
+    rw [not_le, ← nat.floor_eq_zero] at h0z, rw h0z, exact zero_le ⌊y⌋₊,
+    intros p hp, rw [inv_nonneg, sub_nonneg, inv_le_one_iff], right,
+    norm_cast, rw mem_filter at hp, refine le_of_lt (nat.prime.one_lt hp.2),
+    intros p hp1 hp2, refine one_le_inv _ _, rw [sub_pos, inv_lt_one_iff], right,
+    norm_cast, rw mem_filter at hp1, exact nat.prime.one_lt hp1.2,
+    refine sub_le_self _ _, rw [inv_nonneg], exact nat.cast_nonneg p,
+    refine lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound,
+    refine rpow_nonneg_of_nonneg _ _, exact zero_le_two,
+  },
   let P := ∏ p in ((finset.range N).filter (λ p, nat.prime p ∧ (y ≤ p) ∧ ((p:ℝ) ≤ z))), p,
   have hP : P ≠ 0,
   { rw prod_ne_zero_iff,
     intros x hx,
     simp only [mem_filter, mem_range] at hx,
     exact hx.2.1.pos.ne' },
-  have h₁ : ((finset.range N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n →
-       ((p : ℝ) < y) ∨ (z < p))).card = ((finset.range N).filter (λ n, coprime n P)).card,
+  have h₁ : ((Icc 1 N).filter (λ n, ∀ p : ℕ, prime p → p ∣ n →
+       ((p : ℝ) < y) ∨ (z < p))).card = ((Icc 1 N).filter (λ n, coprime n P)).card,
   { congr' 1,
     apply filter_congr,
     simp only [mem_range, nat.coprime_prod, mem_filter, and_imp, ←nat.prime_iff],
@@ -224,7 +276,7 @@ begin
   rw sum_comm,
   simp_rw [←mul_boole _ (μ _ : ℝ), ←mul_sum],
   simp_rw [sum_boole],
-  have : ∑ x in P.divisors, (μ x : ℝ) * ((filter (λ i, x ∣ i) (range N)).card : ℝ) =
+  have : ∑ x in P.divisors, (μ x : ℝ) * ((filter (λ i, x ∣ i) (Icc 1 N)).card : ℝ) =
       ∑ x in P.divisors, (μ x : ℝ) * ((N / x : ℝ) - int.fract (N / x)),
   { rw sum_congr rfl,
     intros x hx,
@@ -239,46 +291,75 @@ begin
     (range N).filter (λ p, nat.prime p ∧ y ≤ p ∧ (p : ℝ) ≤ z),
   { rw [←nat.prime_divisors_eq_to_filter_divisors_prime, product_of_primes_factors_to_finset],
     simp only [mem_filter, implies_true_iff] {contextual := tt} },
-  -- this is false as written (I think) - y+1 won't be the right bound
   have hP_divisors' :
-    P.divisors.filter nat.prime = filter nat.prime (Icc 1 ⌊z⌋₊ \ Icc 1 ⌊y + 1⌋₊),
+    filter nat.prime (Icc 1 ⌊z⌋₊ \ Icc 1 ⌊y⌋₊) ⊆ P.divisors.filter nat.prime,
   {
-    -- rw [hP_divisors, Icc_sdiff_Icc_left],
-    sorry
-    -- { ext n,
-    --   simp only [mem_filter, mem_Ioc, mem_range, and_assoc],
-    --   split,
-    --   { rintro ⟨h₁, h₂, h₃, h₄⟩,
-    --     rw [nat.le_floor_iff' h₂.pos.ne', nat.floor_lt' h₂.pos.ne', sub_lt_iff_lt_add],
-    --     exact ⟨h₃.trans_lt (by simp only [lt_add_iff_pos_right, zero_lt_one]), h₄, h₂⟩ },
-    --   { rintro ⟨h₁, h₂, h₃⟩,
-    --     rw [nat.le_floor_iff' h₃.pos.ne'] at h₂,
-    --     rw [nat.floor_lt' h₃.pos.ne', sub_lt_iff_lt_add] at h₁,
-    --     refine ⟨by simpa only [nat.cast_lt] using h₂.trans_lt hzN, h₃, _, h₂⟩,
-
-    --   }
-
-    -- },
-    -- sorry,
-    -- { apply nat.le_floor,
-    --   rwa [nat.cast_one, le_add_iff_nonneg_left] },
-
-
+    rw [hP_divisors, Icc_sdiff_Icc_left], intros n hn,
+    simp only [mem_filter, mem_Ioc, mem_range, and_assoc],
+    rw [mem_filter, mem_Ioc, nat.le_floor_iff, nat.floor_lt'] at hn,
+    refine ⟨_,hn.2,_,hn.1.2⟩,
+    exact_mod_cast lt_of_le_of_lt hn.1.2 hzN, refine le_of_lt _, exact hn.1.1,
+    exact nat.prime.ne_zero hn.2,
+    refine le_trans _ h, refine le_trans zero_le_one hy,
+    rw nat.le_floor_iff, refine le_trans _ h, refine nat.floor_le _,
+    exact le_trans zero_le_one hy,
+    refine le_trans _ h, refine le_trans zero_le_one hy, rw nat.le_floor_iff,
+    exact_mod_cast hy, exact le_trans zero_le_one hy,
   },
-  have hPsum : ∑ (x : ℕ) in P.divisors, (μ x : ℝ) / x =
-    (partial_euler_product ⌊y+1⌋₊) / (partial_euler_product ⌊z⌋₊),
+  have hPsum : ∑ (x : ℕ) in P.divisors, (μ x : ℝ) / x ≤
+    (partial_euler_product ⌊y⌋₊) / (partial_euler_product ⌊z⌋₊),
   { rw [moebius_rec_sum hP, partial_euler_product, partial_euler_product, prod_inv_distrib,
       prod_inv_distrib, inv_div_inv, ←prod_sdiff'', ←filter_sdiff],
+    refine prod_le_prod_of_subset_of_le_one _ _ _,
     sorry,
-    sorry, sorry
+    --This should just be hP_divisors', but weird decidability error?
+    intros p hp, rw [sub_nonneg, inv_le_one_iff], right, norm_cast, rw mem_filter at hp,
+    refine le_of_lt (nat.prime.one_lt hp.2), intros p hp1 hp2, refine sub_le_self _ _,
+    rw inv_nonneg, exact nat.cast_nonneg p, intros p hp,
+    rw [mem_filter, mem_Icc], rw [mem_filter, mem_Icc] at hp, refine ⟨⟨hp.1.1,_⟩,hp.2⟩,
+    refine le_trans hp.1.2 _,
+    rw nat.le_floor_iff, refine le_trans _ h, refine nat.floor_le _,
+    exact le_trans zero_le_one hy,
+    refine le_trans _ h, refine le_trans zero_le_one hy,
+    intros p hp, refine ne_of_gt _, rw [sub_pos, inv_lt_one_iff],
+    right, norm_cast, rw mem_filter at hp,
+    refine nat.prime.one_lt hp.2,
   },
   rw [sub_eq_add_neg],
   refine add_le_add _ _,
-  refine mul_le_mul_of_nonneg_left hPsum.le _,
+  refine mul_le_mul_of_nonneg_left hPsum _,
   exact nat.cast_nonneg N, refine le_trans (le_abs_self _) _,
-  rw [abs_neg], refine le_trans (abs_sum_le_sum_abs _ _) _, sorry,
-  --divisor_count_eq_pow_iff_squarefree
-  -- ω P ≤ z+1
+  rw [abs_neg], refine le_trans (abs_sum_le_sum_abs _ _) _,
+  calc _ ≤ (σ 0 P : ℝ) :_
+     ... ≤ _ :_,
+  rw nat.arithmetic_function.sigma_zero_apply,
+  refine le_trans (finset.sum_le_card_nsmul _ _ 1 _) _,
+  intros d hd, rw [abs_mul], refine mul_le_one _ _ _,
+  by_cases hdsq : squarefree d,
+  rw [nat.arithmetic_function.moebius_apply_of_squarefree hdsq], norm_cast,
+  rw [abs_pow, abs_neg, abs_one, one_pow],
+  rw nat.arithmetic_function.moebius_eq_zero_of_not_squarefree hdsq, norm_cast,
+  exact zero_le_one, refine abs_nonneg _, rw abs_of_nonneg,
+  refine le_of_lt (int.fract_lt_one _), refine int.fract_nonneg _,
+  simp only [nat.smul_one_eq_coe],
+  have hPsq : squarefree P, { refine prod_primes_squarefree _,
+    intros p hp, rw mem_filter at hp, exact hp.2.1, },
+  rw divisor_count_eq_pow_iff_squarefree.2 hPsq, rw nat.cast_pow, norm_num1,
+  rw ← rpow_nat_cast,
+  refine rpow_le_rpow_of_exponent_le one_le_two _,
+  rw [nat.arithmetic_function.card_distinct_factors_apply, ← list.card_to_finset],
+  transitivity ((Icc 0 ⌊z⌋₊).card : ℝ),
+  norm_cast, refine finset.card_le_of_subset _, intros p hp,
+  rw [list.mem_to_finset, mem_factors_prod] at hp,
+  rcases hp with ⟨q,hq1,hq2⟩, rw mem_filter at hq1,
+  rw [nat.factors_prime hq1.2.1, list.mem_singleton] at hq2, rw [hq2, mem_Icc],
+  refine ⟨zero_le q,_⟩, rw nat.le_floor_iff, exact hq1.2.2.2,
+  refine le_trans _ h, exact le_trans zero_le_one hy,
+  intros n hn, rw mem_filter at hn, exact nat.prime.ne_zero hn.2.1,
+  rw [nat.card_Icc, nat.cast_sub], push_cast, rw sub_zero,
+  rw add_le_add_iff_right, refine nat.floor_le _,
+  refine le_trans _ h, exact le_trans zero_le_one hy,
+  exact zero_le (⌊z⌋₊ + 1),
 end
 
 lemma sieve_lemma_prec' : ∃ C c : ℝ, (0 < C) ∧ (0 < c) ∧
@@ -288,9 +369,9 @@ lemma sieve_lemma_prec' : ∃ C c : ℝ, (0 < C) ∧ (0 < c) ∧
 begin
   rcases weak_mertens_third_lower_all with ⟨C₁,hC₁,hml⟩,
   rcases weak_mertens_third_upper_all with ⟨C₂,hC₂,hmu⟩,
-  let C := 1 / C₁ * C₂ * 2 * 2,
+  let C := 1 / C₁ * C₂ * 2,
   let c := (1:ℝ)/2,
-  have h0C : 0 < C, { refine mul_pos _ zero_lt_two, refine mul_pos _ zero_lt_two,
+  have h0C : 0 < C, { refine mul_pos _ zero_lt_two,
     refine mul_pos _ hC₂, rw one_div_pos, exact hC₁, },
   use C, use c, refine ⟨h0C,one_half_pos,_⟩,
   filter_upwards [tendsto_coe_nat_at_top_at_top.eventually (eventually_gt_at_top (0:ℝ)),
@@ -306,32 +387,23 @@ begin
     refine mul_le_of_le_one_left h0logN.le _,
     change (1 : ℝ) / 2 ≤ 1,
     refine half_le_self zero_le_one },
-  have h2y1 : 2 ≤ y + 1, {
-  refine le_trans h2y _, rw [le_add_iff_nonneg_right], exact zero_le_one, },
   refine le_trans (sieve_lemma_prec N y z (h2y.trans' (by norm_num1)) hzN') _,
   rw [← add_halves C, add_mul, add_mul], refine add_le_add _ _,
   rw [mul_le_mul_right h0N, mul_div, div_le_div_iff],
-  specialize hmu (y+1), specialize hml z (le_of_lt h1z),
+  specialize hmu y, specialize hml z (le_of_lt h1z),
   rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hml,
   rw [norm_eq_abs, abs_of_pos, norm_eq_abs, abs_of_pos] at hmu,
-  transitivity (C₂*log(y+1)*log z), refine mul_le_mul_of_nonneg_right (hmu _) _, exact h2y1,
-  exact log_nonneg (le_of_lt h1z), transitivity (C₂*log(y+1)*partial_euler_product ⌊z⌋₊/C₁),
+  transitivity (C₂*log(y)*log z), refine mul_le_mul_of_nonneg_right (hmu _) _, exact h2y,
+  exact log_nonneg (le_of_lt h1z), transitivity (C₂*log(y)*partial_euler_product ⌊z⌋₊/C₁),
   rw [le_div_iff hC₁, mul_assoc _ _ C₁], refine mul_le_mul_of_nonneg_left _ _,
   rw mul_comm, exact hml, refine mul_nonneg (le_of_lt hC₂) (log_nonneg _),
-  refine le_trans one_le_two h2y1, rw [div_eq_mul_one_div, mul_comm _ (1/C₁), ← mul_assoc,
+  refine le_trans one_le_two h2y, rw [div_eq_mul_one_div, mul_comm _ (1/C₁), ← mul_assoc,
     mul_le_mul_right, ← mul_assoc],
-  have hy₁ : log(y+1) ≤ 2*log y, { rw [← log_rpow, log_le_log],
-    refine le_trans (add_one_le_two_mul _) _, exact le_trans one_le_two h2y,
-    transitivity y*y, refine mul_le_mul h2y _ _ _, refl,
-    exact le_trans zero_le_two h2y, exact le_trans zero_le_two h2y,
-    rw [← sq, ← rpow_nat_cast], norm_cast, exact lt_of_lt_of_le zero_lt_two h2y1,
-    refine rpow_pos_of_pos _ _, exact lt_of_lt_of_le zero_lt_two h2y,
-    exact lt_of_lt_of_le zero_lt_two h2y,},
-  transitivity ((1/C₁)*C₂*(2*log y)), rw mul_le_mul_left, exact hy₁, refine mul_pos _ hC₂,
-  rw one_div_pos, exact hC₁, rw [← mul_assoc, mul_le_mul_right, le_div_iff], exact zero_lt_two,
+  transitivity ((1/C₁)*C₂*(log y)), rw mul_le_mul_left, refine mul_pos _ hC₂,
+  rw one_div_pos, exact hC₁, rw [mul_le_mul_right, le_div_iff], exact zero_lt_two,
   refine log_pos _, exact lt_of_lt_of_le one_lt_two h2y,
   exact lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound, refine log_pos _,
-  exact lt_of_lt_of_le one_lt_two h2y1,
+  exact lt_of_lt_of_le one_lt_two h2y,
   exact lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound,
   exact lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound, exact log_pos h1z,
   exact lt_of_lt_of_le zero_lt_one partial_euler_trivial_lower_bound, exact log_pos h1z,
@@ -1140,3 +1212,4 @@ end
 --     25 * log (log (log N)) * log N / log (log N) ≤ ∑ n in A, (1 / n : ℝ) →
 --       ∃ S ⊆ A, ∑ n in S, (1 / n : ℝ) = 1 :=
 -- sorry
+
