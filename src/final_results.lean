@@ -54,26 +54,129 @@ begin
     mul_comm (2 : ℝ)],
 end
 
-lemma omega_eq_sum (N : ℕ) {n : ℕ} (hn : n ∈ range N) :
-  ω n = ∑ p in (((range N).filter (λ p, nat.prime p)).filter (λ p, p ∣ n)), 1 :=
-sorry
+lemma omega_eq_sum (N : ℕ) {n : ℕ} (hn : n ∈ Icc 1 N) :
+  ω n = ∑ p in (((Icc 1 N).filter (λ p, nat.prime p)).filter (λ p, p ∣ n)), 1 :=
+begin
+  rw [card_distinct_factors_apply', ←card_eq_sum_ones,
+    nat.prime_divisors_eq_to_filter_divisors_prime],
+  rw mem_Icc at hn,
+  congr' 1,
+  ext p,
+  simp only [mem_filter, nat.mem_divisors, ne.def, mem_Icc, and_assoc],
+  split,
+  { rintro ⟨hp₁, hp₂, hp₃⟩,
+    refine ⟨hp₃.one_lt.le, _, hp₃, hp₁⟩,
+    exact (nat.le_of_dvd (pos_iff_ne_zero.2 hp₂) hp₁).trans hn.2 },
+  { rintro ⟨hp₁, hp₂, hp₃, hp₄⟩,
+    refine ⟨hp₄, _, hp₃⟩,
+    rw nat.succ_le_iff at hn,
+    exact hn.1.ne' }
+end
+
+lemma count_multiples'' {m n : ℕ} (hm : 1 ≤ m) :
+  (((finset.Icc 1 n).filter (λ k, m ∣ k)).card : ℝ) = (n / m : ℝ) - int.fract (n / m) :=
+begin
+  rw [count_multiples hm, int.self_sub_fract, ←nat.cast_floor_eq_cast_int_floor,
+    nat.floor_div_eq_div],
+  exact div_nonneg (nat.cast_nonneg _) (nat.cast_nonneg _)
+end
+
+lemma count_multiples''' {m n : ℕ} (hm : 1 ≤ m) :
+  (((finset.Icc 1 n).filter (λ k, m ∣ k)).card : ℝ) ≤ (n / m : ℝ) :=
+begin
+  rw [count_multiples'' hm, sub_le_self_iff],
+  apply int.fract_nonneg,
+end
 
 lemma sum_prime_counting : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
-   (N:ℝ)*log(log N) -C*N ≤ ∑ (x : ℕ) in (range N), (ω x : ℝ) :=
+   (N : ℝ) * log (log N) - C * N ≤ ∑ x in Icc 1 N, (ω x : ℝ) :=
 begin
-  let C := 2,
-  use C,
-  filter_upwards [eventually_ge_at_top 0] with N hN,
-  calc _ ≤ ∑ (x : ℕ) in (range N),
-       ( ∑ p in (((range(N)).filter(λ p, nat.prime p)).filter(λ p, p ∣ x)), 1 : ℝ) :_
-     ... = _ : _,
+  obtain ⟨c, hc⟩ := (prime_reciprocal.trans (is_o_log_inv_one one_ne_zero).is_O).bound,
+  use -meissel_mertens + c + 1,
+  filter_upwards [tendsto_coe_nat_at_top_at_top hc] with N hN,
+  dsimp at hN,
+  simp only [prime_summatory, nat.floor_coe, abs_one, mul_one, norm_eq_abs] at hN,
+  have : ∀ x ∈ Icc 1 N, (ω x : ℝ) = ∑ p in ((Icc 1 N).filter nat.prime), ite (p ∣ x) 1 0,
+  { intros x hx,
+    rw [omega_eq_sum _ hx, nat.cast_sum, nat.cast_one, sum_filter] },
+  rw [sum_congr rfl this, sum_comm],
+  simp only [←sum_filter],
+  have : ∀ x ∈ (Icc 1 N).filter nat.prime,
+    ∑ (a : ℕ) in filter (has_dvd.dvd x) (Icc 1 N), (1 : ℝ) = (N / x : ℝ) - int.fract (N / x),
+  { intros x hx,
+    rw [←count_multiples'', card_eq_sum_ones, nat.cast_sum, nat.cast_one],
+    rw [mem_filter, mem_Icc] at hx,
+    exact hx.1.1 },
+  rw [sum_congr rfl this, sum_sub_distrib],
+  simp only [div_eq_mul_inv (N : ℝ), ←mul_sum],
+  have h₁ : (N : ℝ) * (log (log N) + meissel_mertens - c) ≤
+    N * ∑ (x : ℕ) in filter nat.prime (Icc 1 N), (↑x)⁻¹,
+  { apply mul_le_mul_of_nonneg_left _ (nat.cast_nonneg _),
+    exact sub_le_of_abs_sub_le_left hN },
+  have h₂ : ∑ x in filter nat.prime (Icc 1 N), int.fract ((N : ℝ) * (↑x)⁻¹) ≤ N,
+  { refine (finset.sum_le_card_nsmul _ _ 1 _).trans _,
+    { intros x hx,
+      exact (int.fract_lt_one _).le },
+    simp only [nat.smul_one_eq_coe, nat.cast_le],
+    exact (card_le_of_subset (filter_subset _ _)).trans (by simp) },
+  refine (sub_le_sub h₁ h₂).trans' (le_of_eq _),
+  ring,
+end
 
-  sorry,
-  refine sum_congr _ _, refl, intros n hn, norm_cast, rw ← omega_eq_sum N hn,
+lemma range_eq_insert_Icc {n : ℕ} {hn : 1 ≤ n} : range n = insert 0 (Icc 1 (n - 1)) :=
+begin
+  rw [Icc_succ_left, Ioc_insert_left (nat.zero_le _), ←nat.Ico_succ_right, nat.succ_eq_add_one,
+    nat.sub_add_cancel hn, range_eq_Ico],
 end
 
 lemma sum_prime_counting_sq : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
-   ∑ (x : ℕ) in (range N), (ω x : ℝ)^2 ≤ N*(log(log N))^2 + C*N*log(log N):= sorry
+   ∑ x in Icc 1 N, (ω x : ℝ) ^ 2 ≤ N * log (log N) ^ 2 + C * N * log (log N) :=
+begin
+  use 1,
+  filter_upwards with N,
+  have : ∀ x ∈ Icc 1 N, (ω x : ℝ) ^ 2 = (∑ p in (Icc 1 N).filter nat.prime, ite (p ∣ x) 1 0) ^ 2,
+  { intros x hx,
+    rw [omega_eq_sum _ hx, nat.cast_sum, nat.cast_one, sum_filter] },
+  rw [sum_congr rfl this],
+  simp_rw [sq, sum_mul, mul_sum, boole_mul, ←ite_and, @sum_comm _ _ _ _ (Icc _ _), ←sq],
+  have : ∀ p ∈ (Icc 1 N).filter nat.prime,
+    ∑ q in (Icc 1 N).filter nat.prime, ∑ n in Icc 1 N, ite (p ∣ n ∧ q ∣ n) (1 : ℝ) 0 ≤
+    ∑ n in Icc 1 N, ite (p ∣ n) 1 0 +
+      ∑ q in (Icc 1 N).filter nat.prime, ∑ n in Icc 1 N, ite (p * q ∣ n) 1 0,
+  { intros p hp,
+    rw [←sum_filter_add_sum_filter_not _ (λ q, p = q), sum_filter, sum_ite_eq, if_pos hp],
+    simp only [and_self, add_le_add_iff_left],
+    refine (sum_le_sum _).trans (sum_le_sum_of_subset_of_nonneg (filter_subset _ _) _),
+    { intros q hq,
+      simp only [mem_filter, mem_Icc, ←ne.def] at hp hq,
+      refine sum_le_sum (λ n hn, _),
+      by_cases p ∣ n ∧ q ∣ n,
+      { rw [if_pos h, if_pos (nat.prime.dvd_mul_of_dvd_ne hq.2 hp.2 hq.1.2 h.1 h.2)] },
+      rw if_neg h,
+      split_ifs,
+      { exact zero_le_one },
+      { refl } },
+    { intros i _ _,
+      simp only [sum_boole, nat.cast_nonneg] } },
+  refine (sum_le_sum this).trans _,
+  rw [sum_add_distrib],
+  simp only [sum_boole],
+  have h₁ : ∑ x in (Icc 1 N).filter nat.prime, ((filter ((∣) x) (Icc 1 N)).card : ℝ) ≤
+    N * ∑ x in (Icc 1 N).filter nat.prime, x⁻¹,
+  { simp only [mul_sum, ←div_eq_mul_inv],
+    refine sum_le_sum (λ x hx, _),
+    simp only [mem_filter, mem_Icc] at hx,
+    apply count_multiples''' hx.1.1 },
+  have h₂ : ∑ p in filter nat.prime (Icc 1 N), ∑ q in filter nat.prime (Icc 1 N),
+    ((filter (has_dvd.dvd (p * q)) (Icc 1 N)).card : ℝ) ≤
+    N * (∑ p in (Icc 1 N).filter nat.prime, p⁻¹) ^ 2,
+  { simp only [sq, mul_sum, sum_mul, ←mul_inv, ←div_eq_mul_inv (N : ℝ), ←nat.cast_mul],
+    refine sum_le_sum (λ p hp, (sum_le_sum (λ q hq, _))),
+    simp only [mem_filter, mem_Icc] at hp hq,
+    apply count_multiples''' (one_le_mul hp.1.1 hq.1.1) },
+  refine (add_le_add h₁ h₂).trans _,
+  sorry
+end
 
 -- I think this is false because the LHS set includes 0
 -- but does changing to
@@ -82,13 +185,8 @@ lemma sum_prime_counting_sq : ∃ (C : ℝ), ∀ᶠ (N : ℕ) in at_top,
 lemma count_divisors {x N : ℕ} (hx : x ≠ 0) :
   ((filter (λ i, x ∣ i) (Icc 1 N)).card : ℝ) = (N / x : ℝ) - int.fract (N / x) :=
 begin
-  -- have : filter (λ i, x ∣ i) (Icc 1 N) = filter (λ i, x ∣ i) (range N),
-  -- { ext m,
-  --   simp only [mem_filter, mem_Icc, mem_range],
-  --   apply and_congr_left',
-  -- },
-  -- -- rw count_multiples,
-  sorry
+  rw count_multiples'',
+  exact hx.bot_lt,
 end
 
 lemma is_multiplicative_one {R : Type*} [ring R] :
@@ -311,8 +409,7 @@ begin
   { rw [moebius_rec_sum hP, partial_euler_product, partial_euler_product, prod_inv_distrib,
       prod_inv_distrib, inv_div_inv, ←prod_sdiff'', ←filter_sdiff],
     refine prod_le_prod_of_subset_of_le_one _ _ _,
-    sorry,
-    --This should just be hP_divisors', but weird decidability error?
+    { convert hP_divisors' },
     intros p hp, rw [sub_nonneg, inv_le_one_iff], right, norm_cast, rw mem_filter at hp,
     refine le_of_lt (nat.prime.one_lt hp.2), intros p hp1 hp2, refine sub_le_self _ _,
     rw inv_nonneg, exact nat.cast_nonneg p, intros p hp,
@@ -1157,7 +1254,7 @@ begin
     exact_mod_cast this,
   },
   have hS'' : ∀ s ∈ S, disjoint S' s, {
-    intros s hs, rw finset.disjoint_iff_disjoint_coe,
+    intros s hs, rw ←finset.disjoint_coe,
     refine set.disjoint_of_subset_left hS'.1 _,
     refine set.disjoint_of_subset_right _ hAS,
     rw finset.coe_bUnion, refine set.subset_bUnion_of_mem hs,
@@ -1212,4 +1309,3 @@ end
 --     25 * log (log (log N)) * log N / log (log N) ≤ ∑ n in A, (1 / n : ℝ) →
 --       ∃ S ⊆ A, ∑ n in S, (1 / n : ℝ) = 1 :=
 -- sorry
-
