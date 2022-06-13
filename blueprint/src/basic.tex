@@ -146,6 +146,7 @@ For any $x,y\geq 0$ and $u\geq v\geq 1$
 \[\#\{ n\in (x,x+y] : p\mid n\implies p\not\in [u,v]\} = y\prod_{u\leq p\leq v}\brac{1-\frac{1}{p}}+O(2^v).\]
 \end{lemma}
 \begin{proof}
+  \leanok
 Let $P = \prod_{u\leq p\leq v}p$. The left-hand side of the estimate in the lemma can be written as
 \[\sum_{x\leq n<x+y}1_{(n,P)=1}.\]
 Using the identity $\sum_{d\mid m}\mu(d) = 1$ if $m=1$ and $0$ otherwise, the fact that $d\mid (n,P)$ if and only if $d\mid n$ and $d\mid P$, and that $\sum_{n\leq z}1_{d\mid n}=\left\lfloor\frac{z}{d}\right\rfloor$ for any $z\geq 0$,

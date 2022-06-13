@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
 </script>
-<script type="text/javascript" id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
 </script>
 <meta name="generator" content="plasTeX" />
 <meta charset="utf-8" />
@@ -69,13 +72,7 @@
 <li class="">
   <a href="chap-techprop.html"><span class="toc_ref">6</span> <span class="toc_entry">Deduction of main technical proposition</span></a>
  </li>
-  <li></li>	
-  <li>	
-  <a href="dep_graph.html">Dependency graph</a>
-  </li>
-  <li>	
-  <a href="https://b-mehta.github.io/unit-fractions/">Project home</a>
-  </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
 </ul>
 </nav>
 
@@ -93,6 +90,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">2.1</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-basic.html#lem:omegasum">#</a>
     <a class="icon proof" href="chap-basic.html#a0000000011"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -134,6 +132,7 @@
     Lemma
     </span>
     <span class="lemma_thmlabel">2.2</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-basic.html#lem:omegasquaredsum">#</a>
     <a class="icon proof" href="chap-basic.html#a0000000015"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -184,6 +183,7 @@
     </span>
     <span class="lemma_thmlabel">2.3</span>
     <span class="lemma_thmtitle">Turán’s estimate</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-basic.html#lem:turan">#</a>
     <a class="icon proof" href="chap-basic.html#a0000000021"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -197,7 +197,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1b4ef039cfed0ebb250ff34bb8180d3296a2fbb3/src/main_results.lean#L360">turan_primes_estimate</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/final_results.lean#L845">turan_primes_estimate</a></li>
         </ul>
 
       </div>
@@ -266,7 +266,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1b4ef039cfed0ebb250ff34bb8180d3296a2fbb3/src/for_mathlib/basic_estimates.lean#L1676">is_O_prime_counting_div_log</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/for_mathlib/basic_estimates.lean#L1544">is_O_prime_counting_div_log</a></li>
         </ul>
 
       </div>
@@ -315,7 +315,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1b4ef039cfed0ebb250ff34bb8180d3296a2fbb3/src/for_mathlib/basic_estimates.lean#L897">divisor_bound</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/for_mathlib/basic_estimates.lean#L802">divisor_bound</a></li>
         </ul>
 
       </div>
@@ -409,7 +409,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1b4ef039cfed0ebb250ff34bb8180d3296a2fbb3/src/for_mathlib/basic_estimates.lean#L2381">prime_power_reciprocal</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/for_mathlib/basic_estimates.lean#L2264">prime_power_reciprocal</a></li>
         </ul>
 
       </div>
@@ -459,7 +459,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1b4ef039cfed0ebb250ff34bb8180d3296a2fbb3/src/for_mathlib/basic_estimates.lean#L2148">prime_reciprocal</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/for_mathlib/basic_estimates.lean#L2030">prime_reciprocal</a></li>
         </ul>
 
       </div>
@@ -509,7 +509,7 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1b4ef039cfed0ebb250ff34bb8180d3296a2fbb3/src/for_mathlib/basic_estimates.lean#L2508">mertens_third</a></li>
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/for_mathlib/basic_estimates.lean#L2378">mertens_third</a></li>
         </ul>
 
       </div>
@@ -544,6 +544,7 @@
     </span>
     <span class="lemma_thmlabel">2.9</span>
     <span class="lemma_thmtitle">Sieve of Eratosthenes-Legendre</span>
+    ✓
     <div class="thm_icons">
     <a class="icon proof" href="chap-basic.html#lem:sieve_eratosthenes">#</a>
     <a class="icon proof" href="chap-basic.html#a0000000049"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
@@ -557,7 +558,6 @@
 </button>
         </header>
                 <ul class="uses">
-          <li><a href="https://github.com/b-mehta/unit-fractions//blob/1b4ef039cfed0ebb250ff34bb8180d3296a2fbb3/src/main_results.lean#L335">sieve_eratosthenes</a></li>
         </ul>
 
       </div>
