@@ -1,0 +1,1455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fourier Analysis</title>
+<link rel="next" href="chap-techlemmas.html" title="Technical Lemmas" />
+<link rel="prev" href="chap-tech.html" title="Deduction of the main results" />
+<link rel="up" href="index.html" title="Unit Fractions" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">Unit Fractions</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="chap-def.html"><span class="toc_ref">1</span> <span class="toc_entry">Definitions</span></a>
+ </li>
+<li class="">
+  <a href="chap-basic.html"><span class="toc_ref">2</span> <span class="toc_entry">Basic Estimates</span></a>
+ </li>
+<li class="">
+  <a href="chap-tech.html"><span class="toc_ref">3</span> <span class="toc_entry">Deduction of the main results</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-tech.html#a0000000003"><span class="toc_ref">3.1</span> <span class="toc_entry">Sieve Lemmas</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="chap-fourier.html"><span class="toc_ref">4</span> <span class="toc_entry">Fourier Analysis</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="chap-fourier.html#a0000000004"><span class="toc_ref">4.1</span> <span class="toc_entry">Local definitions</span></a>
+ </li>
+<li class="">
+  <a href="chap-fourier.html#a0000000005"><span class="toc_ref">4.2</span> <span class="toc_entry">Precursor general lemmas</span></a>
+ </li>
+<li class="">
+  <a href="chap-fourier.html#a0000000006"><span class="toc_ref">4.3</span> <span class="toc_entry">Towards the main proposition</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-techlemmas.html"><span class="toc_ref">5</span> <span class="toc_entry">Technical Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="chap-techprop.html"><span class="toc_ref">6</span> <span class="toc_entry">Deduction of main technical proposition</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="chap:fourier">4 Fourier Analysis</h1>
+
+<p>This section contains the part of the proof that uses Fourier analysis to reduce finding solutions to a combinatorial problem involving divisors. </p>
+<p>In this section, we write \([A]\) for the lowest common multiple of \(A\) (if \(A\) is a finite set of naturals). </p>
+<h1 id="a0000000004">4.1 Local definitions</h1>
+<p><div class="definition_thmwrapper" id="def:integer_count">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4.1</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#def:integer_count">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-def.html#def:rec_sum">Definition 1.1</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L21">integer_count</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   For any finite set \(A\) of natural numbers and integer \(k\geq 1\) we write \(F(A;k)\) for the count of the number of subsets \(S\subset A\) such that \(kR(S)\) is an integer. </p>
+
+  </div>
+</div> </p>
+<p><div class="definition_thmwrapper" id="def:j">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4.2</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#def:j">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L72">j</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  Let \(J(A) = (-[A]/2,[A]/2]\cap \mathbb {Z}\backslash \{ 0\} \). </p>
+
+  </div>
+</div> </p>
+<p><div class="definition_thmwrapper" id="def:cos_prod">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4.3</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#def:cos_prod">#</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L87">cos_prod</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>  For any finite set of naturals \(B\) and integer \(t\), we define \(C(B;t) = \prod _{n\in B}\left\lvert \cos (\pi t/n)\right\rvert \). </p>
+
+  </div>
+</div> </p>
+<p><div class="definition_thmwrapper" id="def:major_arc">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4.4</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#def:major_arc">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-fourier.html#def:j">Definition 4.2</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L128">major_arc</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   For any finite set of naturals \(A\) and integer \(k\geq 1\), and real \(K{\gt}0\), we define the ‘major arc’ corresponding to \(t\in \mathbb {Z}\) as </p>
+<div class="displaymath" id="a0000000088">
+  \[ \mathfrak {M}(t;A,k,K) = \{  h\in J(A): \left\lvert h-t[A]/k\right\rvert \leq K/2k\}  \]
+</div>
+<p> Let \(\mathfrak {M}(A,k,K) = \cup _{t\in \mathbb {Z}}\mathfrak {M}(t;A,k,K)\). </p>
+
+  </div>
+</div> </p>
+<p><div class="definition_thmwrapper" id="def:minor_arcs">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    Definition
+    </span>
+    <span class="definition_thmlabel">4.5</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#def:minor_arcs">#</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-fourier.html#def:major_arc">Definition 4.4</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L176">minor_arc₁</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   Let \(I_h(K,k)\) be the interval of length \(K\) centred at \(kh\), and let \(\mathfrak {m}_1(A,k,K,\delta )\) be those \(h\in J(A)\backslash \mathfrak {M}(A,k,K)\) such that </p>
+<div class="displaymath" id="a0000000089">
+  \[ \#  \{  n\in A : \textrm{no element of }I_h(K,k)\textrm{ is divisible by }n\} \geq \delta . \]
+</div>
+<p> Let \(\mathfrak {m}_2(A,k,K,\delta )\) be the rest of \(J(A)\backslash \mathfrak {M}(A,k,K)\). </p>
+
+  </div>
+</div> </p>
+<h1 id="a0000000005">4.2 Precursor general lemmas</h1>
+<p><div class="lemma_thmwrapper" id="lem:orthogonality">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.6</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:orthogonality">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000090"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L267">orthogonality</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  For any \(n,m\in \mathbb {N}\), if \(e(x) = e^{2\pi ix}\), then if \(I\) is any set of \(m\) consecutive integers then </p>
+<div class="displaymath" id="a0000000091">
+  \[ 1_{m\mid n}=\frac{1}{m}\sum _{h\in I}e(h n/m). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000090">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>If \(m\mid n\) then \(n/m\) is an integer, so \(e(hn/m)=1\) for all \(h\in \mathbb {Z}\), so the right-hand side is \(1\). </p>
+<p>If \(m\nmid n\) then \(e(n/m)\neq 1\). Let \(S=\sum _{h\in I}e(hn/m)\), so it suffices to show that \(S=0\). Using \(e(x+y)=e(x)e(y)\) we have </p>
+<div class="displaymath" id="a0000000092">
+  \[ e(n/m)S = \sum _{h\in I}e((h+1)n/m). \]
+</div>
+<p> If \(r=\min (I)\) and \(s=\max (I)\) then the right-hand side is \(S + e((s+1)n/m)-e(rn/m)\). But since \(I\) is a set of \(m\) consecutive integers we know that \(s=r+m-1\), and so </p>
+<div class="displaymath" id="a0000000093">
+  \[ e((s+1)n/m)-e(rn/m) = e(rn/m+n)-e(rn/m)=e(rn/m)e(n)-e(rn/m)=0, \]
+</div>
+<p> since \(e(n)=1\). Therefore \(e(n/m)S=S\), and hence since \(e(n/m)\neq 1\), this forces \(S=0\) as required. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:lcm_desc">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.7</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:lcm_desc">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000094"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L330">lcm_desc</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(A\) be a finite set of natural numbers not containing \(0\). If </p>
+<div class="displaymath" id="a0000000095">
+  \[ \mathcal{P}_A = \{  p \textrm{ prime}: \exists n\in A : p \mid n\}  \]
+</div>
+<p> and for all \(p\in \mathcal{P}_A\) then \(r_p\geq 0\) is the greatest integer such that \(p^{r_p}\) divides some \(n\in A\), then </p>
+<div class="displaymath" id="a0000000096">
+  \[ [A]=\prod _{p\in \mathcal{P}_A}p^{r_p}. \]
+</div>
+
+  </div>
+</div> (NOTE: This is a generally useful fact when working with lowest common multiples, perhaps this should be in mathlib somewhere.) </p>
+<div class="proof_wrapper" id="a0000000094">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>We first note that if \(p\mid [A]\) then \(p\in \mathcal{P}_A\). If not, suppose \(p\not\in \mathcal{P}_A\) and \(p\mid [A]\). Let \(M=[A]/p\). We claim every \(n\in A\) divides \(M\), contradicting the definition of lowest common multiple. It suffices to show that if a prime power \(q^r\mid n\) then \(q\mid M\). But we know \(q^r\mid [A]=Mp\), and \((q^r,p)=1\), so \(q\mid M\) as required. </p>
+<p>By the fundamental theorem of arithmetic, we can write \([A] = \prod _{p\in \mathcal{P}_A}p^{s_p}\) for some integers \(s_p\geq 0\). It remains to show that \(s_p=r_p\). </p>
+<p>That \(s_p\geq r_p\) follows from the fact that \(p^{r_p}\mid n\) for some \(n\in A\) by definition, hence \(p^{r_p}\mid [A]\), hence \(r_p\leq s_p\). </p>
+<p>Suppose that \(s_p{\gt}r_p\), and as above consider \(M=[A]/p\). We claim every \(n\in A\) divides \(M\), the required contradiction. If a prime power \(q^r\mid n\) with \(q\neq p\) then \(q\mid Mp\) hence \(q\mid M\). If \(p^r\mid n\) then \(r\leq r_p\), so \(p^r\mid p^{r_p}\mid p^{s_p-1}\mid M\), as required. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:smooth_lcm">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.8</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:smooth_lcm">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000097"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-def.html#def:local_part">Definition 1.2</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L416">smooth_lcm</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   If \(A\) is a finite set of natural numbers not containing \(0\) such that if \(q\in \mathcal{Q}_A\) then \(q\leq X\), then \([A]\leq e^{O(X)}\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000097">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> We have \([A]=\prod _{p\in \mathcal{P}_A}p^{r_p}\), where \(p^{r_p}\in \mathcal{Q}_A\), by Lemma&#160;<a href="chap-fourier.html#lem:lcm_desc">4.7</a>. By hypothesis \(p^{r_p}\leq X\) and so \([A]\leq X^{\left\lvert \mathcal{P}_A\right\rvert }\). The set \(\mathcal{P}_A\) is a subset of all primes \(\leq X\), and so \(\left\lvert \mathcal{P}_A\right\rvert \leq \pi (X)\ll X/\log X\) by Chebyshev’s estimate Lemma&#160;<a href="chap-basic.html#lem:chebyshev">2.4</a>. Therefore </p>
+<div class="displaymath" id="a0000000098">
+  \[ [A]\leq X^{O(X/\log X)}=e^{O(X)}. \]
+</div>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:cos_bound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.9</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:cos_bound">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000099"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L456">cos_bound</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  If \(x\in [0,1/2]\) then </p>
+<div class="displaymath" id="a0000000100">
+  \[ \cos (\pi x) \leq e^{-2x^2}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000099">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>We have Jordan’s inequality, which says \(\sin (\pi x)\geq 2x\) for all \(x\in [0,1/2]\). Therefore </p>
+<div class="displaymath" id="a0000000101">
+  \[ \cos (\pi x)^2 = 1-\sin (\pi x)^2\leq 1-4x^2. \]
+</div>
+<p> Since \(1-y\leq e^{-y}\) for all \(y\geq 0\), the right-hand side is \(\leq e^{-4x^2}\). Taking square roots, and using \(\cos (\pi x)\geq 0\) for all \(x\in [0,1/2]\), yields </p>
+<div class="displaymath" id="a0000000102">
+  \[ \cos (\pi x) \leq e^{-2x^2}. \]
+</div>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:triv_q_bound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.10</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:triv_q_bound">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000103"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-def.html#def:local_part">Definition 1.2</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L507">triv_q_bound</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   Let \(A\) be a finite set of naturals not containing \(0\). For any \(n\in A\), let \(\mathcal{Q}_A(n)\) denote all those \(q\in \mathcal{Q}_A\) such that \(n\in A_q\), then </p>
+<div class="displaymath" id="a0000000104">
+  \[ \left\lvert \mathcal{Q}_A(n)\right\rvert \leq \tfrac {1}{\log 2}\log n. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000103">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>The first step is to show that \(\prod _{q\in \mathcal{Q}(n)}q\mid n\) (in fact they’re equal, but all we need is the one direction). This can be shown by showing that every \(q\in \mathcal{Q}(n)\) divides \(n\), since \(n\in A_q\) implies \(q\mid n\), and then noting that any two distinct \(q_1,q_2\in \mathcal{Q}(n)\) are coprime. If not, then since they are prime powers, they must both be powers of the same prime, say \(q_1=p^{r_1}{\lt} q_2=p^{r_2}\). Since \(n\in A_{q_2}\) we have \(p^{r_2}\mid n\), but then \(p\mid n/q_1\), so \(p\mid (q_1,n/q_1)\), and so \(n\not\in A_{q_1}\). </p>
+<p>Therefore \(\prod _{q\in \mathcal{Q}(n)}q\leq n\). Since all prime powers are \(\geq 2\) it follows that \(2^{\left\lvert \mathcal{Q}(n)\right\rvert }\leq n\), and the result follows taking logarithms. </p>
+
+  </div>
+</div>
+<h1 id="a0000000006">4.3 Towards the main proposition</h1>
+<p><div class="lemma_thmwrapper" id="lem:orthog_rat">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.11</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:orthog_rat">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000105"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-fourier.html#def:integer_count">Definition 4.1</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L550">orthog_rat</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   If \(A\) is a finite set of natural numbers not containing \(0\) and \(k\geq 1\) is an integer then </p>
+<div class="displaymath" id="a0000000106">
+  \[ F(A;k)= \frac{1}{[A]}\sum _{-[A]/2{\lt} h\leq [A]/2}\prod _{n\in A}(1+e(kh/n)). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000105">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> For any \(S\subset A\), \(k\sum _{n\in S}\frac{1}{n}\in \mathbb {Z}\) if and only if \(k\sum _{n\in S}\frac{[A]}{n}\in [A]\cdot \mathbb {Z}\). By definition \(n\mid [A]\) for all \(n\in A\), and so \(k\sum _{n\in S}\frac{[A]}{n}\) is an integer. It is \(\geq 0\) since each summand is. Therefore by Lemma&#160;<a href="chap-fourier.html#lem:orthogonality">4.6</a>, if \(I\) is any set of \([A]\) consecutive integers </p>
+<div class="displaymath" id="a0000000107">
+  \[ 1_{k\sum _{n\in S}\frac{1}{n}\in \mathbb {Z}}=1_{[A]\mid k\sum _{n\in S}\frac{[A]}{n}} = \frac{1}{[A]}\sum _{h\in I}e(kh\sum _{n\in S}\frac{1}{n}). \]
+</div>
+<p> Therefore, changing summation, </p>
+<div class="displaymath" id="a0000000108">
+  \[ F(A;k) = \sum _{S\subset A}1_{k\sum _{n\in S}\frac{1}{n}\in \mathbb {Z}} = \frac{1}{[A]} \sum _{h\in I}\sum _{S\subset A}\prod _{n\in S}e(kh/n). \]
+</div>
+<p> The lemma now follows choosing \(I=(-[A]/2,[A]/2]\cap \mathbb {Z}\), and using the general fact that for any indexed set of complex numbers \((x_i)_{i\in I}\) </p>
+<div class="displaymath" id="a0000000109">
+  \[ \sum _{J\subset I}\prod _{j\in J}x_j = \prod _{i\in I}(1+x_i). \]
+</div>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:orthog_simp">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.12</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:orthog_simp">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000110"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L640">orthog_simp</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  If \(k\geq 1\) is an integer and \(A\) is a finite set of natural numbers such that there is no \(S\subset A\) such that \(R(S)=1/k\), and \(R(A){\lt}2/k\), then </p>
+<div class="displaymath" id="a0000000111">
+  \[ \sum _{-[A]/2{\lt} h\leq [A]/2}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)= [A]. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000110">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>  For any \(S\subset A\) we have \(k\sum _{n\in S}\frac{1}{n}\leq kR(A){\lt}2\), and therefore if \(k\sum _{n\in S}\frac{1}{n} \in \mathbb {N}\) then \(k\sum _{n\in S}\frac{1}{n} =0\) or \(=1\). The latter can’t happen by assumption, so \(k\sum _{n\in S}\frac{1}{n} =0\). A non-empty sum of \({\gt}0\) summands is \({\gt}0\), so if \(k\sum _{n\in S}\frac{1}{n}\in \mathbb {Z}\) then \(S=\emptyset \). Therefore \(F(A;k)=1\). </p>
+<p>By Lemma&#160;<a href="chap-fourier.html#lem:orthog_rat">4.11</a> therefore </p>
+<div class="displaymath" id="a0000000112">
+  \[ 1=\frac{1}{[A]}\sum _{-[A]/2{\lt} h\leq [A]/2}\prod _{n\in A}(1+e(kh/n)). \]
+</div>
+<p> The conclusion follows multiplying both sides by \([A]\) and taking real parts of both sides. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:orthog_simp2">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.13</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:orthog_simp2">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000113"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-fourier.html#def:j">Definition 4.2</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L649">orthog_simp2</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   If \(k\geq 1\) is an integer and \(A\) is a finite set of natural numbers such that there is no \(S\subset A\) such that \(R(S)=1/k\), and \(R(A){\lt}2/k\), and \([A]\leq 2^{\left\lvert A\right\rvert -1}\) then </p>
+<div class="displaymath" id="a0000000114">
+  \[ \sum _{h\in J(A)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)\leq -2^{\left\lvert A\right\rvert -1}. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000113">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>  By Lemma&#160;<a href="chap-fourier.html#lem:orthog_simp">4.12</a> </p>
+<div class="displaymath" id="a0000000115">
+  \[ \sum _{-[A]/2{\lt} h\leq [A]/2}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)= [A]. \]
+</div>
+<p> By assumption the right-hand side is \(\leq 2^{\left\lvert A\right\rvert -1}\). </p>
+<p>When \(h=0\) </p>
+<div class="displaymath" id="a0000000116">
+  \[ \Re \left( \prod _{n\in A}(1+e(kh/n))\right)= \Re \left( \prod _{n\in A}2\right)=2^{\left\lvert A\right\rvert }. \]
+</div>
+<p> Therefore </p>
+<div class="displaymath" id="a0000000117">
+  \[ \sum _{h\in J(A)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)+2^{\left\lvert A\right\rvert }\leq 2^{\left\lvert A\right\rvert -1}, \]
+</div>
+<p> and the result follows after rearranging. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:majorarcs_disjoint">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.14</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:majorarcs_disjoint">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000118"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-fourier.html#def:major_arc">Definition 4.4</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L664">majorarcs_disjoint</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   If \(A\) is a finite set of integers and \(K\) is a real such that \([A]{\gt}K\) then, for any integer \(k\geq 1\), the sets \(\mathfrak {M}(t;A,k,K)\) are disjoint for distinct \(t\in \mathbb {Z}\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000118">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Suppose not and \(h\in \mathfrak {M}(t_1)\cap \mathfrak {M}(t_2)\). By definition, </p>
+<div class="displaymath" id="a0000000119">
+  \[ \left\lvert hk-t_1[A]\right\rvert \leq K/2 \]
+</div>
+<p> and </p>
+<div class="displaymath" id="a0000000120">
+  \[ \left\lvert hk-t_2[A]\right\rvert \leq K/2, \]
+</div>
+<p> and so by the triangle inequality \([A]\left\lvert t_1-t_2\right\rvert \leq K\). Since \(t_1\neq t_2\), we know \(\left\lvert t_1-t_2\right\rvert \geq 1\), and so \([A]\leq K\), contradicting the assumption. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:useful_rewrite">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.15</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:useful_rewrite">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000121"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-def.html#def:rec_sum">Definition 1.1</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L689">useful_rewrite</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   For any finite set of natural numbers \(A\) and \(\theta \in \mathbb {R}\) </p>
+<div class="displaymath" id="a0000000122">
+  \[ \Re \left( \prod _{n\in A}(1+e(\theta /n))\right)=2^{\left\lvert A\right\rvert }\cos (\pi \theta R(A))\prod _{n\in A}\cos (\pi \theta /n). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000121">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p>Rewrite each factor in the product using \(1+e(\theta /n)=2e(\theta /2n)\cos (\pi \theta /n)\), so </p>
+<div class="displaymath" id="a0000000123">
+  \[ \Re \left( \prod _{n\in A}(1+e(\theta /n))\right) = \Re \left(  2^{\left\lvert A\right\rvert }e(\theta R(A)/2)\prod _{n\in A}\cos (\pi \theta /n)\right). \]
+</div>
+<p> Taking out real factors, this is \(2^{\left\lvert A\right\rvert }\prod _{n\in A}\cos (\pi \theta /n)\Re e(\theta R(A)/2)\), and the claim follows. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:majorarcs">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.16</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:majorarcs">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000124"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L761">majorarcs</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Let \(M\geq 1\) and \(A\) a finite set of naturals such that \(n\geq M\) for all \(n\in A\). Let \(K\) be a real such that \(K{\lt}M\). Let \(k\geq 1\) be an integer which divides \([A]\). Suppose that \(kR(A) \in [2-k/M,2)\). </p>
+<div class="displaymath" id="a0000000125">
+  \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) \geq 0. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000124">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> Since \(k\) divides \([A]\), we know that \(t[A]/k\) is an integer for any \(t\in \mathbb {Z}\), and hence by definition of \(\mathfrak {M}(t)\) we can write \(h=t[A]/k+r\), where \(r\) is an integer satisfying \(\left\lvert r\right\rvert \leq K/2k\). Therefore, letting </p>
+<div class="displaymath" id="a0000000126">
+  \[ J_t =[-K/2k,K/2k]\cap (J(A)-t[A]/k), \]
+</div>
+<p> then </p>
+<div class="displaymath" id="a0000000127">
+  \[ \sum _{h\in \mathfrak {M}(t)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)=\sum _{r\in J_t}\Re \left( \prod _{n\in A}(1+e((t[A]+rk)/n))\right)=\sum _{r\in J_t}\Re \left( \prod _{n\in A}(1+e(rk/n))\right), \]
+</div>
+<p> since \(t[A]/n\) is always an integer, by definition of \([A]\). </p>
+<p>Using Lemma&#160;<a href="chap-fourier.html#lem:useful_rewrite">4.15</a>, this is </p>
+<div class="displaymath" id="a0000000128">
+  \[ 2^{[A]}\sum _{h\in \mathfrak {M}(t)}\cos (\pi krR(A))\prod _{n\in A}\cos (\pi kr/n). \]
+</div>
+<p>Since \([A]\geq \min (A)\geq M{\gt}K\), the hypotheses of Lemma&#160;<a href="chap-fourier.html#lem:majorarcs_disjoint">4.14</a> are all met, and so \(\mathfrak {M}\) is the disjoint union of \(\mathfrak {M}(t)\) as \(t\) ranges over \(t\in \mathbb {Z}\). Therefore \(1_{h\in \mathfrak {M}}=\sum _t 1_{h\in \mathfrak {M}(t)}\), and therefore using the above and rearranging the sum, </p>
+<div class="displaymath" id="a0000000129">
+  \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) =\sum _{r\in [-K/2k,K/2k]\cap \mathbb {Z}}\left( \sum _{t\in \mathbb {Z}}1_{r\in J_t}\right)\cos (\pi krR(A))\prod _{n\in A}\cos (\pi kr/n). \]
+</div>
+<p> Since for all \(n\in A\) we have \(n\geq M{\gt}K\) we have \(\left\lvert kr/n\right\rvert {\lt} 1/2\) for all \(r\) with \(\left\lvert r\right\rvert \leq K/2k\), and hence \(\cos (\pi kr/n)\geq 0\) for all such \(n\) and \(r\). </p>
+<p>Furthermore, writing \(kR(A)=2-\epsilon \) for some \(0{\lt}\epsilon \leq k/M\), we have (since \(r\) is an integer) </p>
+<div class="displaymath" id="a0000000130">
+  \[ \cos (\pi kr R(A)) = \cos (-\pi r\epsilon )\geq 0, \]
+</div>
+<p> since \(\left\lvert r\epsilon \right\rvert \leq K/2M{\lt}1/2\) for all \(\left\lvert r\right\rvert \leq K/2k\). It follows that </p>
+<div class="displaymath" id="a0000000131">
+  \[ \left( \sum _{t\in \mathbb {Z}}1_{r\in J_t}\right)\cos (\pi krR(A))\prod _{n\in A}\cos (\pi kr/n)\geq 0 \]
+</div>
+<p> for all \(r\in [-K/2k,K/2k]\cap \mathbb {Z}\), and hence as the sum of non-negative summands the original sum is non-negative as required. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:minor_lbound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.17</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:minor_lbound">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000132"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-fourier.html#def:cos_prod">Definition 4.3</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L821">minor_lbound</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   Let \(M\geq 1\) and \(A\) a finite set of naturals such that \(n\geq M\) for all \(n\in A\). Let \(K\) be a real such that \(K{\lt}M\). Let \(k\geq 1\) be an integer which divides \([A]\). Suppose that \(kR(A) \in [2-k/M,2)\), and there is no \(S\subset A\) such that \(R(S)=1/k\), and \([A]\leq 2^{\left\lvert A\right\rvert -1}\). Then </p>
+<div class="displaymath" id="a0000000133">
+  \[ \sum _{h\in J(A)\backslash \mathfrak {M}(A,k,K)} C(A;hk)\geq 1/2. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000132">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> By Lemma&#160;<a href="chap-fourier.html#lem:orthog_simp2">4.13</a> </p>
+<div class="displaymath" id="a0000000134">
+  \[ \sum _{h\in J(A)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)\leq -2^{\left\lvert A\right\rvert -1}. \]
+</div>
+<p> By Lemma&#160;<a href="chap-fourier.html#lem:majorarcs">4.16</a> </p>
+<div class="displaymath" id="a0000000135">
+  \[ \sum _{h\in \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right) \geq 0. \]
+</div>
+<p> Therefore </p>
+<div class="displaymath" id="a0000000136">
+  \[ \sum _{h\in J(A)\backslash \mathfrak {M}(A,k,K)}\Re \left( \prod _{n\in A}(1+e(kh/n))\right)\leq -2^{\left\lvert A\right\rvert -1}. \]
+</div>
+<p> By the triangle inequality, using \(\left\lvert \Re z\right\rvert \leq \left\lvert z\right\rvert \) and \(\left\lvert 1+e(\theta )\right\rvert =2\cos (\pi \theta )\), </p>
+<div class="displaymath" id="a0000000137">
+  \[ \sum _{h\in J(A)\backslash \mathfrak {M}(A,k,K)}\left\lvert \cos (\pi kh/n)\right\rvert  \geq 1/2 \]
+</div>
+<p> as required. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:cos_prod_bound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.18</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:cos_prod_bound">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000138"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-fourier.html#def:cos_prod">Definition 4.3</a></li>
+          <li><a href="chap-def.html#def:interval_rare_ppowers">Definition 1.4</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L872">cos_prod_bound</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   For any finite set \(A\) such that \(n\leq N\) for all \(n\in A\), and integer \(t\), if \(t\equiv t_n\pmod{n}\) for \(\left\lvert t_n\right\rvert \leq n/2\) for all \(n\in A\), then </p>
+<div class="displaymath" id="a0000000139">
+  \[ C(A;t)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}t_n^2\right). \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000138">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> We first note that \(\left\lvert \cos (\pi t/n)\right\rvert =\left\lvert \cos (\pi t_n/n)\right\rvert \) for all \(n\in A\), by periodicity of cosine. By Lemma&#160;<a href="chap-fourier.html#lem:cos_bound">4.9</a>, therefore </p>
+<div class="displaymath" id="a0000000140">
+  \[ \left\lvert \cos (\pi t/n)\right\rvert \leq \exp (-2t_n^2/n^2)\leq \exp (-\tfrac {2}{N^2}t_n^2), \]
+</div>
+<p> and the lemma follows taking the product over all \(n\in A\). </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:minor1_bound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.19</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:minor1_bound">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000141"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="chap-fourier.html#def:minor_arcs">Definition 4.5</a></li>
+        </ul>
+
+      </div>
+    </div>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L1000">minor1_bound</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   Suppose that \(N\) is sufficiently large and \(M\geq 8\). Let \(T{\gt}0\) be a real and \(k\geq 1\) be an integer. Let \(A\subset [M,N]\) be a set of integers such that if \(q\in \mathcal{Q}_A\) then \(q\leq \frac{TK^2}{N^2 \log N}\). Then </p>
+<div class="displaymath" id="a0000000142">
+  \[ \sum _{h\in \mathfrak {m}_1(A,k,K,T)} C(A;hk)\leq 1/8. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000141">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> We show in fact that for any \(h\in \mathfrak {m}_1(A,k,K,T)\) we have </p>
+<div class="displaymath" id="a0000000143">
+  \[ C(A;hk)\leq 1/[A]^2. \]
+</div>
+<p> The result then immediately follows since \(\left\lvert \mathfrak {m}_1(A,k,K,T)\right\rvert \leq \left\lvert J(A)\right\rvert \leq [A]\), assuming \([A]\geq 8\), which is true since \([A]\geq \min (A)\geq M\geq 8\). </p>
+<p>By Lemma&#160;<a href="chap-fourier.html#lem:cos_prod_bound">4.18</a>, </p>
+<div class="displaymath" id="a0000000144">
+  \[ C(A;hk)\leq \exp \left( -\frac{2}{N^2}\sum _{n\in A}h_n^2\right), \]
+</div>
+<p> where \(kh\equiv h_n\pmod{n}\) and \(\left\lvert h_n\right\rvert \leq n/2\). Let \(I_h\) be the interval of length \(K\) centred around \(kh\). If no element of \(I_h\) is divisible by \(n\) then \(\left\lvert h_n\right\rvert {\gt}K/2\). Therefore, by definition of \(\mathfrak {m}_1\), \(\left\lvert h_n\right\rvert {\gt}K/2\) for at least \(T\) many \(n\in A\), and hence \(\sum _{n\in A}h_n^2\geq K^2T/4\), and so </p>
+<div class="displaymath" id="a0000000145">
+  \[ C(A;h)\leq \exp \left( -\frac{K^2T}{2N^2}\right). \]
+</div>
+<p> It remains to note that by Lemma&#160;<a href="chap-fourier.html#lem:smooth_lcm">4.8</a> </p>
+<div class="displaymath" id="a0000000146">
+  \[ [A]\leq \exp \left( O\left( \frac{K^2T}{N^2\log N}\right)\right)\leq \exp \left( \frac{K^2T}{4N^2}\right) \]
+</div>
+<p> assuming \(N\) is sufficiently large. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:minor2_ind_bound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.20</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:minor2_ind_bound">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000147"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+          <li><a href="https://github.com/b-mehta/unit-fractions//blob/e90689f444730a64cbfa3972fa79075a0dd18981/src/fourier.lean#L1097">minor2_ind_bound</a></li>
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>  Suppose that \(N\geq 4\). Let \(A\subset [1,N]\) be a finite set of integers and \(t\) an integer. Let \(K,L{\gt}0\) be reals and suppose that \(q\leq \tfrac {1}{16}LK^2/N^2(\log N)^2\) for all \(q\in \mathcal{Q}_A\). Let \(\mathcal{D}=\mathcal{D}_I(A;L)\) where \(I\) is the interval of length \(K\) centred at \(t\). Then </p>
+<div class="displaymath" id="a0000000148">
+  \[ C(A;t)\leq N^{-4\left\lvert \mathcal{Q}_A\backslash \mathcal{D}\right\rvert }. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000147">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> For any \(n\in A\), let \(\mathcal{Q}(n)\) denote all those \(q\in \mathcal{Q}\) such that \(n\in A_q\). Therefore, for any real \(x_n\geq 0\), </p>
+<div class="displaymath" id="a0000000149">
+  \[ \prod _{n\in A}x_n=\prod _{n\in A}\prod _{q\in \mathcal{Q}(n)}x_n^{1/\left\lvert \mathcal{Q}(n)\right\rvert } =\prod _{q\in \mathcal{Q}}\prod _{n\in A_q}x_n^{1/\left\lvert \mathcal{Q}(n)\right\rvert }. \]
+</div>
+<p> By Lemma&#160;<a href="chap-fourier.html#lem:triv_q_bound">4.10</a> for any \(n\in A\) we have \(\left\lvert \mathcal{Q}(n)\right\rvert \leq \tfrac {1}{\log 2}\log n\leq 2\log N\), and so if \(0\leq x_n\leq 1\), </p>
+<div class="displaymath" id="a0000000150">
+  \[ \prod _{n\in A}x_n\leq \prod _{q\in \mathcal{Q}}\prod _{n\in A_q}x_n^{1/2\log N}=\prod _{q\in \mathcal{Q}}\left( \prod _{n\in A_q}x_n\right)^{1/2\log N}. \]
+</div>
+<p> In particular, </p>
+<div class="displaymath" id="a0000000151">
+  \[ C(A;t)\leq \prod _{q\in \mathcal{Q}}C(A_q;t)^{/2\log N}. \]
+</div>
+<p> Using the trivial bound \(C(A_q;t)\leq 1\), to prove the lemma it therefore suffices to show that for every \(q\in \mathcal{Q}\backslash \mathcal{D}_h\) we have \(C(A_q;t)\leq N^{-8\log N}\). </p>
+<p>For any \(n\in A\) let \(t\equiv t_n\pmod{n}\), where \(\left\lvert t_n\right\rvert \leq n/2\). For any \(q\in \mathcal{Q}\backslash \mathcal{D}\) there are, by definition of \(\mathcal{D}\), at least \(L/q\) many \(n\in A_q\) such that \(n\) divides no element of the interval of length \(K\) centred at \(t\). </p>
+<p>Recall that \(t_n\) is the integer in \((-n/2,n/2]\) such that \(t\equiv t_n\pmod{n}\), so that \(n\) divides \(t-t_n\). If \(\left\lvert t_n\right\rvert \leq K/2\) then \(t-t_n\) is in the interval of length \(K\) centred at \(t\), which contradicts the previous paragraph. Therefore \(\left\lvert t_n\right\rvert {\gt}K/2\). Hence by Lemma&#160;<a href="chap-fourier.html#lem:cos_prod_bound">4.18</a> </p>
+<div class="displaymath" id="a0000000152">
+  \[ C(A_q;t)\leq \exp \left( -\frac{2}{N^2}\cdot \frac{L}{q}\cdot \frac{K^2}{4}\right). \]
+</div>
+<p> By assumption, \(q\leq LK^2/16N^2(\log N)^2\), and the proof is complete. </p>
+
+  </div>
+</div>
+<p><div class="lemma_thmwrapper" id="lem:minor2_bound">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    Lemma
+    </span>
+    <span class="lemma_thmlabel">4.21</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#lem:minor2_bound">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000153"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+
+  </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p> Let \(N\) be a sufficiently large integer. Let \(K,L{\gt}0\) be reals such that \(0{\lt}K\leq N\). Let \(T{\gt}0\) be any real. Let \(k\) be an integer such that \(1\leq k \leq N/64\). Let \(A\subset [1,N]\) be a finite set of integers such that </p>
+<ol class="enumerate">
+  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq \tfrac {1}{16}\frac{LK^2}{N^2(\log N)^2}\), and </p>
+</li>
+  <li><p>for any interval \(I\) of length \(K\), either </p>
+<ol class="enumerate">
+  <li><div class="displaymath" id="a0000000154">
+  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq T, \]
+</div>
+<p> or </p>
+</li>
+  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A;L)\). </p>
+</li>
+</ol>
+</li>
+</ol>
+<p> Then </p>
+<div class="displaymath" id="a0000000155">
+  \[ \sum _{h\in \mathfrak {m}_2(A,k,K,T)}C(A;hk)\leq 1/8. \]
+</div>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000153">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> For any \(h\in \mathfrak {m}_2\), let \(I_h\) be the interval of length \(K\) centred at \(kh\). Since \(h\not\in \mathfrak {m}_1\), condition 2(a) cannot hold, and therefore there is some \(x\in I_h\) divisible by all \(q\in \mathcal{D}_{I_h}(A;L)\). In particular, \(kh\) is distance at most \(K/2\) from some multiple of \([\mathcal{D}_{I_h}(A;L)]\). Since \(h\in \mathfrak {m}(A,k,K,T)\), we know \(h\not\in \mathfrak {M}(A,k,K)\), and hence \(kh\) is distance greater than \(K/2\) from any multiple of \([A]\). Since \([\mathcal{Q}]=[A]\), it follows that \(\mathcal{D}_{I_h}(A;L)\neq \mathcal{Q}\). </p>
+<p>Furthermore, for any \(\mathcal{D}\subset \mathcal{Q}\), the number of \(h\in \mathfrak {m}_2\) with \(\mathcal{D}_{I_h}(A;L)=\mathcal{D}\) is at most \(K\) times the number of multiples of \([\mathcal{D}]\) in \([1,k[A]+K]\). The number of multiples of \([\mathcal{D}]\) in \([1,k[A]+K]\) is at most \((k[A]/[\mathcal{D}])+K\), and hence the number of \(h\in \mathfrak {m}_2\) with \(\mathcal{D}_{I_h}(A;L)=\mathcal{D}\) is at most </p>
+<div class="displaymath" id="a0000000156">
+  \[ Kk\frac{[A]}{[\mathcal{D}]} +K^2\leq Kk\prod _{q\in \mathcal{Q}\backslash \mathcal{D}}q+K^2\leq kN^{\left\lvert \mathcal{Q}\backslash \mathcal{D}\right\rvert +1}+K^2. \]
+</div>
+<p> In particular, when \(\mathcal{D}\neq \mathcal{Q}\), the right-hand side is at most \(2kN^{\left\lvert \mathcal{Q}\backslash \mathcal{D}\right\rvert +1}\), that is, </p>
+<div class="displaymath" id="a0000000157">
+  \[ \sum _{h\in \mathfrak {m}_2}1_{\mathcal{D}_{I_h}(A;L)=\mathcal{D}}\leq 2kN^{\left\lvert \mathcal{Q}\backslash \mathcal{D}\right\rvert +1}. \]
+</div>
+<p> (Here we have used the fact that \([A]\leq [D]\prod _{q\in \mathcal{Q}\backslash \mathcal{D}}q\), which is true because every prime power dividing \([A]\) is in \(\mathcal{Q}\), and hence either divides \([D]\) or divides \(\prod _{q\in \mathcal{Q}\backslash \mathcal{D}}q\).) </p>
+<p>Therefore, for any \(\mathcal{D}\subset \mathcal{Q}\), using Lemma&#160;<a href="chap-fourier.html#lem:minor2_ind_bound">4.20</a>, </p>
+<div class="displaymath" id="a0000000158">
+  \[ \sum _{h\in \mathfrak {m}_2}1_{\mathcal{D}_{I_h}(A;L)=\mathcal{D}}C(A;hk)\leq 2kN^{1-3\left\lvert \mathcal{Q}_A\backslash \mathcal{D}\right\rvert }. \]
+</div>
+<p> Since \(\mathcal{D}\neq \mathcal{Q}\), this is at most \(2kN^{-1-\left\lvert \mathcal{Q}\backslash \mathcal{D}\right\rvert }\). </p>
+<p>Therefore (using the trivial estimate \(\left\lvert \mathcal{Q}\right\rvert \leq N\)) </p>
+<div class="displaymath" id="a0000000159">
+  \begin{align*}  \sum _{h\in \mathfrak {m}_2}C(A;h,k) & \leq \frac{2k}{N}\sum _{\mathcal{D}\subseteq \mathcal{Q}}N^{-\left\lvert \mathcal{Q}\backslash \mathcal{D}\right\rvert }\\ & = \frac{2k}{N}(1+1/N)^{\left\lvert \mathcal{Q}\right\rvert }\\ & \leq 8k/N \leq 1/8. \end{align*}
+</div>
+
+  </div>
+</div>
+<p><div class="proposition_thmwrapper" id="prop:fourier">
+  <div class="proposition_thmheading">
+    <span class="proposition_thmcaption">
+    Proposition
+    </span>
+    <span class="proposition_thmlabel">4.22</span>
+    ✓
+    <div class="thm_icons">
+    <a class="icon proof" href="chap-fourier.html#prop:fourier">#</a>
+    <a class="icon proof" href="chap-fourier.html#a0000000160"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    <button class="modal lean">L∃∀N</button>
+    <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+                <ul class="uses">
+        </ul>
+
+      </div>
+    </div>
+
+  </div>
+  </div>
+  <div class="proposition_thmcontent">
+  <p>  There exists a constant \(c{\gt}0\) such that the following holds. Suppose that \(N\) is sufficiently large. Let \(K,L,M,T\) be reals such that \(T,L{\gt}0\) and \(8\leq K{\lt}M\leq N\), and let \(k\) be an integer such that \(1\leq k\leq M/64\). Let \(A\subset [M,N]\) be a set of integers such that </p>
+<ol class="enumerate">
+  <li><p>\(R(A)\in [2/k-1/M,2/k)\), </p>
+</li>
+  <li><p>\(k\) divides \([A]\), </p>
+</li>
+  <li><p>if \(q\in \mathcal{Q}_A\) then \(q\leq c\min \left( M/k,\frac{LK^2}{N^2(\log N)^2},\frac{TK^2}{N^2\log N}\right)\), and </p>
+</li>
+  <li><p>for any interval \(I\) of length \(K\), either </p>
+<ol class="enumerate">
+  <li><div class="displaymath" id="a0000000161">
+  \[ \#  \{  n\in A : \textrm{no element of }I\textrm{ is divisible by }n\} \geq T, \]
+</div>
+<p> or </p>
+</li>
+  <li><p>there is some \(x\in I\) divisible by all \(q\in \mathcal{D}_I(A; L)\). </p>
+</li>
+</ol>
+</li>
+</ol>
+<p> There is some \(S\subset A\) such that \(R(S)=1/k\). </p>
+
+  </div>
+</div> </p>
+<div class="proof_wrapper" id="a0000000160">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▼</span>
+  </div>
+  <div class="proof_content">
+  <p> If the conclusion fails, there is an immediate contradiction by combining Lemmas&#160;<a href="chap-fourier.html#lem:minor_lbound">4.17</a>, <a href="chap-fourier.html#lem:minor1_bound">4.19</a> and <a href="chap-fourier.html#lem:minor2_bound">4.21</a>. The only hypothesis that is not immediate to check is the upper bound \([A]{\lt}2^{\left\lvert A\right\rvert -1}\). This follows since \(\lvert A\rvert \geq MR(A)\geq \frac{2}{k}M-1\geq M/k\), and by Lemma&#160;<a href="chap-fourier.html#lem:smooth_lcm">4.8</a> we have \([A]\leq e^{O(cM/k)}\), which is at most \(2^{\left\lvert A\right\rvert /2}\) assuming \(c\) is sufficiently small. </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="chap-tech.html" title="Deduction of the main results"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="Unit Fractions"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="chap-techlemmas.html" title="Technical Lemmas"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

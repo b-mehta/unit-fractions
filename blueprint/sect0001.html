@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = { 
+    tex: {
+		    inlineMath: [['$','$'], ['\\(','\\)']]
+	} }
+</script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js">
+</script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Introduction</title>
+<link rel="next" href="chap-def.html" title="Definitions" />
+<link rel="prev" href="index.html" title="Unit Fractions" />
+<link rel="up" href="index.html" title="Unit Fractions" />
+<link rel="stylesheet" href="styles/theme-blue.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/stylecours.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">Unit Fractions</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class=" active current">
+  <a href="sect0001.html"><span class="toc_ref"></span> <span class="toc_entry">Introduction</span></a>
+ </li>
+<li class="">
+  <a href="chap-def.html"><span class="toc_ref">1</span> <span class="toc_entry">Definitions</span></a>
+ </li>
+<li class="">
+  <a href="chap-basic.html"><span class="toc_ref">2</span> <span class="toc_entry">Basic Estimates</span></a>
+ </li>
+<li class="">
+  <a href="chap-tech.html"><span class="toc_ref">3</span> <span class="toc_entry">Deduction of the main results</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-tech.html#a0000000003"><span class="toc_ref">3.1</span> <span class="toc_entry">Sieve Lemmas</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-fourier.html"><span class="toc_ref">4</span> <span class="toc_entry">Fourier Analysis</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-fourier.html#a0000000004"><span class="toc_ref">4.1</span> <span class="toc_entry">Local definitions</span></a>
+ </li>
+<li class="">
+  <a href="chap-fourier.html#a0000000005"><span class="toc_ref">4.2</span> <span class="toc_entry">Precursor general lemmas</span></a>
+ </li>
+<li class="">
+  <a href="chap-fourier.html#a0000000006"><span class="toc_ref">4.3</span> <span class="toc_entry">Towards the main proposition</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-techlemmas.html"><span class="toc_ref">5</span> <span class="toc_entry">Technical Lemmas</span></a>
+ </li>
+<li class="">
+  <a href="chap-techprop.html"><span class="toc_ref">6</span> <span class="toc_entry">Deduction of main technical proposition</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000002">Introduction</h1>
+
+<p>This is an interactive blueprint to help with the formalisation of the main result of (<a href="https://arxiv.org/abs/2112.03726">https://arxiv.org/abs/2112.03726</a>): that if \(A\subset \mathbb {N}\) has positive density then there are distinct \(n_1,\ldots ,n_k\in A\) such that \(\frac{1}{n_1}+\cdots +\frac{1}{n_k}=1\). </p>
+<p>(And other more precise results formulated in that paper.) For context, background, references, and so on, we refer to the original paper (<a href="https://arxiv.org/abs/2112.03726">https://arxiv.org/abs/2112.03726</a>). This blueprint will (once finished) be a complete <em>mathematical</em> guide to the entire proof, and indeed the proofs will be in many places expanded and explained more fully, to help the formalisation process. </p>
+<p>Nonetheless, we will be sparing with non-mathematical remarks, and will not usually trouble to explain the context of a particular lemma, or what it’s ‘really saying’, and so on – we will present everything necessary to formalise the proof in Lean, no more and no less. </p>
+<p>The actual Lean code can be found at (<a href="https://github.com/leanprover-community/mathlib/blob/unit-fractions/src/number_theory/unit_fractions.lean">https://github.com/leanprover-community/mathlib/blob/unit-fractions/src/number_theory/unit_fractions.lean</a>). If you’d like to contribute in any way, or have any questions about this project, please email me at bloom@maths.ox.ac.uk. </p>
+<p>This blueprint is adapted from the blueprint created by Patrick Massot for the Sphere Eversion project (<a href="https://github.com/leanprover-community/sphere-eversion">https://github.com/leanprover-community/sphere-eversion</a>). </p>
+<p>This blueprint uses Patrick Massot’s leanblueprint plugin (<a href="https://github.com/PatrickMassot/leanblueprint">https://github.com/PatrickMassot/leanblueprint</a>) for plasTeX (<a href="http://plastex.github.io/plastex/">http://plastex.github.io/plastex/</a>).  </p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="index.html" title="Unit Fractions"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="Unit Fractions"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="chap-def.html" title="Definitions"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>
