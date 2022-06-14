@@ -1345,25 +1345,49 @@ begin
        },
     rw ← hSdecomp, refine le_trans (finset.card_bUnion_le) _, refine finset.sum_le_sum _,
     intros d' hd', refine le_of_lt (h d' _), rw [mem_Icc, nat.ceil_le] at hd',
-    exact_mod_cast (lt_of_lt_of_le zero_lt_one (le_trans h1y hd'.1)),
-   },
+    exact_mod_cast (lt_of_lt_of_le zero_lt_one (le_trans h1y hd'.1)) },
   have : k + 1 ≤ k := nat.le_find_greatest hk_bound this,
   simpa using this,
 end
 
-lemma rec_sum_sdiff {A B : finset ℕ} :
-   (rec_sum A:ℝ) - rec_sum B ≤ rec_sum (A\B) :=
-sorry
-
 lemma rec_sum_union {A B : finset ℕ} :
    (rec_sum (A∪B) : ℝ) ≤ rec_sum A + rec_sum B :=
-sorry
+begin
+  rw [←rat.cast_add, rat.cast_le, rec_sum, rec_sum, rec_sum, ←sum_union_inter,
+    le_add_iff_nonneg_right, ←rec_sum],
+  apply rec_sum_nonneg
+end
+
+lemma rec_sum_sdiff {A B : finset ℕ} :
+   (rec_sum A:ℝ) - rec_sum B ≤ rec_sum (A\B) :=
+begin
+  rw [←rat.cast_sub, rat.cast_le, tsub_le_iff_right, ←rec_sum_disjoint disjoint_sdiff_self_left],
+  apply rec_sum_mono,
+  rw sdiff_union_self_eq_union,
+  apply subset_union_left,
+end
 
 lemma rec_sum_bUnion {I : finset ℕ} (f : ℕ → finset ℕ) :
-  (rec_sum (I.bUnion (λ i:ℕ, f i)):ℝ) ≤ ∑ i in I, rec_sum (f i) := sorry
+  (rec_sum (I.bUnion f) : ℝ) ≤ ∑ i in I, rec_sum (f i) :=
+begin
+  rw [←rat.cast_sum, rat.cast_le, rec_sum],
+  refine sum_bUnion_le_sum_of_nonneg (λ x hx, one_div_nonneg.2 (nat.cast_nonneg _)),
+end
+
+example {f g : ℝ → ℝ} {l : filter ℝ} (hf : tendsto f l at_top) (hfg : ∀ᶠ x in l, f x ≤ g x) :
+  tendsto g l at_top :=
+tendsto_at_top_mono' _ hfg hf
 
 lemma this_particular_tends_to :
-  tendsto (λ x : ℝ, x^(log(log(log x))/log(log x)) ) at_top at_top := sorry
+  tendsto (λ x : ℝ, x^(log(log(log x))/log(log x))) at_top at_top :=
+begin
+  refine tendsto_at_top_mono' _ _ (tendsto_pow_rec_log_log_at_top zero_lt_one),
+  filter_upwards [eventually_ge_at_top (1 : ℝ),
+    (tendsto_log_at_top.comp tendsto_log_at_top).eventually_ge_at_top 0,
+    (tendsto_log_at_top.comp (tendsto_log_at_top.comp tendsto_log_at_top)).eventually_ge_at_top 1]
+      with x hx hx' hx'',
+  refine rpow_le_rpow_of_exponent_le hx (div_le_div_of_le hx' hx''),
+end
 
 lemma Ioc_subset_Ioc_union_Ioc {a b c : ℕ} :
   Ioc a c ⊆ Ioc a b ∪ Ioc b c :=
@@ -1686,4 +1710,3 @@ begin
   refine subset_trans (inter_subset_right _ _) _,
   refine subset_trans (sdiff_subset _ _) (filter_subset _ _),
 end
-
