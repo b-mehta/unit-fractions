@@ -1409,8 +1409,42 @@ log N ^ ((3:ℝ) / 4) ≤ log N * (log(log(log N))/log(log N)) ∧
 (⌈log (log (log N) / log (log (log N))) *(2 * log (log N))⌉₊:ℝ) *
   (2 * ((log N)^((1:ℝ) / 500)) + C*(1/(log(log N))^2)*log N) < (2+2*C)*(log(log(log N))/log(log N)) * log N := sorry
 
+lemma this_fun_increasing_aux : strict_mono_on (λ x, exp x / x ^ 2) (set.Ici 2) :=
+begin
+  refine convex.strict_mono_on_of_deriv_pos (convex_Ici _) _ _,
+  { refine continuous_on_exp.div (continuous_on_pow _) _,
+    rintro x (hx : _ ≤ _),
+    exact pow_ne_zero _ (zero_lt_two.trans_le hx).ne' },
+  rw interior_Ici,
+  intros x hx,
+  have hx₀ : 0 < x := zero_le_two.trans_lt hx,
+  rw [deriv_div differentiable_at_exp, real.deriv_exp, deriv_pow, nat.cast_two, pow_one, ←pow_mul,
+    sq, ←mul_sub, ←sub_mul],
+  { exact div_pos (mul_pos (exp_pos _) (mul_pos (sub_pos_of_lt hx) hx₀)) (pow_pos hx₀ _) },
+  { exact differentiable_at_pow },
+  exact pow_ne_zero _ hx₀.ne'
+end
+
+lemma this_fun_increasing' :
+  ∀ᶠ N : ℝ in at_top, ∀ M, N ≤ M → log N / log (log N) ^ 2 ≤ log M / log (log M) ^ 2 :=
+begin
+  filter_upwards [(tendsto_log_at_top.comp tendsto_log_at_top).eventually_ge_at_top 2,
+    tendsto_log_at_top.eventually_gt_at_top 0,
+    eventually_gt_at_top (0 : ℝ)]
+    with N hN hNl₀ hN₀ M hNM,
+  have hl : log N ≤ log M := log_le_log_of_le hN₀ hNM,
+  have hll : log (log N) ≤ log (log M) := log_le_log_of_le hNl₀ hl,
+  convert this_fun_increasing_aux.monotone_on hN (le_trans hN hll) hll,
+  { rw exp_log hNl₀ },
+  { rw exp_log (hNl₀.trans_le hl) }
+end
+
 lemma this_fun_increasing : ∃ C : ℝ, ∀ N M : ℕ, (C ≤ N) ∧ (N ≤ M) →
-  log N/(log(log N))^2 ≤ log M/(log(log M))^2 := sorry
+  log N/(log(log N))^2 ≤ log M/(log(log M))^2 :=
+begin
+  obtain ⟨C, hC⟩ := eventually_at_top.1 this_fun_increasing',
+  exact ⟨C, λ N M h, hC _ h.1 _ (nat.cast_le.2 h.2)⟩,
+end
 
 lemma harmonic_sum_bound_two' : ∀ᶠ (N : ℝ) in at_top,
   ∑ n in finset.range(⌈N⌉₊), (1 : ℝ)/n ≤ 2*log N := sorry
