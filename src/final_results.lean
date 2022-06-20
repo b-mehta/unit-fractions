@@ -1442,24 +1442,100 @@ begin
 end
 
 lemma harmonic_sum_bound_two' : ∀ᶠ (N : ℝ) in at_top,
-  ∑ n in finset.range(⌈N⌉₊), (1 : ℝ)/n ≤ 2*log N := sorry
+  ∑ n in finset.range(⌈N⌉₊), (1 : ℝ)/n ≤ 2*log N :=
+begin
+  have hharmonic := harmonic_sum_bound_two,
+  rw eventually_at_top at hharmonic, rcases hharmonic with ⟨C,hharmonic⟩,
+  filter_upwards [eventually_ge_at_top ((C:ℝ)+1), eventually_gt_at_top (1:ℝ)] with N hN h1N,
+  rw [← le_sub_iff_add_le] at hN,
+  specialize hharmonic (⌈N-1⌉₊) _,
+  have haux := le_trans hN (nat.le_ceil _), exact_mod_cast haux,
+  transitivity ∑ (n : ℕ) in range (⌈N - 1⌉₊ + 1), (1:ℝ)/n,
+  refine sum_le_sum_of_subset_of_nonneg _ _, rw [range_subset, nat.ceil_le], push_cast,
+  rw ← sub_le_iff_le_add, refine nat.le_ceil _, intros n hn1 hn2, rw one_div_nonneg,
+  exact nat.cast_nonneg n, refine le_trans hharmonic _,
+  rw [mul_le_mul_left zero_lt_two, log_le_log],
+  refine le_trans (le_of_lt (nat.ceil_lt_add_one _)) _, rw sub_nonneg, exact (le_of_lt h1N),
+  ring_nf, norm_cast, rw [pos_iff_ne_zero], intro hbad, rw [nat.ceil_eq_zero, ← not_lt] at hbad,
+  refine hbad _, rw sub_pos, exact h1N, refine lt_trans zero_lt_one h1N, exact real.nontrivial,
+end
+
 
 lemma harmonic_sum_bound' : ∃ C : ℝ, 0 < C ∧ ∀ (N : ℝ), (1 ≤ N) →
-  ∑ n in (Icc 1 ⌊N⌋₊), (1 : ℝ)/n ≤ C*log (2*N) := sorry
+  ∑ n in (Icc 1 ⌊N⌋₊), (1 : ℝ)/n ≤ C*log (2*N) :=
+begin
+  have hharmonic := harmonic_sum_bound_two,
+  rw eventually_at_top at hharmonic, rcases hharmonic with ⟨C₁,hharmonic⟩,
+  let C₁' := max C₁ 2,
+  let I := Ico 1 C₁',
+  let f := (λ M : ℕ, ∑ n in (Icc 1 M), (1 : ℝ)/n),
+  rcases (finset.exists_max_image I f _) with ⟨y,hy,h⟩,
+  let C := max (2:ℝ) ((f y)/log 2),
+  have h0C : 0 < C := lt_of_lt_of_le zero_lt_two (le_max_left _ _),
+  refine ⟨C,h0C,_⟩,
+  intros N h1N,
+  have h0N : 0 < N := lt_of_lt_of_le zero_lt_one h1N,
+  have h1f : 1 ≤ ⌊N⌋₊, { refine nat.le_floor _, exact_mod_cast h1N, },
+  by_cases hcases : ⌊N⌋₊ < C₁,
+  rw [log_mul, mul_add], transitivity C*log 2, transitivity ((f y)/log 2)*log 2,
+  rw div_mul_cancel, refine h ⌊N⌋₊ _, rw mem_Ico, refine ⟨h1f,lt_of_lt_of_le hcases _⟩,
+  refine le_max_left _ _,
+  refine ne_of_gt (log_pos one_lt_two),
+  rw mul_le_mul_right (log_pos one_lt_two), refine le_max_right _ _,
+  refine le_add_of_nonneg_right _, refine mul_nonneg (le_of_lt h0C) (log_nonneg h1N),
+  exact two_ne_zero, refine ne_of_gt h0N,
+  rw not_lt at hcases, specialize hharmonic ⌊N⌋₊ hcases,
+  transitivity (∑ (n : ℕ) in range (⌊N⌋₊ + 1), (1:ℝ)/n),
+  refine sum_le_sum_of_subset_of_nonneg _ _, intros n hn, rw mem_Icc at hn,
+  rw [mem_range, nat.lt_succ_iff], exact hn.2, intros m hm1 hm2, rw one_div_nonneg, exact nat.cast_nonneg m,
+  refine le_trans hharmonic _, transitivity C*log N,
+  refine mul_le_mul _ _ _ _, refine le_max_left _ _, rw log_le_log, refine nat.floor_le (le_of_lt h0N),
+  norm_cast, exact lt_of_lt_of_le zero_lt_one h1f, exact h0N, refine log_nonneg _, exact_mod_cast h1f,
+  exact le_of_lt h0C, rw mul_le_mul_left h0C, rw log_le_log h0N,
+  refine le_mul_of_one_le_left (le_of_lt h0N) one_le_two, refine mul_pos zero_lt_two h0N,
+  rw finset.nonempty_Ico, refine lt_of_lt_of_le one_lt_two (le_max_right _ _),
+end
 
 lemma another_this_particular_tends_to :
-  tendsto (λ x : ℝ, (log x)/log(log x)) at_top at_top := sorry
+  tendsto (λ x : ℝ, (log x)/log(log x)) at_top at_top :=
+begin
+  have : filter.tendsto (λ x : ℝ,  x / log x) at_top at_top,
+  { simpa using tendsto_mul_add_div_pow_log_at_top _ 0 1 zero_lt_one },
+  exact this.comp tendsto_log_at_top,
+end
 
 lemma this_function_big_tends_to :
-  tendsto (λ x : ℝ, x^(log(log(log x))/log(log x))) at_top at_top := sorry
+  tendsto (λ x : ℝ, x^(log(log(log x))/log(log x))) at_top at_top :=
+begin
+  suffices : filter.tendsto (λ x : ℝ,  ((log x / log(log x)))*(log(log(log x)))) at_top at_top,
+  { apply ((tendsto_exp_at_top.comp this)).congr' _,
+    filter_upwards [eventually_gt_at_top (0 : ℝ)] with x hx using
+      by simp only [rpow_def_of_pos hx, mul_div_assoc' (log x), div_mul_eq_mul_div], },
+  refine filter.tendsto.at_top_mul_at_top another_this_particular_tends_to _,
+  exact tendsto_log_at_top.comp (tendsto_log_at_top.comp tendsto_log_at_top),
+end
+
+lemma now_last_large_N : ∀ᶠ (N : ℕ) in at_top,
+198 / 199 * log (log N) ≤ log (log (log (log N)) / log (log N) * log N) :=
+begin
+  filter_upwards [
+    ((another_this_particular_tends_to.comp tendsto_log_at_top).comp tendsto_coe_nat_at_top_at_top).eventually_ge_at_top (199:ℝ),
+    tendsto_log_coe_at_top.eventually_gt_at_top (0:ℝ),
+    tendsto_log_log_coe_at_top.eventually_gt_at_top (0:ℝ),
+    (tendsto_log_at_top.comp tendsto_log_log_coe_at_top).eventually_gt_at_top (0:ℝ),
+    ((tendsto_log_at_top.comp tendsto_log_at_top).comp tendsto_log_log_coe_at_top).eventually_gt_at_top (0:ℝ)
+   ] with N hlarge h0log h0log2 h0log3 h0log4,
+  rw [log_mul, ← sub_le_iff_le_add, ← neg_le_neg_iff, neg_sub, ← one_sub_mul, ← log_inv, inv_div,
+    log_div], transitivity log(log(log N)), refine sub_le_self _ (le_of_lt h0log4),
+  rw [← div_le_iff], norm_num1, rw [le_one_div, one_div_div], exact hlarge,
+  exact div_pos h0log3 h0log2, norm_num1, exact h0log2, exact ne_of_gt h0log2,
+  exact ne_of_gt h0log3, exact ne_of_gt (div_pos h0log3 h0log2), exact ne_of_gt h0log,
+end
 
 lemma the_last_large_N : ∀ C : ℝ, (0 < C) → ∀ᶠ (N : ℕ) in at_top,
 log N ^ ((3:ℝ) / 4) ≤ log N * (log(log(log N))/log(log N)) ∧
 (⌈log (log (log N) / log (log (log N))) *(2 * log (log N))⌉₊:ℝ) *
   (2 * ((log N)^((1:ℝ) / 500)) + C*(1/(log(log N))^2)*log N) < (2+2*C)*(log(log(log N))/log(log N)) * log N := sorry
-
-lemma now_last_large_N : ∀ᶠ (N : ℕ) in at_top,
-198 / 199 * log (log N) ≤ log (log (log (log N)) / log (log N) * log N) := sorry
 
 lemma how_large_can_we_go (C : ℝ) (h0C : 0 < C) : ∀ᶠ (N : ℝ) in at_top,
   (log N)^((1:ℝ)/1000) ≤ (log (log (log ↑N)) / log (log ↑N) * log ↑N) * C := sorry
