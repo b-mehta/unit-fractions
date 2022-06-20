@@ -1532,13 +1532,106 @@ begin
   exact ne_of_gt h0log3, exact ne_of_gt (div_pos h0log3 h0log2), exact ne_of_gt h0log,
 end
 
+lemma large_helper (c C : ℝ) (hc1 : c < 1) (h0C : 0 < C): ∀ᶠ (N : ℝ) in at_top,
+  (log N)^c < (log (log (log N)) / log (log N) * log N) * C :=
+begin
+  have hc : 0 < -c + 1, {rw [add_comm, ← sub_eq_add_neg, sub_pos], exact hc1,},
+  filter_upwards [
+    tendsto_log_at_top.eventually_gt_at_top (0:ℝ),
+    (tendsto_log_at_top.comp tendsto_log_at_top).eventually_gt_at_top (0:ℝ),
+    (tendsto_log_at_top.comp tendsto_log_at_top).eventually_gt_at_top (log C⁻¹ / ((-c + 1) / 2)),
+    (another_this_particular_tends_to.comp tendsto_log_at_top).eventually_gt_at_top (1 / ((-c + 1) / 2) ),
+    ((tendsto_log_at_top.comp tendsto_log_at_top).comp tendsto_log_at_top).eventually_gt_at_top (0:ℝ),
+    ((tendsto_log_at_top.comp tendsto_log_at_top).comp tendsto_log_at_top).eventually_gt_at_top (1:ℝ)
+  ] with N hN hN₁ hN₂ hN₃ hN₄ hN₅,
+  rw [← div_lt_iff h0C, div_eq_mul_one_div, ← lt_div_iff', div_eq_mul_one_div _ ((log N)^c),
+  one_div, one_div, ← rpow_neg, mul_assoc, mul_comm (log N), ← rpow_add_one, div_eq_mul_one_div],
+  transitivity (1/ log (log N)) * log N^(-c+1),
+  rw [mul_comm, ← div_eq_mul_one_div, lt_div_iff, ← log_lt_log_iff, log_rpow, log_mul,
+    ← add_halves ((-c+1)), add_mul], refine add_lt_add _ _, rw ← div_lt_iff', exact hN₂,
+  refine div_pos hc two_pos,
+  rw [← one_lt_div, ← mul_div, ← div_lt_iff'], exact hN₃, exact div_pos hc two_pos, exact hN₄,
+  refine ne_of_gt _, rw inv_pos, exact h0C, exact ne_of_gt hN₁, exact hN, refine mul_pos _ hN₁,
+  rw inv_pos, exact h0C, refine rpow_pos_of_pos hN _, exact hN₁, rw mul_assoc,
+  refine lt_mul_of_one_lt_left _ _, refine mul_pos _ _, rw one_div_pos, exact hN₁,
+  refine rpow_pos_of_pos hN _, exact hN₅, exact ne_of_gt hN, exact le_of_lt hN,
+  refine rpow_pos_of_pos hN _,
+end
+
+
 lemma the_last_large_N : ∀ C : ℝ, (0 < C) → ∀ᶠ (N : ℕ) in at_top,
 log N ^ ((3:ℝ) / 4) ≤ log N * (log(log(log N))/log(log N)) ∧
 (⌈log (log (log N) / log (log (log N))) *(2 * log (log N))⌉₊:ℝ) *
-  (2 * ((log N)^((1:ℝ) / 500)) + C*(1/(log(log N))^2)*log N) < (2+2*C)*(log(log(log N))/log(log N)) * log N := sorry
+  (2 * ((log N)^((1:ℝ) / 500)) + C*(1/(log(log N))^2)*log N) < (2+2*C)*(log(log(log N))/log(log N)) * log N :=
+begin
+  intros C h0C,
+  have htemp' : (3:ℝ)/4 < 1 := by norm_num1,
+  have htemp₂ : (251:ℝ)/500 < 1 := by norm_num1,
+  have htemp₃ : (1:ℝ)/500 < 1 := by norm_num1,
+  have htemp₄ : (0:ℝ) < 1/4 := by norm_num1,
+  filter_upwards [
+    tendsto_log_coe_at_top.eventually_gt_at_top (1:ℝ),
+    tendsto_coe_nat_at_top_at_top.eventually (large_helper ((3:ℝ)/4) (1:ℝ) htemp' zero_lt_one),
+    tendsto_coe_nat_at_top_at_top.eventually (large_helper ((1:ℝ)/500) ((1:ℝ)/4) htemp₃ htemp₄),
+    tendsto_coe_nat_at_top_at_top.eventually (large_helper ((251:ℝ)/500) ((1:ℝ)/2) htemp₂ one_half_pos),
+    ((another_this_particular_tends_to.comp tendsto_log_at_top).comp tendsto_coe_nat_at_top_at_top).eventually_ge_at_top (1:ℝ),
+    tendsto_log_log_coe_at_top.eventually_gt_at_top (0:ℝ),
+    tendsto_log_log_coe_at_top.eventually_gt_at_top (2*(C*1)),
+    tendsto_log_log_coe_at_top.eventually_ge_at_top (log 2 / (1 / 4 / 2)),
+    (tendsto_log_at_top.comp tendsto_log_log_coe_at_top).eventually_gt_at_top (1:ℝ),
+    (another_this_particular_tends_to.comp tendsto_coe_nat_at_top_at_top).eventually_gt_at_top (1:ℝ),
+    ((another_this_particular_tends_to.comp tendsto_log_at_top).comp tendsto_coe_nat_at_top_at_top).eventually_ge_at_top (8:ℝ)
+  ] with N h1logN hlarge1 hlarge2 hlarge3 hweird h0loglogN hloglogN' hloglogN'' h1log3 hbig hbig₂,
+  have h0log3 : 0 < log(log(log N)) := lt_trans zero_lt_one h1log3,
+  have h0logN : 0 < log N := lt_trans zero_lt_one h1logN,
+  have hlarge₃ : 2*log(log N) ≤ (log N)^((1:ℝ)/4), {
+    rw [← log_le_log, log_rpow, ← add_halves ((1:ℝ)/4), log_mul, add_mul], refine add_le_add _ _,
+    rw ← div_le_iff', exact hloglogN'', norm_num1, norm_num1, rw [mul_comm, ← div_eq_mul_one_div,
+      le_div_iff, ← le_div_iff'], exact hbig₂, exact h0log3, norm_num1, exact two_ne_zero,
+    exact ne_of_gt h0loglogN, exact h0logN, refine mul_pos zero_lt_two h0loglogN,
+    refine rpow_pos_of_pos h0logN _,
+   },
+  refine ⟨_,_⟩, rw mul_comm, rw mul_one at hlarge1, exact (le_of_lt hlarge1),
+  transitivity (log (log (log N) / log (log (log N))) *(2 * log (log N)) + 1) *
+  (2 * ((log N)^((1:ℝ) / 500)) + C*(1/(log(log N))^2)*log N),
+  rw mul_lt_mul_right, refine nat.ceil_lt_add_one _, refine mul_nonneg _ _, refine log_nonneg _,
+  exact hweird, exact mul_nonneg (zero_le_two) (le_of_lt h0loglogN), refine add_pos _ _,
+  refine mul_pos zero_lt_two (rpow_pos_of_pos h0logN _), refine mul_pos _ h0logN,
+  refine mul_pos h0C _, rw one_div_pos, refine sq_pos_of_pos h0loglogN,
+  rw [add_mul, mul_add, add_rotate, add_rotate, add_mul, add_mul], refine add_lt_add_of_lt_of_le _ _,
+  rw [one_mul], nth_rewrite 2 (mul_assoc (_ : ℝ)), nth_rewrite 3 (two_mul (_ : ℝ)), refine add_lt_add _ _,
+  rw ← add_halves ((log (log (log N)) / log (log N)) * log N), refine add_lt_add _ _,
+  rw [lt_div_iff, mul_comm, ← mul_assoc], norm_num1, rw ← lt_div_iff', rw div_eq_mul_one_div _ (4:ℝ),
+  exact hlarge2, exact zero_lt_four, exact zero_lt_two, rw [lt_div_iff', ← mul_assoc, mul_lt_mul_right,
+    mul_div, mul_div, div_lt_iff, div_eq_mul_one_div, mul_assoc, mul_comm (1/(log(log N))),
+    ← div_eq_mul_one_div, sq, mul_div_cancel], transitivity (log(log N)), exact hloglogN',
+  refine lt_mul_of_one_lt_left _ _, exact h0loglogN, exact h1log3, exact ne_of_gt h0loglogN,
+  refine sq_pos_of_pos h0loglogN,  exact h0logN, exact zero_lt_two,
+  transitivity log N ^ ((1:ℝ) / 4) * log N ^ ((1:ℝ) / 4) * (2 * log N ^ ((1:ℝ) / 500)),
+  rw mul_lt_mul_right, refine mul_lt_mul _ _ _ _, transitivity log(log(log N)), refine log_lt_log _ _,
+  refine div_pos h0loglogN h0log3, refine div_lt_self h0loglogN h1log3, refine lt_of_lt_of_le _ hlarge₃,
+  transitivity log(log N), refine log_lt_log h0loglogN _, rw ← one_lt_div, exact hbig, exact h0loglogN,
+  refine lt_mul_of_one_lt_left h0loglogN one_lt_two, exact hlarge₃, refine mul_pos zero_lt_two h0loglogN,
+  refine rpow_nonneg_of_nonneg (le_of_lt h0logN) _, refine mul_pos zero_lt_two _,
+  refine rpow_pos_of_pos h0logN _, rw [← rpow_add, ← mul_assoc, mul_comm, ← mul_assoc, ← rpow_add,
+    ← lt_div_iff, div_eq_mul_one_div _ (2:ℝ)], norm_num1, exact hlarge3, exact zero_lt_two,
+  exact h0logN, exact h0logN,
+  transitivity log (log (log N)) * (2 * log (log N)) * (C * (1 / log (log N) ^ 2) * log N),
+  rw [mul_le_mul_right, mul_le_mul_right, log_le_log], refine div_le_self _ _, exact le_of_lt h0loglogN,
+  exact (le_of_lt h1log3), exact div_pos h0loglogN h0log3, exact h0loglogN, refine mul_pos zero_lt_two h0loglogN,
+  refine mul_pos _ h0logN, refine mul_pos h0C _, rw one_div_pos, refine sq_pos_of_pos h0loglogN,
+  convert_to log (log (log ↑N)) * 2 * (C * (log (log ↑N) / log (log ↑N) ^ 2) * log ↑N) ≤
+    2 * C * (log (log (log ↑N)) / log (log ↑N)) * log ↑N using 0, { ring_nf, },
+  rw [sq, div_mul_left], ring_nf, exact ne_of_gt h0loglogN,
+end
 
 lemma how_large_can_we_go (C : ℝ) (h0C : 0 < C) : ∀ᶠ (N : ℝ) in at_top,
-  (log N)^((1:ℝ)/1000) ≤ (log (log (log ↑N)) / log (log ↑N) * log ↑N) * C := sorry
+  (log N)^((1:ℝ)/1000) ≤ (log (log (log ↑N)) / log (log ↑N) * log ↑N) * C :=
+begin
+  have : (1:ℝ)/1000 < 1 := by norm_num1,
+  filter_upwards [large_helper ((1:ℝ)/1000) C this h0C] with N hN,
+  exact le_of_lt hN,
+end
 
 lemma crude_ps (p : ℕ → Prop) [decidable_pred p] (δ : ℝ) (Y : ℝ) (h0δ : 0 < δ) (h1Y : 1 ≤ Y) (N : ℕ)
 (h : ∀ X : ℝ, (Y ≤ X ∧ X ≤ N) → ((filter p (Ico ⌈X⌉₊ ⌈2*X⌉₊)).card : ℝ) ≤ δ*X) (h2N : 2 ≤ N) :
@@ -2226,4 +2319,5 @@ begin
   refine subset_trans (inter_subset_right _ _) _,
   refine subset_trans (sdiff_subset _ _) (filter_subset _ _),
 end
+
 
