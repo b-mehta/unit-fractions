@@ -35,6 +35,7 @@ There is a constant $C>0$ such that the following holds. If $A\subset \{1,\ldots
 then there is an $S\subset A$ such that $\sum_{n\in S}\frac{1}{n}=1$.
 \end{theorem}
 \begin{proof}
+  \leanok
   \uses{lem:sieve1,cor:tech_cor,lem:turan}
   Let $C\geq 2$ be an absolute constant to be chosen shortly, and for brevity let $\epsilon = \log\log\log N/\log\log N$, so that we may assume that $R(A)\geq C\epsilon \log N$. Since $\sum_{n\leq X}\frac{1}{n}\ll \log X$, if $A'=A\cap [N^\epsilon,N]$ we have (assuming $C$ is sufficiently large) $R(A')\geq \frac{C}{2}\epsilon\log N$.
 
