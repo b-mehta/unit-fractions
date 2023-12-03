@@ -1,6 +1,6 @@
 # Unit fractions
 
-The goal of this project is to formalize the proof of a conjecture on unit fractions. Details can be found on the [project website](https://b-mehta.github.io/unit-fractions/).
+This project contains a formalized version of the proof of result on unit fractions, proved by Bloom in the preprint available [here](https://arxiv.org/abs/2112.03726): any set of integers of positive density contains a solution to $1=1/n_1+\cdots+1/n_k$ where the $n_1,\ldots,n_k$ are distinct denominators from the set. This proves a conjecture of Erdos and Graham. Details can be found on the [project website](https://b-mehta.github.io/unit-fractions/).
 
 Much of the project infrastructure has been adapted from the [sphere eversion project](https://leanprover-community.github.io/sphere-eversion/) and the [liquid tensor experiment](https://leanprover-community.github.io/lean-liquid/).
 
